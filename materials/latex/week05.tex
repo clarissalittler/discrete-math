@@ -1,0 +1,33 @@
+\section{Week 5: Counting and Probability II}
+\subsection*{Reading}
+Epp \S 9.5--9.7.
+
+\subsection*{Learning objectives}
+\begin{itemize}
+  \item Compute combinations and binomial coefficients.
+  \item Count with repetition using stars and bars.
+  \item Use Pascal's identity and the binomial theorem.
+\end{itemize}
+
+\subsection*{Key definitions and facts}
+\begin{definition}[Binomial coefficient]
+$\binom{n}{k}=\dfrac{n!}{k!(n-k)!}$ counts $k$-element subsets of an $n$-element set.
+\end{definition}
+
+\begin{theorem}[Binomial theorem]
+$(x+y)^n=\sum_{k=0}^n \binom{n}{k}x^{n-k}y^k$.
+\end{theorem}
+
+\subsection*{Worked example}
+\begin{example}
+How many solutions are there to $x_1+x_2+x_3=7$ with $x_i\ge 0$?
+\emph{Sketch.} Stars and bars gives $\binom{7+3-1}{3-1}=\binom{9}{2}=36$.
+\end{example}
+
+\subsection*{Practice}
+\begin{enumerate}
+  \item Compute $\binom{12}{5}$.
+  \item How many 8-card poker hands contain exactly 3 hearts?
+  \item Prove Pascal's identity: $\binom{n}{k}=\binom{n-1}{k}+\binom{n-1}{k-1}$.
+  \item Use the binomial theorem to expand $(2x-1)^5$.
+\end{enumerate}

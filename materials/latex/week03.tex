@@ -1,0 +1,38 @@
+\section{Week 3: Relations and Modular Arithmetic}
+\subsection*{Reading}
+Epp \S 8.1--8.4.
+
+\subsection*{Learning objectives}
+\begin{itemize}
+  \item Describe a relation using sets, matrices, or digraphs.
+  \item Test whether a relation is reflexive, symmetric, or transitive.
+  \item Form equivalence classes and connect them to partitions.
+  \item Compute congruences and modular inverses.
+\end{itemize}
+
+\subsection*{Key definitions and facts}
+\begin{definition}[Equivalence relation]
+A relation $R$ on a set $A$ is an equivalence relation if it is reflexive, symmetric, and transitive.
+Equivalence classes $[a]$ partition $A$.
+\end{definition}
+
+\begin{definition}[Congruence]
+For $n\ge 2$, $a\equiv b \pmod{n}$ iff $n$ divides $a-b$.
+This is an equivalence relation on $\Z$.
+\end{definition}
+
+\subsection*{Worked example}
+\begin{example}
+Show that $\equiv$ mod $n$ is an equivalence relation on $\Z$.
+\emph{Sketch.} Reflexive: $n\mid (a-a)=0$.
+Symmetric: if $n\mid (a-b)$ then $n\mid (b-a)$.
+Transitive: if $n\mid (a-b)$ and $n\mid (b-c)$ then $n\mid (a-c)$.
+\end{example}
+
+\subsection*{Practice}
+\begin{enumerate}
+  \item For $n=5$, list the equivalence classes of $\Z$ modulo $n$.
+  \item Find the inverse of $3$ modulo $7$.
+  \item Decide whether the relation $xRy$ iff $x-y$ is even is an equivalence relation on $\Z$.
+  \item Prove that every equivalence relation on $A$ defines a partition of $A$.
+\end{enumerate}

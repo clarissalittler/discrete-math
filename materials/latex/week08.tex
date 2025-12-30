@@ -1,0 +1,35 @@
+\section{Week 8: Trees and Graph Algorithms}
+\subsection*{Reading}
+Epp \S 10.4--10.6.
+
+\subsection*{Learning objectives}
+\begin{itemize}
+  \item Identify trees, rooted trees, and m-ary trees.
+  \item Use basic properties such as $|E|=|V|-1$ for trees.
+  \item Find spanning trees in connected graphs.
+  \item Apply shortest-path algorithms conceptually.
+\end{itemize}
+
+\subsection*{Key definitions and facts}
+\begin{definition}[Tree]
+A tree is a connected graph with no simple circuits.
+Equivalently, a tree on $n$ vertices has exactly $n-1$ edges.
+\end{definition}
+
+\begin{definition}[Spanning tree]
+A spanning tree of a graph $G$ is a subgraph that is a tree containing all vertices of $G$.
+\end{definition}
+
+\subsection*{Worked example}
+\begin{example}
+Prove that a tree on $n$ vertices has $n-1$ edges.
+\emph{Sketch.} Use induction on $n$ by removing a leaf and its incident edge.
+\end{example}
+
+\subsection*{Practice}
+\begin{enumerate}
+  \item How many leaves can a full $m$-ary tree of height $h$ have?
+  \item Find a spanning tree of the complete graph $K_5$.
+  \item Explain why removing any edge from a tree disconnects it.
+  \item Run Dijkstra's algorithm on a weighted graph with 5 vertices of your choice.
+\end{enumerate}

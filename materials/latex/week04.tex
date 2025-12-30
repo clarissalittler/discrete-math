@@ -1,0 +1,39 @@
+\section{Week 4: Counting and Probability I}
+\subsection*{Reading}
+Epp \S 9.1--9.4.
+
+\subsection*{Learning objectives}
+\begin{itemize}
+  \item Build sample spaces and events for basic probability models.
+  \item Apply the multiplication rule to count outcomes.
+  \item Apply the addition rule and inclusion--exclusion for two sets.
+  \item Use the pigeonhole principle to force collisions.
+\end{itemize}
+
+\subsection*{Key definitions and facts}
+\begin{definition}[Sample space and event]
+A sample space $S$ is the set of all outcomes. An event is a subset of $S$.
+For equally likely outcomes, $P(E)=|E|/|S|$.
+\end{definition}
+
+\begin{theorem}[Addition rule]
+For events $A,B$, $|A\cup B|=|A|+|B|-|A\cap B|$.
+\end{theorem}
+
+\begin{theorem}[Pigeonhole principle]
+If $n+1$ objects are placed into $n$ boxes, then some box contains at least two objects.
+\end{theorem}
+
+\subsection*{Worked example}
+\begin{example}
+How many 3-letter strings over $\{A,B,C,D\}$ have no repeated letters?
+\emph{Sketch.} Multiplication rule: $4\cdot 3\cdot 2=24$.
+\end{example}
+
+\subsection*{Practice}
+\begin{enumerate}
+  \item A fair die is rolled twice. What is the probability the sum is $7$?
+  \item How many 5-bit binary strings contain at least one $1$?
+  \item Use inclusion--exclusion to count integers in $\{1,\dots,100\}$ divisible by $2$ or $3$.
+  \item Use the pigeonhole principle to show that among 13 people, two share a birth month.
+\end{enumerate}

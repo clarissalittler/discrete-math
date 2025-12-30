@@ -1,0 +1,42 @@
+\section{Week 2: Functions and Cardinality}
+\subsection*{Reading}
+Epp \S 7.1--7.4.
+
+\subsection*{Learning objectives}
+\begin{itemize}
+  \item Identify domain, codomain, and image of a function.
+  \item Distinguish injective, surjective, and bijective functions.
+  \item Use inverses and composition to solve functional equations.
+  \item Compare sizes of sets using countability arguments.
+\end{itemize}
+
+\subsection*{Key definitions and facts}
+\begin{definition}[Injective and surjective]
+A function $f:A\to B$ is injective if $f(x)=f(y)$ implies $x=y$.
+It is surjective if for every $b\in B$ there exists $a\in A$ with $f(a)=b$.
+\end{definition}
+
+\begin{proposition}[Composition]
+If $f$ and $g$ are injective, then $g\circ f$ is injective.
+If $f$ and $g$ are surjective, then $g\circ f$ is surjective.
+\end{proposition}
+
+\begin{definition}[Countable]
+A set $A$ is countably infinite if there is a bijection $A\leftrightarrow\N$.
+A set is countable if it is finite or countably infinite.
+\end{definition}
+
+\subsection*{Worked example}
+\begin{example}
+Let $f:\N\to\N$ be $f(n)=2n$. Show $f$ is injective but not surjective.
+\emph{Sketch.} If $2n=2m$ then $n=m$, so $f$ is injective.
+Odd numbers are not in the image, so $f$ is not surjective.
+\end{example}
+
+\subsection*{Practice}
+\begin{enumerate}
+  \item Give an explicit bijection between $\Z$ and $\N$.
+  \item Decide whether $f(x)=x^3$ from $\R$ to $\R$ is bijective and justify.
+  \item Prove that if $g\circ f$ is injective, then $f$ is injective.
+  \item Show that a finite set cannot be in bijection with a proper subset of itself.
+\end{enumerate}

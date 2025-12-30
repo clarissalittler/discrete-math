@@ -1,0 +1,42 @@
+\section{Week 1: Set Theory}
+\subsection*{Reading}
+Epp \S 6.1--6.4.
+
+\subsection*{Learning objectives}
+\begin{itemize}
+  \item Translate between roster and set-builder notation.
+  \item Prove set identities with the element method.
+  \item Apply standard set laws (commutative, associative, distributive).
+  \item Use power sets and partitions correctly.
+\end{itemize}
+
+\subsection*{Key definitions and facts}
+\begin{definition}[Subset and equality]
+For sets $A,B$, $A \subseteq B$ means every element of $A$ is in $B$.
+$A=B$ means $A \subseteq B$ and $B \subseteq A$.
+\end{definition}
+
+\begin{definition}[Power set and partition]
+The power set $\Pow(A)$ is the set of all subsets of $A$.
+A partition of $A$ is a collection of nonempty, pairwise disjoint subsets whose union is $A$.
+\end{definition}
+
+\begin{theorem}[De Morgan's laws]
+$(A \cup B)^c = A^c \cap B^c$ and $(A \cap B)^c = A^c \cup B^c$.
+\end{theorem}
+
+\subsection*{Worked example}
+\begin{example}
+Prove $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$.
+\emph{Sketch.} For any $x$,
+$x \in A \cap (B \cup C)$ iff $x \in A$ and $(x \in B$ or $x \in C)$,
+iff $(x \in A \cap B)$ or $(x \in A \cap C)$.
+\end{example}
+
+\subsection*{Practice}
+\begin{enumerate}
+  \item Convert $\{x \in \Z : x^2 < 10\}$ into roster notation.
+  \item Prove $A \setminus B = A \cap B^c$ using the element method.
+  \item List $\Pow(\{a,b,c\})$ and verify its size.
+  \item Give a counterexample showing $A \cap (B \setminus C) = (A \cap B) \setminus C$ can fail.
+\end{enumerate}

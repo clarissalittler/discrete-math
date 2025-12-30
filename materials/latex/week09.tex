@@ -1,0 +1,35 @@
+\section{Week 9: Regular Expressions and Automata}
+\subsection*{Reading}
+Epp \S 12.1--12.3.
+
+\subsection*{Learning objectives}
+\begin{itemize}
+  \item Describe languages over an alphabet and express them with regex.
+  \item Build DFAs and compute the language they recognize.
+  \item Minimize DFAs by merging equivalent states.
+  \item Explain the equivalence between regex and DFAs.
+\end{itemize}
+
+\subsection*{Key definitions and facts}
+\begin{definition}[Regular expression]
+A regular expression over alphabet $\Sigma$ is built from $\emptyset$, $\epsilon$, symbols in $\Sigma$,
+union ($\mid$), concatenation, and Kleene star ($^*$).
+\end{definition}
+
+\begin{theorem}[Kleene's theorem]
+A language is regular iff it is recognized by some DFA.
+\end{theorem}
+
+\subsection*{Worked example}
+\begin{example}
+Design a DFA over $\{0,1\}$ that accepts strings with an even number of $0$'s.
+\emph{Sketch.} Use two states: even and odd, toggling on input $0$.
+\end{example}
+
+\subsection*{Practice}
+\begin{enumerate}
+  \item Write a regex for all binary strings that end with $01$.
+  \item Construct a DFA for strings over $\{a,b\}$ that contain no substring $bb$.
+  \item Minimize a DFA with 4 states of your choosing.
+  \item Prove that the intersection of two regular languages is regular.
+\end{enumerate}

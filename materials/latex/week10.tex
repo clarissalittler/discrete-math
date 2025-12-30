@@ -1,0 +1,35 @@
+\section{Week 10: Analysis of Algorithm Efficiency}
+\subsection*{Reading}
+Epp \S 11.1--11.5.
+
+\subsection*{Learning objectives}
+\begin{itemize}
+  \item Compare growth rates using limits and dominance.
+  \item Use big-$O$, big-$\Omega$, and big-$\Theta$ definitions.
+  \item Analyze simple loops and summations.
+  \item Solve basic recurrences using expansion or master theorem.
+\end{itemize}
+
+\subsection*{Key definitions and facts}
+\begin{definition}[Big-$O$]
+$f(n)=O(g(n))$ if there exist constants $c,n_0$ such that
+$0\le f(n) \le c g(n)$ for all $n\ge n_0$.
+\end{definition}
+
+\begin{definition}[Big-$\Theta$]
+$f(n)=\Theta(g(n))$ if $f(n)=O(g(n))$ and $f(n)=\Omega(g(n))$.
+\end{definition}
+
+\subsection*{Worked example}
+\begin{example}
+Analyze the runtime of a loop that runs $n$ times and inside runs a loop $n$ times.
+\emph{Sketch.} The total number of iterations is $n^2$, so the runtime is $\Theta(n^2)$.
+\end{example}
+
+\subsection*{Practice}
+\begin{enumerate}
+  \item Order the functions $n\log n$, $n^{1.5}$, $2^n$, $n^3$ by growth rate.
+  \item Show that $3n^2+5n+7$ is $\Theta(n^2)$.
+  \item Solve the recurrence $T(n)=2T(n/2)+n$ with $T(1)=1$.
+  \item Analyze the runtime of binary search.
+\end{enumerate}

@@ -1,0 +1,36 @@
+\section{Week 7: Graph Theory I}
+\subsection*{Reading}
+Epp \S 10.1--10.3.
+
+\subsection*{Learning objectives}
+\begin{itemize}
+  \item Distinguish walks, trails, paths, and circuits.
+  \item Apply Euler's criteria for trails and circuits.
+  \item Represent graphs with adjacency matrices.
+  \item Determine whether two graphs are isomorphic.
+\end{itemize}
+
+\subsection*{Key definitions and facts}
+\begin{definition}[Walk and trail]
+A walk is a sequence of vertices with adjacent consecutive vertices.
+A trail is a walk with no repeated edges. A path is a trail with no repeated vertices.
+\end{definition}
+
+\begin{theorem}[Euler's criterion]
+A connected graph has an Euler circuit iff every vertex has even degree.
+It has an Euler trail iff exactly two vertices have odd degree.
+\end{theorem}
+
+\subsection*{Worked example}
+\begin{example}
+Does a connected graph with degrees $(2,2,2,4,4)$ have an Euler circuit?
+\emph{Sketch.} All degrees are even, so an Euler circuit exists.
+\end{example}
+
+\subsection*{Practice}
+\begin{enumerate}
+  \item Give the adjacency matrix for the 4-cycle $C_4$.
+  \item Determine whether the two graphs below are isomorphic (draw your own examples).
+  \item Find an Euler trail in a graph with exactly two odd-degree vertices.
+  \item Show that the sum of entries in an adjacency matrix equals $2|E|$.
+\end{enumerate}
