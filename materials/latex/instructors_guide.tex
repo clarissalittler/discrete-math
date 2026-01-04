@@ -1,0 +1,1207 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+
+% Colors
+\definecolor{classA}{RGB}{52, 73, 94}
+\definecolor{classB}{RGB}{41, 128, 185}
+\definecolor{activity}{RGB}{39, 174, 96}
+\definecolor{tip}{RGB}{230, 126, 34}
+\definecolor{agda}{RGB}{142, 68, 173}
+
+% Custom boxes
+\tcbset{
+    boxrule=0.5pt,
+    arc=2pt,
+    left=6pt,
+    right=6pt,
+    top=6pt,
+    bottom=6pt
+}
+
+\newtcolorbox{classabox}{
+    colback=classA!5,
+    colframe=classA,
+    title={\textbf{Class A (Tuesday)}},
+    fonttitle=\bfseries\color{white},
+    coltitle=white
+}
+
+\newtcolorbox{classbbox}{
+    colback=classB!5,
+    colframe=classB,
+    title={\textbf{Class B (Thursday)}},
+    fonttitle=\bfseries\color{white},
+    coltitle=white
+}
+
+\newtcolorbox{activitybox}{
+    colback=activity!5,
+    colframe=activity,
+    title={\textbf{In-Class Activity}},
+    fonttitle=\bfseries\color{white},
+    coltitle=white
+}
+
+\newtcolorbox{tipbox}{
+    colback=tip!5,
+    colframe=tip,
+    title={\textbf{Teaching Tip}},
+    fonttitle=\bfseries\color{white},
+    coltitle=white
+}
+
+\newtcolorbox{agdabox}{
+    colback=agda!5,
+    colframe=agda,
+    title={\textbf{Agda Connection}},
+    fonttitle=\bfseries\color{white},
+    coltitle=white
+}
+
+% Header/Footer
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{CS 251: Discrete Mathematics}
+\lhead{Instructor's Guide}
+\rfoot{Page \thepage}
+
+\title{\textbf{CS 251: Discrete Mathematics}\\[0.5em]\Large Instructor's Guide\\[0.3em]\normalsize 10-Week Quarter, Two 2-Hour Sessions per Week}
+\author{Course Materials with Category Theory Enrichment}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+
+\tableofcontents
+\newpage
+
+%=============================================================================
+\section{Course Overview}
+%=============================================================================
+
+\subsection{Course Philosophy}
+
+This course introduces discrete mathematics with an emphasis on \textbf{mathematical maturity} and \textbf{proof fluency}. While covering standard topics (sets, functions, relations, counting, graphs), we incorporate ``Going Deeper'' sections that connect to category theory and type theory---giving students a glimpse of the elegant abstractions underlying discrete structures.
+
+\subsection{Prerequisites}
+Students should have completed a first course covering:
+\begin{itemize}
+    \item Propositional and predicate logic
+    \item Basic proof techniques (direct, contrapositive, contradiction)
+    \item Mathematical induction (weak and strong)
+\end{itemize}
+
+Chapter 0 provides a refresher on these topics for the first class session.
+
+\subsection{Course Materials}
+\begin{itemize}
+    \item \textbf{Primary:} Course notes (Weeks 0--10 LaTeX documents)
+    \item \textbf{Supplementary:} Agda developments for each week
+    \item \textbf{Reference:} Epp, \textit{Discrete Mathematics with Applications} (optional)
+\end{itemize}
+
+\subsection{Assessment Suggestions}
+\begin{itemize}
+    \item Weekly problem sets (60\%)---mix of computation and proof
+    \item Theorem proving projects (40\%)---two projects, described in Section~\ref{sec:projects}
+\end{itemize}
+
+\subsection{Session Structure (2 hours)}
+Recommended breakdown for each class:
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Time} & \textbf{Activity} \\
+\midrule
+0:00--0:10 & Warm-up problem / Review questions \\
+0:10--0:50 & Lecture block 1 (new material) \\
+0:50--1:10 & In-class activity / Worked examples \\
+1:10--1:50 & Lecture block 2 (continued material) \\
+1:50--2:00 & Summary / Preview of next session \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\newpage
+%=============================================================================
+\section{Week 0: Proof Refresher (Optional Pre-Week)}
+%=============================================================================
+
+\textit{If your students need a refresher, cover this material in an optional session or assign as pre-reading before Week 1.}
+
+\subsection{Topics}
+\begin{itemize}
+    \item Propositional logic review (connectives, truth tables, logical equivalence)
+    \item Predicate logic review (quantifiers, negation of quantified statements)
+    \item Proof techniques: direct proof, contrapositive, contradiction
+    \item Mathematical induction: weak, strong, structural
+    \item Common proof patterns and templates
+\end{itemize}
+
+\begin{activitybox}
+\textbf{Proof Workshop:} Give students 4--5 statements and have them identify which proof technique is most appropriate, then complete one proof together.
+
+Example statements:
+\begin{enumerate}
+    \item If $n^2$ is even, then $n$ is even. (Contrapositive)
+    \item $\sqrt{2}$ is irrational. (Contradiction)
+    \item $\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$. (Induction)
+    \item If $a \mid b$ and $b \mid c$, then $a \mid c$. (Direct)
+\end{enumerate}
+\end{activitybox}
+
+\begin{tipbox}
+Students often struggle with the \textit{structure} of proofs. Emphasize that proofs are communication---they should guide the reader through the logical steps. Encourage students to write in complete sentences and explicitly state which technique they're using.
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 1: Set Theory}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Set notation and membership ($\in$, $\notin$)
+    \item Set-builder notation; common sets ($\mathbb{N}, \mathbb{Z}, \mathbb{Q}, \mathbb{R}$)
+    \item Subsets and set equality
+    \item Power sets
+    \item Set operations: union, intersection, complement, difference
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Translate between verbal descriptions and set-builder notation
+    \item Prove set containment using element-chasing arguments
+    \item Compute power sets for small sets
+\end{itemize}
+
+\textbf{Warm-up (10 min):} List all subsets of $\{1, 2, 3\}$. How many are there? Conjecture a formula for $|\mathcal{P}(A)|$ when $|A| = n$.
+\end{classabox}
+
+\begin{activitybox}
+\textbf{Venn Diagram Gallery Walk:} Post 6 Venn diagrams around the room, each showing a shaded region. Students circulate and write the set expression for each shaded region. Discuss multiple correct answers (e.g., $A \cap B'$ vs $A \setminus B$).
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Proving set identities (distributive laws, De Morgan's laws)
+    \item Cartesian products
+    \item Indexed families of sets; generalized union and intersection
+    \item Introduction to cardinality (finite sets)
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Write rigorous proofs of set identities using element-chasing
+    \item Understand Cartesian products and tuples
+    \item Apply set identities to simplify expressions
+\end{itemize}
+
+\textbf{Lecture Focus:} Work through the proof of De Morgan's law in detail:
+\[
+(A \cup B)^c = A^c \cap B^c
+\]
+Emphasize the bidirectional nature of set equality proofs.
+\end{classbbox}
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week01\_SetTheory.agda}
+
+Key concepts to highlight:
+\begin{itemize}
+    \item Sets as predicates: \texttt{Pred A = A -> Set}
+    \item Union as sum type: \texttt{(P $\cup$ Q) x = Sum (P x) (Q x)}
+    \item Intersection as product type: \texttt{(P $\cap$ Q) x = Pair (P x) (Q x)}
+    \item Subset proofs are \textit{functions}: \texttt{P $\subseteq$ Q = (x : A) -> P x -> Q x}
+\end{itemize}
+
+\textbf{Going Deeper:} Mention that sets form a \textit{Boolean algebra}---this connects to circuit design and propositional logic. The Agda file proves the non-contradiction law constructively.
+\end{agdabox}
+
+\begin{tipbox}
+Students often write ``Let $x \in A \cup B$'' without considering both cases. Drill the pattern:
+\begin{enumerate}
+    \item State what you want to prove
+    \item Handle both cases of the union separately
+    \item Conclude with what you've shown
+\end{enumerate}
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 2: Functions}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Definition of function; domain, codomain, range
+    \item Function equality
+    \item Injective (one-to-one) functions
+    \item Surjective (onto) functions
+    \item Bijective functions
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Determine whether a function is injective/surjective from its definition
+    \item Prove a function is injective or surjective
+    \item Construct counterexamples when a function lacks these properties
+\end{itemize}
+
+\textbf{Warm-up:} For each function, classify as injective, surjective, both, or neither:
+\begin{enumerate}
+    \item $f: \mathbb{R} \to \mathbb{R}$, $f(x) = x^2$
+    \item $g: \mathbb{Z} \to \mathbb{Z}$, $g(n) = n + 1$
+    \item $h: \mathbb{R} \to \mathbb{R}^+$, $h(x) = e^x$
+\end{enumerate}
+\end{classabox}
+
+\begin{activitybox}
+\textbf{Function Card Sort:} Prepare cards with various functions (some with explicit formulas, some described verbally, some as diagrams). Students sort them into four categories: injective only, surjective only, bijective, neither. Discuss edge cases.
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Function composition
+    \item Identity function; composition laws (associativity, identity)
+    \item Inverse functions
+    \item Proving composition preserves injectivity/surjectivity
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Compute compositions of functions
+    \item Prove that $g \circ f$ injective implies $f$ injective
+    \item Find inverse functions and verify they satisfy the inverse properties
+\end{itemize}
+
+\textbf{Key Theorem:} $f$ has a two-sided inverse if and only if $f$ is bijective.
+\end{classbbox}
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week02\_Functions.agda}
+
+Key concepts:
+\begin{itemize}
+    \item Composition: \texttt{(g $\circ$ f) x = g (f x)}
+    \item Injective: \texttt{(x y : A) -> Eq (f x) (f y) -> Eq x y}
+    \item Isomorphism record with \texttt{to}, \texttt{from}, and inverse proofs
+\end{itemize}
+
+\textbf{Going Deeper:} Functions form a \textit{category}! Show students the three laws:
+\begin{enumerate}
+    \item $\text{id} \circ f = f$ (left identity)
+    \item $f \circ \text{id} = f$ (right identity)
+    \item $(h \circ g) \circ f = h \circ (g \circ f)$ (associativity)
+\end{enumerate}
+The Agda file proves these as \texttt{composeIdLeft}, \texttt{composeIdRight}, \texttt{composeAssoc}.
+\end{agdabox}
+
+\begin{tipbox}
+The notation $g \circ f$ (``$g$ after $f$'') confuses students because $f$ appears second but is applied first. Use the mnemonic ``read right to left'' or write compositions as $f; g$ in class discussions if it helps.
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 3: Relations and Modular Arithmetic}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Binary relations; relation as subset of $A \times B$
+    \item Properties: reflexive, symmetric, transitive, antisymmetric
+    \item Equivalence relations
+    \item Equivalence classes and partitions
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Test whether a relation has specific properties
+    \item Prove a relation is an equivalence relation
+    \item Compute equivalence classes and understand the partition correspondence
+\end{itemize}
+
+\textbf{Warm-up:} For each relation on $\mathbb{Z}$, identify which properties it has:
+\begin{enumerate}
+    \item $a \sim b$ iff $a = b$
+    \item $a \sim b$ iff $a \leq b$
+    \item $a \sim b$ iff $a - b$ is even
+    \item $a \sim b$ iff $|a - b| \leq 1$
+\end{enumerate}
+\end{classabox}
+
+\begin{activitybox}
+\textbf{Partition Puzzle:} Give students a set $S = \{1, 2, 3, 4, 5, 6\}$ and several partitions. For each partition, have them write out the corresponding equivalence relation explicitly as a set of ordered pairs. Then reverse: given an equivalence relation, find the partition.
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Modular arithmetic: congruence modulo $n$
+    \item Properties of congruence (equivalence relation)
+    \item Modular arithmetic operations
+    \item Division algorithm; div and mod
+    \item Introduction to Fermat's Little Theorem (statement only)
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Perform modular arithmetic calculations
+    \item Prove statements about divisibility and congruence
+    \item Apply modular arithmetic to practical problems (checksums, cryptography preview)
+\end{itemize}
+
+\textbf{Application:} ISBN check digits, credit card validation (Luhn algorithm).
+\end{classbbox}
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week03\_RelationsMod.agda}
+
+Key concepts:
+\begin{itemize}
+    \item Relation as function: \texttt{Rel A = A -> A -> Set}
+    \item Equivalence record with reflexivity, symmetry, transitivity proofs
+    \item \texttt{Prime} data type and \texttt{fermatLittle} postulate
+    \item Chinese Remainder Theorem as \texttt{CRTSystem} record
+\end{itemize}
+
+\textbf{Going Deeper:} Equivalence relations correspond to \textit{quotient types}. The kernel of any function is an equivalence relation---this is why modular arithmetic ``works.''
+\end{agdabox}
+
+\begin{tipbox}
+Students often confuse ``$a \equiv b \pmod{n}$'' with ``$a = b \mod n$.'' Emphasize that the first is a \textit{relation} (a statement that can be true or false), while the second is typically an \textit{operation} that computes a remainder.
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 4: Basic Counting}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Counting principles: sum rule, product rule
+    \item Permutations (with and without repetition)
+    \item Combinations; binomial coefficients $\binom{n}{k}$
+    \item Pascal's triangle and Pascal's identity
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Identify when to use sum vs. product rule
+    \item Distinguish between permutations and combinations
+    \item Compute binomial coefficients using Pascal's identity
+\end{itemize}
+
+\textbf{Warm-up:} A license plate has 3 letters followed by 3 digits. How many plates are possible if:
+\begin{enumerate}
+    \item Repetition is allowed?
+    \item No repetition is allowed?
+    \item The letters must spell a word? (Define ``word'' loosely)
+\end{enumerate}
+\end{classabox}
+
+\begin{activitybox}
+\textbf{Counting Stations:} Set up 4 stations with different counting problems. Groups rotate every 10 minutes, solving one problem at each station. Problems should vary in difficulty and technique required. Conclude with a gallery walk where each group presents their solution.
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Binomial theorem
+    \item Combinatorial proofs
+    \item Counting with repetition (multisets)
+    \item Stars and bars technique
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Apply the binomial theorem to expand $(x + y)^n$
+    \item Write combinatorial proofs of identities
+    \item Use stars and bars for distribution problems
+\end{itemize}
+
+\textbf{Key Identity:} $\binom{n}{0} + \binom{n}{1} + \cdots + \binom{n}{n} = 2^n$
+
+\textbf{Combinatorial Proof:} Both sides count subsets of an $n$-element set.
+\end{classbbox}
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week04\_CountingProb1.agda}
+
+Key concepts:
+\begin{itemize}
+    \item \texttt{factorial} and \texttt{choose} functions defined recursively
+    \item Pascal's identity verified: \texttt{pascal : (n k : Nat) -> Eq (choose (succ n) (succ k)) (choose n (succ k) + choose n k)}
+\end{itemize}
+
+\textbf{Going Deeper:} Combinatorial objects often have recursive structure. The recursive definition of $\binom{n}{k}$ corresponds to a decision: does the subset include element $n$ or not?
+\end{agdabox}
+
+\begin{tipbox}
+For stars and bars problems, always have students:
+\begin{enumerate}
+    \item Identify what the ``stars'' represent
+    \item Identify what the ``bars'' separate
+    \item Write out a small example explicitly
+\end{enumerate}
+The formula $\binom{n+k-1}{k-1}$ is easy to misremember; understanding beats memorization.
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 5: Advanced Counting and Probability}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Inclusion-exclusion principle (2 sets, 3 sets, general)
+    \item Derangements
+    \item Stirling numbers of the second kind
+    \item Multinomial coefficients
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Apply inclusion-exclusion to count unions
+    \item Derive and apply the derangement formula
+    \item Understand Stirling numbers as partition counts
+\end{itemize}
+
+\textbf{Warm-up:} In a class of 30 students, 18 play soccer, 15 play basketball, and 10 play both. How many play neither sport?
+\end{classabox}
+
+\begin{activitybox}
+\textbf{Hat Check Problem:} Present the classic problem: $n$ people check their hats, and hats are returned randomly. What's the probability nobody gets their own hat?
+
+Have students:
+\begin{enumerate}
+    \item Compute $D(n)/n!$ for $n = 1, 2, 3, 4, 5$
+    \item Notice the pattern approaching $1/e \approx 0.368$
+    \item Derive the recurrence $D(n) = (n-1)(D(n-1) + D(n-2))$
+\end{enumerate}
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Probability axioms and basic probability
+    \item Conditional probability
+    \item Independence
+    \item Bayes' theorem
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Compute probabilities using counting techniques
+    \item Apply conditional probability and identify independence
+    \item Use Bayes' theorem for ``inverse'' probability problems
+\end{itemize}
+
+\textbf{Application:} Medical testing (sensitivity, specificity, false positive rates).
+\end{classbbox}
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week05\_CountingProb2.agda}
+
+Key concepts:
+\begin{itemize}
+    \item \texttt{derangement} function with recurrence relation
+    \item \texttt{stirling2} for Stirling numbers
+    \item \texttt{inclusionExclusion2} and \texttt{inclusionExclusion3}
+    \item Probability as pairs of naturals (numerator, denominator)
+\end{itemize}
+
+\textbf{Going Deeper:} The formula $D(n) \approx n!/e$ is a beautiful example of how continuous mathematics (the exponential function) emerges from discrete counting.
+\end{agdabox}
+
+\begin{tipbox}
+Bayes' theorem problems are notoriously confusing. Use tree diagrams consistently and have students label every branch with both the conditional probability and the joint probability. The visual representation prevents many common errors.
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 6: Expected Value and Random Variables}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Random variables (discrete)
+    \item Probability mass functions
+    \item Expected value: definition and properties
+    \item Linearity of expectation
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Define random variables for counting problems
+    \item Compute expected values directly and using linearity
+    \item Apply indicator random variables
+\end{itemize}
+
+\textbf{Warm-up:} You roll two dice. Let $X$ be the sum. What is $E[X]$? What is $E[X^2]$? Is $E[X^2] = E[X]^2$?
+\end{classabox}
+
+\begin{activitybox}
+\textbf{Coupon Collector Exploration:} A cereal company puts one of $n$ different toys in each box. How many boxes do you expect to buy to collect all $n$ toys?
+
+Guide students through:
+\begin{enumerate}
+    \item Define $X_i$ = boxes needed to get the $i$th new toy (after having $i-1$)
+    \item Show $X_i$ is geometric with success probability $(n-i+1)/n$
+    \item Apply linearity: $E[X] = \sum_{i=1}^{n} E[X_i] = n \cdot H_n$
+\end{enumerate}
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Variance and standard deviation
+    \item Common distributions: Bernoulli, binomial, geometric
+    \item Applications of expected value in algorithms
+    \item Introduction to graphs (transition to Week 7)
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Compute variance for simple distributions
+    \item Recognize when to apply standard distributions
+    \item Understand expected running time analysis
+\end{itemize}
+
+\textbf{Application:} Expected number of comparisons in randomized quicksort.
+\end{classbbox}
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week06\_ExpectationGraphs.agda}
+
+Key concepts:
+\begin{itemize}
+    \item Probability distributions as functions to rationals
+    \item Expected value computation
+    \item Graph representations (adjacency list, matrix) introduced
+\end{itemize}
+
+\textbf{Going Deeper:} Expected value is a \textit{linear functional} on the space of random variables. This linearity is what makes many complex calculations tractable.
+\end{agdabox}
+
+\begin{tipbox}
+The coupon collector problem is excellent for building intuition about linearity of expectation. Emphasize that we \textit{don't need independence} to use linearity---this is what makes it so powerful.
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 7: Graph Theory I}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Graph terminology: vertices, edges, degree, paths, cycles
+    \item Graph representations: adjacency matrix, adjacency list
+    \item Special graphs: complete, bipartite, cycle, path graphs
+    \item Handshaking lemma
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Translate between different graph representations
+    \item Identify properties of special graph families
+    \item Apply the handshaking lemma to prove existence results
+\end{itemize}
+
+\textbf{Warm-up:} Draw $K_4$, $K_{2,3}$, $C_5$, and $P_4$. For each, determine the number of vertices, edges, and whether it's bipartite.
+\end{classabox}
+
+\begin{activitybox}
+\textbf{Graph Isomorphism Challenge:} Present pairs of graphs drawn differently. Students determine whether each pair is isomorphic. For isomorphic pairs, find the bijection. For non-isomorphic pairs, identify an invariant that differs (vertex count, edge count, degree sequence, etc.).
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Graph isomorphism; isomorphism invariants
+    \item Walks, trails, paths; Eulerian trails and circuits
+    \item Euler's theorem for Eulerian graphs
+    \item Graph coloring introduction; chromatic number
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Prove graphs are non-isomorphic using invariants
+    \item Determine whether a graph has an Eulerian trail/circuit
+    \item Find proper colorings and bounds on chromatic number
+\end{itemize}
+
+\textbf{Historical Note:} The Seven Bridges of K\"onigsberg problem (1736) launched graph theory.
+\end{classbbox}
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week07\_GraphTheoryI.agda}
+
+Key concepts:
+\begin{itemize}
+    \item \texttt{MatrixGraph n} record with adjacency function
+    \item \texttt{Walk}, \texttt{Trail}, \texttt{Path} data types
+    \item \texttt{Coloring}, \texttt{ProperColoring}, \texttt{Colorable} definitions
+    \item \texttt{chromaticNumber} and \texttt{fourColorTheorem} postulates
+\end{itemize}
+
+\textbf{Going Deeper:} Graph homomorphisms generalize colorings: a proper $k$-coloring is exactly a homomorphism to $K_k$. This connects graph theory to category theory.
+\end{agdabox}
+
+\begin{tipbox}
+When teaching Euler's theorem, have students physically trace paths on whiteboard graphs. The parity argument (even degree = can escape any vertex you enter) becomes intuitive with physical demonstration.
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 8: Trees and Graph Algorithms}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Trees: definitions and characterizations
+    \item Tree properties: $|E| = |V| - 1$, unique paths
+    \item Rooted trees; binary trees
+    \item Tree traversals: preorder, inorder, postorder
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Prove equivalent characterizations of trees
+    \item Perform tree traversals
+    \item Understand the structure of binary search trees
+\end{itemize}
+
+\textbf{Warm-up:} Prove: A connected graph with $n$ vertices and $n-1$ edges is a tree.
+\end{classabox}
+
+\begin{activitybox}
+\textbf{Traversal Race:} Display a binary tree. Teams race to produce the preorder, inorder, and postorder traversals. Verify by reconstructing the tree from two traversals.
+
+Follow-up question: Given preorder and postorder only, can you always reconstruct the tree? (No---consider a tree with only left children.)
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Spanning trees; counting spanning trees (Cayley's formula: $n^{n-2}$)
+    \item Minimum spanning trees: Kruskal's and Prim's algorithms
+    \item Shortest paths: BFS, Dijkstra's algorithm
+    \item Folds on trees (catamorphisms)
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Find MSTs using greedy algorithms
+    \item Trace Dijkstra's algorithm
+    \item Express tree computations as folds
+\end{itemize}
+\end{classbbox}
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week08\_TreesAlgorithms.agda}
+
+Key concepts:
+\begin{itemize}
+    \item \texttt{BinTree} and \texttt{Tree} (rose tree) data types
+    \item \texttt{binFold : (A -> B -> B -> B) -> B -> BinTree A -> B}
+    \item Many operations as folds: \texttt{sizeAsFold}, \texttt{heightAsFold}, \texttt{mirror}, \texttt{mapTree}
+\end{itemize}
+
+\textbf{Going Deeper:} Tree folds are \textit{catamorphisms}---the unique maps from an initial algebra. This is why so many tree operations factor through a single fold pattern. The fold essentially says: ``Replace constructors with operations.''
+\end{agdabox}
+
+\begin{tipbox}
+The fold abstraction is powerful but initially confusing. Start with concrete examples:
+\begin{itemize}
+    \item Size: replace \texttt{leaf} with 0, \texttt{branch} with $\lambda x\, l\, r.\, 1 + l + r$
+    \item Sum: replace \texttt{leaf} with 0, \texttt{branch} with $\lambda x\, l\, r.\, x + l + r$
+\end{itemize}
+Then show how both instantiate the same pattern.
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 9: Formal Languages and Automata}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Alphabets, strings, languages
+    \item Regular expressions
+    \item Deterministic finite automata (DFA)
+    \item DFA acceptance; designing DFAs
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Write regular expressions for given languages
+    \item Design DFAs for simple languages
+    \item Trace DFA execution on input strings
+\end{itemize}
+
+\textbf{Warm-up:} Write a regular expression for: binary strings with an even number of 1s.
+\end{classabox}
+
+\begin{activitybox}
+\textbf{DFA Design Workshop:} Groups design DFAs for increasingly complex languages:
+\begin{enumerate}
+    \item Strings ending in ``01''
+    \item Strings with ``010'' as a substring
+    \item Strings where every ``0'' is immediately followed by ``1''
+    \item Binary representations of multiples of 3
+\end{enumerate}
+Groups present their solutions and peer-review for correctness.
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Nondeterministic finite automata (NFA)
+    \item Equivalence of DFA and NFA (subset construction)
+    \item Equivalence of regular expressions and finite automata
+    \item Pumping lemma (informal)
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Convert NFAs to DFAs
+    \item Convert regular expressions to NFAs
+    \item Use the pumping lemma to prove languages are not regular
+\end{itemize}
+\end{classbbox}
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week09\_RegexAutomata.agda}
+
+Key concepts:
+\begin{itemize}
+    \item \texttt{Regex} data type with constructors for $\emptyset$, $\varepsilon$, literals, union, concatenation, star
+    \item \texttt{DFA} and \texttt{NFA} record types
+    \item \texttt{accepts} function for DFA execution
+\end{itemize}
+
+\textbf{Going Deeper:} Regular languages form a \textit{Kleene algebra}---a structure with union, concatenation, and Kleene star satisfying specific axioms. DFAs can be viewed as coalgebras, dual to the algebraic view of syntax.
+\end{agdabox}
+
+\begin{tipbox}
+The subset construction can produce exponentially many states. Work through a small example completely, then ask: ``What's the worst case?'' Show that an NFA with $n$ states can require a DFA with $2^n$ states (the ``count the $k$th-from-last character'' example).
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 10: Complexity andTic-Tac-Toe}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Review of Big-O notation
+    \item Big-$\Omega$ and Big-$\Theta$
+    \item Analyzing recursive algorithms (recurrence relations)
+    \item Master theorem
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Determine asymptotic complexity of algorithms
+    \item Set up and solve simple recurrences
+    \item Apply the master theorem
+\end{itemize}
+
+\textbf{Warm-up:} Rank these functions by growth rate:
+$n^2$, $2^n$, $n \log n$, $n!$, $\log n$, $n^{1.5}$, $n$
+\end{classabox}
+
+\begin{activitybox}
+\textbf{Algorithm Analysis Gallery:} Post 6--8 code snippets (sorting algorithms, search algorithms, recursive functions). Students analyze each and determine Big-O complexity. Discuss which analyses require careful counting vs. simple pattern recognition.
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Game trees
+    \item Minimax algorithm
+    \item Tic-Tac-Toe analysis
+    \item Course review and synthesis
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Build game trees for simple games
+    \item Apply minimax to determine optimal play
+    \item Synthesize course material: sets, functions, counting, graphs, trees
+\end{itemize}
+
+\textbf{Final Activity:} Tic-Tac-Toe is solved (always a draw with optimal play). Walk through the game tree analysis using minimax.
+\end{classbbox}
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week10\_Efficiency.agda}
+
+Key concepts:
+\begin{itemize}
+    \item Big-O as a relation: eventually bounded
+    \item \texttt{GameTree} data type
+    \item \texttt{minimax} function for game evaluation
+\end{itemize}
+
+\textbf{Going Deeper:} Complexity theory connects to category theory through the Curry-Howard correspondence: programs are proofs, and asymptotic complexity measures ``how hard'' a proof is to construct.
+\end{agdabox}
+
+\begin{tipbox}
+The tic-tac-toe game tree is small enough to fully explore but large enough to motivate pruning. Use this as a bridge to discussing alpha-beta pruning for more complex games like chess.
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Weekly Homework Suggestions}
+%=============================================================================
+
+\subsection{Homework Philosophy}
+Each problem set should include:
+\begin{itemize}
+    \item \textbf{Computational problems} (40\%): Practice with techniques
+    \item \textbf{Proof problems} (40\%): Develop proof-writing skills
+    \item \textbf{Challenge problems} (20\%): Deeper thinking, optional extra credit
+\end{itemize}
+
+\subsection{Sample Problems by Week}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{cX}
+\toprule
+\textbf{Week} & \textbf{Sample Problems} \\
+\midrule
+1 & Prove $(A \cap B) \cup (A \cap B^c) = A$. Compute $|\mathcal{P}(\mathcal{P}(\{1,2\}))|$. \\
+2 & Show $f(x) = 2x + 1$ is bijective $\mathbb{R} \to \mathbb{R}$. Prove composition of bijections is bijective. \\
+3 & Find all $x$ with $3x \equiv 5 \pmod{7}$. Prove congruence mod $n$ is an equivalence relation. \\
+4 & Count 8-bit strings with exactly three 1s. Prove $\binom{n}{k} = \binom{n}{n-k}$ combinatorially. \\
+5 & Use inclusion-exclusion to count permutations of MISSISSIPPI with no adjacent S's. Compute $D(6)$. \\
+6 & Find $E[X]$ where $X$ = sum of two dice. Expected value of max of two dice. \\
+7 & Determine if two given graphs are isomorphic. Find $\chi(C_7)$ and $\chi(K_{3,3})$. \\
+8 & Prove every tree is bipartite. Trace Dijkstra on a weighted graph. \\
+9 & Design DFA for $\{w \in \{0,1\}^* : w \text{ has 010 as substring}\}$. Convert to regex. \\
+10 & Solve $T(n) = 2T(n/2) + n$. Draw partial game tree for tic-tac-toe from given position. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\newpage
+%=============================================================================
+\section{Agda Integration Guide}
+%=============================================================================
+
+\subsection{Why Agda?}
+Agda serves several pedagogical purposes:
+\begin{enumerate}
+    \item \textbf{Precision:} Forces students to be completely explicit about definitions and proofs
+    \item \textbf{Feedback:} Type errors catch logical mistakes immediately
+    \item \textbf{Exploration:} Interactive proving develops mathematical intuition
+    \item \textbf{Connection:} Demonstrates the Curry-Howard correspondence (propositions as types)
+\end{enumerate}
+
+\subsection{Integration Options}
+
+\textbf{Option A: Demonstration Only}
+\begin{itemize}
+    \item Show Agda in lectures to illustrate key concepts
+    \item No student coding required
+    \item Use for: Sets as predicates, functions as morphisms, proofs as programs
+\end{itemize}
+
+\textbf{Option B: Optional Enrichment}
+\begin{itemize}
+    \item Provide Agda files for interested students
+    \item Offer extra credit for completing Agda exercises
+    \item Include brief Agda explanations in ``Going Deeper'' sections
+\end{itemize}
+
+\textbf{Option C: Integrated Labs}
+\begin{itemize}
+    \item Weekly 1-hour Agda lab sessions
+    \item Structured exercises with holes for students to fill
+    \item Graded on completion/effort
+\end{itemize}
+
+\subsection{Agda Exercises by Difficulty}
+
+\begin{center}
+\begin{tabularx}{\textwidth}{lXl}
+\toprule
+\textbf{File} & \textbf{Exercises} & \textbf{Difficulty} \\
+\midrule
+Common & Prove \texttt{addAssoc}, \texttt{addZeroRight} & Easy \\
+Week01 & Prove subset transitivity, De Morgan's laws & Easy--Medium \\
+Week02 & Show \texttt{succ} is injective, functor laws for \texttt{Maybe} & Medium \\
+Week03 & Divisibility properties, kernel equivalence & Medium \\
+Week05 & Verify derangement values, Stirling recurrence & Medium \\
+Week07 & Euler formula verification (rearranged) & Medium \\
+Week08 & Express operations as folds, prove fold laws & Medium--Hard \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\newpage
+%=============================================================================
+\section{``Going Deeper'' Topic Guide}
+%=============================================================================
+
+The ``Going Deeper'' sections introduce category theory and type theory concepts at an accessible level. Here's guidance on presenting these topics:
+
+\subsection{Week 1: Boolean Algebras}
+\textbf{Key Message:} Sets with $\cup$, $\cap$, and complement form an algebraic structure.
+
+\textbf{Accessibility:} Very accessible. Students can verify the axioms using Venn diagrams.
+
+\textbf{Connection:} Same structure appears in logic (AND, OR, NOT) and circuits.
+
+\subsection{Week 2: Functions as Category}
+\textbf{Key Message:} Composition satisfies simple laws; these laws define a ``category.''
+
+\textbf{Accessibility:} Moderately accessible. Focus on the three laws without formal category theory.
+
+\textbf{Connection:} Same pattern appears everywhere (matrices, types, proofs).
+
+\subsection{Week 3: Equivalence and Quotients}
+\textbf{Key Message:} Equivalence relations create ``new types'' by identifying elements.
+
+\textbf{Accessibility:} Conceptually challenging. Use $\mathbb{Z}_n$ as the primary example.
+
+\textbf{Connection:} Quotients appear in abstract algebra (groups, rings).
+
+\subsection{Weeks 4--5: Counting and Bijections}
+\textbf{Key Message:} Counting arguments are bijections in disguise.
+
+\textbf{Accessibility:} Very accessible. Combinatorial proofs become ``find the bijection.''
+
+\textbf{Connection:} Cardinality of types; combinatorial species.
+
+\subsection{Week 7: Graph Homomorphisms}
+\textbf{Key Message:} Colorings are special homomorphisms; invariants detect non-existence.
+
+\textbf{Accessibility:} Accessible with concrete examples.
+
+\textbf{Connection:} Functors preserve structure; contravariant functors for colorings.
+
+\subsection{Week 8: Initial Algebras and Folds}
+\textbf{Key Message:} Recursive data types are ``initial algebras''; folds are universal maps.
+
+\textbf{Accessibility:} Most challenging. Focus on the pattern, not the theory.
+
+\textbf{Connection:} Catamorphisms, anamorphisms, recursion schemes.
+
+\subsection{Week 9: Kleene Algebras}
+\textbf{Key Message:} Regular expressions form an algebraic structure.
+
+\textbf{Accessibility:} Accessible at the axiomatic level.
+
+\textbf{Connection:} Coalgebras, final coalgebras, bisimulation.
+
+\newpage
+%=============================================================================
+\section{Theorem Proving Projects}
+\label{sec:projects}
+%=============================================================================
+
+Students complete two theorem proving projects during the quarter. These projects develop deep understanding through extended engagement with proof, connecting paper-and-pencil mathematics to mechanized verification.
+
+\subsection{Project 1: Foundations (Due Week 5)}
+
+\textbf{Overview:} Students formalize and prove properties about sets, functions, and relations---either in Agda or as a written proof portfolio.
+
+\subsubsection{Option A: Agda Track}
+Complete the following proofs in Agda (fill in holes in provided files):
+\begin{enumerate}
+    \item \textbf{Set Theory:} Prove 5 set identities including:
+    \begin{itemize}
+        \item De Morgan's laws (both directions)
+        \item Distributivity of $\cap$ over $\cup$
+        \item Symmetric difference is associative
+    \end{itemize}
+    \item \textbf{Functions:} Prove 4 properties including:
+    \begin{itemize}
+        \item Composition of injections is injective
+        \item If $g \circ f$ is surjective, then $g$ is surjective
+        \item Functor laws for \texttt{Maybe} (identity and composition)
+    \end{itemize}
+    \item \textbf{Relations:} Prove 3 properties including:
+    \begin{itemize}
+        \item Kernel of any function is an equivalence relation
+        \item Divisibility is transitive
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Option B: Written Track}
+Submit a proof portfolio with:
+\begin{enumerate}
+    \item 6 polished proofs of set/function/relation theorems
+    \item Each proof must include: theorem statement, proof strategy overview, complete proof, and reflection on difficulties encountered
+    \item At least 2 proofs must use different techniques (direct, contrapositive, contradiction, induction)
+\end{enumerate}
+
+\begin{tipbox}
+\textbf{Grading Rubric (per proof):}
+\begin{itemize}
+    \item Correctness (40\%): Logical validity, no gaps
+    \item Clarity (30\%): Well-organized, clear prose
+    \item Style (20\%): Appropriate level of detail, good notation
+    \item Reflection (10\%): Insightful discussion of proof strategy
+\end{itemize}
+\end{tipbox}
+
+\subsection{Project 2: Structures (Due Week 10)}
+
+\textbf{Overview:} Students explore a deeper topic connecting discrete structures to broader mathematics, with emphasis on the ``Going Deeper'' themes.
+
+\subsubsection{Option A: Agda Track}
+Choose one of the following extended developments:
+\begin{enumerate}
+    \item \textbf{Counting and Bijections:}
+    \begin{itemize}
+        \item Prove Pascal's identity computationally
+        \item Prove the hockey-stick identity
+        \item Verify Stirling number recurrence
+        \item Implement and verify derangement counting
+    \end{itemize}
+
+    \item \textbf{Graph Theory:}
+    \begin{itemize}
+        \item Implement graph representations
+        \item Prove handshaking lemma
+        \item Verify Euler's formula for specific planar graphs
+        \item Implement and verify 2-coloring for bipartite graphs
+    \end{itemize}
+
+    \item \textbf{Trees and Folds:}
+    \begin{itemize}
+        \item Implement 5+ tree operations as folds
+        \item Prove fold fusion law
+        \item Prove mirror is an involution
+        \item Show that map preserves identity and composition (functor laws)
+    \end{itemize}
+
+    \item \textbf{Automata Theory:}
+    \begin{itemize}
+        \item Implement regex matching via derivatives
+        \item Prove properties of regex operations
+        \item Implement DFA simulation
+        \item Verify DFA/NFA equivalence for small examples
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Option B: Written Track}
+Write an expository paper (8--12 pages) on one of:
+\begin{enumerate}
+    \item \textbf{Boolean Algebras and Sets:} Explain the Boolean algebra axioms, show sets satisfy them, connect to propositional logic and digital circuits.
+
+    \item \textbf{The Category of Sets:} Explain what a category is, show that sets and functions form one, discuss universal properties (products, coproducts).
+
+    \item \textbf{Equivalence Relations and Quotients:} Explain the correspondence between equivalence relations and partitions, develop modular arithmetic as a quotient, discuss quotient structures in algebra.
+
+    \item \textbf{Graph Coloring and Homomorphisms:} Explain graph homomorphisms, show colorings are homomorphisms to complete graphs, discuss the chromatic polynomial.
+
+    \item \textbf{Catamorphisms and Recursion Schemes:} Explain folds as structured recursion, show how many operations factor through folds, discuss the connection to initial algebras.
+\end{enumerate}
+
+\textbf{Paper Requirements:}
+\begin{itemize}
+    \item Clear exposition accessible to classmates
+    \item At least 3 fully worked examples
+    \item At least 2 complete proofs
+    \item Annotated bibliography with 4+ sources
+    \item Discussion of connections to course material
+\end{itemize}
+
+\subsection{Project Timeline and Milestones}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Week} & \textbf{Project 1} & \textbf{Project 2} \\
+\midrule
+2 & Topic selection & --- \\
+3 & Progress check (2 proofs done) & --- \\
+5 & \textbf{Final submission} & Topic selection \\
+7 & --- & Progress check \\
+9 & --- & Draft for peer review \\
+10 & --- & \textbf{Final submission} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Peer Review Process}
+For Project 2, incorporate peer review:
+\begin{enumerate}
+    \item Week 9: Students exchange drafts with a partner
+    \item Partners provide written feedback on:
+    \begin{itemize}
+        \item Clarity of exposition
+        \item Correctness of proofs
+        \item Suggestions for improvement
+    \end{itemize}
+    \item Final submission includes a ``response to reviewers'' section addressing feedback
+\end{enumerate}
+
+\begin{activitybox}
+\textbf{Project Showcase (Finals Week):}
+Optional presentations where students share their Project 2 work. Each presenter gets 10 minutes to explain the main ideas and one interesting proof. This builds communication skills and exposes students to topics beyond their own project.
+\end{activitybox}
+
+\newpage
+%=============================================================================
+\section{Additional Resources}
+%=============================================================================
+
+\subsection{Recommended Reading}
+\begin{itemize}
+    \item \textbf{Primary Text:} Epp, \textit{Discrete Mathematics with Applications}
+    \item \textbf{Proof Writing:} Hammack, \textit{Book of Proof} (free online)
+    \item \textbf{Graph Theory:} West, \textit{Introduction to Graph Theory}
+    \item \textbf{Category Theory (gentle):} Lawvere \& Schanuel, \textit{Conceptual Mathematics}
+    \item \textbf{Type Theory:} Pierce, \textit{Types and Programming Languages}
+\end{itemize}
+
+\subsection{Online Resources}
+\begin{itemize}
+    \item \textbf{Agda:} \url{https://agda.readthedocs.io/}
+    \item \textbf{Category Theory:} nLab (\url{https://ncatlab.org/})
+    \item \textbf{Proof Practice:} \url{https://www.proofwiki.org/}
+\end{itemize}
+
+\subsection{Software}
+\begin{itemize}
+    \item \textbf{Agda:} Install via Haskell Stack or system package manager
+    \item \textbf{Graph Visualization:} Graphviz, yEd
+    \item \textbf{Automata Simulation:} JFLAP
+\end{itemize}
+
+\vfill
+\begin{center}
+\textit{This guide accompanies the CS 251 course materials.}\\
+\textit{Last updated: \today}
+\end{center}
+
+\end{document}
