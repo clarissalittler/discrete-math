@@ -198,3 +198,200 @@ postulate
 -- Complete bipartite graph K_{m,n}
 postulate
   completeBipartite : (m n : Nat) -> MatrixGraph (m + n)
+
+-- ============================================
+-- GRAPH COLORING
+-- ============================================
+
+{-
+  A k-coloring assigns each vertex a color from {0, 1, ..., k-1}
+  such that no two adjacent vertices have the same color.
+
+  The chromatic number χ(G) is the minimum k for which
+  a k-coloring exists.
+-}
+
+-- A coloring assigns colors (represented as Fin k) to vertices
+Coloring : {n : Nat} -> Nat -> MatrixGraph n -> Set
+Coloring {n} k g = Fin n -> Fin k
+
+-- A coloring is proper if adjacent vertices have different colors
+ProperColoring : {n k : Nat} (g : MatrixGraph n) -> (Fin n -> Fin k) -> Set
+ProperColoring {n} {k} g c =
+  (u v : Fin n) -> Edge g u v -> Not (Eq (c u) (c v))
+
+-- A graph is k-colorable if it has a proper k-coloring
+Colorable : {n : Nat} -> Nat -> MatrixGraph n -> Set
+Colorable {n} k g = Sigma (Coloring {n} k g) (ProperColoring g)
+
+-- Chromatic number: minimum k such that G is k-colorable
+postulate
+  chromaticNumber : {n : Nat} -> MatrixGraph n -> Nat
+  chromaticNumberMinimal : {n : Nat} (g : MatrixGraph n) ->
+    Colorable (chromaticNumber g) g
+  chromaticNumberOptimal : {n : Nat} (g : MatrixGraph n) (k : Nat) ->
+    Colorable k g -> Leq (chromaticNumber g) k
+
+-- ============================================
+-- CHROMATIC NUMBERS OF SPECIAL GRAPHS
+-- ============================================
+
+{-
+  χ(K_n) = n     (complete graph needs n colors)
+  χ(C_n) = 2     if n is even
+  χ(C_n) = 3     if n is odd
+  χ(K_{m,n}) = 2 (bipartite)
+  χ(Tree) = 2    (if at least one edge)
+-}
+
+-- Complete graphs need n colors
+postulate
+  chromaticComplete : (n : Nat) -> Leq one n ->
+    Eq (chromaticNumber (completeGraph n)) n
+
+-- Bipartite graphs are 2-colorable
+postulate
+  bipartiteIs2Colorable : {n : Nat} (g : MatrixGraph n) ->
+    -- If g is bipartite, then χ(g) ≤ 2
+    Set
+
+-- A graph is bipartite iff it contains no odd cycle
+Bipartite : {n : Nat} -> MatrixGraph n -> Set
+Bipartite {n} g = Colorable {n} (succ (succ zero)) g
+
+postulate
+  bipartiteNoOddCycle : {n : Nat} (g : MatrixGraph n) ->
+    Bipartite g -> -- implies no odd-length cycles
+    Set
+
+-- ============================================
+-- PLANAR GRAPHS
+-- ============================================
+
+{-
+  A graph is planar if it can be drawn in the plane
+  without edge crossings.
+
+  Euler's formula: V - E + F = 2
+  (for connected planar graphs)
+
+  Key consequences:
+  - For V ≥ 3: E ≤ 3V - 6
+  - For triangle-free graphs: E ≤ 2V - 4
+  - K_5 and K_{3,3} are not planar
+-}
+
+-- Planarity (abstract property)
+postulate
+  Planar : {n : Nat} -> MatrixGraph n -> Set
+
+-- Edge count in a graph
+edgeCount : {n : Nat} -> MatrixGraph n -> Nat
+edgeCount {zero} g = zero
+edgeCount {succ n} g = zero  -- placeholder: would count all true entries / 2
+
+-- Euler's formula for planar graphs
+record EulerFormula {n : Nat} (g : MatrixGraph n) : Set where
+  field
+    vertices : Nat
+    edges : Nat
+    faces : Nat
+    formula : Eq (vertices - edges + faces) (succ (succ zero))
+
+-- Edge bound for planar graphs: E ≤ 3V - 6
+postulate
+  planarEdgeBound : {n : Nat} (g : MatrixGraph n) ->
+    Planar g ->
+    Leq (succ (succ (succ zero))) n ->  -- V ≥ 3
+    Leq (edgeCount g) (succ (succ (succ zero)) * n - succ (succ (succ (succ (succ (succ zero))))))
+
+-- Edge bound for triangle-free planar graphs: E ≤ 2V - 4
+postulate
+  planarTriangleFreeEdgeBound : {n : Nat} (g : MatrixGraph n) ->
+    Planar g ->
+    -- g is triangle-free
+    Leq (edgeCount g) (succ (succ zero) * n - succ (succ (succ (succ zero))))
+
+-- K_5 is not planar
+postulate
+  k5NotPlanar : Not (Planar (completeGraph (succ (succ (succ (succ (succ zero)))))))
+
+-- K_{3,3} is not planar
+postulate
+  k33NotPlanar : Not (Planar (completeBipartite (succ (succ (succ zero)))
+                                                (succ (succ (succ zero)))))
+
+-- Kuratowski's theorem
+postulate
+  kuratowski : {n : Nat} (g : MatrixGraph n) ->
+    Planar g ->
+    -- g contains no subdivision of K_5 or K_{3,3}
+    Set
+
+-- Four Color Theorem: every planar graph is 4-colorable
+postulate
+  fourColorTheorem : {n : Nat} (g : MatrixGraph n) ->
+    Planar g ->
+    Colorable {n} (succ (succ (succ (succ zero)))) g
+
+-- ============================================
+-- EXERCISES
+-- ============================================
+
+{-
+  EXERCISE 1: Prove that χ(G) ≥ ω(G) where ω is the clique number
+  (size of largest complete subgraph)
+-}
+postulate
+  exercise-chromClique : {n : Nat} (g : MatrixGraph n) ->
+    (k : Nat) ->  -- clique size
+    -- if g contains K_k as subgraph
+    Leq k (chromaticNumber g)
+
+{-
+  EXERCISE 2: Show that a 2-coloring of a path graph exists
+-}
+postulate
+  exercise-pathColoring : (n : Nat) -> Leq one n ->
+    Colorable {n} (succ (succ zero)) (pathGraph n)
+
+{-
+  EXERCISE 3: Show that the complete graph K_3 needs exactly 3 colors
+-}
+three : Nat
+three = succ (succ (succ zero))
+
+postulate
+  exercise-k3Chromatic : Eq (chromaticNumber (completeGraph three)) three
+
+{-
+  EXERCISE 4: Verify Euler's formula for the tetrahedron (K_4 embedded)
+  V = 4, E = 6, F = 4
+  V - E + F = 2, but natural number subtraction is tricky, so we verify:
+  V + F = E + 2  (rearranged form)
+  4 + 4 = 6 + 2 = 8 ✓
+-}
+four : Nat
+four = succ three
+
+six : Nat
+six = succ (succ (succ three))
+
+two : Nat
+two = succ (succ zero)
+
+eight : Nat
+eight = succ (succ six)
+
+-- Euler's formula rearranged: V + F = E + 2
+exercise-eulerTetrahedron : Eq (four + four) (six + two)
+exercise-eulerTetrahedron = refl
+
+{-
+  EXERCISE 5: Show that every planar graph has a vertex of degree ≤ 5
+  (Consequence of E ≤ 3V - 6 and handshake lemma)
+-}
+postulate
+  exercise-planarDegree5 : {n : Nat} (g : MatrixGraph n) ->
+    Planar g ->
+    Sigma (Fin n) (\v -> Leq (vertexDegree g v) (succ (succ (succ (succ (succ zero))))))

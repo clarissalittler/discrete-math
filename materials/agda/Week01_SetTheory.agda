@@ -187,3 +187,168 @@ PowerSet A = Pred A
 -- Power set membership
 _∈P_ : {A : Set} -> Pred A -> PowerSet A -> Set
 P ∈P S = P ⊆ S
+
+-- ============================================
+-- CARTESIAN PRODUCTS AND DISJOINT UNIONS
+-- ============================================
+
+-- Product of sets (already available as Pair)
+-- A × B = { (a, b) | a ∈ A, b ∈ B }
+
+-- Projections
+proj₁ : {A B : Set} -> Pair A B -> A
+proj₁ = fst
+
+proj₂ : {A B : Set} -> Pair A B -> B
+proj₂ = snd
+
+-- Product is associative (up to isomorphism)
+prodAssocTo : {A B C : Set} -> Pair (Pair A B) C -> Pair A (Pair B C)
+prodAssocTo (pair (pair a b) c) = pair a (pair b c)
+
+prodAssocFrom : {A B C : Set} -> Pair A (Pair B C) -> Pair (Pair A B) C
+prodAssocFrom (pair a (pair b c)) = pair (pair a b) c
+
+-- Product is commutative (up to isomorphism)
+prodCommTo : {A B : Set} -> Pair A B -> Pair B A
+prodCommTo (pair a b) = pair b a
+
+-- Disjoint union is associative
+sumAssocTo : {A B C : Set} -> Sum (Sum A B) C -> Sum A (Sum B C)
+sumAssocTo (inl (inl a)) = inl a
+sumAssocTo (inl (inr b)) = inr (inl b)
+sumAssocTo (inr c) = inr (inr c)
+
+sumAssocFrom : {A B C : Set} -> Sum A (Sum B C) -> Sum (Sum A B) C
+sumAssocFrom (inl a) = inl (inl a)
+sumAssocFrom (inr (inl b)) = inl (inr b)
+sumAssocFrom (inr (inr c)) = inr c
+
+-- Disjoint union is commutative
+sumCommTo : {A B : Set} -> Sum A B -> Sum B A
+sumCommTo (inl a) = inr a
+sumCommTo (inr b) = inl b
+
+-- ============================================
+-- BOOLEAN ALGEBRA STRUCTURE
+-- ============================================
+
+{-
+  Sets under ∪, ∩, and complement form a Boolean algebra!
+
+  A Boolean algebra satisfies:
+  1. Associativity of ∪ and ∩
+  2. Commutativity of ∪ and ∩
+  3. Distributivity in both directions
+  4. Identity elements (∅ for ∪, U for ∩)
+  5. Complement laws
+
+  We've already proven 1-4 above. The complement laws:
+  - P ∪ (Compl P) = U    (Law of Excluded Middle - requires classical logic)
+  - P ∩ (Compl P) = ∅    (Non-contradiction)
+-}
+
+-- Non-contradiction is provable constructively
+nonContradiction : {A : Set} (P : Pred A) -> SetEq (P ∩ Compl P) EmptySet
+nonContradiction P = pair left right
+  where
+    left : (P ∩ Compl P) ⊆ EmptySet
+    left x (pair px notPx) = notPx px
+    right : EmptySet ⊆ (P ∩ Compl P)
+    right x e = absurd e
+
+-- Excluded middle would require classical logic
+-- LEM : {A : Set} (P : Pred A) -> SetEq (P ∪ Compl P) Universal
+
+-- ============================================
+-- CARDINALITY (Finite Sets)
+-- ============================================
+
+-- Finite set as a function from Fin n
+FinSet : Nat -> Set -> Set
+FinSet n A = Fin n -> A
+
+-- Cardinality of finite set represented by list
+card : {A : Set} -> List A -> Nat
+card = length
+
+-- ============================================
+-- EXERCISES
+-- ============================================
+
+{-
+  EXERCISE 1: Prove that subset is transitive
+  (This is already proved above, but try it yourself!)
+-}
+exercise-subsetTrans : {A : Set} {P Q R : Pred A} -> P ⊆ Q -> Q ⊆ R -> P ⊆ R
+exercise-subsetTrans pq qr x px = qr x (pq x px)
+
+{-
+  EXERCISE 2: Prove that the empty set is a subset of every set
+-}
+exercise-emptySubset : {A : Set} (P : Pred A) -> EmptySet ⊆ P
+exercise-emptySubset P x ()
+
+{-
+  EXERCISE 3: Prove that every set is a subset of the universal set
+-}
+exercise-subsetUniversal : {A : Set} (P : Pred A) -> P ⊆ Universal
+exercise-subsetUniversal P x px = unit
+
+{-
+  EXERCISE 4: Prove intersection is monotonic in both arguments
+  If P ⊆ P' and Q ⊆ Q', then (P ∩ Q) ⊆ (P' ∩ Q')
+-}
+exercise-intersectMono : {A : Set} {P P' Q Q' : Pred A} ->
+  P ⊆ P' -> Q ⊆ Q' -> (P ∩ Q) ⊆ (P' ∩ Q')
+exercise-intersectMono pp' qq' x (pair px qx) = pair (pp' x px) (qq' x qx)
+
+{-
+  EXERCISE 5: Prove union is monotonic in both arguments
+-}
+exercise-unionMono : {A : Set} {P P' Q Q' : Pred A} ->
+  P ⊆ P' -> Q ⊆ Q' -> (P ∪ Q) ⊆ (P' ∪ Q')
+exercise-unionMono pp' qq' x (inl px) = inl (pp' x px)
+exercise-unionMono pp' qq' x (inr qx) = inr (qq' x qx)
+
+{-
+  EXERCISE 6: Prove that intersection is the greatest lower bound
+  P ∩ Q ⊆ P, P ∩ Q ⊆ Q, and if R ⊆ P and R ⊆ Q then R ⊆ P ∩ Q
+-}
+exercise-intersectGLB : {A : Set} {P Q R : Pred A} ->
+  R ⊆ P -> R ⊆ Q -> R ⊆ (P ∩ Q)
+exercise-intersectGLB rp rq x rx = pair (rp x rx) (rq x rx)
+
+{-
+  EXERCISE 7: Prove that union is the least upper bound
+  P ⊆ P ∪ Q, Q ⊆ P ∪ Q, and if P ⊆ R and Q ⊆ R then P ∪ Q ⊆ R
+-}
+exercise-unionLUB : {A : Set} {P Q R : Pred A} ->
+  P ⊆ R -> Q ⊆ R -> (P ∪ Q) ⊆ R
+exercise-unionLUB pr qr x (inl px) = pr x px
+exercise-unionLUB pr qr x (inr qx) = qr x qx
+
+{-
+  EXERCISE 8: Prove that set difference satisfies P ∖ Q ⊆ P
+-}
+exercise-diffSubset : {A : Set} (P Q : Pred A) -> (P ∖ Q) ⊆ P
+exercise-diffSubset P Q x (pair px notQx) = px
+
+{-
+  EXERCISE 9: Prove that if P and Q are disjoint, then P ⊆ Compl Q
+  Disjoint means P ∩ Q = ∅
+-}
+postulate
+  exercise-disjointCompl : {A : Set} {P Q : Pred A} ->
+    SetEq (P ∩ Q) EmptySet -> P ⊆ Compl Q
+
+{-
+  EXERCISE 10 (Challenge): Prove the symmetric difference is associative
+  P △ Q = (P ∖ Q) ∪ (Q ∖ P)
+-}
+SymDiff : {A : Set} -> Pred A -> Pred A -> Pred A
+SymDiff P Q = (P ∖ Q) ∪ (Q ∖ P)
+
+postulate
+  exercise-symDiffAssoc : {A : Set} (P Q R : Pred A) ->
+    SetEq (SymDiff (SymDiff P Q) R) (SymDiff P (SymDiff Q R))

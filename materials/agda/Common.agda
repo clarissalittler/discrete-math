@@ -270,3 +270,80 @@ min : Nat -> Nat -> Nat
 min zero n = zero
 min (succ m) zero = zero
 min (succ m) (succ n) = succ (min m n)
+
+-- ============================================
+-- DIVISION AND MODULAR ARITHMETIC
+-- ============================================
+
+-- Division with remainder (returns quotient and remainder)
+divMod : Nat -> Nat -> Pair Nat Nat
+divMod n zero = pair zero n  -- division by zero: return (0, n)
+divMod zero (succ d) = pair zero zero
+divMod (succ n) (succ d) with divMod n (succ d)
+... | pair q r with succ r ==? succ d
+... | true = pair (succ q) zero
+... | false = pair q (succ r)
+
+-- Quotient
+div : Nat -> Nat -> Nat
+div n d = fst (divMod n d)
+
+-- Remainder (modulo)
+mod : Nat -> Nat -> Nat
+mod n d = snd (divMod n d)
+
+-- Power function
+_^_ : Nat -> Nat -> Nat
+base ^ zero = one
+base ^ succ exp = base * (base ^ exp)
+
+infixr 8 _^_
+
+-- GCD (Euclidean algorithm)
+{-# TERMINATING #-}
+gcd : Nat -> Nat -> Nat
+gcd a zero = a
+gcd a (succ b) = gcd (succ b) (mod a (succ b))
+
+-- Coprime: gcd = 1
+Coprime : Nat -> Nat -> Set
+Coprime a b = Eq (gcd a b) one
+
+-- Divides relation
+_∣_ : Nat -> Nat -> Set
+d ∣ n = Sigma Nat (\k -> Eq (k * d) n)
+
+-- ============================================
+-- DECIDABLE EQUALITY
+-- ============================================
+
+decEqNat : (m n : Nat) -> Dec (Eq m n)
+decEqNat zero zero = yes refl
+decEqNat zero (succ n) = no (\())
+decEqNat (succ m) zero = no (\())
+decEqNat (succ m) (succ n) with decEqNat m n
+... | yes p = yes (cong succ p)
+... | no np = no (\{ refl -> np refl })
+
+-- ============================================
+-- EXERCISES (holes for students to fill)
+-- ============================================
+
+{-
+  EXERCISE: Prove that addition is associative
+  Fill in the hole to complete the proof.
+-}
+exercise-addAssoc : (a b c : Nat) -> Eq ((a + b) + c) (a + (b + c))
+exercise-addAssoc = addAssoc  -- Students: try proving this yourself!
+
+{-
+  EXERCISE: Prove that 0 is a right identity for addition
+-}
+exercise-addZeroRight : (n : Nat) -> Eq (n + zero) n
+exercise-addZeroRight = addZeroRight  -- Students: try proving this yourself!
+
+{-
+  EXERCISE: Prove the successor case for addition commutativity
+-}
+exercise-addSuccRight : (m n : Nat) -> Eq (m + succ n) (succ (m + n))
+exercise-addSuccRight = addSuccRight  -- Students: try proving this yourself!

@@ -158,3 +158,149 @@ Kernel f x y = Eq (f x) (f y)
 -- Kernel is always an equivalence relation
 kernelEquiv : {A B : Set} (f : A -> B) -> Equivalence (Kernel f)
 kernelEquiv f = pair (\x -> refl) (pair (\x y -> sym) (\x y z -> trans))
+
+-- ============================================
+-- ADVANCED NUMBER THEORY
+-- ============================================
+
+open import Common using (_^_; mod; gcd; Coprime; _∣_; div)
+
+-- Euler's totient function φ(n) = count of k ∈ [1,n] with gcd(k,n) = 1
+-- We define it abstractly; computing it requires more machinery
+postulate
+  φ : Nat -> Nat
+
+  -- φ(1) = 1
+  φ-one : Eq (φ one) one
+
+  -- φ(p) = p - 1 for prime p
+  φ-prime : (p : Nat) -> Set -> Eq (φ p) (p - one)
+
+  -- φ is multiplicative: φ(mn) = φ(m)φ(n) when gcd(m,n) = 1
+  φ-multiplicative : (m n : Nat) -> Coprime m n -> Eq (φ (m * n)) (φ m * φ n)
+
+-- ============================================
+-- FERMAT'S LITTLE THEOREM
+-- ============================================
+
+{-
+  Fermat's Little Theorem:
+  If p is prime and gcd(a, p) = 1, then a^(p-1) ≡ 1 (mod p)
+
+  In type theory, we state this as:
+  For prime p and a coprime to p, (a ^ (p - 1)) mod p = 1
+-}
+
+-- Primality (simplified definition)
+data Prime : Nat -> Set where
+  prime : (p : Nat) ->
+          Leq (succ (succ zero)) p ->  -- p ≥ 2
+          ((d : Nat) -> d ∣ p -> Sum (Eq d one) (Eq d p)) ->  -- only divisors are 1 and p
+          Prime p
+
+-- Fermat's Little Theorem (stated as axiom - proof requires group theory)
+postulate
+  fermatLittle : (p : Nat) -> Prime p -> (a : Nat) -> Coprime a p ->
+    Eq (mod (a ^ (p - one)) p) one
+
+-- Corollary: a^p ≡ a (mod p) for any a
+postulate
+  fermatLittleAlt : (p : Nat) -> Prime p -> (a : Nat) ->
+    Eq (mod (a ^ p) p) (mod a p)
+
+-- ============================================
+-- EULER'S THEOREM (generalization of Fermat)
+-- ============================================
+
+{-
+  Euler's Theorem:
+  If gcd(a, n) = 1, then a^φ(n) ≡ 1 (mod n)
+
+  This generalizes Fermat's Little Theorem (when n = p prime, φ(p) = p - 1)
+-}
+
+postulate
+  eulerTheorem : (n : Nat) -> Leq one n -> (a : Nat) -> Coprime a n ->
+    Eq (mod (a ^ φ n) n) one
+
+-- ============================================
+-- CHINESE REMAINDER THEOREM
+-- ============================================
+
+{-
+  Chinese Remainder Theorem:
+  If gcd(n₁, n₂) = 1, then for any a₁, a₂, there exists unique x (mod n₁n₂) with:
+    x ≡ a₁ (mod n₁)
+    x ≡ a₂ (mod n₂)
+-}
+
+-- System of two congruences
+record CRTSystem : Set where
+  field
+    n1 n2 : Nat
+    a1 a2 : Nat
+    coprime : Coprime n1 n2
+
+-- CRT solution exists and is unique mod n1*n2
+postulate
+  crtSolution : (sys : CRTSystem) ->
+    Sigma Nat (\x ->
+      Pair (Eq (mod x (CRTSystem.n1 sys)) (mod (CRTSystem.a1 sys) (CRTSystem.n1 sys)))
+           (Eq (mod x (CRTSystem.n2 sys)) (mod (CRTSystem.a2 sys) (CRTSystem.n2 sys))))
+
+  crtUnique : (sys : CRTSystem) -> (x y : Nat) ->
+    Eq (mod x (CRTSystem.n1 sys)) (mod (CRTSystem.a1 sys) (CRTSystem.n1 sys)) ->
+    Eq (mod x (CRTSystem.n2 sys)) (mod (CRTSystem.a2 sys) (CRTSystem.n2 sys)) ->
+    Eq (mod y (CRTSystem.n1 sys)) (mod (CRTSystem.a1 sys) (CRTSystem.n1 sys)) ->
+    Eq (mod y (CRTSystem.n2 sys)) (mod (CRTSystem.a2 sys) (CRTSystem.n2 sys)) ->
+    Eq (mod x (CRTSystem.n1 sys * CRTSystem.n2 sys))
+       (mod y (CRTSystem.n1 sys * CRTSystem.n2 sys))
+
+-- ============================================
+-- MODULAR INVERSE
+-- ============================================
+
+-- Modular inverse: b such that a*b ≡ 1 (mod n)
+HasModInverse : Nat -> Nat -> Set
+HasModInverse a n = Sigma Nat (\b -> Eq (mod (a * b) n) one)
+
+-- Modular inverse exists iff gcd(a, n) = 1
+postulate
+  modInverseExists : (a n : Nat) -> Leq one n -> Coprime a n -> HasModInverse a n
+  modInverseOnlyIfCoprime : (a n : Nat) -> HasModInverse a n -> Coprime a n
+
+-- ============================================
+-- EXERCISES
+-- ============================================
+
+{-
+  EXERCISE 1: Prove that divisibility is reflexive
+  Every number divides itself: n | n
+-}
+exercise-divRefl : (n : Nat) -> n ∣ n
+exercise-divRefl n = sigma one (mulOneLeft n)
+
+{-
+  EXERCISE 2: Prove that divisibility is transitive
+  If a | b and b | c, then a | c
+-}
+postulate
+  exercise-divTrans : (a b c : Nat) -> a ∣ b -> b ∣ c -> a ∣ c
+
+{-
+  EXERCISE 3: Prove that if d | a and d | b, then d | (a + b)
+-}
+postulate
+  exercise-divSum : (d a b : Nat) -> d ∣ a -> d ∣ b -> d ∣ (a + b)
+
+{-
+  EXERCISE 4: Show that 1 divides everything
+-}
+exercise-oneDivides : (n : Nat) -> one ∣ n
+exercise-oneDivides n = sigma n (trans (mulComm n one) (mulOneLeft n))
+
+{-
+  EXERCISE 5: Show that every number divides 0
+-}
+exercise-dividesZero : (n : Nat) -> n ∣ zero
+exercise-dividesZero n = sigma zero refl

@@ -126,3 +126,105 @@ condProb (pair nAB dAB) (pair nB dB) = pair (nAB * dB) (dAB * nB)
 Independent : Probability -> Probability -> Probability -> Set
 Independent pA pB pAB with pA | pB | pAB
 ... | pair nA dA | pair nB dB | pair nAB dAB = Eq (nAB * dA * dB) (nA * nB * dAB)
+
+-- ============================================
+-- DERANGEMENTS
+-- ============================================
+
+{-
+  A derangement is a permutation with no fixed points.
+  D(n) = number of derangements of n elements
+
+  Formula: D(n) = n! * Σ_{k=0}^{n} (-1)^k / k!
+  Recurrence: D(n) = (n-1) * (D(n-1) + D(n-2))
+
+  For large n: D(n) ≈ n!/e
+-}
+
+-- Derangement count
+derangement : Nat -> Nat
+derangement zero = one           -- D(0) = 1 (empty permutation)
+derangement (succ zero) = zero   -- D(1) = 0 (no derangements)
+derangement (succ (succ n)) =
+  succ n * (derangement (succ n) + derangement n)
+
+-- Small values
+-- D(0) = 1, D(1) = 0, D(2) = 1, D(3) = 2, D(4) = 9, D(5) = 44
+
+-- Hat-check probability: D(n)/n! ≈ 1/e ≈ 0.368
+-- The probability that no one gets their own hat
+
+-- ============================================
+-- INCLUSION-EXCLUSION PRINCIPLE
+-- ============================================
+
+{-
+  |A₁ ∪ A₂ ∪ ... ∪ Aₙ| =
+    Σ|Aᵢ| - Σ|Aᵢ ∩ Aⱼ| + Σ|Aᵢ ∩ Aⱼ ∩ Aₖ| - ...
+
+  This is the generalization of:
+  |A ∪ B| = |A| + |B| - |A ∩ B|
+-}
+
+-- For two sets
+inclusionExclusion2 : Nat -> Nat -> Nat -> Nat
+inclusionExclusion2 countA countB countAB = (countA + countB) - countAB
+
+-- For three sets
+inclusionExclusion3 : Nat -> Nat -> Nat -> Nat -> Nat -> Nat -> Nat -> Nat
+inclusionExclusion3 a b c ab ac bc abc =
+  (a + b + c) - (ab + ac + bc) + abc
+
+-- Number of surjective functions from n-element set to k-element set
+-- Using inclusion-exclusion: k! * S(n, k) where S is Stirling number
+surjections : Nat -> Nat -> Nat
+surjections n k = fact k * stirling2 n k
+
+-- ============================================
+-- EXERCISES
+-- ============================================
+
+{-
+  EXERCISE 1: Prove C(n, 0) = 1 for all n
+-}
+exercise-chooseZero : (n : Nat) -> Eq (choose n zero) one
+exercise-chooseZero n = refl
+
+{-
+  EXERCISE 2: Compute C(5, 2) and verify it equals 10
+-}
+exercise-choose52 : Eq (choose (succ (succ (succ (succ (succ zero)))))
+                              (succ (succ zero)))
+                      (succ (succ (succ (succ (succ
+                       (succ (succ (succ (succ (succ zero))))))))))
+exercise-choose52 = refl
+
+{-
+  EXERCISE 3: Verify D(4) = 9
+-}
+exercise-derangement4 : Eq (derangement (succ (succ (succ (succ zero)))))
+                          (succ (succ (succ (succ (succ
+                           (succ (succ (succ (succ zero)))))))))
+exercise-derangement4 = refl
+
+{-
+  EXERCISE 4: Prove the recurrence for Stirling numbers
+  S(n+1, k+1) = (k+1) * S(n, k+1) + S(n, k)
+-}
+exercise-stirlingRecurrence : (n k : Nat) ->
+  Eq (stirling2 (succ n) (succ k))
+     (succ k * stirling2 n (succ k) + stirling2 n k)
+exercise-stirlingRecurrence n k = refl
+
+{-
+  EXERCISE 5: Show that S(n, 1) = 1 (one way to put n items in 1 subset)
+  Hint: Use induction and the recurrence
+-}
+postulate
+  exercise-stirlingOne : (n : Nat) -> Leq one n -> Eq (stirling2 n one) one
+
+{-
+  EXERCISE 6: Show that S(n, n) = 1 (one way: each element in own subset)
+-}
+postulate
+  exercise-stirlingN : (n : Nat) -> Eq (stirling2 n n) one

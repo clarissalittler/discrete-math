@@ -248,6 +248,151 @@ Prove that if $R$ is symmetric and transitive, and every element is related to s
 \emph{Proof.} Let $a \in A$. By assumption, there exists $b$ such that $aRb$. By symmetry, $bRa$. By transitivity (using $aRb$ and $bRa$), we get $aRa$. Since $a$ was arbitrary, $R$ is reflexive. \qed
 \end{example}
 
+\subsection*{Advanced number theory}
+
+The following theorems are powerful tools for modular arithmetic, especially in cryptography and algorithm design.
+
+\begin{definition}[Euler's totient function]
+For a positive integer $n$, \textbf{Euler's totient function} $\phi(n)$ counts the integers from 1 to $n$ that are coprime to $n$:
+\[
+\phi(n) = |\{k : 1 \leq k \leq n \text{ and } \gcd(k, n) = 1\}|
+\]
+\end{definition}
+
+\begin{theorem}[Computing $\phi(n)$]
+\begin{itemize}
+  \item If $p$ is prime: $\phi(p) = p - 1$
+  \item If $p$ is prime: $\phi(p^k) = p^k - p^{k-1} = p^{k-1}(p - 1)$
+  \item If $\gcd(m, n) = 1$: $\phi(mn) = \phi(m)\phi(n)$ \quad (multiplicative)
+\end{itemize}
+In general, if $n = p_1^{a_1} p_2^{a_2} \cdots p_k^{a_k}$, then:
+\[
+\phi(n) = n \prod_{p \mid n} \left(1 - \frac{1}{p}\right) = n \cdot \frac{p_1 - 1}{p_1} \cdot \frac{p_2 - 1}{p_2} \cdots \frac{p_k - 1}{p_k}
+\]
+\end{theorem}
+
+\begin{example}
+Compute $\phi(12)$.
+
+\emph{Solution.} $12 = 2^2 \cdot 3$. So:
+\[
+\phi(12) = 12 \cdot \left(1 - \frac{1}{2}\right) \cdot \left(1 - \frac{1}{3}\right) = 12 \cdot \frac{1}{2} \cdot \frac{2}{3} = 4
+\]
+We can verify: the integers from 1 to 12 coprime to 12 are $\{1, 5, 7, 11\}$. Indeed, $|\{1, 5, 7, 11\}| = 4$.
+\end{example}
+
+\begin{theorem}[Fermat's Little Theorem]
+If $p$ is prime and $\gcd(a, p) = 1$, then:
+\[
+a^{p-1} \equiv 1 \pmod{p}
+\]
+Equivalently, for any integer $a$: $a^p \equiv a \pmod{p}$.
+\end{theorem}
+
+\begin{example}
+Compute $2^{100} \bmod 7$.
+
+\emph{Solution.} By Fermat's Little Theorem, $2^6 \equiv 1 \pmod{7}$ (since 7 is prime and $\gcd(2,7) = 1$).
+
+Write $100 = 6 \cdot 16 + 4$. Then:
+\[
+2^{100} = 2^{6 \cdot 16 + 4} = (2^6)^{16} \cdot 2^4 \equiv 1^{16} \cdot 16 \equiv 16 \equiv 2 \pmod{7}
+\]
+\end{example}
+
+\begin{theorem}[Euler's Theorem]
+If $\gcd(a, n) = 1$, then:
+\[
+a^{\phi(n)} \equiv 1 \pmod{n}
+\]
+This generalizes Fermat's Little Theorem (when $n = p$ is prime, $\phi(p) = p-1$).
+\end{theorem}
+
+\begin{example}
+Compute $7^{222} \bmod 12$.
+
+\emph{Solution.} Since $\gcd(7, 12) = 1$ and $\phi(12) = 4$, Euler's theorem gives $7^4 \equiv 1 \pmod{12}$.
+
+Write $222 = 4 \cdot 55 + 2$. Then:
+\[
+7^{222} = (7^4)^{55} \cdot 7^2 \equiv 1^{55} \cdot 49 \equiv 49 \equiv 1 \pmod{12}
+\]
+\end{example}
+
+\begin{keyresult}
+Euler's Theorem explains \emph{why RSA works}. If $n = pq$ with primes $p, q$, and $ed \equiv 1 \pmod{\phi(n)}$, then for any message $m$ coprime to $n$:
+\[
+(m^e)^d = m^{ed} = m^{1 + k\phi(n)} = m \cdot (m^{\phi(n)})^k \equiv m \cdot 1^k = m \pmod{n}
+\]
+Decryption recovers the original message!
+\end{keyresult}
+
+\begin{theorem}[Chinese Remainder Theorem (CRT)]
+Let $n_1, n_2, \ldots, n_k$ be pairwise coprime positive integers (i.e., $\gcd(n_i, n_j) = 1$ for $i \neq j$). Then for any integers $a_1, a_2, \ldots, a_k$, the system of congruences:
+\begin{align*}
+x &\equiv a_1 \pmod{n_1} \\
+x &\equiv a_2 \pmod{n_2} \\
+&\vdots \\
+x &\equiv a_k \pmod{n_k}
+\end{align*}
+has a unique solution modulo $N = n_1 n_2 \cdots n_k$.
+\end{theorem}
+
+\begin{strategy}
+To solve a CRT system with two moduli $n_1$ and $n_2$:
+\begin{enumerate}
+  \item From $x \equiv a_1 \pmod{n_1}$, write $x = a_1 + n_1 t$ for some integer $t$.
+  \item Substitute into $x \equiv a_2 \pmod{n_2}$: solve $a_1 + n_1 t \equiv a_2 \pmod{n_2}$ for $t$.
+  \item Compute $x = a_1 + n_1 t$.
+\end{enumerate}
+\end{strategy}
+
+\begin{example}
+Solve the system:
+\begin{align*}
+x &\equiv 2 \pmod{3} \\
+x &\equiv 3 \pmod{5}
+\end{align*}
+
+\emph{Solution.} From the first equation: $x = 2 + 3t$ for some integer $t$.
+
+Substitute into the second: $2 + 3t \equiv 3 \pmod{5}$, so $3t \equiv 1 \pmod{5}$.
+
+To find $3^{-1} \pmod{5}$: $3 \cdot 2 = 6 \equiv 1 \pmod{5}$, so $t \equiv 2 \pmod{5}$.
+
+Thus $t = 2 + 5s$ for some $s$, and:
+\[
+x = 2 + 3(2 + 5s) = 8 + 15s
+\]
+So $x \equiv 8 \pmod{15}$.
+
+\textbf{Check:} $8 = 2 + 2 \cdot 3$, so $8 \equiv 2 \pmod 3$. \checkmark \quad $8 = 3 + 1 \cdot 5$, so $8 \equiv 3 \pmod 5$. \checkmark
+\end{example}
+
+\begin{example}
+Find the last two digits of $3^{100}$.
+
+\emph{Solution.} We need $3^{100} \bmod 100$. Since $100 = 4 \cdot 25$ and $\gcd(4, 25) = 1$, we use CRT.
+
+\textbf{Modulo 4:} $3^2 = 9 \equiv 1 \pmod{4}$, so $3^{100} = (3^2)^{50} \equiv 1 \pmod{4}$.
+
+\textbf{Modulo 25:} $\phi(25) = 25(1 - 1/5) = 20$. By Euler, $3^{20} \equiv 1 \pmod{25}$.
+
+Since $100 = 20 \cdot 5$: $3^{100} = (3^{20})^5 \equiv 1 \pmod{25}$.
+
+\textbf{Combine using CRT:} We need $x$ with $x \equiv 1 \pmod{4}$ and $x \equiv 1 \pmod{25}$.
+
+Both congruences give $x \equiv 1$, so $x \equiv 1 \pmod{100}$.
+
+The last two digits of $3^{100}$ are $\boxed{01}$.
+\end{example}
+
+\begin{commonmistake}
+\textbf{Forgetting the coprimality requirement.} Fermat's Little Theorem requires $\gcd(a, p) = 1$. For example, $3^5 \not\equiv 1 \pmod{5}$ because $\gcd(3, 5) = 1$... wait, that's wrong! Let's check: $3^4 = 81 \equiv 1 \pmod 5$. \checkmark
+
+But $5^4 \not\equiv 1 \pmod 5$ because $\gcd(5, 5) = 5 \neq 1$. In fact, $5^4 \equiv 0 \pmod 5$.
+\end{commonmistake}
+
 \begin{example}
 Write the relation matrix for ``divides'' on $\{1, 2, 3, 4\}$.
 
@@ -402,4 +547,16 @@ A relation can be both (e.g., $=$), neither, or just one. The identity relation 
   \item Prove: If $a \equiv b \pmod{n}$ and $c \mid n$, then $a \equiv b \pmod{c}$.
 
   \item Show that the intersection of two equivalence relations on $A$ is an equivalence relation.
+
+  \item Compute $\phi(60)$ using the formula.
+
+  \item Use Fermat's Little Theorem to find $5^{302} \bmod 7$.
+
+  \item Use Euler's Theorem to find $3^{340} \bmod 11$.
+
+  \item Solve the system: $x \equiv 1 \pmod{4}$, $x \equiv 2 \pmod{5}$, $x \equiv 3 \pmod{7}$.
+
+  \item What are the last two digits of $7^{2024}$?
+
+  \item Prove Fermat's Little Theorem for $a = 2$ and $p = 5$ by direct computation.
 \end{enumerate}

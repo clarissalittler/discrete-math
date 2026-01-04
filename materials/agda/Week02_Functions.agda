@@ -179,3 +179,232 @@ isoTrans ab bc = record
   ; rightInv = \y -> trans (cong (_≅_.to bc) (_≅_.rightInv ab (_≅_.from bc y)))
                            (_≅_.rightInv bc y)
   }
+
+-- ============================================
+-- STANDARD ISOMORPHISMS
+-- ============================================
+
+-- Currying isomorphism: (A × B → C) ≅ (A → B → C)
+-- Note: Full isomorphism requires function extensionality
+-- We demonstrate the pointwise version instead
+
+curryUncurryPointwise : {A B C : Set} (f : Pair A B -> C) (p : Pair A B) ->
+  Eq (uncurry (curry f) p) (f p)
+curryUncurryPointwise f (pair a b) = refl
+
+uncurryCurryPointwise : {A B C : Set} (f : A -> B -> C) (a : A) (b : B) ->
+  Eq (curry (uncurry f) a b) (f a b)
+uncurryCurryPointwise f a b = refl
+
+-- With function extensionality (postulated), we could prove the full isomorphism
+postulate
+  funext : {A : Set} {B : A -> Set} {f g : (x : A) -> B x} ->
+    ((x : A) -> Eq (f x) (g x)) -> Eq f g
+
+curryIso : {A B C : Set} -> (Pair A B -> C) ≅ (A -> B -> C)
+curryIso = record
+  { to = curry
+  ; from = uncurry
+  ; leftInv = \f -> funext (\{ (pair a b) -> refl })
+  ; rightInv = \f -> funext (\a -> funext (\b -> refl))
+  }
+
+-- Product commutativity: A × B ≅ B × A
+prodCommIso : {A B : Set} -> Pair A B ≅ Pair B A
+prodCommIso = record
+  { to = \{ (pair a b) -> pair b a }
+  ; from = \{ (pair b a) -> pair a b }
+  ; leftInv = \{ (pair a b) -> refl }
+  ; rightInv = \{ (pair b a) -> refl }
+  }
+
+-- Product associativity: (A × B) × C ≅ A × (B × C)
+prodAssocIso : {A B C : Set} -> Pair (Pair A B) C ≅ Pair A (Pair B C)
+prodAssocIso = record
+  { to = \{ (pair (pair a b) c) -> pair a (pair b c) }
+  ; from = \{ (pair a (pair b c)) -> pair (pair a b) c }
+  ; leftInv = \{ (pair (pair a b) c) -> refl }
+  ; rightInv = \{ (pair a (pair b c)) -> refl }
+  }
+
+-- Sum commutativity: A + B ≅ B + A
+sumCommIso : {A B : Set} -> Sum A B ≅ Sum B A
+sumCommIso = record
+  { to = \{ (inl a) -> inr a ; (inr b) -> inl b }
+  ; from = \{ (inl b) -> inr b ; (inr a) -> inl a }
+  ; leftInv = \{ (inl a) -> refl ; (inr b) -> refl }
+  ; rightInv = \{ (inl b) -> refl ; (inr a) -> refl }
+  }
+
+-- Sum associativity: (A + B) + C ≅ A + (B + C)
+sumAssocIso : {A B C : Set} -> Sum (Sum A B) C ≅ Sum A (Sum B C)
+sumAssocIso = record
+  { to = \{ (inl (inl a)) -> inl a ; (inl (inr b)) -> inr (inl b) ; (inr c) -> inr (inr c) }
+  ; from = \{ (inl a) -> inl (inl a) ; (inr (inl b)) -> inl (inr b) ; (inr (inr c)) -> inr c }
+  ; leftInv = \{ (inl (inl a)) -> refl ; (inl (inr b)) -> refl ; (inr c) -> refl }
+  ; rightInv = \{ (inl a) -> refl ; (inr (inl b)) -> refl ; (inr (inr c)) -> refl }
+  }
+
+-- Unit is identity for product: Unit × A ≅ A
+unitProdIso : {A : Set} -> Pair Unit A ≅ A
+unitProdIso = record
+  { to = \{ (pair unit a) -> a }
+  ; from = \a -> pair unit a
+  ; leftInv = \{ (pair unit a) -> refl }
+  ; rightInv = \a -> refl
+  }
+
+-- Empty is zero for sum: Empty + A ≅ A
+emptySumIso : {A : Set} -> Sum Empty A ≅ A
+emptySumIso = record
+  { to = \{ (inl ()) ; (inr a) -> a }
+  ; from = inr
+  ; leftInv = \{ (inl ()) ; (inr a) -> refl }
+  ; rightInv = \a -> refl
+  }
+
+-- Empty is zero for product: Empty × A ≅ Empty
+emptyProdIso : {A : Set} -> Pair Empty A ≅ Empty
+emptyProdIso = record
+  { to = \{ (pair () a) }
+  ; from = absurd
+  ; leftInv = \{ (pair () a) }
+  ; rightInv = \()
+  }
+
+-- Distributivity: A × (B + C) ≅ (A × B) + (A × C)
+distribIso : {A B C : Set} -> Pair A (Sum B C) ≅ Sum (Pair A B) (Pair A C)
+distribIso = record
+  { to = \{ (pair a (inl b)) -> inl (pair a b) ; (pair a (inr c)) -> inr (pair a c) }
+  ; from = \{ (inl (pair a b)) -> pair a (inl b) ; (inr (pair a c)) -> pair a (inr c) }
+  ; leftInv = \{ (pair a (inl b)) -> refl ; (pair a (inr c)) -> refl }
+  ; rightInv = \{ (inl (pair a b)) -> refl ; (inr (pair a c)) -> refl }
+  }
+
+-- ============================================
+-- CATEGORICAL PERSPECTIVE
+-- ============================================
+
+{-
+  Functions form a CATEGORY!
+
+  Objects: Sets (types)
+  Morphisms: Functions between sets
+  Identity: id function
+  Composition: ∘
+
+  The laws are satisfied:
+  1. id ∘ f = f             (left identity)
+  2. f ∘ id = f             (right identity)
+  3. (h ∘ g) ∘ f = h ∘ (g ∘ f)  (associativity)
+
+  We proved these above as composeIdLeft, composeIdRight, composeAssoc!
+-}
+
+-- Functor laws for map on lists
+-- A functor F satisfies:
+--   F(id) = id
+--   F(g ∘ f) = F(g) ∘ F(f)
+
+mapId : {A : Set} (xs : List A) -> Eq (map id xs) xs
+mapId [] = refl
+mapId (x :: xs) = cong (x ::_) (mapId xs)
+
+mapCompose : {A B C : Set} (g : B -> C) (f : A -> B) (xs : List A) ->
+  Eq (map (g ∘ f) xs) (map g (map f xs))
+mapCompose g f [] = refl
+mapCompose g f (x :: xs) = cong (g (f x) ::_) (mapCompose g f xs)
+
+-- ============================================
+-- EXERCISES
+-- ============================================
+
+{-
+  EXERCISE 1: Prove that id is a two-sided inverse for itself
+-}
+exercise-idInverse : {A : Set} -> TwoSidedInverse (id {A}) id
+exercise-idInverse = pair (\x -> refl) (\x -> refl)
+
+{-
+  EXERCISE 2: Prove that the successor function on Nat is injective
+-}
+exercise-succInjective : Injective succ
+exercise-succInjective x y eq with eq
+... | refl = refl
+
+{-
+  EXERCISE 3: Prove that const is NOT injective (in general)
+  Hint: Find a counterexample by constructing two different inputs
+  that map to the same output
+-}
+-- const-not-injective : Not (Injective (const {Nat} {Bool} zero))
+-- Proof would require that zero = succ zero from const zero true = const zero false
+
+{-
+  EXERCISE 4: Prove that if f has a left inverse, f is injective
+  (This is leftInverseInjective, try proving it yourself!)
+-}
+exercise-leftInvInj : {A B : Set} {f : A -> B} {g : B -> A} ->
+  LeftInverse g f -> Injective f
+exercise-leftInvInj {g = g} left x y fx=fy =
+  trans (sym (left x)) (trans (cong g fx=fy) (left y))
+
+{-
+  EXERCISE 5: Show that preimage preserves subset
+  If P ⊆ Q, then f⁻¹(P) ⊆ f⁻¹(Q)
+-}
+open import Week01_SetTheory using (_⊆_)
+
+exercise-preimageSubset : {A B : Set} (f : A -> B) {P Q : Pred B} ->
+  P ⊆ Q -> Preimage f P ⊆ Preimage f Q
+exercise-preimageSubset f pq x pfx = pq (f x) pfx
+
+{-
+  EXERCISE 6: Prove that composition of left inverses is a left inverse
+  If g is left inverse of f, and g' is left inverse of h,
+  then g ∘ g' is left inverse of h ∘ f
+-}
+postulate
+  exercise-composeLeftInverse : {A B C : Set} {f : A -> B} {g : B -> A}
+    {h : B -> C} {g' : C -> B} ->
+    LeftInverse g f -> LeftInverse g' h ->
+    LeftInverse (g ∘ g') (h ∘ f)
+
+{-
+  EXERCISE 7: Show that flip is an involution: flip (flip f) = f
+-}
+exercise-flipInvolution : {A B C : Set} (f : A -> B -> C) (a : A) (b : B) ->
+  Eq (flip (flip f) a b) (f a b)
+exercise-flipInvolution f a b = refl
+
+{-
+  EXERCISE 8: Prove that uncurry ∘ curry = id (part of currying isomorphism)
+-}
+exercise-uncurryCurry : {A B C : Set} (f : Pair A B -> C) (p : Pair A B) ->
+  Eq (uncurry (curry f) p) (f p)
+exercise-uncurryCurry f (pair a b) = refl
+
+{-
+  EXERCISE 9: Define and prove Maybe is a functor
+-}
+mapMaybe : {A B : Set} -> (A -> B) -> Maybe A -> Maybe B
+mapMaybe f nothing = nothing
+mapMaybe f (just x) = just (f x)
+
+exercise-mapMaybeId : {A : Set} (m : Maybe A) -> Eq (mapMaybe id m) m
+exercise-mapMaybeId nothing = refl
+exercise-mapMaybeId (just x) = refl
+
+exercise-mapMaybeCompose : {A B C : Set} (g : B -> C) (f : A -> B) (m : Maybe A) ->
+  Eq (mapMaybe (g ∘ f) m) (mapMaybe g (mapMaybe f m))
+exercise-mapMaybeCompose g f nothing = refl
+exercise-mapMaybeCompose g f (just x) = refl
+
+{-
+  EXERCISE 10 (Challenge): Prove Cantor's theorem in type theory
+  There is no surjection from A to (A -> Bool)
+-}
+postulate
+  exercise-cantor : {A : Set} (f : A -> (A -> Bool)) -> Not (Surjective f)
+  -- The actual proof uses diagonalization, similar to the classic set-theoretic proof
+  -- Key idea: the function d(x) = not (f x x) cannot be in the image of f

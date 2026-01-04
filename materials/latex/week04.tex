@@ -66,6 +66,95 @@ For finite sets $A$, $B$, $C$:
 \]
 \end{theorem}
 
+\begin{theorem}[Inclusion-exclusion (general)]
+For finite sets $A_1, A_2, \ldots, A_n$:
+\[
+\left|\bigcup_{i=1}^{n} A_i\right| = \sum_{i} |A_i| - \sum_{i < j} |A_i \cap A_j| + \sum_{i < j < k} |A_i \cap A_j \cap A_k| - \cdots + (-1)^{n-1}|A_1 \cap A_2 \cap \cdots \cap A_n|
+\]
+The pattern alternates: add singles, subtract pairs, add triples, subtract quadruples, etc.
+\end{theorem}
+
+\begin{example}
+How many integers in $\{1, \ldots, 100\}$ are divisible by 2, 3, or 5?
+
+\emph{Solution.} Let $A_2, A_3, A_5$ be the sets divisible by 2, 3, 5 respectively.
+\begin{align*}
+|A_2| &= 50, \quad |A_3| = 33, \quad |A_5| = 20 \\
+|A_2 \cap A_3| &= |A_6| = 16, \quad |A_2 \cap A_5| = |A_{10}| = 10, \quad |A_3 \cap A_5| = |A_{15}| = 6 \\
+|A_2 \cap A_3 \cap A_5| &= |A_{30}| = 3
+\end{align*}
+By inclusion-exclusion:
+\[
+|A_2 \cup A_3 \cup A_5| = 50 + 33 + 20 - 16 - 10 - 6 + 3 = 74
+\]
+\end{example}
+
+\subsection*{Derangements}
+
+\begin{definition}[Derangement]
+A \textbf{derangement} of $\{1, 2, \ldots, n\}$ is a permutation $\sigma$ with no fixed points: $\sigma(i) \neq i$ for all $i$. The number of derangements of $n$ elements is denoted $D_n$ (or $!n$).
+\end{definition}
+
+\begin{theorem}[Counting derangements]
+The number of derangements of $n$ elements is:
+\[
+D_n = n! \sum_{k=0}^{n} \frac{(-1)^k}{k!} = n! \left(1 - 1 + \frac{1}{2!} - \frac{1}{3!} + \cdots + \frac{(-1)^n}{n!}\right)
+\]
+Equivalently:
+\[
+D_n = n! \left(1 - \frac{1}{1!} + \frac{1}{2!} - \frac{1}{3!} + \cdots + \frac{(-1)^n}{n!}\right)
+\]
+\end{theorem}
+
+\begin{keyresult}
+For large $n$: $D_n \approx \frac{n!}{e}$ (rounded to the nearest integer). The probability that a random permutation is a derangement approaches $\frac{1}{e} \approx 0.368$ as $n \to \infty$.
+\end{keyresult}
+
+\begin{example}
+Compute $D_4$ (derangements of 4 elements).
+
+\emph{Solution.} Using the formula:
+\[
+D_4 = 4! \left(1 - 1 + \frac{1}{2} - \frac{1}{6} + \frac{1}{24}\right) = 24 \left(\frac{12 - 4 + 1}{24}\right) = 24 \cdot \frac{9}{24} = 9
+\]
+
+We can verify by listing: the derangements of $\{1,2,3,4\}$ are:
+\[
+2143, \; 2341, \; 2413, \; 3142, \; 3412, \; 3421, \; 4123, \; 4312, \; 4321
+\]
+Indeed, there are 9.
+\end{example}
+
+\begin{example}[The Hat Check Problem]
+A hat check attendant returns $n$ hats to $n$ people at random. What is the probability that nobody gets their own hat?
+
+\emph{Solution.} There are $n!$ equally likely ways to distribute hats. The favorable outcomes are derangements: $D_n$.
+\[
+P(\text{no one gets own hat}) = \frac{D_n}{n!} = \sum_{k=0}^{n} \frac{(-1)^k}{k!} \approx \frac{1}{e} \approx 0.368
+\]
+\end{example}
+
+\begin{strategy}[Deriving the derangement formula via inclusion-exclusion]
+Let $A_i$ = permutations where person $i$ gets their own hat (a fixed point at position $i$).
+
+We want $D_n = n! - |A_1 \cup A_2 \cup \cdots \cup A_n|$.
+
+\begin{itemize}
+  \item $|A_i| = (n-1)!$ (fix position $i$, permute the rest)
+  \item $|A_i \cap A_j| = (n-2)!$ (fix positions $i$ and $j$)
+  \item In general: $|A_{i_1} \cap \cdots \cap A_{i_k}| = (n-k)!$
+  \item There are $\binom{n}{k}$ ways to choose $k$ positions
+\end{itemize}
+
+By inclusion-exclusion:
+\begin{align*}
+|A_1 \cup \cdots \cup A_n| &= \binom{n}{1}(n-1)! - \binom{n}{2}(n-2)! + \binom{n}{3}(n-3)! - \cdots \\
+&= \sum_{k=1}^{n} (-1)^{k-1} \binom{n}{k}(n-k)! = \sum_{k=1}^{n} (-1)^{k-1} \frac{n!}{k!}
+\end{align*}
+
+So $D_n = n! - \sum_{k=1}^{n} (-1)^{k-1} \frac{n!}{k!} = n! \sum_{k=0}^{n} \frac{(-1)^k}{k!}$.
+\end{strategy}
+
 \begin{definition}[Permutation]
 A \textbf{permutation} of a set is an arrangement of its elements in a sequence. The number of permutations of $n$ distinct objects is:
 \[
@@ -385,4 +474,14 @@ These type operations satisfy the same laws as arithmetic:
   \item How many permutations of ABCDEF contain ABC as a consecutive substring?
 
   \item Prove: If 5 points are selected from the integer lattice points in $\{0,1,2\}^2$, then two of them have midpoint that is also a lattice point.
+
+  \item Use inclusion-exclusion to count integers in $\{1, \ldots, 1000\}$ divisible by 2, 3, or 5.
+
+  \item Compute $D_5$ (the number of derangements of 5 elements).
+
+  \item Five friends exchange gifts so that no one receives their own gift. How many ways can this be done?
+
+  \item How many permutations of $\{1, 2, 3, 4, 5, 6\}$ have at least one fixed point? (Hint: Use complement counting with derangements.)
+
+  \item Use inclusion-exclusion to count the number of surjective functions from a 4-element set to a 3-element set. (Hint: Let $A_i$ be functions missing element $i$ in the image.)
 \end{enumerate}

@@ -146,6 +146,126 @@ The \textbf{distance} $d(u, v)$ between vertices $u$ and $v$ is the length of th
 \end{itemize}
 \end{definition}
 
+\subsection*{Graph coloring}
+
+\begin{definition}[Vertex coloring]
+A \textbf{(proper) vertex coloring} of a graph $G$ is an assignment of colors to vertices such that no two adjacent vertices share the same color. A \textbf{$k$-coloring} uses at most $k$ colors.
+\end{definition}
+
+\begin{definition}[Chromatic number]
+The \textbf{chromatic number} $\chi(G)$ is the minimum number of colors needed to properly color $G$.
+\end{definition}
+
+\begin{theorem}[Chromatic number bounds]
+For any graph $G$:
+\begin{enumerate}
+  \item $\chi(G) \geq \omega(G)$, where $\omega(G)$ is the size of the largest clique (complete subgraph).
+  \item $\chi(G) \leq \Delta(G) + 1$, where $\Delta(G)$ is the maximum degree.
+  \item If $G$ is connected and not a complete graph or odd cycle, then $\chi(G) \leq \Delta(G)$ (Brooks' theorem).
+\end{enumerate}
+\end{theorem}
+
+\begin{theorem}[Chromatic numbers of special graphs]
+\begin{itemize}
+  \item $\chi(K_n) = n$ (complete graph needs $n$ colors)
+  \item $\chi(C_n) = 2$ if $n$ is even; $\chi(C_n) = 3$ if $n$ is odd
+  \item $\chi(K_{m,n}) = 2$ (bipartite graphs are 2-colorable)
+  \item A tree with at least one edge has $\chi(T) = 2$
+\end{itemize}
+\end{theorem}
+
+\begin{definition}[Bipartite graph]
+A graph is \textbf{bipartite} if its vertices can be partitioned into two sets such that every edge connects a vertex in one set to a vertex in the other. Equivalently, $G$ is bipartite iff $\chi(G) \leq 2$.
+\end{definition}
+
+\begin{theorem}[Bipartite characterization]
+A graph is bipartite if and only if it contains no odd-length cycle.
+\end{theorem}
+
+\begin{example}
+Is the Petersen graph 3-colorable?
+
+\emph{Solution.} The Petersen graph contains triangles (3-cycles), so $\chi \geq 3$. In fact, $\chi(\text{Petersen}) = 3$. You can verify by constructing a 3-coloring: color the outer 5-cycle with alternating colors (using 3 since it's odd), then color the inner 5-cycle consistently.
+\end{example}
+
+\subsection*{Planar graphs}
+
+\begin{definition}[Planar graph]
+A graph is \textbf{planar} if it can be drawn in the plane with no edges crossing (except at vertices). Such a drawing is called a \textbf{planar embedding}.
+\end{definition}
+
+\begin{definition}[Faces]
+In a planar embedding, the plane is divided into \textbf{faces} (regions), including one unbounded \textbf{outer face}. The boundary of each face consists of edges and vertices.
+\end{definition}
+
+\begin{theorem}[Euler's formula for planar graphs]
+For a connected planar graph with $V$ vertices, $E$ edges, and $F$ faces:
+\[
+V - E + F = 2
+\]
+\end{theorem}
+
+\begin{example}
+Verify Euler's formula for the tetrahedron graph $K_4$.
+
+\emph{Solution.} $K_4$ has $V = 4$ vertices and $E = \binom{4}{2} = 6$ edges. Drawing it as a triangle with a point in the center gives $F = 4$ faces (3 inner triangles + 1 outer face).
+
+Check: $4 - 6 + 4 = 2$. \checkmark
+\end{example}
+
+\begin{theorem}[Edge bound for planar graphs]
+For a connected planar graph with $V \geq 3$ vertices:
+\[
+E \leq 3V - 6
+\]
+If the graph has no triangles (is triangle-free), then $E \leq 2V - 4$.
+\end{theorem}
+
+\begin{corollary}
+$K_5$ and $K_{3,3}$ are not planar.
+\end{corollary}
+
+\begin{proof}
+For $K_5$: $V = 5$, $E = 10$. But $3V - 6 = 9 < 10$. Violates the bound.
+
+For $K_{3,3}$: $V = 6$, $E = 9$. Since $K_{3,3}$ is bipartite, it has no triangles, so we need $E \leq 2V - 4 = 8 < 9$. Violates the bound.
+\end{proof}
+
+\begin{theorem}[Kuratowski's theorem]
+A graph is planar if and only if it contains no subgraph that is a subdivision of $K_5$ or $K_{3,3}$.
+
+(A \textbf{subdivision} is obtained by inserting vertices of degree 2 into edges.)
+\end{theorem}
+
+\begin{theorem}[Four Color Theorem]
+Every planar graph can be colored with at most 4 colors: $\chi(G) \leq 4$ for planar $G$.
+\end{theorem}
+
+\begin{remark}
+The Four Color Theorem was proved in 1976 using computer assistance to check thousands of cases. Simpler proofs exist but none are ``hand-checkable.''
+\end{remark}
+
+\begin{example}
+Show that the cube graph $Q_3$ is planar.
+
+\emph{Solution.} $Q_3$ has $V = 8$ vertices and $E = 12$ edges. Check: $3V - 6 = 18 \geq 12$. \checkmark (This doesn't prove planarity, but it's consistent.)
+
+To prove planarity, we draw $Q_3$ without crossings: draw the outer square as the front face, the inner square as the back face, and connect corresponding vertices.
+\end{example}
+
+\begin{strategy}
+To show a graph is NOT planar:
+\begin{enumerate}
+  \item Show it violates $E \leq 3V - 6$, or
+  \item Find a $K_5$ or $K_{3,3}$ subdivision.
+\end{enumerate}
+To show a graph IS planar:
+\begin{enumerate}
+  \item Draw it without crossings, or
+  \item Prove $V$ and $E$ satisfy the bounds (necessary but not sufficient).
+\end{enumerate}
+\end{strategy}
+
 \subsection*{Worked examples}
 
 \begin{example}
@@ -388,4 +508,20 @@ This is how commutative diagrams work: they specify which paths should be consid
   \item How many automorphisms does the cycle $C_n$ have?
 
   \item Prove: If $G$ is connected and has exactly 2 vertices of odd degree, any Euler trail must start and end at those vertices.
+
+  \item Find $\chi(C_7)$ and $\chi(C_8)$.
+
+  \item Find the chromatic number of the wheel graph $W_5$ (a 5-cycle with a central vertex connected to all).
+
+  \item Use Euler's formula to find the number of faces in a connected planar graph with 10 vertices and 15 edges.
+
+  \item Prove that every planar graph has a vertex of degree at most 5.
+
+  \item Is the Petersen graph planar? Prove your answer.
+
+  \item A planar graph has 12 faces, and each face is bounded by exactly 3 edges. How many edges and vertices does it have?
+
+  \item Give a 3-coloring of the graph $K_4$ minus one edge.
+
+  \item Prove: If $G$ is planar with no cycles of length $\leq 4$, then $E \leq \frac{5}{3}(V - 2)$.
 \end{enumerate}

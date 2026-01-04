@@ -1,0 +1,302 @@
+\section{Chapter 0: Proof Refresher}
+
+This chapter reviews the proof techniques and logical foundations from the first quarter. Use it as a reference throughout the course.
+
+\subsection*{Propositional Logic Review}
+
+\begin{definition}[Logical connectives]
+Let $P$ and $Q$ be propositions (statements that are either true or false).
+
+\begin{center}
+\begin{tabular}{clc}
+\textbf{Symbol} & \textbf{Name} & \textbf{True when...} \\
+\hline
+$\neg P$ & Negation (NOT) & $P$ is false \\
+$P \land Q$ & Conjunction (AND) & Both $P$ and $Q$ are true \\
+$P \lor Q$ & Disjunction (OR) & At least one of $P$, $Q$ is true \\
+$P \to Q$ & Implication (IF-THEN) & $P$ is false, or $Q$ is true \\
+$P \leftrightarrow Q$ & Biconditional (IFF) & $P$ and $Q$ have the same truth value \\
+\end{tabular}
+\end{center}
+\end{definition}
+
+\begin{theorem}[Key equivalences]
+The following are logically equivalent (have the same truth table):
+\begin{align*}
+P \to Q &\equiv \neg P \lor Q \equiv \neg Q \to \neg P \quad \text{(contrapositive)} \\
+\neg(P \land Q) &\equiv \neg P \lor \neg Q \quad \text{(De Morgan)} \\
+\neg(P \lor Q) &\equiv \neg P \land \neg Q \quad \text{(De Morgan)} \\
+P \to Q &\not\equiv Q \to P \quad \text{(converse is NOT equivalent!)}
+\end{align*}
+\end{theorem}
+
+\subsection*{Predicate Logic Review}
+
+\begin{definition}[Quantifiers]
+Let $P(x)$ be a predicate (a statement depending on variable $x$) over domain $D$.
+
+\textbf{Universal quantifier:} $\forall x \in D.\, P(x)$ means ``for all $x$ in $D$, $P(x)$ holds.''
+
+\textbf{Existential quantifier:} $\exists x \in D.\, P(x)$ means ``there exists some $x$ in $D$ such that $P(x)$ holds.''
+\end{definition}
+
+\begin{theorem}[Negating quantifiers]
+\begin{align*}
+\neg(\forall x.\, P(x)) &\equiv \exists x.\, \neg P(x) \\
+\neg(\exists x.\, P(x)) &\equiv \forall x.\, \neg P(x)
+\end{align*}
+To negate ``all cats are black,'' say ``there exists a cat that is not black.''
+\end{theorem}
+
+\begin{theorem}[Quantifier order matters]
+\[
+\forall x.\, \exists y.\, P(x,y) \quad \not\equiv \quad \exists y.\, \forall x.\, P(x,y)
+\]
+\textbf{Example.} Let $P(x,y)$ mean ``$y > x$'' over $\mathbb{R}$.
+\begin{itemize}
+  \item $\forall x.\, \exists y.\, (y > x)$: For every number, there's a larger one. \textbf{True.}
+  \item $\exists y.\, \forall x.\, (y > x)$: There's a number larger than all others. \textbf{False.}
+\end{itemize}
+\end{theorem}
+
+\subsection*{Proof Techniques}
+
+\begin{strategy}[Direct proof]
+To prove $P \to Q$: Assume $P$ is true, then show $Q$ follows.
+
+\textbf{Template:}
+\begin{quote}
+\emph{Assume $P$. [Reasoning...] Therefore $Q$.}
+\end{quote}
+
+\textbf{Example.} Prove: If $n$ is even, then $n^2$ is even.
+
+\emph{Proof.} Assume $n$ is even. Then $n = 2k$ for some integer $k$. So $n^2 = (2k)^2 = 4k^2 = 2(2k^2)$. Since $2k^2$ is an integer, $n^2$ is even. \qed
+\end{strategy}
+
+\begin{strategy}[Proof by contrapositive]
+To prove $P \to Q$: Prove $\neg Q \to \neg P$ instead (they're equivalent).
+
+\textbf{Template:}
+\begin{quote}
+\emph{We prove the contrapositive. Assume $\neg Q$. [Reasoning...] Therefore $\neg P$.}
+\end{quote}
+
+\textbf{Example.} Prove: If $n^2$ is odd, then $n$ is odd.
+
+\emph{Proof.} We prove the contrapositive: if $n$ is even, then $n^2$ is even. Assume $n$ is even. Then $n = 2k$, so $n^2 = 4k^2 = 2(2k^2)$, which is even. \qed
+\end{strategy}
+
+\begin{strategy}[Proof by contradiction]
+To prove $P$: Assume $\neg P$ and derive a contradiction.
+
+\textbf{Template:}
+\begin{quote}
+\emph{Suppose for contradiction that $\neg P$. [Reasoning...] This contradicts [known fact]. Therefore $P$.}
+\end{quote}
+
+\textbf{Example.} Prove: $\sqrt{2}$ is irrational.
+
+\emph{Proof.} Suppose for contradiction that $\sqrt{2} = a/b$ where $a, b$ are integers with no common factors. Then $2 = a^2/b^2$, so $a^2 = 2b^2$. Thus $a^2$ is even, so $a$ is even; write $a = 2c$. Then $4c^2 = 2b^2$, so $b^2 = 2c^2$, meaning $b$ is also even. But then $a$ and $b$ share factor 2, contradicting our assumption. \qed
+\end{strategy}
+
+\begin{strategy}[Proof by cases]
+To prove $P$: Partition into exhaustive cases and prove each.
+
+\textbf{Template:}
+\begin{quote}
+\emph{Case 1: [Condition]. [Proof of $P$ in this case.]}\\
+\emph{Case 2: [Condition]. [Proof of $P$ in this case.]}\\
+\emph{These cases are exhaustive, so $P$ holds.}
+\end{quote}
+
+\textbf{Example.} Prove: For any integer $n$, $n^2 + n$ is even.
+
+\emph{Proof.} Case 1: $n$ is even. Then $n^2$ is even, so $n^2 + n$ is even + even = even.
+
+Case 2: $n$ is odd. Then $n^2$ is odd, so $n^2 + n$ is odd + odd = even.
+
+Every integer is either even or odd, so $n^2 + n$ is always even. \qed
+\end{strategy}
+
+\subsection*{Mathematical Induction}
+
+\begin{strategy}[Weak induction]
+To prove $\forall n \geq n_0.\, P(n)$:
+\begin{enumerate}
+  \item \textbf{Base case:} Prove $P(n_0)$.
+  \item \textbf{Inductive step:} Prove $P(k) \to P(k+1)$ for arbitrary $k \geq n_0$.
+\end{enumerate}
+
+\textbf{Why it works:} Base case gives $P(n_0)$. Inductive step gives $P(n_0) \to P(n_0+1)$, so $P(n_0+1)$. Inductive step again gives $P(n_0+1) \to P(n_0+2)$, so $P(n_0+2)$. And so on forever.
+\end{strategy}
+
+\begin{example}
+Prove: $\displaystyle\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$ for all $n \geq 1$.
+
+\emph{Proof.} By induction on $n$.
+
+\textbf{Base case} ($n = 1$): $\sum_{i=1}^{1} i = 1 = \frac{1 \cdot 2}{2}$. \checkmark
+
+\textbf{Inductive step:} Assume $\sum_{i=1}^{k} i = \frac{k(k+1)}{2}$ for some $k \geq 1$. Then:
+\[
+\sum_{i=1}^{k+1} i = \left(\sum_{i=1}^{k} i\right) + (k+1) = \frac{k(k+1)}{2} + (k+1) = \frac{k(k+1) + 2(k+1)}{2} = \frac{(k+1)(k+2)}{2}
+\]
+This is the formula with $n = k+1$. \checkmark
+
+By induction, the formula holds for all $n \geq 1$. \qed
+\end{example}
+
+\begin{strategy}[Strong induction]
+To prove $\forall n \geq n_0.\, P(n)$:
+\begin{enumerate}
+  \item \textbf{Base case(s):} Prove $P(n_0)$ (and possibly $P(n_0+1), \ldots$).
+  \item \textbf{Inductive step:} Prove $\bigl[P(n_0) \land P(n_0+1) \land \cdots \land P(k)\bigr] \to P(k+1)$.
+\end{enumerate}
+
+Use strong induction when proving $P(k+1)$ requires cases smaller than $k$ (not just $k$ itself).
+\end{strategy}
+
+\begin{example}
+Prove: Every integer $n \geq 2$ can be written as a product of primes.
+
+\emph{Proof.} By strong induction on $n$.
+
+\textbf{Base case} ($n = 2$): 2 is prime, so it's a product of primes (just itself). \checkmark
+
+\textbf{Inductive step:} Assume every integer from 2 to $k$ can be written as a product of primes. Consider $k + 1$.
+
+\emph{Case 1:} $k+1$ is prime. Then $k+1$ is a product of primes (itself). \checkmark
+
+\emph{Case 2:} $k+1$ is composite. Then $k+1 = ab$ where $2 \leq a, b \leq k$. By the inductive hypothesis, both $a$ and $b$ are products of primes. So $k+1 = ab$ is also a product of primes. \checkmark
+
+By strong induction, every $n \geq 2$ is a product of primes. \qed
+\end{example}
+
+\begin{strategy}[Structural induction]
+To prove a property $P$ holds for all elements of a recursively-defined set $S$:
+\begin{enumerate}
+  \item \textbf{Base case(s):} Prove $P$ for each base element of $S$.
+  \item \textbf{Inductive step(s):} For each recursive rule, assume $P$ holds for the inputs and prove $P$ for the output.
+\end{enumerate}
+\end{strategy}
+
+\begin{example}
+Define binary trees recursively:
+\begin{itemize}
+  \item \textbf{Base:} A single node $\bullet$ is a binary tree.
+  \item \textbf{Recursive:} If $T_1$ and $T_2$ are binary trees, then the tree with a root connected to $T_1$ (left) and $T_2$ (right) is a binary tree.
+\end{itemize}
+
+Prove: Every binary tree has one more node than it has internal nodes (nodes with children).
+
+\emph{Proof.} Let $P(T)$ be: ``$T$ has one more leaf than internal node.''
+
+\textbf{Base case:} A single node $\bullet$ has 1 leaf and 0 internal nodes. $1 = 0 + 1$. \checkmark
+
+\textbf{Inductive step:} Suppose $T_1$ has $\ell_1$ leaves, $i_1$ internal nodes (with $\ell_1 = i_1 + 1$), and similarly $T_2$ has $\ell_2 = i_2 + 1$. Form tree $T$ with root connected to $T_1$ and $T_2$.
+
+In $T$: The root is a new internal node. All leaves of $T_1$ and $T_2$ are still leaves. So:
+\begin{align*}
+\text{leaves}(T) &= \ell_1 + \ell_2 \\
+\text{internal}(T) &= i_1 + i_2 + 1 \quad \text{(the root)}
+\end{align*}
+Check: $\ell_1 + \ell_2 = (i_1 + 1) + (i_2 + 1) = (i_1 + i_2 + 1) + 1 = \text{internal}(T) + 1$. \checkmark
+
+By structural induction, every binary tree has one more leaf than internal node. \qed
+\end{example}
+
+\subsection*{Common Inference Rules}
+
+\begin{center}
+\begin{tabular}{lll}
+\textbf{Name} & \textbf{Rule} & \textbf{Meaning} \\
+\hline
+Modus ponens & $P, \; P \to Q \;\vdash\; Q$ & If $P$ and $P \to Q$, conclude $Q$ \\
+Modus tollens & $\neg Q, \; P \to Q \;\vdash\; \neg P$ & If $\neg Q$ and $P \to Q$, conclude $\neg P$ \\
+Hypothetical syllogism & $P \to Q, \; Q \to R \;\vdash\; P \to R$ & Chain implications \\
+Disjunctive syllogism & $P \lor Q, \; \neg P \;\vdash\; Q$ & Eliminate one disjunct \\
+Conjunction & $P, \; Q \;\vdash\; P \land Q$ & Combine facts \\
+Simplification & $P \land Q \;\vdash\; P$ & Extract from conjunction \\
+Addition & $P \;\vdash\; P \lor Q$ & Weaken to disjunction \\
+Resolution & $P \lor Q, \; \neg P \lor R \;\vdash\; Q \lor R$ & Combine disjunctions \\
+\end{tabular}
+\end{center}
+
+\subsection*{Existential and Universal Proofs}
+
+\begin{strategy}[Proving $\exists x.\, P(x)$]
+Exhibit a specific witness $c$ and show $P(c)$ holds.
+
+\textbf{Example.} Prove: There exists an integer $n$ such that $n^2 = n$.
+
+\emph{Proof.} Take $n = 1$. Then $1^2 = 1$. \qed
+\end{strategy}
+
+\begin{strategy}[Proving $\forall x.\, P(x)$]
+Let $x$ be an arbitrary element of the domain and prove $P(x)$.
+
+\textbf{Example.} Prove: For all integers $n$, if $n$ is odd, then $n^2$ is odd.
+
+\emph{Proof.} Let $n$ be an arbitrary odd integer. Then $n = 2k + 1$ for some integer $k$. So $n^2 = (2k+1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1$, which is odd. \qed
+\end{strategy}
+
+\begin{strategy}[Disproving $\forall x.\, P(x)$]
+Find a counterexample: a specific $c$ where $P(c)$ is false.
+
+\textbf{Example.} Disprove: For all primes $p$, $2^p - 1$ is prime.
+
+\emph{Counterexample.} $p = 11$ is prime, but $2^{11} - 1 = 2047 = 23 \times 89$. \qed
+\end{strategy}
+
+\subsection*{Common Pitfalls}
+
+\begin{commonmistake}
+\textbf{Assuming what you're trying to prove.} In a direct proof of $P \to Q$, you assume $P$, not $Q$. If you find yourself writing ``Assume $Q$...'' you've gone wrong.
+\end{commonmistake}
+
+\begin{commonmistake}
+\textbf{Confusing the converse.} $P \to Q$ is NOT equivalent to $Q \to P$. Proving ``if it's raining, the ground is wet'' does not prove ``if the ground is wet, it's raining.''
+\end{commonmistake}
+
+\begin{commonmistake}
+\textbf{Induction: not using the hypothesis.} In the inductive step, you must actually use the assumption $P(k)$ to prove $P(k+1)$. If your proof of $P(k+1)$ doesn't reference $P(k)$, either the proof is wrong or you didn't need induction.
+\end{commonmistake}
+
+\begin{commonmistake}
+\textbf{Induction: wrong base case.} If your claim is $\forall n \geq 5.\, P(n)$, your base case must be $n = 5$, not $n = 1$.
+\end{commonmistake}
+
+\begin{commonmistake}
+\textbf{Proof by example.} Checking $P(1), P(2), P(3)$ does not prove $\forall n.\, P(n)$. You need a general argument (or induction).
+\end{commonmistake}
+
+\begin{commonmistake}
+\textbf{Existential overgeneralization.} From ``there exists an $x$ with property $P$,'' you cannot conclude that \emph{every} $x$ has property $P$.
+\end{commonmistake}
+
+\subsection*{Practice}
+
+\begin{enumerate}
+  \item Prove by induction: $\displaystyle\sum_{i=1}^{n} i^2 = \frac{n(n+1)(2n+1)}{6}$.
+
+  \item Prove by induction: $n! > 2^n$ for all $n \geq 4$.
+
+  \item Prove by strong induction: Every amount of postage $\geq 12$ cents can be made using 4-cent and 5-cent stamps.
+
+  \item Prove by contrapositive: If $n^2$ is divisible by 3, then $n$ is divisible by 3.
+
+  \item Prove by contradiction: There are infinitely many primes.
+
+  \item Prove or disprove: For all integers $a, b, c$, if $a \mid bc$, then $a \mid b$ or $a \mid c$.
+
+  \item Prove by structural induction: For any arithmetic expression built from integers using $+$ and $\times$, the result is an integer. (Define the set of arithmetic expressions recursively first.)
+
+  \item Negate the following statement and determine which is true: ``For every $\epsilon > 0$, there exists $\delta > 0$ such that for all $x$, if $|x| < \delta$ then $|f(x)| < \epsilon$.''
+
+  \item Find the error in this ``proof'': \emph{Claim: All horses are the same color.}
+
+  \emph{``Proof'' by induction:} Base case: One horse is trivially the same color as itself. Inductive step: Assume any $k$ horses are the same color. Given $k+1$ horses, remove one; the remaining $k$ are the same color. Put it back and remove a different one; those $k$ are the same color too. So all $k+1$ are the same color. \qed
+
+  \item Prove: For all sets $A$ and $B$, if $A \subseteq B$, then $\mathcal{P}(A) \subseteq \mathcal{P}(B)$.
+\end{enumerate}
