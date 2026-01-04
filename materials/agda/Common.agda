@@ -33,6 +33,9 @@ _*_ : Nat -> Nat -> Nat
 zero * n = zero
 succ m * n = n + (m * n)
 
+infixl 6 _+_
+infixl 7 _*_
+
 _-_ : Nat -> Nat -> Nat
 n - zero = n
 zero - succ m = zero
@@ -128,3 +131,142 @@ mulZeroRight (succ n) = mulZeroRight n
 data Fin : Nat -> Set where
   fzero : {n : Nat} -> Fin (succ n)
   fsucc : {n : Nat} -> Fin n -> Fin (succ n)
+
+-- Decidability
+data Dec (A : Set) : Set where
+  yes : A -> Dec A
+  no : Not A -> Dec A
+
+-- Boolean operations
+not : Bool -> Bool
+not true = false
+not false = true
+
+_&&_ : Bool -> Bool -> Bool
+true && b = b
+false && _ = false
+
+_||_ : Bool -> Bool -> Bool
+true || _ = true
+false || b = b
+
+infixr 6 _&&_
+infixr 5 _||_
+
+-- Maybe type
+data Maybe (A : Set) : Set where
+  nothing : Maybe A
+  just : A -> Maybe A
+
+-- Vector type
+data Vec (A : Set) : Nat -> Set where
+  [] : Vec A zero
+  _::_ : {n : Nat} -> A -> Vec A n -> Vec A (succ n)
+
+head : {A : Set} {n : Nat} -> Vec A (succ n) -> A
+head (x :: _) = x
+
+tail : {A : Set} {n : Nat} -> Vec A (succ n) -> Vec A n
+tail (_ :: xs) = xs
+
+-- Substitution for equality
+subst : {A : Set} (P : A -> Set) {x y : A} -> Eq x y -> P x -> P y
+subst P refl px = px
+
+-- More equality reasoning
+_≡⟨_⟩_ : {A : Set} (x : A) {y z : A} -> Eq x y -> Eq y z -> Eq x z
+_ ≡⟨ p ⟩ q = trans p q
+
+_∎ : {A : Set} (x : A) -> Eq x x
+_ ∎ = refl
+
+infixr 2 _≡⟨_⟩_
+infix 3 _∎
+
+-- More arithmetic lemmas
+addSuccRight : (m n : Nat) -> Eq (m + succ n) (succ (m + n))
+addSuccRight zero n = refl
+addSuccRight (succ m) n = cong succ (addSuccRight m n)
+
+addComm : (m n : Nat) -> Eq (m + n) (n + m)
+addComm zero n = sym (addZeroRight n)
+addComm (succ m) n = trans (cong succ (addComm m n)) (sym (addSuccRight n m))
+
+addAssoc : (a b c : Nat) -> Eq ((a + b) + c) (a + (b + c))
+addAssoc zero b c = refl
+addAssoc (succ a) b c = cong succ (addAssoc a b c)
+
+-- Multiplication lemmas
+mulSuccRight : (m n : Nat) -> Eq (m * succ n) (m + m * n)
+mulSuccRight zero n = refl
+mulSuccRight (succ m) n =
+  cong succ (trans (cong (n +_) (mulSuccRight m n))
+            (trans (sym (addAssoc n m (m * n)))
+            (trans (cong (_+ m * n) (addComm n m))
+                   (addAssoc m n (m * n)))))
+
+mulComm : (m n : Nat) -> Eq (m * n) (n * m)
+mulComm zero n = sym (mulZeroRight n)
+mulComm (succ m) n = trans (cong (n +_) (mulComm m n)) (sym (mulSuccRight n m))
+
+-- List utilities
+reverse : {A : Set} -> List A -> List A
+reverse [] = []
+reverse (x :: xs) = reverse xs ++ (x :: [])
+
+filter : {A : Set} -> (A -> Bool) -> List A -> List A
+filter p [] = []
+filter p (x :: xs) = if p x then x :: filter p xs else filter p xs
+
+all : {A : Set} -> (A -> Bool) -> List A -> Bool
+all p [] = true
+all p (x :: xs) = p x && all p xs
+
+any : {A : Set} -> (A -> Bool) -> List A -> Bool
+any p [] = false
+any p (x :: xs) = p x || any p xs
+
+-- Propositional all and any for lists
+All : {A : Set} -> (A -> Set) -> List A -> Set
+All P [] = Unit
+All P (x :: xs) = Pair (P x) (All P xs)
+
+Any : {A : Set} -> (A -> Set) -> List A -> Set
+Any P [] = Empty
+Any P (x :: xs) = Sum (P x) (Any P xs)
+
+-- Inequality utilities
+leqTrans : {a b c : Nat} -> Leq a b -> Leq b c -> Leq a c
+leqTrans leqZero _ = leqZero
+leqTrans (leqSucc p) (leqSucc q) = leqSucc (leqTrans p q)
+
+leqAntiSym : {m n : Nat} -> Leq m n -> Leq n m -> Eq m n
+leqAntiSym leqZero leqZero = refl
+leqAntiSym (leqSucc p) (leqSucc q) = cong succ (leqAntiSym p q)
+
+leqSuccRight : {m n : Nat} -> Leq m n -> Leq m (succ n)
+leqSuccRight leqZero = leqZero
+leqSuccRight (leqSucc p) = leqSucc (leqSuccRight p)
+
+-- Natural number comparison
+_<=?_ : Nat -> Nat -> Bool
+zero <=? n = true
+succ m <=? zero = false
+succ m <=? succ n = m <=? n
+
+_==?_ : Nat -> Nat -> Bool
+zero ==? zero = true
+zero ==? succ n = false
+succ m ==? zero = false
+succ m ==? succ n = m ==? n
+
+-- Max and min
+max : Nat -> Nat -> Nat
+max zero n = n
+max (succ m) zero = succ m
+max (succ m) (succ n) = succ (max m n)
+
+min : Nat -> Nat -> Nat
+min zero n = zero
+min (succ m) zero = zero
+min (succ m) (succ n) = succ (min m n)

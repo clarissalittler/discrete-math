@@ -8,6 +8,7 @@ Epp \S 6.1--6.4.
   \item Prove set identities with the element method.
   \item Apply standard set laws (commutative, associative, distributive).
   \item Use power sets and partitions correctly.
+  \item Understand Cartesian products and their properties.
 \end{itemize}
 
 \subsection*{Key definitions and facts}
@@ -16,22 +17,197 @@ For sets $A,B$, $A \subseteq B$ means every element of $A$ is in $B$.
 $A=B$ means $A \subseteq B$ and $B \subseteq A$.
 \end{definition}
 
+\begin{definition}[Set operations]
+Let $A$ and $B$ be sets:
+\begin{itemize}
+  \item \textbf{Union:} $A \cup B = \{x : x \in A \text{ or } x \in B\}$
+  \item \textbf{Intersection:} $A \cap B = \{x : x \in A \text{ and } x \in B\}$
+  \item \textbf{Difference:} $A \setminus B = \{x : x \in A \text{ and } x \notin B\}$
+  \item \textbf{Complement:} $A^c = \{x \in U : x \notin A\}$ (relative to universal set $U$)
+\end{itemize}
+\end{definition}
+
 \begin{definition}[Power set and partition]
-The power set $\Pow(A)$ is the set of all subsets of $A$.
+The power set $\Pow(A)$ is the set of all subsets of $A$. If $|A| = n$, then $|\Pow(A)| = 2^n$.
 A partition of $A$ is a collection of nonempty, pairwise disjoint subsets whose union is $A$.
 \end{definition}
+
+\begin{definition}[Cartesian product]
+The Cartesian product $A \times B = \{(a,b) : a \in A, b \in B\}$.
+We have $|A \times B| = |A| \cdot |B|$ for finite sets.
+\end{definition}
+
+\begin{theorem}[Set laws]
+For all sets $A, B, C$:
+\begin{itemize}
+  \item \textbf{Commutative:} $A \cup B = B \cup A$, $A \cap B = B \cap A$
+  \item \textbf{Associative:} $(A \cup B) \cup C = A \cup (B \cup C)$
+  \item \textbf{Distributive:} $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$
+  \item \textbf{Absorption:} $A \cup (A \cap B) = A$, $A \cap (A \cup B) = A$
+  \item \textbf{Identity:} $A \cup \emptyset = A$, $A \cap U = A$
+\end{itemize}
+\end{theorem}
 
 \begin{theorem}[De Morgan's laws]
 $(A \cup B)^c = A^c \cap B^c$ and $(A \cap B)^c = A^c \cup B^c$.
 \end{theorem}
 
-\subsection*{Worked example}
-\begin{example}
-Prove $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$.
-\emph{Sketch.} For any $x$,
-$x \in A \cap (B \cup C)$ iff $x \in A$ and $(x \in B$ or $x \in C)$,
-iff $(x \in A \cap B)$ or $(x \in A \cap C)$.
+\begin{remark}[Boolean algebra]
+The set operations form a \textbf{Boolean algebra}: $\cup$ behaves like logical OR, $\cap$ behaves like AND, and complementation behaves like NOT. This correspondence allows you to translate between set identities and logical equivalences. For example, De Morgan's laws for sets correspond exactly to De Morgan's laws for logic: $\neg(P \lor Q) \equiv \neg P \land \neg Q$.
+\end{remark}
+
+\begin{example}[Boolean-style simplification]
+Simplify the set expression $(A \cap B) \cup (A \cap B^c)$.
+
+\emph{Solution.} Factor out $A$ using distributivity:
+\[
+(A \cap B) \cup (A \cap B^c) = A \cap (B \cup B^c) = A \cap U = A
+\]
+The key insight is that $B \cup B^c = U$ (law of excluded middle for sets).
 \end{example}
+
+\begin{warning}[Russell's paradox]
+Not every description defines a valid set. Consider $R = \{x : x \notin x\}$---the ``set of all sets that don't contain themselves.'' Is $R \in R$? If yes, then by definition $R \notin R$. If no, then $R \in R$. This contradiction shows that unrestricted set formation leads to paradoxes. Modern set theory (ZFC) avoids this by carefully axiomatizing which collections can be sets.
+\end{warning}
+
+\subsection*{Worked examples}
+\begin{example}
+Prove $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ (Distributive law).
+
+\emph{Proof.} We show mutual inclusion.
+
+($\subseteq$) Let $x \in A \cap (B \cup C)$. Then $x \in A$ and $x \in B \cup C$.
+Since $x \in B \cup C$, either $x \in B$ or $x \in C$.
+\begin{itemize}
+  \item If $x \in B$: then $x \in A \cap B$, so $x \in (A \cap B) \cup (A \cap C)$.
+  \item If $x \in C$: then $x \in A \cap C$, so $x \in (A \cap B) \cup (A \cap C)$.
+\end{itemize}
+
+($\supseteq$) Let $x \in (A \cap B) \cup (A \cap C)$.
+Then $x \in A \cap B$ or $x \in A \cap C$.
+In either case, $x \in A$, and $x \in B$ or $x \in C$, so $x \in B \cup C$.
+Thus $x \in A \cap (B \cup C)$. \qed
+\end{example}
+
+\begin{example}
+Prove De Morgan's law: $(A \cup B)^c = A^c \cap B^c$.
+
+\emph{Proof.}
+$x \in (A \cup B)^c$ iff $x \notin A \cup B$
+iff not($x \in A$ or $x \in B$)
+iff ($x \notin A$ and $x \notin B$)
+iff $x \in A^c$ and $x \in B^c$
+iff $x \in A^c \cap B^c$. \qed
+\end{example}
+
+\begin{example}
+List the power set $\Pow(\{1, 2\})$ and verify that $|\Pow(\{1,2\})| = 2^2$.
+
+\emph{Solution.} The subsets of $\{1, 2\}$ are:
+\[
+\Pow(\{1, 2\}) = \{\emptyset, \{1\}, \{2\}, \{1, 2\}\}
+\]
+We have $|\Pow(\{1,2\})| = 4 = 2^2$. \checkmark
+\end{example}
+
+\begin{example}
+Let $A = \{0, 1\}$ and $B = \{a, b, c\}$. Find $A \times B$ and $|A \times B|$.
+
+\emph{Solution.}
+\[
+A \times B = \{(0, a), (0, b), (0, c), (1, a), (1, b), (1, c)\}
+\]
+We have $|A \times B| = 6 = 2 \times 3 = |A| \cdot |B|$. \checkmark
+\end{example}
+
+\begin{example}
+Disprove: $(A \cup B) \setminus C = A \cup (B \setminus C)$ for all sets $A, B, C$.
+
+\emph{Solution.} We need a counterexample where removing $C$ from $A \cup B$ differs from keeping $A$ intact and only removing $C$ from $B$. The key is to have elements in $A \cap C$ that are not in $B$.
+
+Let $A = \{1\}$, $B = \{2\}$, $C = \{1\}$:
+\begin{itemize}
+  \item LHS: $A \cup B = \{1, 2\}$, so $(A \cup B) \setminus C = \{1,2\} \setminus \{1\} = \{2\}$.
+  \item RHS: $B \setminus C = \{2\} \setminus \{1\} = \{2\}$, so $A \cup (B \setminus C) = \{1\} \cup \{2\} = \{1, 2\}$.
+\end{itemize}
+Since $\{2\} \neq \{1, 2\}$, the identity fails. The issue is that the LHS removes elements of $C$ from all of $A \cup B$, while the RHS preserves $A$ completely. \qed
+\end{example}
+
+\begin{example}
+Prove the absorption law: $A \cup (A \cap B) = A$.
+
+\emph{Proof.}
+($\supseteq$) If $x \in A$, then $x \in A \cup (A \cap B)$ since $x$ is in the first part of the union.
+
+($\subseteq$) If $x \in A \cup (A \cap B)$, then $x \in A$ or $x \in A \cap B$. In either case, $x \in A$ (since $A \cap B \subseteq A$).
+
+Therefore $A \cup (A \cap B) = A$. \qed
+\end{example}
+
+\begin{goingdeeper}[Going Deeper: Arrows and Diagrams]
+This begins a running thread through the course: learning to think in terms of \emph{arrows} and \emph{diagrams}. These tools will illuminate structures throughout discrete mathematics.
+
+\subsubsection*{Functions as Arrows}
+
+We've been writing $f: A \to B$ for functions. The arrow notation isn't accidental---it suggests \emph{direction} and \emph{connection}. Let's take this seriously.
+
+\textbf{Key observations:}
+\begin{itemize}
+  \item \textbf{Arrows compose:} If $f: A \to B$ and $g: B \to C$, we get $g \circ f: A \to C$.
+  \item \textbf{Composition is associative:} $(h \circ g) \circ f = h \circ (g \circ f)$, so we can write $h \circ g \circ f$ without ambiguity.
+  \item \textbf{Identity arrows exist:} Every set $A$ has an identity function $\id_A: A \to A$ with $\id_A(x) = x$.
+  \item \textbf{Identities are neutral:} $f \circ \id_A = f$ and $\id_B \circ f = f$.
+\end{itemize}
+
+\subsubsection*{Diagrams as Visual Equations}
+
+A \emph{commutative diagram} is a picture representing equations between composites of functions. Consider:
+\[
+\begin{tikzcd}
+A \arrow[r, "f"] \arrow[dr, "h"'] & B \arrow[d, "g"] \\
+ & C
+\end{tikzcd}
+\]
+This diagram \textbf{commutes} if $g \circ f = h$. In words: ``going from $A$ to $C$ via $B$ gives the same result as going directly.''
+
+A more complex example---a commutative square:
+\[
+\begin{tikzcd}
+A \arrow[r, "f"] \arrow[d, "h"'] & B \arrow[d, "g"] \\
+C \arrow[r, "k"'] & D
+\end{tikzcd}
+\]
+This commutes if $g \circ f = k \circ h$. Both paths from $A$ to $D$ give the same composite.
+
+\textbf{Why diagrams?} Complex equations become pictures you can \emph{see}. Proofs become \emph{path-finding}: to show two composites are equal, find paths in a commuting diagram connecting them.
+
+\subsubsection*{Exercises: Arrows and Diagrams}
+
+\begin{enumerate}
+  \item Draw the diagram representing $h \circ g \circ f = k$ for functions $f: A \to B$, $g: B \to C$, $h: C \to D$, and $k: A \to D$. (Hint: it's a triangle with a long path.)
+
+  \item Consider this commutative square:
+  \[
+  \begin{tikzcd}
+  A \arrow[r, "f"] \arrow[d, "h"'] & B \arrow[d, "g"] \\
+  C \arrow[r, "k"'] & D
+  \end{tikzcd}
+  \]
+  Write down the equation this diagram represents.
+
+  \item If the square above commutes, and we also have $m: D \to E$, draw the extended diagram. What new equation(s) can we derive involving $m$?
+
+  \item True or False: If $g \circ f = g \circ f'$, then $f = f'$. Either prove this or give a counterexample with small sets.
+
+  \item The identity law says $f \circ \id_A = f$. Draw this as a (degenerate) commutative triangle.
+
+  \item Associativity says $(h \circ g) \circ f = h \circ (g \circ f)$. Explain why this means we can unambiguously write $h \circ g \circ f$ without parentheses.
+
+  \item Let $f: \{1,2\} \to \{a,b,c\}$ and $g: \{a,b,c\} \to \{x,y\}$ be given functions. How many functions $h: \{1,2\} \to \{x,y\}$ are there such that the triangle with $f$, $g$, $h$ commutes (i.e., $g \circ f = h$)? Is it always exactly one?
+
+  \item \textbf{Diagram chase:} Suppose triangles $g \circ f = h$ and $k \circ g = \ell$ both commute. Prove that $k \circ h = \ell \circ f$ by manipulating composites. (This is ``chasing'' around the combined diagram.)
+\end{enumerate}
+\end{goingdeeper}
 
 \subsection*{Practice}
 \begin{enumerate}
@@ -39,4 +215,7 @@ iff $(x \in A \cap B)$ or $(x \in A \cap C)$.
   \item Prove $A \setminus B = A \cap B^c$ using the element method.
   \item List $\Pow(\{a,b,c\})$ and verify its size.
   \item Give a counterexample showing $A \cap (B \setminus C) = (A \cap B) \setminus C$ can fail.
+  \item Prove the absorption law: $A \cup (A \cap B) = A$.
+  \item If $A$ has 4 elements and $B$ has 3 elements, what is the maximum size of $A \cap B$? The minimum?
+  \item Prove that for any sets $A, B, C$: $(A \cap B) \cup (A \cap C) \cup (B \cap C) \subseteq (A \cup B) \cap (A \cup C) \cap (B \cup C)$.
 \end{enumerate}

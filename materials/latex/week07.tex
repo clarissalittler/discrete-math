@@ -1,4 +1,4 @@
-\section{Week 7: Graph Theory I}
+\section{Week 7: Graph Theory I --- Paths and Connectivity}
 \subsection*{Reading}
 Epp \S 10.1--10.3.
 
@@ -6,31 +6,386 @@ Epp \S 10.1--10.3.
 \begin{itemize}
   \item Distinguish walks, trails, paths, and circuits.
   \item Apply Euler's criteria for trails and circuits.
-  \item Represent graphs with adjacency matrices.
+  \item Determine graph connectivity and connected components.
+  \item Represent graphs with adjacency matrices and adjacency lists.
   \item Determine whether two graphs are isomorphic.
 \end{itemize}
 
 \subsection*{Key definitions and facts}
-\begin{definition}[Walk and trail]
-A walk is a sequence of vertices with adjacent consecutive vertices.
-A trail is a walk with no repeated edges. A path is a trail with no repeated vertices.
+
+\begin{definition}[Walk]
+A \textbf{walk} in a graph $G$ from vertex $v_0$ to vertex $v_n$ is a sequence:
+\[
+v_0, e_1, v_1, e_2, v_2, \ldots, e_n, v_n
+\]
+where each $e_i$ is an edge connecting $v_{i-1}$ and $v_i$. The \textbf{length} of the walk is $n$ (the number of edges).
 \end{definition}
 
-\begin{theorem}[Euler's criterion]
-A connected graph has an Euler circuit iff every vertex has even degree.
-It has an Euler trail iff exactly two vertices have odd degree.
+\begin{definition}[Types of walks]
+\begin{itemize}
+  \item A \textbf{trail} is a walk with no repeated edges.
+  \item A \textbf{path} is a walk with no repeated vertices (hence no repeated edges).
+  \item A \textbf{closed walk} is a walk where $v_0 = v_n$.
+  \item A \textbf{circuit} (or closed trail) is a closed walk with no repeated edges.
+  \item A \textbf{cycle} (or simple circuit) is a circuit with no repeated vertices except $v_0 = v_n$.
+\end{itemize}
+\end{definition}
+
+\begin{proposition}[Path existence]
+If there is a walk from $u$ to $v$ in a graph, then there is a path from $u$ to $v$.
+\end{proposition}
+
+\begin{definition}[Connectivity]
+\begin{itemize}
+  \item A graph is \textbf{connected} if there is a path between every pair of vertices.
+  \item A \textbf{connected component} of a graph is a maximal connected subgraph.
+  \item A \textbf{cut vertex} (or articulation point) is a vertex whose removal disconnects the graph.
+  \item A \textbf{bridge} is an edge whose removal disconnects the graph.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Euler trail and circuit]
+An \textbf{Euler trail} is a trail that uses every edge of the graph exactly once.
+An \textbf{Euler circuit} is a circuit that uses every edge exactly once (starts and ends at the same vertex).
+\end{definition}
+
+\begin{theorem}[Euler's theorem]
+Let $G$ be a connected graph.
+\begin{enumerate}
+  \item $G$ has an \textbf{Euler circuit} if and only if every vertex has even degree.
+  \item $G$ has an \textbf{Euler trail} (but no Euler circuit) if and only if exactly two vertices have odd degree. In this case, the trail must start and end at the odd-degree vertices.
+\end{enumerate}
 \end{theorem}
 
-\subsection*{Worked example}
+\begin{keyresult}
+To check if a connected graph has an Euler circuit or trail:
+\begin{enumerate}
+  \item Count vertices of odd degree.
+  \item 0 odd-degree vertices $\Rightarrow$ Euler circuit exists.
+  \item 2 odd-degree vertices $\Rightarrow$ Euler trail exists (but no circuit).
+  \item $>2$ odd-degree vertices $\Rightarrow$ no Euler trail.
+\end{enumerate}
+\end{keyresult}
+
+\begin{definition}[Hamiltonian path and cycle]
+A \textbf{Hamiltonian path} visits every vertex exactly once.
+A \textbf{Hamiltonian cycle} is a cycle that visits every vertex exactly once (except returning to start).
+\end{definition}
+
+\begin{remark}
+Unlike Euler paths/circuits, there is no simple characterization for when Hamiltonian paths/cycles exist. Determining existence is NP-complete.
+\end{remark}
+
+\subsection*{Graph representations}
+
+\begin{definition}[Adjacency matrix]
+The \textbf{adjacency matrix} $A$ of a graph $G$ with $n$ vertices is an $n \times n$ matrix where:
+\[
+A_{ij} = \text{number of edges between vertex } i \text{ and vertex } j
+\]
+For a simple graph, $A_{ij} \in \{0, 1\}$. The matrix is symmetric for undirected graphs.
+\end{definition}
+
+\begin{proposition}[Properties of adjacency matrices]
+For the adjacency matrix $A$ of a simple graph:
+\begin{itemize}
+  \item The sum of row $i$ (or column $i$) equals $\deg(v_i)$.
+  \item The sum of all entries equals $2|E|$.
+  \item The diagonal is all zeros (no loops).
+  \item $(A^k)_{ij}$ counts the number of walks of length $k$ from $v_i$ to $v_j$.
+\end{itemize}
+\end{proposition}
+
+\begin{definition}[Adjacency list]
+An \textbf{adjacency list} representation stores, for each vertex, a list of its neighbors. This is more space-efficient for sparse graphs.
+\end{definition}
+
+\subsection*{Graph isomorphism}
+
+\begin{definition}[Graph isomorphism]
+Two graphs $G_1 = (V_1, E_1)$ and $G_2 = (V_2, E_2)$ are \textbf{isomorphic}, written $G_1 \cong G_2$, if there exists a bijection $f: V_1 \to V_2$ such that:
+\[
+\{u, v\} \in E_1 \iff \{f(u), f(v)\} \in E_2
+\]
+The function $f$ is called an \textbf{isomorphism}.
+\end{definition}
+
+\begin{theorem}[Isomorphism invariants]
+If $G_1 \cong G_2$, then:
+\begin{enumerate}
+  \item $|V_1| = |V_2|$
+  \item $|E_1| = |E_2|$
+  \item They have the same degree sequence
+  \item They have the same number of cycles of each length
+  \item They have the same number of connected components
+  \item Corresponding subgraphs are isomorphic
+\end{enumerate}
+These are \emph{necessary} but not \emph{sufficient} conditions for isomorphism.
+\end{theorem}
+
+\begin{strategy}
+To show two graphs are NOT isomorphic, find an invariant they don't share. To show they ARE isomorphic, construct an explicit bijection and verify edge preservation.
+\end{strategy}
+
+\begin{definition}[Automorphism]
+An \textbf{automorphism} of a graph $G$ is an isomorphism from $G$ to itself. The set of all automorphisms forms a group under composition.
+\end{definition}
+
+\subsection*{Distance and diameter}
+
+\begin{definition}[Distance]
+The \textbf{distance} $d(u, v)$ between vertices $u$ and $v$ is the length of the shortest path between them. If no path exists, $d(u, v) = \infty$.
+\end{definition}
+
+\begin{definition}[Eccentricity, radius, diameter]
+\begin{itemize}
+  \item The \textbf{eccentricity} of a vertex $v$ is the maximum distance from $v$ to any other vertex: $\max_{u} d(v, u)$.
+  \item The \textbf{diameter} of a connected graph is the maximum eccentricity.
+  \item The \textbf{radius} is the minimum eccentricity.
+  \item A \textbf{center} is a vertex with minimum eccentricity.
+\end{itemize}
+\end{definition}
+
+\subsection*{Worked examples}
+
 \begin{example}
-Does a connected graph with degrees $(2,2,2,4,4)$ have an Euler circuit?
-\emph{Sketch.} All degrees are even, so an Euler circuit exists.
+Does a connected graph with degrees $(2, 2, 2, 4, 4)$ have an Euler circuit?
+
+\emph{Solution.} All degrees are even (2, 2, 2, 4, 4), so yes, an Euler circuit exists by Euler's theorem.
 \end{example}
+
+\begin{example}
+Does the graph $K_4$ (complete graph on 4 vertices) have an Euler circuit?
+
+\emph{Solution.} In $K_4$, each vertex has degree 3 (odd). All 4 vertices have odd degree. Since we need 0 or 2 vertices of odd degree for an Euler trail/circuit, $K_4$ has neither.
+\end{example}
+
+\begin{example}
+Does the graph $K_5$ have an Euler circuit?
+
+\emph{Solution.} In $K_5$, each vertex has degree 4 (even). All vertices have even degree, so $K_5$ has an Euler circuit.
+\end{example}
+
+\begin{example}
+Find the adjacency matrix for the cycle $C_4$ on vertices $\{1, 2, 3, 4\}$.
+
+\emph{Solution.} The edges are $\{1,2\}, \{2,3\}, \{3,4\}, \{4,1\}$.
+\[
+A = \begin{pmatrix}
+0 & 1 & 0 & 1 \\
+1 & 0 & 1 & 0 \\
+0 & 1 & 0 & 1 \\
+1 & 0 & 1 & 0
+\end{pmatrix}
+\]
+\end{example}
+
+\begin{example}
+Show that the sum of entries in an adjacency matrix of a simple graph equals $2|E|$.
+
+\emph{Solution.} Each edge $\{u, v\}$ contributes 1 to entry $(u, v)$ and 1 to entry $(v, u)$, for a total of 2 per edge. Thus the sum equals $2|E|$.
+\end{example}
+
+\begin{example}
+Determine whether these two graphs are isomorphic:
+
+$G_1$: vertices $\{a, b, c, d\}$, edges $\{a,b\}, \{b,c\}, \{c,d\}, \{d,a\}$
+
+$G_2$: vertices $\{1, 2, 3, 4\}$, edges $\{1,2\}, \{2,3\}, \{3,4\}, \{4,1\}$
+
+\emph{Solution.} Both are cycles of length 4.
+\begin{itemize}
+  \item Same number of vertices: 4 \checkmark
+  \item Same number of edges: 4 \checkmark
+  \item Same degree sequence: $(2, 2, 2, 2)$ \checkmark
+\end{itemize}
+
+The bijection $f: a \mapsto 1, b \mapsto 2, c \mapsto 3, d \mapsto 4$ preserves edges:
+$\{a,b\} \mapsto \{1,2\}$, $\{b,c\} \mapsto \{2,3\}$, $\{c,d\} \mapsto \{3,4\}$, $\{d,a\} \mapsto \{4,1\}$. All edges match, so $G_1 \cong G_2$.
+\end{example}
+
+\begin{example}
+Prove that $C_5$ and $K_5$ are not isomorphic.
+
+\emph{Solution.} $C_5$ has 5 edges (a cycle). $K_5$ has $\binom{5}{2} = 10$ edges. Since they have different numbers of edges, they are not isomorphic.
+\end{example}
+
+\begin{example}
+Are two graphs with the same degree sequence necessarily isomorphic?
+
+\emph{Solution.} No! Consider:
+\begin{itemize}
+  \item $G_1$: a 6-cycle $C_6$. Degree sequence: $(2, 2, 2, 2, 2, 2)$.
+  \item $G_2$: two disjoint triangles $K_3 \sqcup K_3$. Degree sequence: $(2, 2, 2, 2, 2, 2)$.
+\end{itemize}
+Same degree sequence, but $G_1$ is connected and $G_2$ is not. Not isomorphic.
+\end{example}
+
+\begin{example}
+Find the diameter of the complete graph $K_n$.
+
+\emph{Solution.} Every pair of vertices is connected by an edge, so $d(u, v) = 1$ for all $u \neq v$. The diameter is 1.
+\end{example}
+
+\begin{example}
+Find an Euler trail in a graph with vertices $\{A, B, C, D\}$ and edges
+\[
+\{A,B\}, \{A,C\}, \{B,C\}, \{B,D\}, \{C,D\}.
+\]
+
+\emph{Solution.} First, check degrees: $\deg(A) = 2$, $\deg(B) = 3$, $\deg(C) = 3$, $\deg(D) = 2$.
+
+Odd-degree vertices: $B$ and $C$ (exactly 2). So an Euler trail exists, starting and ending at $B$ and $C$.
+
+One Euler trail starting at $B$: $B \to A \to C \to B \to D \to C$.
+
+Verify: Uses edges $\{B,A\}, \{A,C\}, \{C,B\}, \{B,D\}, \{D,C\}$ --- all 5 edges, each exactly once. \checkmark
+\end{example}
+
+\begin{example}
+Compute $A^2$ for the path graph $P_3$ on vertices $\{1, 2, 3\}$ with edges $\{1,2\}$ and $\{2,3\}$. Interpret the result.
+
+\emph{Solution.}
+\[
+A = \begin{pmatrix} 0 & 1 & 0 \\ 1 & 0 & 1 \\ 0 & 1 & 0 \end{pmatrix}
+\]
+\[
+A^2 = \begin{pmatrix} 0 & 1 & 0 \\ 1 & 0 & 1 \\ 0 & 1 & 0 \end{pmatrix}
+\begin{pmatrix} 0 & 1 & 0 \\ 1 & 0 & 1 \\ 0 & 1 & 0 \end{pmatrix}
+= \begin{pmatrix} 1 & 0 & 1 \\ 0 & 2 & 0 \\ 1 & 0 & 1 \end{pmatrix}
+\]
+
+Interpretation: $(A^2)_{ij}$ is the number of walks of length 2 from $i$ to $j$.
+\begin{itemize}
+  \item $(A^2)_{11} = 1$: one walk $1 \to 2 \to 1$.
+  \item $(A^2)_{13} = 1$: one walk $1 \to 2 \to 3$.
+  \item $(A^2)_{22} = 2$: two walks $2 \to 1 \to 2$ and $2 \to 3 \to 2$.
+\end{itemize}
+\end{example}
+
+\begin{commonmistake}
+\textbf{Confusing Euler and Hamiltonian.}
+\begin{itemize}
+  \item Euler: visits every \emph{edge} exactly once.
+  \item Hamiltonian: visits every \emph{vertex} exactly once.
+\end{itemize}
+Euler has a simple characterization (degree conditions). Hamiltonian does not.
+\end{commonmistake}
+
+\begin{commonmistake}
+\textbf{Thinking matching invariants proves isomorphism.} Equal vertex count, edge count, and degree sequence are \emph{necessary} but not \emph{sufficient} for isomorphism. You must construct a bijection or find a distinguishing property.
+\end{commonmistake}
+
+\begin{goingdeeper}[Going Deeper: Graphs Generate Categories]
+The categorical thread continues: graphs give rise to categories, and this perspective illuminates why adjacency matrices count paths.
+
+\subsubsection*{The Free Category on a Graph}
+
+Given a directed graph $G$, we can build a category $\mathbf{Path}(G)$:
+\begin{itemize}
+  \item \textbf{Objects:} Vertices of $G$
+  \item \textbf{Morphisms from $u$ to $v$:} Directed paths from $u$ to $v$
+  \item \textbf{Composition:} Concatenation of paths
+  \item \textbf{Identity at $v$:} The empty path (length 0) at $v$
+\end{itemize}
+
+This is called the \emph{free category} on $G$---it's the category with ``just enough structure'' to capture the graph.
+
+\textbf{Example.} For the graph $1 \to 2 \to 3$:
+\begin{itemize}
+  \item Morphisms $1 \to 3$: just the path $1 \to 2 \to 3$ (one morphism)
+  \item Morphisms $2 \to 2$: just the empty path $\id_2$ (one morphism)
+  \item Morphisms $3 \to 1$: none (no path backwards)
+\end{itemize}
+
+\textbf{Example.} For a cycle $1 \to 2 \to 3 \to 1$:
+\begin{itemize}
+  \item Morphisms $1 \to 1$: empty path, $1 \to 2 \to 3 \to 1$, twice around, thrice around, ...
+  \item This is infinite! The cycle generates infinitely many paths.
+\end{itemize}
+
+\subsubsection*{Adjacency Matrices Count Morphisms}
+
+Here's the key insight: $(A^k)_{ij}$ counts the number of \textbf{morphisms of length $k$} from $i$ to $j$ in $\mathbf{Path}(G)$.
+
+Why? Let's see for $k = 2$:
+\[
+(A^2)_{ij} = \sum_m A_{im} \cdot A_{mj}
+\]
+Each term $A_{im} \cdot A_{mj}$ counts paths that go $i \to m \to j$ (one for each intermediate vertex $m$ with edges from $i$ and to $j$).
+
+This is exactly the \textbf{composition} of morphisms in $\mathbf{Path}(G)$!
+
+\subsubsection*{Composition as Matrix Multiplication}
+
+The correspondence is:
+\begin{center}
+\begin{tabular}{cc}
+\textbf{Category} & \textbf{Matrix} \\
+\hline
+Composition of paths & Matrix multiplication \\
+Length-$k$ paths & $A^k$ \\
+Identity (length-0 path) & $I$ (identity matrix)
+\end{tabular}
+\end{center}
+
+\subsubsection*{Quotient Categories: Imposing Relations}
+
+What if we want to declare two paths equal? For example, in a commutative square:
+\[
+\begin{tikzcd}
+1 \arrow[r, "a"] \arrow[d, "c"'] & 2 \arrow[d, "b"] \\
+3 \arrow[r, "d"'] & 4
+\end{tikzcd}
+\]
+In $\mathbf{Path}(G)$, the paths $b \circ a$ and $d \circ c$ are different morphisms. But if we impose the relation $b \circ a = d \circ c$, we get a \emph{quotient category} where these paths are identified.
+
+This is how commutative diagrams work: they specify which paths should be considered equal.
+
+\subsubsection*{Exercises: Graphs and Paths}
+
+\begin{enumerate}
+  \item For the graph $1 \to 2 \to 3$, list all morphisms in $\mathbf{Path}(G)$ from each vertex to each vertex.
+
+  \item For the graph with edges $1 \to 2$, $2 \to 3$, $3 \to 1$, how many morphisms of length 3 are there from 1 to 1? Verify using $A^3$.
+
+  \item For a graph with edges $a \to b$, $b \to c$, $a \to c$, are there two different morphisms from $a$ to $c$? In the \emph{quotient} category where we impose $c \circ b \circ a^{-1} = \id$... wait, we can't do that without inverses. Just count: how many distinct paths from $a$ to $c$?
+
+  \item Write the adjacency matrix for the 3-cycle. Compute $A^2$ and verify that $(A^2)_{11}$ equals the number of length-2 paths from 1 to 1.
+
+  \item A graph has edges $1 \to 2$, $2 \to 1$ (a 2-cycle). How many morphisms of length 4 are there from 1 to 1? Compute using $A^4$.
+
+  \item \textbf{Challenge:} If $G$ is a graph with no directed cycles, prove that $\mathbf{Path}(G)$ has finitely many morphisms between any two vertices. (Hint: What bounds the length of paths?)
+
+  \item Draw a directed graph whose path category has exactly 3 morphisms from vertex $a$ to vertex $b$.
+
+  \item In the path category, explain why composition is associative and why the empty path is the identity.
+\end{enumerate}
+\end{goingdeeper}
 
 \subsection*{Practice}
 \begin{enumerate}
   \item Give the adjacency matrix for the 4-cycle $C_4$.
-  \item Determine whether the two graphs below are isomorphic (draw your own examples).
+
+  \item Determine whether the two graphs below are isomorphic (construct your own example).
+
   \item Find an Euler trail in a graph with exactly two odd-degree vertices.
+
   \item Show that the sum of entries in an adjacency matrix equals $2|E|$.
+
+  \item Prove: If $G$ is a simple graph and $\overline{G}$ is its complement, then $G \cong \overline{G}$ implies $|V| \equiv 0$ or $1 \pmod 4$.
+
+  \item Compute $A^2$ for $K_3$ and interpret the entries.
+
+  \item Prove that every connected graph on $n$ vertices has at least $n-1$ edges.
+
+  \item Find the diameter of the $n$-cube $Q_n$.
+
+  \item Does $K_{3,3}$ (complete bipartite graph) have an Euler circuit? An Euler trail?
+
+  \item Prove that a graph is bipartite if and only if it contains no odd-length cycles.
+
+  \item How many automorphisms does the cycle $C_n$ have?
+
+  \item Prove: If $G$ is connected and has exactly 2 vertices of odd degree, any Euler trail must start and end at those vertices.
 \end{enumerate}

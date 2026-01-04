@@ -7,21 +7,143 @@ Epp \S 9.5--9.7.
   \item Compute combinations and binomial coefficients.
   \item Count with repetition using stars and bars.
   \item Use Pascal's identity and the binomial theorem.
+  \item Apply counting techniques to probability problems.
 \end{itemize}
 
 \subsection*{Key definitions and facts}
 \begin{definition}[Binomial coefficient]
 $\binom{n}{k}=\dfrac{n!}{k!(n-k)!}$ counts $k$-element subsets of an $n$-element set.
+Equivalently, it is the number of ways to choose $k$ items from $n$ items without regard to order.
 \end{definition}
+
+\begin{theorem}[Pascal's identity]
+For $1 \leq k \leq n$:
+\[
+\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}
+\]
+\emph{Combinatorial proof:} Consider element $n$. Either it's in the subset (choose $k-1$ more from $n-1$) or it's not (choose $k$ from $n-1$).
+\end{theorem}
 
 \begin{theorem}[Binomial theorem]
 $(x+y)^n=\sum_{k=0}^n \binom{n}{k}x^{n-k}y^k$.
 \end{theorem}
 
-\subsection*{Worked example}
+\begin{theorem}[Stars and bars]
+The number of ways to place $n$ identical objects into $k$ distinct bins is $\binom{n+k-1}{k-1}$.
+Equivalently, this counts non-negative integer solutions to $x_1 + x_2 + \cdots + x_k = n$.
+\end{theorem}
+
+\begin{theorem}[Useful identities]
+\begin{itemize}
+  \item $\binom{n}{k} = \binom{n}{n-k}$ (symmetry)
+  \item $\sum_{k=0}^{n} \binom{n}{k} = 2^n$ (total subsets)
+  \item $\sum_{k=0}^{n} (-1)^k \binom{n}{k} = 0$ (alternating sum)
+  \item $\binom{n}{0} + \binom{n}{2} + \cdots = \binom{n}{1} + \binom{n}{3} + \cdots = 2^{n-1}$
+\end{itemize}
+\end{theorem}
+
+\begin{definition}[Multinomial coefficient]
+The number of ways to partition $n$ objects into groups of sizes $k_1, k_2, \ldots, k_r$ (where $k_1 + \cdots + k_r = n$) is:
+\[
+\binom{n}{k_1, k_2, \ldots, k_r} = \frac{n!}{k_1! k_2! \cdots k_r!}
+\]
+\end{definition}
+
+\subsection*{Worked examples}
 \begin{example}
 How many solutions are there to $x_1+x_2+x_3=7$ with $x_i\ge 0$?
-\emph{Sketch.} Stars and bars gives $\binom{7+3-1}{3-1}=\binom{9}{2}=36$.
+
+\emph{Solution.} Using stars and bars: we have 7 stars and need 2 bars to separate into 3 groups.
+Total positions: $7 + 2 = 9$. Choose 2 positions for bars: $\binom{9}{2} = \frac{9 \cdot 8}{2} = 36$.
+\end{example}
+
+\begin{example}
+Prove $\sum_{k=0}^{n} \binom{n}{k} = 2^n$.
+
+\emph{Proof 1 (Binomial theorem):} Set $x = y = 1$ in $(x+y)^n = \sum_{k=0}^n \binom{n}{k}x^{n-k}y^k$.
+
+\emph{Proof 2 (Combinatorial):} LHS counts all subsets of an $n$-element set (choose 0, or 1, or 2, ..., or $n$ elements). RHS: each element is either in or out, giving $2^n$ choices. \qed
+\end{example}
+
+\begin{example}
+How many ways can the letters of MISSISSIPPI be arranged?
+
+\emph{Solution.} Total 11 letters: M(1), I(4), S(4), P(2).
+Using the multinomial coefficient: $\binom{11}{1,4,4,2} = \frac{11!}{1! \cdot 4! \cdot 4! \cdot 2!} = \frac{39916800}{1 \cdot 24 \cdot 24 \cdot 2} = 34650$.
+\end{example}
+
+\begin{example}
+Prove Pascal's identity: $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$.
+
+\emph{Algebraic proof:}
+\begin{align*}
+\binom{n-1}{k-1} + \binom{n-1}{k} &= \frac{(n-1)!}{(k-1)!(n-k)!} + \frac{(n-1)!}{k!(n-k-1)!} \\
+&= \frac{(n-1)! \cdot k + (n-1)! \cdot (n-k)}{k!(n-k)!} \\
+&= \frac{(n-1)! \cdot n}{k!(n-k)!} = \frac{n!}{k!(n-k)!} = \binom{n}{k}
+\end{align*}
+\end{example}
+
+\begin{example}
+Use the binomial theorem to expand $(2x - 1)^4$.
+
+\emph{Solution.} By the binomial theorem with $a = 2x$ and $b = -1$:
+\begin{align*}
+(2x - 1)^4 &= \sum_{k=0}^{4} \binom{4}{k} (2x)^{4-k} (-1)^k \\
+&= \binom{4}{0}(2x)^4 - \binom{4}{1}(2x)^3 + \binom{4}{2}(2x)^2 - \binom{4}{3}(2x) + \binom{4}{4} \\
+&= 1 \cdot 16x^4 - 4 \cdot 8x^3 + 6 \cdot 4x^2 - 4 \cdot 2x + 1 \\
+&= 16x^4 - 32x^3 + 24x^2 - 8x + 1
+\end{align*}
+\end{example}
+
+\begin{example}
+How many positive integer solutions are there to $x_1 + x_2 + x_3 = 10$?
+
+\emph{Solution.} Since we want \emph{positive} integers ($x_i \geq 1$), substitute $y_i = x_i - 1$ so $y_i \geq 0$. Then:
+\[
+(y_1 + 1) + (y_2 + 1) + (y_3 + 1) = 10 \implies y_1 + y_2 + y_3 = 7
+\]
+Now we count non-negative integer solutions using stars and bars. We have 7 stars and need 2 bars to separate into 3 groups:
+\[
+\binom{7 + 3 - 1}{3 - 1} = \binom{9}{2} = \frac{9 \cdot 8}{2} = 36
+\]
+\end{example}
+
+\begin{example}
+A committee of 5 is chosen from 6 men and 4 women. How many committees have at least 2 women?
+
+\emph{Solution.} ``At least 2 women'' means 2, 3, or 4 women. Count each case:
+\begin{itemize}
+  \item 2 women, 3 men: $\binom{4}{2} \binom{6}{3} = 6 \cdot 20 = 120$
+  \item 3 women, 2 men: $\binom{4}{3} \binom{6}{2} = 4 \cdot 15 = 60$
+  \item 4 women, 1 man: $\binom{4}{4} \binom{6}{1} = 1 \cdot 6 = 6$
+\end{itemize}
+Total: $120 + 60 + 6 = 186$.
+
+\emph{Alternative (complement):} Total committees: $\binom{10}{5} = 252$. Committees with fewer than 2 women:
+\begin{itemize}
+  \item 0 women: $\binom{4}{0}\binom{6}{5} = 6$
+  \item 1 woman: $\binom{4}{1}\binom{6}{4} = 4 \cdot 15 = 60$
+\end{itemize}
+Answer: $252 - 6 - 60 = 186$. \checkmark
+\end{example}
+
+\begin{example}
+In how many ways can 10 identical apples be distributed among 4 children?
+
+\emph{Solution.} This is distributing $n = 10$ identical objects into $k = 4$ distinct bins. By stars and bars:
+\[
+\binom{10 + 4 - 1}{4 - 1} = \binom{13}{3} = \frac{13 \cdot 12 \cdot 11}{3 \cdot 2 \cdot 1} = \frac{1716}{6} = 286
+\]
+\end{example}
+
+\begin{example}
+Prove combinatorially: $\binom{n}{0} + \binom{n}{1} + \binom{n}{2} + \cdots + \binom{n}{n} = 2^n$.
+
+\emph{Proof.} The LHS counts subsets of an $n$-element set by size: there are $\binom{n}{k}$ subsets of size $k$.
+
+The RHS counts subsets directly: each of the $n$ elements is either in or out of the subset, giving $2^n$ choices.
+
+Both count the same thing (total number of subsets), so they're equal. \qed
 \end{example}
 
 \subsection*{Practice}
@@ -30,4 +152,7 @@ How many solutions are there to $x_1+x_2+x_3=7$ with $x_i\ge 0$?
   \item How many 8-card poker hands contain exactly 3 hearts?
   \item Prove Pascal's identity: $\binom{n}{k}=\binom{n-1}{k}+\binom{n-1}{k-1}$.
   \item Use the binomial theorem to expand $(2x-1)^5$.
+  \item How many positive integer solutions are there to $x_1 + x_2 + x_3 + x_4 = 15$?
+  \item Prove: $\binom{n}{0}^2 + \binom{n}{1}^2 + \cdots + \binom{n}{n}^2 = \binom{2n}{n}$.
+  \item A committee of 5 is to be chosen from 6 men and 4 women. How many committees have at least 2 women?
 \end{enumerate}

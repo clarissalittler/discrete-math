@@ -8,31 +8,398 @@ Epp \S 8.1--8.4.
   \item Test whether a relation is reflexive, symmetric, or transitive.
   \item Form equivalence classes and connect them to partitions.
   \item Compute congruences and modular inverses.
+  \item Apply the extended Euclidean algorithm.
 \end{itemize}
 
 \subsection*{Key definitions and facts}
+
+\begin{definition}[Relation]
+A \textbf{relation} from set $A$ to set $B$ is a subset $R \subseteq A \times B$. We write $aRb$ or $(a,b) \in R$ to indicate that $a$ is related to $b$. A relation on $A$ is a relation from $A$ to $A$.
+\end{definition}
+
+\begin{definition}[Properties of relations]
+Let $R$ be a relation on set $A$.
+\begin{itemize}
+  \item $R$ is \textbf{reflexive} if $aRa$ for all $a \in A$.
+  \item $R$ is \textbf{symmetric} if $aRb$ implies $bRa$ for all $a,b \in A$.
+  \item $R$ is \textbf{antisymmetric} if $aRb$ and $bRa$ imply $a = b$ for all $a,b \in A$.
+  \item $R$ is \textbf{transitive} if $aRb$ and $bRc$ imply $aRc$ for all $a,b,c \in A$.
+  \item $R$ is \textbf{irreflexive} if $\neg(aRa)$ for all $a \in A$.
+  \item $R$ is \textbf{total} if $aRb$ or $bRa$ for all $a,b \in A$.
+\end{itemize}
+\end{definition}
+
 \begin{definition}[Equivalence relation]
-A relation $R$ on a set $A$ is an equivalence relation if it is reflexive, symmetric, and transitive.
-Equivalence classes $[a]$ partition $A$.
+A relation $R$ on a set $A$ is an \textbf{equivalence relation} if it is reflexive, symmetric, and transitive. For an equivalence relation $\sim$, the \textbf{equivalence class} of $a$ is:
+\[
+[a] = \{x \in A : x \sim a\}
+\]
 \end{definition}
 
-\begin{definition}[Congruence]
-For $n\ge 2$, $a\equiv b \pmod{n}$ iff $n$ divides $a-b$.
-This is an equivalence relation on $\Z$.
+\begin{theorem}[Equivalence classes partition]
+If $\sim$ is an equivalence relation on $A$, then:
+\begin{enumerate}
+  \item Every element belongs to exactly one equivalence class.
+  \item Two equivalence classes are either identical or disjoint.
+  \item The equivalence classes partition $A$: $A = \bigsqcup_{a \in A} [a]$.
+\end{enumerate}
+\end{theorem}
+
+\begin{definition}[Partial order]
+A relation $R$ on $A$ is a \textbf{partial order} if it is reflexive, antisymmetric, and transitive. The pair $(A, R)$ is called a \textbf{partially ordered set} (poset).
 \end{definition}
 
-\subsection*{Worked example}
+\begin{definition}[Total order]
+A partial order $\leq$ on $A$ is a \textbf{total order} if for all $a, b \in A$, either $a \leq b$ or $b \leq a$.
+\end{definition}
+
+\begin{definition}[Congruence modulo $n$]
+For integers $a, b$ and positive integer $n$, we say $a$ is \textbf{congruent} to $b$ modulo $n$, written $a \equiv b \pmod{n}$, if $n$ divides $a - b$. Equivalently:
+\[
+a \equiv b \pmod{n} \iff a \bmod n = b \bmod n \iff \exists k \in \Z: a = b + kn
+\]
+\end{definition}
+
+\begin{theorem}[Congruence is an equivalence relation]
+For any positive integer $n$, congruence modulo $n$ is an equivalence relation on $\Z$. The equivalence classes are the \textbf{residue classes}:
+\[
+[0], [1], [2], \ldots, [n-1]
+\]
+The set of residue classes is denoted $\Z_n$ or $\Z/n\Z$.
+\end{theorem}
+
+\begin{theorem}[Modular arithmetic]
+For all $a, b, c, d \in \Z$ and positive integer $n$:
+\begin{enumerate}
+  \item If $a \equiv b \pmod{n}$ and $c \equiv d \pmod{n}$, then $a + c \equiv b + d \pmod{n}$.
+  \item If $a \equiv b \pmod{n}$ and $c \equiv d \pmod{n}$, then $ac \equiv bd \pmod{n}$.
+  \item If $a \equiv b \pmod{n}$, then $a^k \equiv b^k \pmod{n}$ for all $k \geq 0$.
+\end{enumerate}
+\end{theorem}
+
+\begin{definition}[Modular inverse]
+For $a \in \Z_n$, the \textbf{modular inverse} of $a$ modulo $n$ is an integer $b$ such that $ab \equiv 1 \pmod{n}$. We write $b = a^{-1} \pmod{n}$.
+\end{definition}
+
+\begin{theorem}[Existence of modular inverse]
+The integer $a$ has a modular inverse modulo $n$ if and only if $\gcd(a, n) = 1$.
+\end{theorem}
+
+\begin{theorem}[Division algorithm]
+For any integers $a$ and $b$ with $b > 0$, there exist unique integers $q$ (quotient) and $r$ (remainder) such that:
+\[
+a = bq + r \quad \text{and} \quad 0 \leq r < b
+\]
+\end{theorem}
+
+\begin{theorem}[Euclidean algorithm]
+For positive integers $a$ and $b$, $\gcd(a, b)$ can be computed by repeatedly applying: $\gcd(a, b) = \gcd(b, a \bmod b)$, until one argument becomes 0.
+\end{theorem}
+
+\begin{theorem}[Extended Euclidean algorithm (Bézout's identity)]
+For any positive integers $a$ and $b$, there exist integers $x$ and $y$ such that:
+\[
+ax + by = \gcd(a, b)
+\]
+\end{theorem}
+
+\begin{strategy}
+To find the modular inverse of $a$ modulo $n$ when $\gcd(a,n) = 1$:
+\begin{enumerate}
+  \item Use the extended Euclidean algorithm to find $x, y$ with $ax + ny = 1$.
+  \item Then $a^{-1} \equiv x \pmod{n}$.
+\end{enumerate}
+\end{strategy}
+
+\subsection*{Representations of relations}
+
+\begin{definition}[Matrix representation]
+A relation $R$ on a finite set $A = \{a_1, \ldots, a_n\}$ can be represented by an $n \times n$ \textbf{relation matrix} $M$ where:
+\[
+M_{ij} = \begin{cases} 1 & \text{if } a_i R a_j \\ 0 & \text{otherwise} \end{cases}
+\]
+\end{definition}
+
+\begin{proposition}[Matrix properties]
+For a relation matrix $M$:
+\begin{itemize}
+  \item $R$ is reflexive iff all diagonal entries are 1.
+  \item $R$ is symmetric iff $M = M^T$ (matrix is symmetric).
+  \item $R$ is antisymmetric iff $M_{ij} = 1$ and $M_{ji} = 1$ imply $i = j$.
+  \item $R$ is transitive iff $M^2$ (Boolean matrix product) has no 1 where $M$ has 0.
+\end{itemize}
+\end{proposition}
+
+\begin{definition}[Digraph representation]
+A relation $R$ on $A$ can be represented as a directed graph (digraph) with vertices $A$ and a directed edge from $a$ to $b$ whenever $aRb$.
+\end{definition}
+
+\subsection*{Closures}
+
+\begin{definition}[Closure]
+The \textbf{reflexive closure} of $R$ is the smallest reflexive relation containing $R$: $R \cup \{(a,a) : a \in A\}$.
+
+The \textbf{symmetric closure} of $R$ is the smallest symmetric relation containing $R$: $R \cup R^{-1}$ where $R^{-1} = \{(b,a) : (a,b) \in R\}$.
+
+The \textbf{transitive closure} of $R$, denoted $R^+$, is the smallest transitive relation containing $R$.
+\end{definition}
+
+\begin{theorem}[Computing transitive closure]
+$R^+ = R \cup R^2 \cup R^3 \cup \cdots$ where $R^n = R \circ R^{n-1}$ (relation composition). For finite sets, $R^+ = R \cup R^2 \cup \cdots \cup R^n$ where $|A| = n$.
+\end{theorem}
+
+\subsection*{Worked examples}
+
 \begin{example}
-Show that $\equiv$ mod $n$ is an equivalence relation on $\Z$.
-\emph{Sketch.} Reflexive: $n\mid (a-a)=0$.
-Symmetric: if $n\mid (a-b)$ then $n\mid (b-a)$.
-Transitive: if $n\mid (a-b)$ and $n\mid (b-c)$ then $n\mid (a-c)$.
+Show that congruence modulo $n$ is an equivalence relation on $\Z$.
+
+\emph{Proof.}
+\begin{itemize}
+  \item \textbf{Reflexive:} For any $a \in \Z$, we have $a - a = 0 = n \cdot 0$, so $n \mid (a - a)$. Thus $a \equiv a \pmod{n}$.
+
+  \item \textbf{Symmetric:} Suppose $a \equiv b \pmod{n}$. Then $n \mid (a - b)$, so $a - b = nk$ for some integer $k$. Then $b - a = -nk = n(-k)$, so $n \mid (b - a)$. Thus $b \equiv a \pmod{n}$.
+
+  \item \textbf{Transitive:} Suppose $a \equiv b \pmod{n}$ and $b \equiv c \pmod{n}$. Then $a - b = nj$ and $b - c = nk$ for integers $j, k$. Adding: $a - c = (a - b) + (b - c) = nj + nk = n(j + k)$. So $n \mid (a - c)$, and $a \equiv c \pmod{n}$. \qed
+\end{itemize}
 \end{example}
+
+\begin{example}
+Find the inverse of $3$ modulo $7$.
+
+\emph{Solution.} We need $x$ such that $3x \equiv 1 \pmod{7}$.
+
+\textbf{Method 1 (Trial):} Check $3 \cdot 1 = 3$, $3 \cdot 2 = 6$, $3 \cdot 3 = 9 \equiv 2$, $3 \cdot 4 = 12 \equiv 5$, $3 \cdot 5 = 15 \equiv 1 \pmod{7}$. So $3^{-1} \equiv 5 \pmod{7}$.
+
+\textbf{Method 2 (Extended Euclidean):}
+\begin{align*}
+7 &= 2 \cdot 3 + 1 \\
+1 &= 7 - 2 \cdot 3 = 1 \cdot 7 + (-2) \cdot 3
+\end{align*}
+So $(-2) \cdot 3 + 1 \cdot 7 = 1$, meaning $3^{-1} \equiv -2 \equiv 5 \pmod{7}$.
+\end{example}
+
+\begin{example}
+Let $A = \{1, 2, 3, 4\}$ and $R = \{(1,1), (1,2), (2,1), (2,2), (3,3), (3,4), (4,3), (4,4)\}$. Show this is an equivalence relation and find the equivalence classes.
+
+\emph{Solution.}
+\begin{itemize}
+  \item \textbf{Reflexive:} $(1,1), (2,2), (3,3), (4,4) \in R$. \checkmark
+  \item \textbf{Symmetric:} For each $(a,b) \in R$ with $a \neq b$: $(1,2) \in R$ and $(2,1) \in R$; $(3,4) \in R$ and $(4,3) \in R$. \checkmark
+  \item \textbf{Transitive:} Check all pairs: $(1,2), (2,1) \Rightarrow (1,1) \in R$; $(3,4), (4,3) \Rightarrow (3,3) \in R$. All other transitive requirements are satisfied. \checkmark
+\end{itemize}
+
+Equivalence classes: $[1] = [2] = \{1, 2\}$ and $[3] = [4] = \{3, 4\}$.
+
+The partition is $\{\{1,2\}, \{3,4\}\}$.
+\end{example}
+
+\begin{example}
+Use the Euclidean algorithm to find $\gcd(252, 105)$.
+
+\emph{Solution.}
+\begin{align*}
+252 &= 2 \cdot 105 + 42 \\
+105 &= 2 \cdot 42 + 21 \\
+42 &= 2 \cdot 21 + 0
+\end{align*}
+So $\gcd(252, 105) = 21$.
+\end{example}
+
+\begin{example}
+Use the extended Euclidean algorithm to express $\gcd(252, 105)$ as a linear combination.
+
+\emph{Solution.} Working backwards:
+\begin{align*}
+21 &= 105 - 2 \cdot 42 \\
+   &= 105 - 2 \cdot (252 - 2 \cdot 105) \\
+   &= 105 - 2 \cdot 252 + 4 \cdot 105 \\
+   &= 5 \cdot 105 + (-2) \cdot 252
+\end{align*}
+So $21 = 5 \cdot 105 + (-2) \cdot 252$.
+\end{example}
+
+\begin{example}[Toy RSA example]
+This example illustrates RSA arithmetic (not secure for real use). Let $p = 5$ and $q = 11$, so $n = pq = 55$ and $\phi(n) = (p-1)(q-1) = 4 \cdot 10 = 40$.
+
+Choose public exponent $e = 3$ (which is coprime to 40). Find the private exponent $d$ such that $ed \equiv 1 \pmod{40}$.
+
+\emph{Solution.} We need $3d \equiv 1 \pmod{40}$. Using trial or the extended Euclidean algorithm:
+\[
+40 = 13 \cdot 3 + 1 \implies 1 = 40 - 13 \cdot 3
+\]
+So $d \equiv -13 \equiv 27 \pmod{40}$. Check: $3 \cdot 27 = 81 = 2 \cdot 40 + 1 \equiv 1 \pmod{40}$. \checkmark
+
+\textbf{Encryption:} To encrypt message $m = 12$, compute $c \equiv m^e \pmod{n}$:
+\[
+c \equiv 12^3 = 1728 \equiv 1728 - 31 \cdot 55 = 1728 - 1705 = 23 \pmod{55}
+\]
+
+\textbf{Decryption:} To decrypt, compute $c^d \pmod{n}$. We have $23^{27} \pmod{55}$.
+
+Using repeated squaring modulo 55:
+$23^2 = 529 \equiv 529 - 9 \cdot 55 = 34$, $23^4 \equiv 34^2 = 1156 \equiv 1156 - 21 \cdot 55 = 1$, so $23^{27} = 23^{24} \cdot 23^3 = (23^4)^6 \cdot 23^3 \equiv 1^6 \cdot 23^3 = 12167 \equiv 12 \pmod{55}$.
+
+We recover the original message $m = 12$!
+\end{example}
+
+\begin{example}
+Prove that if $R$ is symmetric and transitive, and every element is related to some element, then $R$ is reflexive.
+
+\emph{Proof.} Let $a \in A$. By assumption, there exists $b$ such that $aRb$. By symmetry, $bRa$. By transitivity (using $aRb$ and $bRa$), we get $aRa$. Since $a$ was arbitrary, $R$ is reflexive. \qed
+\end{example}
+
+\begin{example}
+Write the relation matrix for ``divides'' on $\{1, 2, 3, 4\}$.
+
+\emph{Solution.} $a \mid b$ means $a$ divides $b$.
+\[
+M = \begin{pmatrix}
+1 & 1 & 1 & 1 \\
+0 & 1 & 0 & 1 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1
+\end{pmatrix}
+\]
+Row $i$, column $j$ is 1 iff $i \mid j$. This is reflexive (diagonal is 1), antisymmetric (if $i \mid j$ and $j \mid i$ with $i,j \geq 1$, then $i = j$), and transitive. So divisibility is a partial order.
+\end{example}
+
+\begin{goingdeeper}[Going Deeper: Preorders---The Simplest Categories]
+This week we discover that the arrow-and-diagram language from Weeks 1--2 applies beautifully to familiar structures: preorders. This gives us concrete, easy-to-visualize categories to practice with.
+
+\subsubsection*{Preorders You Already Know}
+
+A \emph{preorder} is a set with a reflexive and transitive relation. You've seen many:
+\begin{itemize}
+  \item $(\N, \leq)$: natural numbers with ``less than or equal to''
+  \item $(\Pow(X), \subseteq)$: subsets of $X$ ordered by inclusion
+  \item $(Div_n, \mid)$: divisors of $n$ ordered by divisibility
+  \item $(\Z, \leq)$: integers with the usual ordering
+\end{itemize}
+
+\subsubsection*{Preorders as Categories}
+
+Here's the key insight: \textbf{a preorder IS a category}. Given $(P, \leq)$:
+\begin{itemize}
+  \item \textbf{Objects:} Elements of $P$
+  \item \textbf{Arrows:} There is exactly one arrow $a \to b$ if $a \leq b$, and no arrow otherwise
+  \item \textbf{Identity:} $a \leq a$ (reflexivity) gives the identity arrow $a \to a$
+  \item \textbf{Composition:} $a \leq b$ and $b \leq c$ imply $a \leq c$ (transitivity)
+\end{itemize}
+
+This is called a \emph{thin category}: between any two objects, there's \emph{at most one} arrow. The existence of an arrow $a \to b$ simply records that $a \leq b$.
+
+\textbf{Example: Divisibility.} Consider $(\{1, 2, 3, 6\}, \mid)$:
+\[
+\begin{tikzcd}
+ & 6 & \\
+2 \arrow[ur] & & 3 \arrow[ul] \\
+ & 1 \arrow[ul] \arrow[ur] &
+\end{tikzcd}
+\]
+We have arrows $1 \to 2$ (since $1 \mid 2$), $2 \to 6$, etc. The composite $1 \to 2 \to 6$ equals the direct arrow $1 \to 6$ (both just say $1 \mid 6$).
+
+\subsubsection*{What Composition Means Here}
+
+In a preorder category, composition is \emph{invisible}---there's only one arrow between any two comparable elements anyway. But it corresponds exactly to \textbf{transitivity}:
+\[
+\text{Arrow } a \to b \text{ and arrow } b \to c \text{ compose to give arrow } a \to c
+\]
+This is just: $a \leq b$ and $b \leq c$ imply $a \leq c$.
+
+\subsubsection*{Monotone Functions = Structure-Preserving Maps}
+
+In Weeks 1--2, we emphasized that the arrows between objects matter as much as the objects themselves. What are the ``good'' maps between preorders?
+
+A function $f: P \to Q$ between preorders is \textbf{monotone} (or order-preserving) if:
+\[
+a \leq b \implies f(a) \leq f(b)
+\]
+In categorical language: \emph{if there's an arrow $a \to b$, then there's an arrow $f(a) \to f(b)$}. The function $f$ ``preserves arrows.''
+
+Such a structure-preserving map between categories is called a \textbf{functor}.
+
+\textbf{Examples of monotone functions:}
+\begin{itemize}
+  \item $\lfloor \cdot \rfloor: (\R, \leq) \to (\Z, \leq)$ (floor function)
+  \item $|S|: (\Pow(X), \subseteq) \to (\N, \leq)$ (cardinality, when $X$ is finite)
+  \item $n \mapsto 2n: (\N, \leq) \to (\N, \leq)$
+\end{itemize}
+
+\subsubsection*{Products and Coproducts in Preorders}
+
+The universal properties from Week 2 specialize nicely to preorders:
+\begin{itemize}
+  \item \textbf{Product} of $a$ and $b$ = greatest lower bound (meet): the largest $c$ with $c \leq a$ and $c \leq b$
+  \item \textbf{Coproduct} of $a$ and $b$ = least upper bound (join): the smallest $c$ with $a \leq c$ and $b \leq c$
+\end{itemize}
+
+\textbf{Example.} In $(\{1, 2, 3, 6\}, \mid)$:
+\begin{itemize}
+  \item Product of 2 and 3 is $\gcd(2, 3) = 1$
+  \item Coproduct of 2 and 3 is $\text{lcm}(2, 3) = 6$
+\end{itemize}
+
+\subsubsection*{Exercises: Preorders as Categories}
+
+\begin{enumerate}
+  \item Draw the divisibility preorder on $\{1, 2, 4, 8\}$ as a diagram with arrows. Is this a total order (every two elements comparable)?
+
+  \item List all arrows in the preorder $(\Pow(\{1, 2\}), \subseteq)$. How many are there? (Don't forget identity arrows!)
+
+  \item Verify that transitivity is composition: In $\{1, 2, 4, 8\}$ with divisibility, we have $1 \mid 2$ and $2 \mid 4$. Draw this as composing arrows $1 \to 2 \to 4$, giving $1 \to 4$.
+
+  \item Is the floor function $\lfloor \cdot \rfloor: \R \to \Z$ monotone? Prove or disprove.
+
+  \item Is the function $f(n) = n^2$ monotone from $(\Z, \leq)$ to $(\Z, \leq)$? What about from $(\N, \leq)$ to $(\N, \leq)$?
+
+  \item In $(\{1, 2, 3, 6\}, \mid)$, what is the product (greatest lower bound) of 2 and 3? What is their coproduct (least upper bound)?
+
+  \item \textbf{Universal property check:} In divisibility, verify that $\gcd(6, 10)$ satisfies: for any $d$ with $d \mid 6$ and $d \mid 10$, we have $d \mid \gcd(6, 10)$.
+
+  \item Draw the diagram expressing the universal property of $\gcd(a, b)$ using arrows in a divisibility preorder.
+
+  \item How many monotone functions are there from $(\{0, 1\}, \leq)$ to $(\{a, b, c\}, \leq)$ where $a \leq b \leq c$? (Hint: Where can 0 go? Then where can 1 go?)
+
+  \item Give an example of a function $\{1, 2, 3\} \to \{1, 2, 3\}$ that is NOT monotone for the usual $\leq$.
+
+  \item \textbf{Functors compose:} Prove that if $f: P \to Q$ and $g: Q \to R$ are both monotone, then $g \circ f: P \to R$ is monotone.
+
+  \item \textbf{Challenge:} In $(\Pow(\{1, 2, 3\}), \subseteq)$, what is the product (greatest lower bound) of $\{1, 2\}$ and $\{2, 3\}$? The coproduct (least upper bound)? Verify using the universal property.
+\end{enumerate}
+\end{goingdeeper}
+
+\begin{commonmistake}
+\textbf{Confusing symmetric and antisymmetric.} These are \emph{not} opposites!
+\begin{itemize}
+  \item Symmetric: $aRb \Rightarrow bRa$
+  \item Antisymmetric: $aRb \land bRa \Rightarrow a = b$
+\end{itemize}
+A relation can be both (e.g., $=$), neither, or just one. The identity relation $\{(a,a) : a \in A\}$ is both symmetric and antisymmetric.
+\end{commonmistake}
 
 \subsection*{Practice}
 \begin{enumerate}
-  \item For $n=5$, list the equivalence classes of $\Z$ modulo $n$.
-  \item Find the inverse of $3$ modulo $7$.
-  \item Decide whether the relation $xRy$ iff $x-y$ is even is an equivalence relation on $\Z$.
+  \item For $n = 5$, list the equivalence classes of $\Z$ modulo $n$.
+
+  \item Find the inverse of $3$ modulo $7$ using the extended Euclidean algorithm.
+
+  \item Decide whether the relation $xRy$ iff $x - y$ is even is an equivalence relation on $\Z$.
+
   \item Prove that every equivalence relation on $A$ defines a partition of $A$.
+
+  \item Let $R = \{(a,b) \in \Z \times \Z : a \leq b\}$. Which properties does $R$ have: reflexive, symmetric, antisymmetric, transitive?
+
+  \item Find $\gcd(1071, 462)$ and express it as a linear combination of $1071$ and $462$.
+
+  \item Solve $17x \equiv 1 \pmod{43}$.
+
+  \item Let $R$ be a relation on $\{1,2,3\}$ with matrix:
+  \[
+  M = \begin{pmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \\ 0 & 0 & 1 \end{pmatrix}
+  \]
+  Find the transitive closure $R^+$ and give its matrix.
+
+  \item Prove: If $a \equiv b \pmod{n}$ and $c \mid n$, then $a \equiv b \pmod{c}$.
+
+  \item Show that the intersection of two equivalence relations on $A$ is an equivalence relation.
 \end{enumerate}

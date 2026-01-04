@@ -1,0 +1,10 @@
+\contentsline {section}{\numberline {1}Week 1: Set Theory}{2}{section.1}%
+\contentsline {section}{\numberline {2}Week 2: Functions and Cardinality}{7}{section.2}%
+\contentsline {section}{\numberline {3}Week 3: Relations and Modular Arithmetic}{12}{section.3}%
+\contentsline {section}{\numberline {4}Week 4: Counting and Probability I}{19}{section.4}%
+\contentsline {section}{\numberline {5}Week 5: Counting and Probability II}{26}{section.5}%
+\contentsline {section}{\numberline {6}Week 6: Expected Value and Introduction to Graphs}{29}{section.6}%
+\contentsline {section}{\numberline {7}Week 7: Graph Theory I --- Paths and Connectivity}{34}{section.7}%
+\contentsline {section}{\numberline {8}Week 8: Trees and Graph Algorithms}{41}{section.8}%
+\contentsline {section}{\numberline {9}Week 9: Regular Expressions and Finite Automata}{48}{section.9}%
+\contentsline {section}{\numberline {10}Week 10: Analysis of Algorithm Efficiency}{57}{section.10}%

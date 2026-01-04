@@ -1,39 +1,303 @@
-\section{Week 6: Expected Value and Intro Graphs}
+\section{Week 6: Expected Value and Introduction to Graphs}
 \subsection*{Reading}
-Epp \S 9.8; 1.4; 4.9.
+Epp \S 9.8; 10.1; 10.2.
 
 \subsection*{Learning objectives}
 \begin{itemize}
-  \item Apply the axioms of probability to compute expectations.
-  \item Use linearity of expectation to simplify calculations.
-  \item Describe graphs, vertices, edges, and degree.
-  \item Use the handshake theorem to relate degrees and edges.
+  \item Define and compute expected value for discrete random variables.
+  \item Apply linearity of expectation to simplify calculations.
+  \item Use indicator random variables for counting.
+  \item Define graphs, vertices, edges, and basic terminology.
+  \item Apply the handshake theorem to relate degrees and edges.
+  \item Distinguish simple graphs, multigraphs, and digraphs.
 \end{itemize}
 
-\subsection*{Key definitions and facts}
+\subsection*{Part I: Expected Value}
+
+\begin{definition}[Probability axioms (Kolmogorov)]
+A \textbf{probability measure} on a sample space $S$ is a function $P$ assigning to each event $A \subseteq S$ a number $P(A)$ satisfying:
+\begin{enumerate}
+  \item \textbf{Non-negativity:} $P(A) \geq 0$ for all events $A$.
+  \item \textbf{Normalization:} $P(S) = 1$.
+  \item \textbf{Additivity:} If $A_1, A_2, \ldots$ are pairwise disjoint events, then
+  \[
+  P\left(\bigcup_{i=1}^{\infty} A_i\right) = \sum_{i=1}^{\infty} P(A_i)
+  \]
+\end{enumerate}
+\end{definition}
+
+\begin{proposition}[Consequences of the axioms]
+From the three axioms, we can derive:
+\begin{itemize}
+  \item $P(\emptyset) = 0$
+  \item $P(A^c) = 1 - P(A)$
+  \item If $A \subseteq B$, then $P(A) \leq P(B)$
+  \item $P(A \cup B) = P(A) + P(B) - P(A \cap B)$
+  \item $0 \leq P(A) \leq 1$ for all events $A$
+\end{itemize}
+\end{proposition}
+
+\begin{definition}[Random variable]
+A \textbf{random variable} $X$ on a sample space $S$ is a function $X: S \to \R$ that assigns a real number to each outcome. For discrete random variables, the possible values form a finite or countably infinite set.
+\end{definition}
+
 \begin{definition}[Expected value]
-For a discrete random variable $X$ with values $x_i$ and probabilities $p_i$,
-$E[X]=\sum_i x_i p_i$.
+The \textbf{expected value} (or \textbf{expectation} or \textbf{mean}) of a discrete random variable $X$ with possible values $x_1, x_2, \ldots$ and probabilities $p_i = P(X = x_i)$ is:
+\[
+E[X] = \sum_i x_i \cdot P(X = x_i) = \sum_i x_i \cdot p_i
+\]
+provided the sum converges absolutely.
 \end{definition}
 
 \begin{theorem}[Linearity of expectation]
-For random variables $X,Y$, $E[X+Y]=E[X]+E[Y]$.
+For any random variables $X$ and $Y$ (even if dependent) and constants $a, b \in \R$:
+\[
+E[aX + bY] = aE[X] + bE[Y]
+\]
+More generally, for any $X_1, \ldots, X_n$:
+\[
+E\left[\sum_{i=1}^n X_i\right] = \sum_{i=1}^n E[X_i]
+\]
 \end{theorem}
+
+\begin{keyresult}
+Linearity of expectation is extremely powerful because it works \emph{regardless of whether the random variables are independent}. This makes many expected value calculations surprisingly simple.
+\end{keyresult}
+
+\begin{definition}[Indicator random variable]
+An \textbf{indicator random variable} $I_A$ for event $A$ is:
+\[
+I_A = \begin{cases} 1 & \text{if } A \text{ occurs} \\ 0 & \text{otherwise} \end{cases}
+\]
+Note that $E[I_A] = P(A)$.
+\end{definition}
+
+\begin{theorem}[Counting with indicators]
+If $X$ counts the number of events $A_1, \ldots, A_n$ that occur, then:
+\[
+X = I_{A_1} + I_{A_2} + \cdots + I_{A_n}
+\]
+and by linearity:
+\[
+E[X] = P(A_1) + P(A_2) + \cdots + P(A_n)
+\]
+\end{theorem}
+
+\begin{definition}[Common distributions]
+\begin{itemize}
+  \item \textbf{Bernoulli($p$):} $X = 1$ with probability $p$, $X = 0$ with probability $1-p$. $E[X] = p$.
+
+  \item \textbf{Binomial($n, p$):} Number of successes in $n$ independent trials, each with success probability $p$. $E[X] = np$.
+
+  \item \textbf{Geometric($p$):} Number of trials until first success. $E[X] = 1/p$.
+
+  \item \textbf{Uniform on $\{1, \ldots, n\}$:} Each value equally likely. $E[X] = (n+1)/2$.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Variance and standard deviation]
+The \textbf{variance} of $X$ is:
+\[
+\text{Var}(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2
+\]
+The \textbf{standard deviation} is $\sigma = \sqrt{\text{Var}(X)}$.
+\end{definition}
+
+\subsection*{Part II: Introduction to Graphs}
+
+\begin{definition}[Graph]
+A \textbf{graph} $G = (V, E)$ consists of:
+\begin{itemize}
+  \item $V$: a finite nonempty set of \textbf{vertices} (or nodes)
+  \item $E$: a set of \textbf{edges}, each connecting two vertices
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Types of graphs]
+\begin{itemize}
+  \item \textbf{Simple graph:} No loops (edges from a vertex to itself) and no multiple edges between the same pair of vertices.
+  \item \textbf{Multigraph:} Allows multiple edges between the same pair of vertices.
+  \item \textbf{Pseudograph:} Allows loops and multiple edges.
+  \item \textbf{Directed graph (digraph):} Edges have direction, going from one vertex to another.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Basic terminology]
+Let $G = (V, E)$ be a graph.
+\begin{itemize}
+  \item Two vertices are \textbf{adjacent} if an edge connects them.
+  \item An edge is \textbf{incident} to its endpoints.
+  \item The \textbf{degree} $\deg(v)$ of vertex $v$ is the number of edges incident to $v$ (loops count twice).
+  \item A vertex with degree 0 is \textbf{isolated}.
+  \item A vertex with degree 1 is a \textbf{leaf} (or pendant vertex).
+  \item The \textbf{neighborhood} $N(v)$ is the set of vertices adjacent to $v$.
+\end{itemize}
+\end{definition}
 
 \begin{theorem}[Handshake theorem]
-In any finite graph, the sum of all vertex degrees equals $2|E|$.
+In any graph $G = (V, E)$:
+\[
+\sum_{v \in V} \deg(v) = 2|E|
+\]
+\emph{Proof idea:} Each edge contributes exactly 2 to the sum of degrees (1 to each endpoint). \qed
 \end{theorem}
 
-\subsection*{Worked example}
+\begin{corollary}
+In any graph, the number of vertices with odd degree is even.
+\end{corollary}
+
+\begin{definition}[Special graphs]
+\begin{itemize}
+  \item \textbf{Complete graph $K_n$:} Simple graph on $n$ vertices with all possible edges. Has $\binom{n}{2} = \frac{n(n-1)}{2}$ edges.
+
+  \item \textbf{Cycle $C_n$:} Graph on $n$ vertices forming a single cycle. Has $n$ edges.
+
+  \item \textbf{Path $P_n$:} Graph on $n$ vertices forming a single path. Has $n-1$ edges.
+
+  \item \textbf{Complete bipartite graph $K_{m,n}$:} Vertices partitioned into sets of sizes $m$ and $n$; every vertex in one set is adjacent to every vertex in the other. Has $mn$ edges.
+
+  \item \textbf{$n$-cube $Q_n$:} Vertices are $n$-bit strings; edges connect strings differing in exactly one bit. Has $2^n$ vertices and $n \cdot 2^{n-1}$ edges.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Degree sequence]
+The \textbf{degree sequence} of a graph is the list of vertex degrees in non-increasing order. For example, $K_4$ has degree sequence $(3, 3, 3, 3)$.
+\end{definition}
+
+\begin{theorem}[Degree sequence realizability]
+A sequence of non-negative integers $(d_1, d_2, \ldots, d_n)$ with $d_1 \geq d_2 \geq \cdots \geq d_n$ is the degree sequence of a simple graph if and only if:
+\begin{enumerate}
+  \item The sum $\sum d_i$ is even.
+  \item The sequence satisfies the Erdős--Gallai conditions (or can be checked using the Havel--Hakimi algorithm).
+\end{enumerate}
+\end{theorem}
+
+\begin{definition}[Subgraph]
+$H = (V', E')$ is a \textbf{subgraph} of $G = (V, E)$ if $V' \subseteq V$ and $E' \subseteq E$.
+
+$H$ is an \textbf{induced subgraph} if $E'$ contains all edges of $G$ whose endpoints are both in $V'$.
+\end{definition}
+
+\begin{definition}[Graph complement]
+The \textbf{complement} $\overline{G}$ of a simple graph $G = (V, E)$ has the same vertices as $G$, and two vertices are adjacent in $\overline{G}$ iff they are not adjacent in $G$.
+\end{definition}
+
+\subsection*{Worked examples}
+
 \begin{example}
-A fair die is rolled. Compute $E[X]$.
-\emph{Sketch.} $E[X]=(1+2+3+4+5+6)/6=3.5$.
+A fair die is rolled. Let $X$ be the outcome. Compute $E[X]$.
+
+\emph{Solution.} Each outcome $1, 2, 3, 4, 5, 6$ has probability $\frac{1}{6}$.
+\[
+E[X] = 1 \cdot \frac{1}{6} + 2 \cdot \frac{1}{6} + 3 \cdot \frac{1}{6} + 4 \cdot \frac{1}{6} + 5 \cdot \frac{1}{6} + 6 \cdot \frac{1}{6} = \frac{21}{6} = 3.5
+\]
 \end{example}
+
+\begin{example}
+A coin is flipped 10 times. What is the expected number of heads?
+
+\emph{Solution.} Let $X_i = 1$ if flip $i$ is heads, 0 otherwise. Then $X = X_1 + \cdots + X_{10}$ counts heads.
+
+By linearity: $E[X] = E[X_1] + \cdots + E[X_{10}] = 10 \cdot \frac{1}{2} = 5$.
+\end{example}
+
+\begin{example}
+In a random permutation of $n$ elements, what is the expected number of fixed points (elements in their original position)?
+
+\emph{Solution.} Let $X_i = 1$ if element $i$ is in position $i$. Then $X = \sum_{i=1}^n X_i$ counts fixed points.
+
+$P(\text{element } i \text{ is in position } i) = \frac{1}{n}$ (any of the $n!$ permutations, the element has $\frac{(n-1)!}{n!} = \frac{1}{n}$ chance of being fixed).
+
+By linearity: $E[X] = n \cdot \frac{1}{n} = 1$.
+
+Remarkably, the expected number of fixed points is exactly 1, regardless of $n$!
+\end{example}
+
+\begin{example}
+What is the expected number of times we must roll a die to get a 6?
+
+\emph{Solution.} This is a geometric random variable with success probability $p = \frac{1}{6}$.
+
+$E[X] = \frac{1}{p} = 6$.
+\end{example}
+
+\begin{example}
+Verify the handshake theorem for $K_4$.
+
+\emph{Solution.} $K_4$ has 4 vertices, each with degree 3 (connected to all others).
+\begin{itemize}
+  \item Sum of degrees: $3 + 3 + 3 + 3 = 12$
+  \item Number of edges: $\binom{4}{2} = 6$
+  \item Check: $2 \times 6 = 12$ \checkmark
+\end{itemize}
+\end{example}
+
+\begin{example}
+Is there a simple graph with degree sequence $(3, 3, 2, 2, 2)$?
+
+\emph{Solution.} Sum of degrees: $3 + 3 + 2 + 2 + 2 = 12$, which is even. \checkmark
+
+Using Havel--Hakimi: Sort: $(3, 3, 2, 2, 2)$. Remove 3 and subtract 1 from next 3 degrees: $(2, 1, 1, 2)$. Sort: $(2, 2, 1, 1)$. Remove 2: $(1, 0, 1)$. Sort: $(1, 1, 0)$. Remove 1: $(0, 0)$. This is realizable (empty graph).
+
+Yes, such a graph exists.
+\end{example}
+
+\begin{example}
+How many edges does the $n$-cube $Q_n$ have?
+
+\emph{Solution.} $Q_n$ has $2^n$ vertices, each an $n$-bit string. Each vertex has degree $n$ (can flip any of $n$ bits).
+
+Sum of degrees: $n \cdot 2^n$.
+
+By handshake theorem: $|E| = \frac{n \cdot 2^n}{2} = n \cdot 2^{n-1}$.
+\end{example}
+
+\begin{example}
+Prove: The sum of degrees in a tree on $n$ vertices is $2(n-1)$.
+
+\emph{Solution.} A tree on $n$ vertices has exactly $n-1$ edges (this is a standard fact---see Week 8). By the handshake theorem:
+\[
+\sum_{v \in V} \deg(v) = 2|E| = 2(n-1)
+\]
+\end{example}
+
+\begin{example}
+Show that every simple graph on $n \geq 2$ vertices has at least two vertices of the same degree.
+
+\emph{Solution.} Degrees in a simple graph range from 0 to $n-1$. That's $n$ possible values. But if some vertex has degree 0 (isolated), no vertex can have degree $n-1$ (connected to all). So at most $n-1$ distinct degrees are possible among $n$ vertices. By pigeonhole, two must share a degree.
+\end{example}
+
+\begin{commonmistake}
+\textbf{Forgetting linearity works for dependent variables.} The formula $E[X + Y] = E[X] + E[Y]$ does NOT require $X$ and $Y$ to be independent. Many students add independence as an assumption when it's unnecessary.
+\end{commonmistake}
+
+\begin{commonmistake}
+\textbf{Confusing $E[X \cdot Y]$ with $E[X] \cdot E[Y]$.} These are equal only when $X$ and $Y$ are independent. In general, $E[XY] = E[X]E[Y] + \text{Cov}(X,Y)$.
+\end{commonmistake}
 
 \subsection*{Practice}
 \begin{enumerate}
   \item A coin is flipped 10 times. What is the expected number of heads?
+
   \item Show that the sum of degrees in a tree on $n$ vertices is $2(n-1)$.
-  \item Find $E[X]$ for a geometric random variable with success probability $p$ (give the formula).
-  \item Decide whether a graph with degree sequence $3,3,2,2,2$ is possible.
+
+  \item Find $E[X]$ for a geometric random variable with success probability $p$.
+
+  \item Decide whether a graph with degree sequence $(3, 3, 2, 2, 2)$ is possible.
+
+  \item In a random permutation of $\{1, 2, \ldots, n\}$, what is the expected number of elements greater than all previous elements?
+
+  \item How many edges does $K_{4,5}$ have? What are the degrees of the vertices?
+
+  \item Prove that the complement of $K_n$ is an empty graph (no edges).
+
+  \item A bag contains 5 red and 3 blue marbles. Two are drawn without replacement. What is the expected number of red marbles drawn?
+
+  \item Show that the number of edges in a simple graph on $n$ vertices is at most $\binom{n}{2}$.
+
+  \item Using the handshake theorem, prove: If $G$ is a graph where every vertex has degree at least $k$, then $|E| \geq \frac{k|V|}{2}$.
+
+  \item Prove that every graph has an even number of vertices with odd degree.
+
+  \item In a room of 100 people, everyone shakes hands with exactly 3 other people. Is this possible?
 \end{enumerate}

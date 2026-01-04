@@ -1,35 +1,492 @@
-\section{Week 9: Regular Expressions and Automata}
+\section{Week 9: Regular Expressions and Finite Automata}
 \subsection*{Reading}
 Epp \S 12.1--12.3.
 
 \subsection*{Learning objectives}
 \begin{itemize}
-  \item Describe languages over an alphabet and express them with regex.
-  \item Build DFAs and compute the language they recognize.
+  \item Define languages, alphabets, and strings.
+  \item Construct regular expressions to describe languages.
+  \item Build deterministic finite automata (DFAs) and trace their execution.
+  \item Convert between regular expressions and DFAs.
   \item Minimize DFAs by merging equivalent states.
-  \item Explain the equivalence between regex and DFAs.
+  \item Understand the pumping lemma for proving non-regularity.
 \end{itemize}
 
 \subsection*{Key definitions and facts}
+
+\begin{definition}[Alphabet, string, language]
+\begin{itemize}
+  \item An \textbf{alphabet} $\Sigma$ is a finite, nonempty set of symbols.
+  \item A \textbf{string} (or word) over $\Sigma$ is a finite sequence of symbols from $\Sigma$.
+  \item The \textbf{empty string} $\varepsilon$ has length 0.
+  \item The set of all strings over $\Sigma$ is denoted $\Sigma^*$.
+  \item A \textbf{language} over $\Sigma$ is a subset $L \subseteq \Sigma^*$.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[String operations]
+\begin{itemize}
+  \item \textbf{Length:} $|w|$ is the number of symbols in $w$.
+  \item \textbf{Concatenation:} $w_1 w_2$ appends $w_2$ to $w_1$. Note: $w\varepsilon = \varepsilon w = w$.
+  \item \textbf{Exponentiation:} $w^n = \underbrace{ww \cdots w}_{n \text{ times}}$; $w^0 = \varepsilon$.
+  \item \textbf{Reversal:} $w^R$ is $w$ written backwards.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Language operations]
+For languages $L, L_1, L_2 \subseteq \Sigma^*$:
+\begin{itemize}
+  \item \textbf{Union:} $L_1 \cup L_2 = \{w : w \in L_1 \text{ or } w \in L_2\}$
+  \item \textbf{Concatenation:} $L_1 L_2 = \{w_1 w_2 : w_1 \in L_1, w_2 \in L_2\}$
+  \item \textbf{Kleene star:} $L^* = \{\varepsilon\} \cup L \cup L^2 \cup L^3 \cup \cdots = \bigcup_{n \geq 0} L^n$
+  \item \textbf{Kleene plus:} $L^+ = L \cup L^2 \cup L^3 \cup \cdots = LL^*$
+\end{itemize}
+\end{definition}
+
+\subsection*{Regular expressions}
+
 \begin{definition}[Regular expression]
-A regular expression over alphabet $\Sigma$ is built from $\emptyset$, $\epsilon$, symbols in $\Sigma$,
-union ($\mid$), concatenation, and Kleene star ($^*$).
+A \textbf{regular expression} (regex) over alphabet $\Sigma$ is defined recursively:
+\begin{enumerate}
+  \item $\emptyset$ is a regex denoting the empty language $\{\}$.
+  \item $\varepsilon$ is a regex denoting the language $\{\varepsilon\}$.
+  \item For each $a \in \Sigma$, $a$ is a regex denoting $\{a\}$.
+  \item If $r_1$ and $r_2$ are regexes, then:
+  \begin{itemize}
+    \item $(r_1 \mid r_2)$ denotes $L(r_1) \cup L(r_2)$ (union/alternation)
+    \item $(r_1 r_2)$ denotes $L(r_1) L(r_2)$ (concatenation)
+    \item $(r_1)^*$ denotes $L(r_1)^*$ (Kleene star)
+  \end{itemize}
+\end{enumerate}
+\end{definition}
+
+\begin{definition}[Precedence]
+Operator precedence (highest to lowest): Kleene star $*$, concatenation, union $\mid$.
+
+So $ab^*\mid c$ means $(a(b^*))\mid c$, not $a(b^* \mid c)$ or $(ab)^* \mid c$.
+\end{definition}
+
+\begin{example}[Common regex patterns]
+Over $\Sigma = \{0, 1\}$:
+\begin{itemize}
+  \item All strings: $(0 \mid 1)^*$
+  \item Strings starting with 1: $1(0 \mid 1)^*$
+  \item Strings ending with 01: $(0 \mid 1)^*01$
+  \item Strings with exactly one 1: $0^*10^*$
+  \item Strings with at least one 0: $(0 \mid 1)^*0(0 \mid 1)^*$
+  \item Even-length strings: $((0 \mid 1)(0 \mid 1))^*$
+\end{itemize}
+\end{example}
+
+\subsection*{Deterministic finite automata}
+
+\begin{definition}[DFA]
+A \textbf{deterministic finite automaton} (DFA) is a 5-tuple $(Q, \Sigma, \delta, q_0, F)$ where:
+\begin{itemize}
+  \item $Q$ is a finite set of \textbf{states}
+  \item $\Sigma$ is the input \textbf{alphabet}
+  \item $\delta: Q \times \Sigma \to Q$ is the \textbf{transition function}
+  \item $q_0 \in Q$ is the \textbf{start state}
+  \item $F \subseteq Q$ is the set of \textbf{accept (final) states}
+\end{itemize}
+\end{definition}
+
+\begin{definition}[DFA execution]
+A DFA \textbf{accepts} a string $w = a_1 a_2 \cdots a_n$ if there exists a sequence of states $r_0, r_1, \ldots, r_n$ such that:
+\begin{enumerate}
+  \item $r_0 = q_0$ (start in the start state)
+  \item $r_{i+1} = \delta(r_i, a_{i+1})$ for each $i$ (follow transitions)
+  \item $r_n \in F$ (end in an accept state)
+\end{enumerate}
+The language of a DFA $M$, denoted $L(M)$, is the set of all strings it accepts.
+\end{definition}
+
+\begin{definition}[State diagram]
+A DFA can be represented as a directed graph:
+\begin{itemize}
+  \item Vertices are states
+  \item An edge from $q$ to $q'$ labeled $a$ indicates $\delta(q, a) = q'$
+  \item The start state has an incoming arrow from nowhere
+  \item Accept states are drawn with a double circle
+\end{itemize}
+\end{definition}
+
+\subsection*{Nondeterministic finite automata}
+
+\begin{definition}[NFA]
+A \textbf{nondeterministic finite automaton} (NFA) is like a DFA, but:
+\begin{itemize}
+  \item The transition function is $\delta: Q \times (\Sigma \cup \{\varepsilon\}) \to \Pow(Q)$
+  \item From a state, there can be 0, 1, or many transitions on the same symbol
+  \item $\varepsilon$-transitions allow changing state without consuming input
+\end{itemize}
+An NFA accepts if \emph{some} path leads to an accept state.
+\end{definition}
+
+\begin{theorem}[NFA-DFA equivalence]
+For every NFA, there exists a DFA that accepts the same language. The subset construction converts an NFA with $n$ states to a DFA with at most $2^n$ states.
+\end{theorem}
+
+\subsection*{Regular languages}
+
+\begin{definition}[Regular language]
+A language $L$ is \textbf{regular} if it is recognized by some DFA (equivalently, by some NFA, or described by some regex).
 \end{definition}
 
 \begin{theorem}[Kleene's theorem]
-A language is regular iff it is recognized by some DFA.
+The following are equivalent for a language $L$:
+\begin{enumerate}
+  \item $L$ is described by a regular expression.
+  \item $L$ is recognized by a DFA.
+  \item $L$ is recognized by an NFA.
+\end{enumerate}
 \end{theorem}
 
-\subsection*{Worked example}
+\begin{theorem}[Closure properties]
+Regular languages are closed under:
+\begin{itemize}
+  \item Union, concatenation, Kleene star (by definition)
+  \item Complement: If $L$ is regular, so is $\Sigma^* \setminus L$ (swap accept/non-accept states in DFA)
+  \item Intersection: $L_1 \cap L_2 = \overline{\overline{L_1} \cup \overline{L_2}}$ (De Morgan)
+  \item Reversal: If $L$ is regular, so is $L^R = \{w^R : w \in L\}$
+\end{itemize}
+\end{theorem}
+
+\subsection*{DFA minimization}
+
+\begin{definition}[Equivalent states]
+Two states $p$ and $q$ in a DFA are \textbf{equivalent} if for all strings $w \in \Sigma^*$:
+\[
+\hat{\delta}(p, w) \in F \iff \hat{\delta}(q, w) \in F
+\]
+where $\hat{\delta}$ is the extended transition function.
+\end{definition}
+
+\begin{theorem}[Minimization]
+Every regular language has a unique (up to isomorphism) minimum-state DFA. It is obtained by merging equivalent states.
+\end{theorem}
+
+\begin{definition}[Table-filling algorithm]
+To find equivalent states:
+\begin{enumerate}
+  \item Mark all pairs $(p, q)$ where exactly one is in $F$ as distinguishable.
+  \item Repeat: Mark $(p, q)$ as distinguishable if for some $a \in \Sigma$, $(\delta(p,a), \delta(q,a))$ is distinguishable.
+  \item Unmarked pairs are equivalent; merge them.
+\end{enumerate}
+\end{definition}
+
+\subsection*{Non-regular languages}
+
+\begin{theorem}[Pumping lemma for regular languages]
+If $L$ is regular, then there exists a ``pumping length'' $p$ such that any string $w \in L$ with $|w| \geq p$ can be written as $w = xyz$ where:
+\begin{enumerate}
+  \item $|y| > 0$ (the pump is non-empty)
+  \item $|xy| \leq p$ (the pump is near the start)
+  \item For all $i \geq 0$, $xy^iz \in L$ (pumping preserves membership)
+\end{enumerate}
+\end{theorem}
+
+\begin{strategy}
+To prove a language $L$ is \emph{not} regular using the pumping lemma:
+\begin{enumerate}
+  \item Assume $L$ is regular (for contradiction).
+  \item Let $p$ be the pumping length.
+  \item Choose a string $w \in L$ with $|w| \geq p$ (often depending on $p$).
+  \item Show that no matter how $w$ is split as $xyz$ (satisfying conditions 1 and 2), there exists $i$ such that $xy^iz \notin L$.
+  \item Contradiction: $L$ is not regular.
+\end{enumerate}
+\end{strategy}
+
+\subsection*{Worked examples}
+
 \begin{example}
-Design a DFA over $\{0,1\}$ that accepts strings with an even number of $0$'s.
-\emph{Sketch.} Use two states: even and odd, toggling on input $0$.
+Design a DFA over $\{0, 1\}$ that accepts strings with an even number of 0s.
+
+\emph{Solution.} Two states: $q_e$ (even 0s so far) and $q_o$ (odd 0s so far).
+\begin{itemize}
+  \item Start state: $q_e$ (zero 0s is even)
+  \item Accept state: $\{q_e\}$
+  \item Transitions: On 0, toggle between $q_e$ and $q_o$. On 1, stay in current state.
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[shorten >=1pt, node distance=2.5cm, on grid, auto]
+  \node[state, initial, accepting] (qe) {$q_e$};
+  \node[state] (qo) [right=of qe] {$q_o$};
+  \path[->]
+    (qe) edge[bend left] node {0} (qo)
+    (qo) edge[bend left] node {0} (qe)
+    (qe) edge[loop above] node {1} ()
+    (qo) edge[loop above] node {1} ();
+\end{tikzpicture}
+\end{center}
 \end{example}
+
+\begin{example}
+Write a regex for all binary strings that end with 01.
+
+\emph{Solution.} $(0 \mid 1)^*01$
+
+Any sequence of 0s and 1s, followed by 01.
+\end{example}
+
+\begin{example}
+Construct a DFA for strings over $\{a, b\}$ containing no substring $bb$.
+
+\emph{Solution.} Three states tracking what we've seen at the end:
+\begin{itemize}
+  \item $q_0$: Start, or last symbol was $a$ (no recent $b$)
+  \item $q_1$: Last symbol was $b$
+  \item $q_{\text{dead}}$: Saw $bb$, reject
+\end{itemize}
+
+\begin{itemize}
+  \item From $q_0$: On $a$, stay in $q_0$. On $b$, go to $q_1$.
+  \item From $q_1$: On $a$, go to $q_0$. On $b$, go to $q_{\text{dead}}$.
+  \item From $q_{\text{dead}}$: Stay in $q_{\text{dead}}$ on any input.
+  \item Accept states: $\{q_0, q_1\}$
+\end{itemize}
+\end{example}
+
+\begin{example}
+Prove that the intersection of two regular languages is regular.
+
+\emph{Solution.} Let $L_1$ be recognized by DFA $M_1 = (Q_1, \Sigma, \delta_1, q_1, F_1)$ and let $L_2$ be recognized by $M_2 = (Q_2, \Sigma, \delta_2, q_2, F_2)$.
+
+Construct the product DFA $M = (Q_1 \times Q_2, \Sigma, \delta, (q_1, q_2), F_1 \times F_2)$ where:
+\[
+\delta((p, q), a) = (\delta_1(p, a), \delta_2(q, a))
+\]
+This DFA accepts $w$ iff both $M_1$ and $M_2$ accept $w$, so $L(M) = L_1 \cap L_2$.
+\end{example}
+
+\begin{example}
+Minimize the following DFA over $\{0, 1\}$.
+
+States: $\{A, B, C, D\}$. Start: $A$. Accept: $\{C\}$.
+Transitions: $\delta(A,0)=B$, $\delta(A,1)=C$, $\delta(B,0)=B$, $\delta(B,1)=C$, $\delta(C,0)=D$, $\delta(C,1)=C$, $\delta(D,0)=D$, $\delta(D,1)=C$.
+
+\emph{Solution.} Using the table-filling algorithm:
+\begin{enumerate}
+  \item Mark $(A,C), (B,C), (D,C)$ (one accept, one non-accept).
+  \item Check remaining pairs:
+    \begin{itemize}
+      \item $(A,B)$: $\delta(A,0)=B$, $\delta(B,0)=B$ --- same. $\delta(A,1)=C$, $\delta(B,1)=C$ --- same. Not distinguishable yet.
+      \item $(A,D)$: $\delta(A,0)=B$, $\delta(D,0)=D$. Check $(B,D)$ first.
+      \item $(B,D)$: $\delta(B,0)=B$, $\delta(D,0)=D$ --- need to check $(B,D)$. $\delta(B,1)=C$, $\delta(D,1)=C$ --- same. Not distinguishable.
+    \end{itemize}
+  \item States $A$, $B$, $D$ are equivalent. Merge them into one state.
+\end{enumerate}
+Minimal DFA has 2 states: $\{A,B,D\}$ and $\{C\}$.
+\end{example}
+
+\begin{example}
+Prove that $L = \{0^n1^n : n \geq 0\}$ is not regular using the pumping lemma.
+
+\emph{Proof.} Assume $L$ is regular. Let $p$ be the pumping length.
+
+Choose $w = 0^p1^p \in L$. Then $|w| = 2p \geq p$.
+
+By the pumping lemma, $w = xyz$ where $|y| > 0$, $|xy| \leq p$, and $xy^iz \in L$ for all $i$.
+
+Since $|xy| \leq p$ and $w$ starts with $p$ zeros, $xy$ consists only of 0s. So $y = 0^k$ for some $k > 0$.
+
+Consider $i = 2$: $xy^2z = 0^{p+k}1^p$. Since $k > 0$, this has more 0s than 1s, so $xy^2z \notin L$.
+
+Contradiction. Therefore $L$ is not regular. \qed
+\end{example}
+
+\begin{example}
+Write a regular expression for all binary strings with at least two 0s.
+
+\emph{Solution.} We need at least two 0s, with any number of 0s and 1s before, between, and after them:
+\[
+(0 \mid 1)^* 0 (0 \mid 1)^* 0 (0 \mid 1)^*
+\]
+Equivalently, using $1^*$ instead of $(0 \mid 1)^*$ where appropriate: $1^* 0 1^* 0 (0 \mid 1)^*$ (but the first form is more symmetric).
+\end{example}
+
+\begin{example}
+Design a DFA over $\{a, b\}$ that accepts strings where the number of $a$s is divisible by 3.
+
+\emph{Solution.} Track $(\text{number of } a\text{s}) \mod 3$. Three states: $q_0$ (seen $0 \mod 3$), $q_1$ (seen $1 \mod 3$), $q_2$ (seen $2 \mod 3$).
+\begin{itemize}
+  \item Start state: $q_0$ (zero $a$s)
+  \item Accept state: $\{q_0\}$ (divisible by 3)
+  \item Transitions on $a$: $q_0 \to q_1 \to q_2 \to q_0$ (cycle)
+  \item Transitions on $b$: self-loops (don't change count)
+\end{itemize}
+
+Formally: $\delta(q_i, a) = q_{(i+1) \mod 3}$ and $\delta(q_i, b) = q_i$.
+\end{example}
+
+\begin{example}
+Prove that $L = \{ww : w \in \{0,1\}^*\}$ is not regular.
+
+\emph{Proof.} Assume $L$ is regular with pumping length $p$.
+
+Choose $s = 0^p 1 0^p 1 \in L$ (where $w = 0^p 1$). We have $|s| = 2p + 2 \geq p$.
+
+By the pumping lemma, $s = xyz$ with $|y| > 0$, $|xy| \leq p$.
+
+Since $|xy| \leq p$ and $s$ starts with $p$ zeros, we have $y = 0^k$ for some $k \geq 1$.
+
+Consider $xy^0z = 0^{p-k} 1 0^p 1$. The first half has $p - k$ zeros before its first 1, while the second half has $p$ zeros before its first 1. Since $k \geq 1$, these halves are different, so $xy^0z \notin L$.
+
+Contradiction. Therefore $L$ is not regular. \qed
+\end{example}
+
+\begin{example}
+Design a DFA for binary strings representing numbers divisible by 3 (reading left to right, most significant bit first).
+
+\emph{Solution.} Track the value $\mod 3$ as we read. If current value is $v$ and we read bit $b$, new value is $2v + b \pmod 3$.
+
+States: $q_0, q_1, q_2$ representing value $\mod 3$.
+\begin{itemize}
+  \item Start: $q_0$ (value 0)
+  \item Accept: $\{q_0\}$
+  \item From $q_0$: on 0, $2 \cdot 0 + 0 = 0 \to q_0$; on 1, $2 \cdot 0 + 1 = 1 \to q_1$
+  \item From $q_1$: on 0, $2 \cdot 1 + 0 = 2 \to q_2$; on 1, $2 \cdot 1 + 1 = 3 \equiv 0 \to q_0$
+  \item From $q_2$: on 0, $2 \cdot 2 + 0 = 4 \equiv 1 \to q_1$; on 1, $2 \cdot 2 + 1 = 5 \equiv 2 \to q_2$
+\end{itemize}
+
+Test: $110_2 = 6$. Path: $q_0 \xrightarrow{1} q_1 \xrightarrow{1} q_0 \xrightarrow{0} q_0$. Accept. \checkmark
+\end{example}
+
+\begin{commonmistake}
+\textbf{Confusing $\emptyset$ and $\varepsilon$.} $\emptyset$ is the regex for the empty language (no strings). $\varepsilon$ is the regex for the language containing only the empty string $\{\varepsilon\}$.
+\end{commonmistake}
+
+\begin{commonmistake}
+\textbf{Forgetting that the pumping lemma is only for proving non-regularity.} You cannot use it to prove a language IS regular. Satisfying the pumping lemma is necessary but not sufficient for regularity.
+\end{commonmistake}
+
+\begin{goingdeeper}[Going Deeper: Duality and Observation]
+Week 8 introduced \emph{initial algebras} for understanding recursive data structures like trees. This week, we glimpse the dual concept: \emph{coalgebras} for understanding systems with observable behavior, like automata.
+
+\subsubsection*{Algebras vs Coalgebras}
+
+Recall from Week 8: an algebra takes us \emph{from} structure \emph{to} a set:
+\begin{itemize}
+  \item List algebra: $([], \text{cons})$ tells how to \emph{build} lists
+  \item Tree algebra: $(\text{leaf}, \text{node})$ tells how to \emph{build} trees
+  \item The arrow points ``inward'': $F(A) \to A$
+\end{itemize}
+
+A \emph{coalgebra} reverses the direction---it tells us how to \emph{observe} or \emph{decompose}:
+\begin{itemize}
+  \item The arrow points ``outward'': $A \to F(A)$
+  \item Given a state, we observe something about it
+\end{itemize}
+
+\subsubsection*{DFAs as Coalgebras}
+
+A DFA has a transition function and acceptance condition. For each state $q$, we can observe:
+\begin{enumerate}
+  \item Is $q$ accepting? (Output: yes/no)
+  \item Where do we go on each input symbol? (Transitions)
+\end{enumerate}
+
+This gives a function: $\text{state} \to (\text{output} \times \text{next-states})$.
+
+Formally, a DFA over alphabet $\Sigma$ is a coalgebra for the pattern:
+\[
+Q \to \{0, 1\} \times Q^\Sigma
+\]
+where $Q^\Sigma$ means ``a function from $\Sigma$ to $Q$.''
+
+\subsubsection*{Streams: Another Coalgebra}
+
+An infinite stream of values from $A$ can be observed:
+\begin{enumerate}
+  \item What's the first element? (The head)
+  \item What's the rest of the stream? (The tail)
+\end{enumerate}
+
+This gives: $\text{Stream}(A) \to A \times \text{Stream}(A)$.
+
+Contrast with lists: for lists, we have $1 + A \times \text{List}(A) \to \text{List}(A)$ (building up from $[]$ and $\text{cons}$).
+
+For streams, we have $\text{Stream}(A) \to A \times \text{Stream}(A)$ (tearing down into head and tail).
+
+\subsubsection*{The Duality Pattern}
+
+\begin{center}
+\begin{tabular}{lcc}
+& \textbf{Algebra} & \textbf{Coalgebra} \\
+\hline
+Structure map & $F(A) \to A$ & $A \to F(A)$ \\
+Intuition & Constructors & Observers \\
+Universal object & Initial (smallest) & Final (largest) \\
+Universal map & Fold (catamorphism) & Unfold (anamorphism) \\
+Data & Finite & Potentially infinite \\
+Example & Lists, trees & Streams, automata \\
+\end{tabular}
+\end{center}
+
+\subsubsection*{Bisimulation: When Are Two States ``The Same''?}
+
+Two DFA states are \emph{bisimilar} if no sequence of observations can distinguish them. This means:
+\begin{itemize}
+  \item They give the same accept/reject output
+  \item For each input symbol, they transition to bisimilar states
+\end{itemize}
+
+This is exactly what DFA minimization does: merge bisimilar states!
+
+\subsubsection*{Exercises: Duality and Observation}
+
+\begin{enumerate}
+  \item For an infinite stream, what is $\text{head}(\text{tail}(\text{tail}([0, 1, 2, 3, \ldots])))$?
+
+  \item The Fibonacci stream is $[0, 1, 1, 2, 3, 5, 8, \ldots]$. If we define it by $\text{fib} = [0, 1] \mathbin{+\!\!+} \text{zipWith}(+, \text{fib}, \text{tail}(\text{fib}))$, what are the first 5 elements? (Trace through.)
+
+  \item For the DFA from the ``even number of 0s'' example, write out the coalgebra structure: for each state, give the pair $(\text{accept?}, \text{transitions})$.
+
+  \item Fill in this duality table:
+  \begin{center}
+  \begin{tabular}{lcc}
+  \textbf{Concept} & \textbf{Algebra} & \textbf{Coalgebra} \\
+  \hline
+  Structure map & $F(A) \to A$ & ? \\
+  Constructors & Build up & ? \\
+  Universal object & Initial & ? \\
+  Universal map & Fold & ? \\
+  Data type & Finite & ?
+  \end{tabular}
+  \end{center}
+
+  \item Why can we have infinite streams but (in a total language) not ``infinite lists''? (Hint: What goes wrong if we try to fold over an infinite structure?)
+
+  \item In the DFA minimization example, states $A$, $B$, $D$ were merged because they were bisimilar. Verify that $A$ and $B$ are bisimilar by checking: (a) same accept status, (b) transitions lead to bisimilar states.
+
+  \item \textbf{Challenge:} The ``Brzozowski derivative'' of a language $L$ with respect to symbol $a$ is $\partial_a(L) = \{w : aw \in L\}$. Show that this is exactly the ``observe a transition'' operation in the coalgebra view of languages.
+\end{enumerate}
+\end{goingdeeper}
 
 \subsection*{Practice}
 \begin{enumerate}
-  \item Write a regex for all binary strings that end with $01$.
-  \item Construct a DFA for strings over $\{a,b\}$ that contain no substring $bb$.
+  \item Write a regex for all binary strings that end with 01.
+
+  \item Construct a DFA for strings over $\{a, b\}$ that contain no substring $bb$.
+
   \item Minimize a DFA with 4 states of your choosing.
+
   \item Prove that the intersection of two regular languages is regular.
+
+  \item Write a regex for binary strings with at least two 0s.
+
+  \item Design a DFA that accepts strings over $\{a,b\}$ where the number of $a$s is divisible by 3.
+
+  \item Prove that $L = \{w \in \{0,1\}^* : w = w^R\}$ (palindromes) is not regular.
+
+  \item Convert the regex $(a \mid b)^*aba$ to an NFA.
+
+  \item Show that if $L$ is regular, then $L^R = \{w^R : w \in L\}$ is regular.
+
+  \item Design a DFA for binary strings representing numbers divisible by 3.
+
+  \item Prove that $L = \{a^{n^2} : n \geq 0\}$ is not regular.
+
+  \item Given DFAs for $L_1$ and $L_2$, construct a DFA for $L_1 \setminus L_2$.
 \end{enumerate}

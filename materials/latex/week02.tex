@@ -8,30 +8,268 @@ Epp \S 7.1--7.4.
   \item Distinguish injective, surjective, and bijective functions.
   \item Use inverses and composition to solve functional equations.
   \item Compare sizes of sets using countability arguments.
+  \item Apply the pigeonhole principle to function problems.
 \end{itemize}
 
 \subsection*{Key definitions and facts}
-\begin{definition}[Injective and surjective]
-A function $f:A\to B$ is injective if $f(x)=f(y)$ implies $x=y$.
-It is surjective if for every $b\in B$ there exists $a\in A$ with $f(a)=b$.
+\begin{definition}[Function]
+A function $f: A \to B$ assigns to each element $a \in A$ exactly one element $f(a) \in B$.
+\begin{itemize}
+  \item \textbf{Domain:} the set $A$
+  \item \textbf{Codomain:} the set $B$
+  \item \textbf{Image/Range:} $\{f(a) : a \in A\} \subseteq B$
+\end{itemize}
 \end{definition}
 
-\begin{proposition}[Composition]
-If $f$ and $g$ are injective, then $g\circ f$ is injective.
-If $f$ and $g$ are surjective, then $g\circ f$ is surjective.
+\begin{definition}[Image and preimage of sets]
+Let $f: A \to B$ be a function.
+\begin{itemize}
+  \item For $S \subseteq A$, the \textbf{image} of $S$ under $f$ is $f(S) = \{f(x) : x \in S\} \subseteq B$.
+  \item For $T \subseteq B$, the \textbf{preimage} (or inverse image) of $T$ under $f$ is $f^{-1}(T) = \{x \in A : f(x) \in T\} \subseteq A$.
+\end{itemize}
+\end{definition}
+
+\begin{warning}
+The notation $f^{-1}(T)$ for preimage does \emph{not} require $f$ to have an inverse function. The preimage $f^{-1}(T)$ is always defined as a set, even when $f$ is not bijective.
+\end{warning}
+
+\begin{definition}[Injective, surjective, bijective]
+Let $f: A \to B$ be a function.
+\begin{itemize}
+  \item $f$ is \textbf{injective} (one-to-one) if $f(x) = f(y)$ implies $x = y$.
+  \item $f$ is \textbf{surjective} (onto) if for every $b \in B$, there exists $a \in A$ with $f(a) = b$.
+  \item $f$ is \textbf{bijective} if it is both injective and surjective.
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Inverse function]
+If $f: A \to B$ is bijective, then $f^{-1}: B \to A$ exists and satisfies:
+$f^{-1}(f(a)) = a$ for all $a \in A$, and $f(f^{-1}(b)) = b$ for all $b \in B$.
+\end{definition}
+
+\begin{proposition}[Composition preserves properties]
+Let $f: A \to B$ and $g: B \to C$.
+\begin{itemize}
+  \item If $f$ and $g$ are injective, then $g \circ f$ is injective.
+  \item If $f$ and $g$ are surjective, then $g \circ f$ is surjective.
+  \item If $f$ and $g$ are bijective, then $g \circ f$ is bijective with $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$.
+\end{itemize}
 \end{proposition}
 
-\begin{definition}[Countable]
-A set $A$ is countably infinite if there is a bijection $A\leftrightarrow\N$.
-A set is countable if it is finite or countably infinite.
+\begin{proposition}[Composition tests]
+\begin{itemize}
+  \item If $g \circ f$ is injective, then $f$ is injective.
+  \item If $g \circ f$ is surjective, then $g$ is surjective.
+\end{itemize}
+\end{proposition}
+
+\begin{definition}[Countable and uncountable]
+A set $A$ is \textbf{countably infinite} if there is a bijection $A \leftrightarrow \N$.
+A set is \textbf{countable} if it is finite or countably infinite.
+A set is \textbf{uncountable} if it is not countable.
 \end{definition}
 
-\subsection*{Worked example}
+\begin{theorem}[Countability results]
+\begin{itemize}
+  \item $\Z$ and $\Q$ are countable.
+  \item The union of countably many countable sets is countable.
+  \item $\R$ is uncountable (Cantor's diagonal argument).
+  \item $|\Pow(\N)| = |\R| > |\N|$.
+\end{itemize}
+\end{theorem}
+
+\subsection*{Worked examples}
+\begin{example}
+Let $f: \Z \to \Z$ be defined by $f(n) = n^2 - 1$. Find $f(\{-2, 0, 3\})$ and $f^{-1}(\{0, 3, 8\})$.
+
+\emph{Solution.}
+
+\textbf{Image:} Compute $f$ on each element of $\{-2, 0, 3\}$:
+\begin{itemize}
+  \item $f(-2) = (-2)^2 - 1 = 4 - 1 = 3$
+  \item $f(0) = 0^2 - 1 = -1$
+  \item $f(3) = 3^2 - 1 = 9 - 1 = 8$
+\end{itemize}
+Thus $f(\{-2, 0, 3\}) = \{-1, 3, 8\}$.
+
+\textbf{Preimage:} Find all $n \in \Z$ such that $f(n) = n^2 - 1 \in \{0, 3, 8\}$.
+\begin{itemize}
+  \item $n^2 - 1 = 0 \Rightarrow n^2 = 1 \Rightarrow n = \pm 1$
+  \item $n^2 - 1 = 3 \Rightarrow n^2 = 4 \Rightarrow n = \pm 2$
+  \item $n^2 - 1 = 8 \Rightarrow n^2 = 9 \Rightarrow n = \pm 3$
+\end{itemize}
+Thus $f^{-1}(\{0, 3, 8\}) = \{-3, -2, -1, 1, 2, 3\}$.
+\end{example}
+
 \begin{example}
 Let $f:\N\to\N$ be $f(n)=2n$. Show $f$ is injective but not surjective.
-\emph{Sketch.} If $2n=2m$ then $n=m$, so $f$ is injective.
-Odd numbers are not in the image, so $f$ is not surjective.
+
+\emph{Proof.}
+\textbf{Injective:} Suppose $f(n) = f(m)$, i.e., $2n = 2m$. Dividing by 2, we get $n = m$. Thus $f$ is injective.
+
+\textbf{Not surjective:} Consider $1 \in \N$. If $f(n) = 1$, then $2n = 1$, which has no solution in $\N$. So $1$ is not in the image of $f$. \qed
 \end{example}
+
+\begin{example}
+Prove: If $g \circ f$ is injective, then $f$ is injective.
+
+\emph{Proof.} Suppose $f(x) = f(y)$. Then $g(f(x)) = g(f(y))$, i.e., $(g \circ f)(x) = (g \circ f)(y)$.
+Since $g \circ f$ is injective, $x = y$. Thus $f$ is injective. \qed
+\end{example}
+
+\begin{example}
+Give a bijection between $\Z$ and $\N$.
+
+\emph{Solution.} Define $f: \Z \to \N$ by:
+\[
+f(n) = \begin{cases}
+2n & \text{if } n > 0 \\
+-2n + 1 & \text{if } n \leq 0
+\end{cases}
+\]
+This maps: $0 \mapsto 1$, $-1 \mapsto 3$, $1 \mapsto 2$, $-2 \mapsto 5$, $2 \mapsto 4$, etc.
+\end{example}
+
+\begin{example}
+Determine whether $f: \R \to \R$ defined by $f(x) = x^3$ is bijective.
+
+\emph{Solution.}
+
+\textbf{Injective:} Suppose $f(a) = f(b)$, i.e., $a^3 = b^3$. Taking cube roots (which is well-defined on $\R$), we get $a = b$. So $f$ is injective.
+
+\textbf{Surjective:} For any $y \in \R$, we need $x$ with $x^3 = y$. Take $x = \sqrt[3]{y}$ (cube roots exist for all real numbers, including negatives). Then $f(x) = (\sqrt[3]{y})^3 = y$. So $f$ is surjective.
+
+Since $f$ is both injective and surjective, $f$ is bijective. The inverse is $f^{-1}(y) = \sqrt[3]{y}$.
+\end{example}
+
+\begin{example}
+Prove that $(0, 1)$ is uncountable using Cantor's diagonal argument.
+
+\emph{Proof.} Suppose for contradiction that $(0, 1)$ is countable, so we can list all numbers in $(0, 1)$:
+\[
+r_1 = 0.d_{11}d_{12}d_{13}\ldots, \quad r_2 = 0.d_{21}d_{22}d_{23}\ldots, \quad r_3 = 0.d_{31}d_{32}d_{33}\ldots, \quad \ldots
+\]
+where each $d_{ij}$ is a digit. Construct a new number $x = 0.e_1e_2e_3\ldots$ where:
+\[
+e_n = \begin{cases} 5 & \text{if } d_{nn} \neq 5 \\ 6 & \text{if } d_{nn} = 5 \end{cases}
+\]
+Then $x \in (0, 1)$ but $x \neq r_n$ for any $n$ (they differ in the $n$th decimal place). This contradicts the assumption that all elements of $(0, 1)$ were listed. Therefore $(0, 1)$ is uncountable. \qed
+\end{example}
+
+\begin{example}
+Let $f: A \to B$ and $g: B \to C$. Prove that if $g \circ f$ is surjective, then $g$ is surjective.
+
+\emph{Proof.} Let $c \in C$. We need to find some $b \in B$ with $g(b) = c$.
+
+Since $g \circ f$ is surjective, there exists $a \in A$ with $(g \circ f)(a) = c$, i.e., $g(f(a)) = c$.
+
+Let $b = f(a) \in B$. Then $g(b) = g(f(a)) = c$.
+
+So for every $c \in C$, we found $b \in B$ with $g(b) = c$. Thus $g$ is surjective. \qed
+\end{example}
+
+\begin{goingdeeper}[Going Deeper: The Art of Diagram Chasing]
+Building on Week 1's introduction to diagrams, we now develop \emph{diagram chasing} as a proof technique and encounter our first \emph{universal property}.
+
+\subsubsection*{Diagram Chasing as Proof}
+
+Given that some diagram commutes, we often want to prove that certain composites are equal. The method: find two paths between the same endpoints and use commutativity.
+
+\textbf{Example.} Suppose this diagram commutes:
+\[
+\begin{tikzcd}
+A \arrow[r, "f"] \arrow[d, "h"'] & B \arrow[d, "g"] \\
+C \arrow[r, "k"'] & D
+\end{tikzcd}
+\]
+and we also know that $m \circ g = n \circ k$ for some $m, n$. Then:
+\[
+m \circ g \circ f = n \circ k \circ h
+\]
+\emph{Proof:} $m \circ g \circ f = m \circ (g \circ f) = m \circ (k \circ h) = (m \circ k) \circ h$... wait, that's not quite right. Let's be more careful: $m \circ g \circ f = (m \circ g) \circ f = (n \circ k) \circ f$. Hmm, we need $k \circ h = g \circ f$. So: $m \circ g \circ f = m \circ (g \circ f) = m \circ (k \circ h)$. And $(m \circ g) \circ f = (n \circ k) \circ f$...
+
+Actually, the key insight is simpler: from the square, $g \circ f = k \circ h$. So $m \circ g \circ f = m \circ k \circ h$. If additionally $m \circ k = n \circ k$... This shows why we must chase carefully!
+
+\subsubsection*{Cancellation Properties}
+
+Recall from the main notes that injective functions are ``left-cancellable'':
+\[
+f \circ g = f \circ h \implies g = h \quad \text{(when } f \text{ is injective)}
+\]
+And surjective functions are ``right-cancellable'':
+\[
+g \circ f = h \circ f \implies g = h \quad \text{(when } f \text{ is surjective)}
+\]
+
+These properties can be drawn as diagrams:
+\[
+\begin{tikzcd}
+X \arrow[r, shift left, "g"] \arrow[r, shift right, "h"'] & A \arrow[r, "f"] & B
+\end{tikzcd}
+\quad\text{(left cancellation)}
+\qquad
+\begin{tikzcd}
+A \arrow[r, "f"] & B \arrow[r, shift left, "g"] \arrow[r, shift right, "h"'] & X
+\end{tikzcd}
+\quad\text{(right cancellation)}
+\]
+
+\subsubsection*{The ``Unique Arrow'' Pattern}
+
+A powerful pattern emerges: \emph{there exists a unique arrow making the diagram commute}. When we have uniqueness:
+\begin{itemize}
+  \item Any two arrows satisfying the condition must be equal
+  \item This lets us prove equality by showing both arrows satisfy the same property
+\end{itemize}
+
+\subsubsection*{Universal Property of Products}
+
+The Cartesian product $A \times B$ satisfies a \emph{universal property}: for any set $X$ with functions $f: X \to A$ and $g: X \to B$, there exists a \textbf{unique} function $\langle f, g \rangle: X \to A \times B$ making this diagram commute:
+\[
+\begin{tikzcd}
+ & X \arrow[dl, "f"'] \arrow[d, dashed, "{\langle f, g \rangle}"] \arrow[dr, "g"] & \\
+A & A \times B \arrow[l, "\pi_1"] \arrow[r, "\pi_2"'] & B
+\end{tikzcd}
+\]
+The function is $\langle f, g \rangle(x) = (f(x), g(x))$. The universal property says this is the \emph{only} way to ``factor through'' $A \times B$.
+
+\textbf{Why uniqueness matters:} If someone gives you another function $h: X \to A \times B$ with $\pi_1 \circ h = f$ and $\pi_2 \circ h = g$, you can immediately conclude $h = \langle f, g \rangle$!
+
+\subsubsection*{Exercises: Diagram Chasing}
+
+\begin{enumerate}
+  \item \textbf{Cancellation practice:} Let $f: A \to B$ be injective, and suppose $f \circ g = f \circ h$ for $g, h: X \to A$. Prove $g = h$ by considering what happens element-by-element.
+
+  \item Draw the diagram expressing ``$f$ is left-cancellable''---show $g$, $h$, and $f$, and indicate the conclusion $g = h$.
+
+  \item If $g \circ f$ is injective, prove that $f$ must be injective. (Hint: Suppose $f(a) = f(b)$ and show $a = b$.)
+
+  \item If $g \circ f$ is injective, must $g$ be injective? Prove or give a counterexample.
+
+  \item If $g \circ f$ is surjective, prove that $g$ must be surjective.
+
+  \item If $g \circ f$ is surjective, must $f$ be surjective? Prove or give a counterexample.
+
+  \item \textbf{Product verification:} Let $A = \{1, 2\}$, $B = \{a, b, c\}$, $X = \{*\}$ (a one-element set). Define $f(*) = 1$ and $g(*) = b$. What is $\langle f, g \rangle(*)$?
+
+  \item For $A = \{1, 2\}$, $B = \{a, b\}$, $X = \{x, y\}$, define $f(x) = 1$, $f(y) = 2$, $g(x) = a$, $g(y) = b$. Write out $\langle f, g \rangle$ explicitly.
+
+  \item \textbf{Uniqueness in action:} Suppose $h, h': X \to A \times B$ both satisfy $\pi_1 \circ h = f$, $\pi_2 \circ h = g$ and the same for $h'$. Prove $h = h'$ using element-by-element reasoning.
+
+  \item \textbf{Diagram chase:} Given this commuting diagram:
+  \[
+  \begin{tikzcd}
+  A \arrow[r, "f"] \arrow[d, "h"'] & B \arrow[d, "g"] \\
+  C \arrow[r, "k"'] & D
+  \end{tikzcd}
+  \]
+  Prove that $g \circ f = k \circ h$ by writing out what ``the diagram commutes'' means.
+
+  \item If $f: A \to B$ is a bijection with inverse $f^{-1}: B \to A$, draw the two triangles showing $f^{-1} \circ f = \id_A$ and $f \circ f^{-1} = \id_B$.
+
+  \item \textbf{Challenge:} Prove that if $f: A \to B$ has both a left inverse $g$ (meaning $g \circ f = \id_A$) and a right inverse $h$ (meaning $f \circ h = \id_B$), then $g = h$. (Hint: Compute $g \circ f \circ h$ two ways.)
+\end{enumerate}
+\end{goingdeeper}
 
 \subsection*{Practice}
 \begin{enumerate}
@@ -39,4 +277,7 @@ Odd numbers are not in the image, so $f$ is not surjective.
   \item Decide whether $f(x)=x^3$ from $\R$ to $\R$ is bijective and justify.
   \item Prove that if $g\circ f$ is injective, then $f$ is injective.
   \item Show that a finite set cannot be in bijection with a proper subset of itself.
+  \item Prove that $f: A \to B$ is injective iff there exists $g: B \to A$ with $g \circ f = \text{id}_A$.
+  \item Prove that $f: A \to B$ is surjective iff there exists $g: B \to A$ with $f \circ g = \text{id}_B$.
+  \item Show that the set of all finite subsets of $\N$ is countable.
 \end{enumerate}

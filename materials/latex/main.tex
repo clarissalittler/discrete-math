@@ -1,34 +1,107 @@
 \documentclass[11pt]{article}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning,arrows,graphs,graphs.standard}
+\usepackage{tikz-cd}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
 
+% Number sets
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
 \newcommand{\Q}{\mathbb{Q}}
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
 \newcommand{\Pow}{\mathcal{P}}
 
+% Common operators
+\DeclareMathOperator{\lcm}{lcm}
+% \gcd already defined by amsmath
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\ran}{ran}
+\DeclareMathOperator{\id}{id}
+
+% Theorem environments
+\theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
-\newtheorem{theorem}{Theorem}[section]
 \newtheorem{example}{Example}[section]
+\newtheorem{exercise}{Exercise}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{note}{Note}
+\newtheorem*{warning}{Warning}
+
+% Colored box for key results
+\newtcolorbox{keyresult}{
+  colback=blue!5!white,
+  colframe=blue!75!black,
+  title=Key Result
+}
+
+% Colored box for common mistakes
+\newtcolorbox{commonmistake}{
+  colback=red!5!white,
+  colframe=red!75!black,
+  title=Common Mistake
+}
+
+% Colored box for proof strategies
+\newtcolorbox{strategy}{
+  colback=green!5!white,
+  colframe=green!50!black,
+  title=Proof Strategy
+}
+
+% Colored box for categorical enrichment (optional advanced material)
+\newtcolorbox{goingdeeper}[1][Going Deeper]{
+  colback=violet!5!white,
+  colframe=violet!75!black,
+  title=#1
+}
 
 \begin{document}
-\title{CS251 Discrete Mathematics: Weekly Learning Materials}
-\author{}
+\title{CS251 Discrete Mathematics\\[0.5em]\large Weekly Tutorial Notes}
+\author{Based on Epp, \textit{Discrete Mathematics with Applications}}
 \date{}
 \maketitle
+
+\begin{abstract}
+These notes provide supplementary material for CS251 Discrete Mathematics. Each week covers key definitions, theorems, worked examples, and practice problems aligned with the Epp textbook. The emphasis is on developing proof techniques and problem-solving skills essential for computer science.
+\end{abstract}
+
 \tableofcontents
+\newpage
 
 \input{week01}
+\newpage
 \input{week02}
+\newpage
 \input{week03}
+\newpage
 \input{week04}
+\newpage
 \input{week05}
+\newpage
 \input{week06}
+\newpage
 \input{week07}
+\newpage
 \input{week08}
+\newpage
 \input{week09}
+\newpage
 \input{week10}
 
 \end{document}

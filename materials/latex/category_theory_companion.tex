@@ -1,0 +1,1048 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning,arrows,graphs,graphs.standard}
+\usepackage{tikz-cd}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+
+% Number sets
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Pow}{\mathcal{P}}
+
+% Category theory notation
+\newcommand{\cat}[1]{\mathbf{#1}}
+\newcommand{\Set}{\cat{Set}}
+\newcommand{\Rel}{\cat{Rel}}
+\newcommand{\Vect}{\cat{Vect}}
+\newcommand{\ob}{\mathrm{ob}}
+\newcommand{\Hom}{\mathrm{Hom}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\op}{\mathrm{op}}
+
+% Common operators
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\cod}{cod}
+\DeclareMathOperator{\im}{im}
+
+% Theorem environments
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{exercise}{Exercise}[section]
+\newtheorem{nonexample}{Non-Example}[section]
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{note}{Note}
+\newtheorem*{intuition}{Intuition}
+\newtheorem*{application}{Application}
+
+% Colored boxes
+\newtcolorbox{keyresult}{
+  colback=blue!5!white,
+  colframe=blue!75!black,
+  title=Key Result
+}
+
+\newtcolorbox{warning}{
+  colback=red!5!white,
+  colframe=red!75!black,
+  title=Warning
+}
+
+\newtcolorbox{programmingnote}{
+  colback=green!5!white,
+  colframe=green!50!black,
+  title=Programming Connection
+}
+
+\begin{document}
+\title{Category Theory for Discrete Mathematics\\[0.5em]\large A Companion to CS251}
+\author{Supplementary Notes}
+\date{}
+\maketitle
+
+\begin{abstract}
+These notes provide a comprehensive introduction to category theory, developed in parallel with the CS251 discrete mathematics curriculum. Each section corresponds to a week of the main course and introduces categorical concepts that illuminate and generalize the core material. This companion is intended for motivated students who want to see deeper connections between discrete mathematics, programming, and abstract algebra.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%=============================================================================
+\section{Week 1--2: The Category of Sets}
+%=============================================================================
+
+\subsection{Categories: Objects and Morphisms}
+
+The central insight of category theory is that mathematical structures are best understood not in isolation, but through the \emph{structure-preserving maps} between them. Instead of asking ``what is a set?'', we ask ``what are the functions between sets?''
+
+\begin{definition}[Category]
+A \textbf{category} $\mathcal{C}$ consists of:
+\begin{enumerate}
+  \item A collection $\ob(\mathcal{C})$ of \textbf{objects}
+  \item For each pair of objects $A, B$, a collection $\Hom(A, B)$ of \textbf{morphisms} (or \textbf{arrows}) from $A$ to $B$
+  \item For each object $A$, an \textbf{identity morphism} $\id_A \in \Hom(A, A)$
+  \item For morphisms $f \in \Hom(A, B)$ and $g \in \Hom(B, C)$, a \textbf{composition} $g \circ f \in \Hom(A, C)$
+\end{enumerate}
+subject to:
+\begin{itemize}
+  \item \textbf{Associativity:} $(h \circ g) \circ f = h \circ (g \circ f)$
+  \item \textbf{Identity:} $f \circ \id_A = f$ and $\id_B \circ f = f$
+\end{itemize}
+\end{definition}
+
+We write $f: A \to B$ to indicate $f \in \Hom(A, B)$.
+
+\begin{example}[The category $\Set$]
+The category $\Set$ has:
+\begin{itemize}
+  \item Objects: all sets
+  \item Morphisms: functions between sets
+  \item Composition: function composition
+  \item Identity: the identity function $\id_A(x) = x$
+\end{itemize}
+\end{example}
+
+\begin{example}[Counting morphisms]
+In $\Set$, how many morphisms are there from $A = \{1, 2\}$ to $B = \{a, b, c\}$?
+
+Each element of $A$ can map to any element of $B$, so there are $|B|^{|A|} = 3^2 = 9$ morphisms.
+\end{example}
+
+\subsection{Commutative Diagrams}
+
+A powerful notation for expressing equations between morphisms.
+
+\begin{definition}[Commutative diagram]
+A diagram of objects and morphisms \textbf{commutes} if all paths between any two objects give the same composite morphism.
+\end{definition}
+
+\begin{example}
+The triangle:
+\[
+\begin{tikzcd}
+A \arrow[r, "f"] \arrow[dr, "h"'] & B \arrow[d, "g"] \\
+ & C
+\end{tikzcd}
+\]
+commutes if and only if $g \circ f = h$.
+\end{example}
+
+\begin{example}
+The square:
+\[
+\begin{tikzcd}
+A \arrow[r, "f"] \arrow[d, "h"'] & B \arrow[d, "g"] \\
+C \arrow[r, "k"'] & D
+\end{tikzcd}
+\]
+commutes if and only if $g \circ f = k \circ h$.
+\end{example}
+
+\begin{programmingnote}
+Commutative diagrams are the ``type signatures'' of mathematics. In programming terms, they express that two different implementations compute the same result. The equation $g \circ f = h$ says: ``composing $f$ then $g$ is the same as just doing $h$.''
+\end{programmingnote}
+
+\subsection{Monomorphisms, Epimorphisms, and Isomorphisms}
+
+The categorical approach characterizes injectivity and surjectivity \emph{without mentioning elements}.
+
+\begin{definition}[Monomorphism]
+A morphism $f: A \to B$ is a \textbf{monomorphism} (or \textbf{mono}) if it is left-cancellable:
+\[
+\text{For all } g, h: X \to A, \quad f \circ g = f \circ h \implies g = h
+\]
+\end{definition}
+
+\begin{definition}[Epimorphism]
+A morphism $f: A \to B$ is an \textbf{epimorphism} (or \textbf{epi}) if it is right-cancellable:
+\[
+\text{For all } g, h: B \to X, \quad g \circ f = h \circ f \implies g = h
+\]
+\end{definition}
+
+\begin{definition}[Isomorphism]
+A morphism $f: A \to B$ is an \textbf{isomorphism} if there exists $g: B \to A$ such that $g \circ f = \id_A$ and $f \circ g = \id_B$. We write $A \cong B$.
+\end{definition}
+
+\begin{theorem}
+In $\Set$:
+\begin{enumerate}
+  \item $f$ is mono $\iff$ $f$ is injective
+  \item $f$ is epi $\iff$ $f$ is surjective
+  \item $f$ is iso $\iff$ $f$ is bijective
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(Mono $\iff$ injective) Suppose $f$ is mono and $f(a) = f(b)$. Define $g, h: \{*\} \to A$ by $g(*) = a$, $h(*) = b$. Then $f \circ g = f \circ h$, so $g = h$, hence $a = b$.
+
+Conversely, suppose $f$ is injective and $f \circ g = f \circ h$. For any $x$, $f(g(x)) = f(h(x))$, so $g(x) = h(x)$ by injectivity. Thus $g = h$.
+\end{proof}
+
+\begin{warning}
+In other categories, mono $\neq$ injective and epi $\neq$ surjective! For example, in the category of rings, the inclusion $\Z \hookrightarrow \Q$ is epic but not surjective.
+\end{warning}
+
+\subsection{Universal Properties: Products and Coproducts}
+
+The deepest insights come from \emph{universal properties}---characterizations that uniquely determine a construction up to isomorphism.
+
+\begin{definition}[Product]
+A \textbf{product} of objects $A$ and $B$ is an object $A \times B$ together with morphisms $\pi_1: A \times B \to A$ and $\pi_2: A \times B \to B$ such that:
+
+For any object $X$ with morphisms $f: X \to A$ and $g: X \to B$, there exists a \emph{unique} morphism $\langle f, g \rangle: X \to A \times B$ making this diagram commute:
+\[
+\begin{tikzcd}
+ & X \arrow[dl, "f"'] \arrow[d, dashed, "{\langle f, g \rangle}"] \arrow[dr, "g"] & \\
+A & A \times B \arrow[l, "\pi_1"] \arrow[r, "\pi_2"'] & B
+\end{tikzcd}
+\]
+\end{definition}
+
+In $\Set$, the Cartesian product $A \times B = \{(a, b) : a \in A, b \in B\}$ with projections $\pi_1(a,b) = a$ and $\pi_2(a,b) = b$ satisfies this universal property.
+
+\begin{definition}[Coproduct]
+A \textbf{coproduct} of objects $A$ and $B$ is an object $A + B$ together with morphisms $\iota_1: A \to A + B$ and $\iota_2: B \to A + B$ such that:
+
+For any object $X$ with morphisms $f: A \to X$ and $g: B \to X$, there exists a unique morphism $[f, g]: A + B \to X$ making this diagram commute:
+\[
+\begin{tikzcd}
+A \arrow[r, "\iota_1"] \arrow[dr, "f"'] & A + B \arrow[d, dashed, "{[f, g]}"] & B \arrow[l, "\iota_2"'] \arrow[dl, "g"] \\
+ & X &
+\end{tikzcd}
+\]
+\end{definition}
+
+\begin{programmingnote}
+Products correspond to \texttt{pair} types or \texttt{struct}s. Coproducts correspond to \texttt{Either} types or \texttt{union}s. The morphism $[f, g]$ is pattern matching:
+\begin{verbatim}
+case x of
+  Left a  -> f(a)
+  Right b -> g(b)
+\end{verbatim}
+\end{programmingnote}
+
+\subsection{Exercises}
+
+\begin{exercise}
+Let $A = \{1, 2, 3\}$ and $B = \{a, b\}$.
+\begin{enumerate}[label=(\alph*)}
+  \item How many morphisms are there in $\Hom(A, B)$?
+  \item How many morphisms are there in $\Hom(B, A)$?
+  \item How many of the morphisms $A \to B$ are epimorphisms?
+  \item How many of the morphisms $B \to A$ are monomorphisms?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+Prove that every isomorphism is both a monomorphism and an epimorphism.
+\end{exercise}
+
+\begin{exercise}
+Let $f: A \to B$ and $g: B \to C$. Prove:
+\begin{enumerate}[label=(\alph*)]
+  \item If $g \circ f$ is mono, then $f$ is mono.
+  \item If $g \circ f$ is epi, then $g$ is epi.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}[Universal property verification]
+Let $A = \{1, 2\}$, $B = \{a, b, c\}$, $X = \{x, y\}$. Define $f: X \to A$ by $f(x) = 1, f(y) = 2$ and $g: X \to B$ by $g(x) = a, g(y) = c$.
+\begin{enumerate}[label=(\alph*)]
+  \item Write out $A \times B$ explicitly.
+  \item Construct the unique $\langle f, g \rangle: X \to A \times B$.
+  \item Verify that $\pi_1 \circ \langle f, g \rangle = f$ and $\pi_2 \circ \langle f, g \rangle = g$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+The \textbf{exponential} $B^A$ in $\Set$ is the set of all functions from $A$ to $B$, with evaluation $\varepsilon: B^A \times A \to B$ defined by $\varepsilon(f, a) = f(a)$.
+
+The universal property says: for any $g: X \times A \to B$, there exists a unique $\tilde{g}: X \to B^A$ such that $\varepsilon \circ (\tilde{g} \times \id_A) = g$.
+
+Interpret this in programming: what is $\tilde{g}$ doing? (Hint: currying.)
+\end{exercise}
+
+%=============================================================================
+\section{Week 3: Preorders as Categories and Functors}
+%=============================================================================
+
+\subsection{Preorders Are Categories}
+
+\begin{definition}[Preorder]
+A \textbf{preorder} $(P, \leq)$ is a set $P$ with a relation $\leq$ that is reflexive and transitive.
+\end{definition}
+
+\begin{theorem}
+Every preorder $(P, \leq)$ corresponds to a category:
+\begin{itemize}
+  \item Objects: elements of $P$
+  \item Morphisms: there is exactly one morphism $a \to b$ iff $a \leq b$
+  \item Identity: $a \leq a$ (reflexivity)
+  \item Composition: $a \leq b$ and $b \leq c$ imply $a \leq c$ (transitivity)
+\end{itemize}
+Such a category is called \textbf{thin} (at most one morphism between any two objects).
+\end{theorem}
+
+\begin{example}
+Consider divisibility on $\{1, 2, 3, 6\}$. As a category:
+\[
+\begin{tikzcd}
+ & 6 & \\
+2 \arrow[ur] & & 3 \arrow[ul] \\
+ & 1 \arrow[ul] \arrow[ur] &
+\end{tikzcd}
+\]
+The arrow $1 \to 6$ exists (via composition $1 \to 2 \to 6$) but is not drawn separately.
+\end{example}
+
+\begin{example}
+The power set $(\Pow(X), \subseteq)$ is a preorder category. Products are intersections (greatest lower bounds) and coproducts are unions (least upper bounds).
+\end{example}
+
+\subsection{Functors}
+
+\begin{definition}[Functor]
+A \textbf{functor} $F: \mathcal{C} \to \mathcal{D}$ between categories consists of:
+\begin{enumerate}
+  \item A mapping $F: \ob(\mathcal{C}) \to \ob(\mathcal{D})$ on objects
+  \item For each $f: A \to B$ in $\mathcal{C}$, a morphism $F(f): F(A) \to F(B)$ in $\mathcal{D}$
+\end{enumerate}
+such that:
+\begin{itemize}
+  \item $F(\id_A) = \id_{F(A)}$ (preserves identities)
+  \item $F(g \circ f) = F(g) \circ F(f)$ (preserves composition)
+\end{itemize}
+\end{definition}
+
+\begin{theorem}
+A functor between preorder categories is exactly a \textbf{monotone function}: $a \leq b \implies F(a) \leq F(b)$.
+\end{theorem}
+
+\begin{example}[Power set functor]
+Define $\Pow: \Set \to \Set$ by:
+\begin{itemize}
+  \item On objects: $\Pow(A) = \{S : S \subseteq A\}$
+  \item On morphisms: $\Pow(f)(S) = \{f(x) : x \in S\}$ (direct image)
+\end{itemize}
+Verify: $\Pow(\id_A)(S) = S$ and $\Pow(g \circ f) = \Pow(g) \circ \Pow(f)$.
+\end{example}
+
+\begin{example}[Forgetful functor]
+Many ``forgetful'' functors forget structure:
+\begin{itemize}
+  \item $U: \cat{Grp} \to \Set$ forgets the group operation
+  \item $U: \cat{Top} \to \Set$ forgets the topology
+\end{itemize}
+\end{example}
+
+\subsection{The Category $\Rel$}
+
+\begin{definition}[The category $\Rel$]
+The category $\Rel$ has:
+\begin{itemize}
+  \item Objects: sets
+  \item Morphisms $R: A \to B$: relations $R \subseteq A \times B$
+  \item Composition: $S \circ R = \{(a, c) : \exists b.\, (a, b) \in R \land (b, c) \in S\}$
+  \item Identity: $\Delta_A = \{(a, a) : a \in A\}$
+\end{itemize}
+\end{definition}
+
+There is a functor $\Set \to \Rel$ sending each function to its graph (a functional relation).
+
+\begin{example}
+Let $R = \{(1, a), (1, b), (2, c)\} \subseteq \{1, 2\} \times \{a, b, c\}$ and $S = \{(a, x), (b, x), (c, y)\} \subseteq \{a, b, c\} \times \{x, y\}$.
+
+Then $S \circ R = \{(1, x), (2, y)\}$.
+\end{example}
+
+\subsection{Galois Connections (Adjunctions for Preorders)}
+
+\begin{definition}[Galois connection]
+Let $(P, \leq)$ and $(Q, \leq)$ be preorders. A \textbf{Galois connection} is a pair of monotone functions $F: P \to Q$ and $G: Q \to P$ such that:
+\[
+F(p) \leq q \iff p \leq G(q)
+\]
+We write $F \dashv G$ (``$F$ is left adjoint to $G$'').
+\end{definition}
+
+\begin{example}[Floor and ceiling]
+Between $(\R, \leq)$ and $(\Z, \leq)$:
+\begin{itemize}
+  \item $\iota \dashv \lfloor \cdot \rfloor$: the inclusion $\iota: \Z \to \R$ is left adjoint to floor
+  \item $\lceil \cdot \rceil \dashv \iota$: ceiling is left adjoint to inclusion
+\end{itemize}
+This means: $\iota(n) \leq x \iff n \leq \lfloor x \rfloor$ and $x \leq \iota(n) \iff \lceil x \rceil \leq n$.
+\end{example}
+
+\begin{keyresult}
+Galois connections are the ``preorder version'' of adjunctions, one of the most important concepts in category theory. They appear throughout computer science: in abstract interpretation, type inference, and database query optimization.
+\end{keyresult}
+
+\subsection{Exercises}
+
+\begin{exercise}
+Show that the divisibility preorder on $\{1, 2, 4, 8\}$ forms a total order when viewed as a category.
+\end{exercise}
+
+\begin{exercise}
+Let $P = (\{1, 2, 3, 4\}, \leq)$ and $Q = (\{a, b, c\}, \leq)$ where $a \leq b \leq c$.
+\begin{enumerate}[label=(\alph*)]
+  \item How many functors (monotone functions) are there from $P$ to $Q$?
+  \item Give an example of a non-monotone function $\{1, 2, 3, 4\} \to \{a, b, c\}$.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+Verify that relational composition in $\Rel$ is associative.
+\end{exercise}
+
+\begin{exercise}[Application: Type systems]
+In a programming language with subtyping, we have a preorder on types. The function type constructor is:
+\begin{itemize}
+  \item Contravariant in the argument: if $A' \leq A$, then $(A \to B) \leq (A' \to B)$
+  \item Covariant in the result: if $B \leq B'$, then $(A \to B) \leq (A \to B')$
+\end{itemize}
+Explain why the argument is contravariant using the substitution principle.
+\end{exercise}
+
+%=============================================================================
+\section{Weeks 4--5: Polynomial Functors and Counting}
+%=============================================================================
+
+\subsection{Types Have Sizes}
+
+A surprising connection between algebra and type theory:
+
+\begin{center}
+\begin{tabular}{lcc}
+\textbf{Type} & \textbf{Notation} & \textbf{Inhabitants} \\
+\hline
+Void (empty) & $0$ & 0 \\
+Unit & $1$ & 1 \\
+Bool & $2$ & 2 \\
+Sum $A + B$ & $A + B$ & $|A| + |B|$ \\
+Product $A \times B$ & $A \times B$ & $|A| \times |B|$ \\
+Function $A \to B$ & $B^A$ & $|B|^{|A|}$ \\
+\end{tabular}
+\end{center}
+
+This is not coincidence---it reflects deep structure.
+
+\subsection{Polynomial Functors}
+
+\begin{definition}[Polynomial functor]
+A \textbf{polynomial functor} $F: \Set \to \Set$ has the form:
+\[
+F(X) = A_0 + A_1 \times X + A_2 \times X^2 + A_3 \times X^3 + \cdots
+\]
+where the $A_i$ are fixed sets and $X^n = X \times X \times \cdots \times X$ ($n$ times).
+\end{definition}
+
+The \textbf{generating function} of $F$ is $\sum_i |A_i| x^i$.
+
+\begin{example}[Maybe/Option]
+$\text{Maybe}(X) = 1 + X$ with generating function $1 + x$.
+\begin{itemize}
+  \item $\text{Maybe}(\emptyset) = 1 + \emptyset = 1 = \{\text{Nothing}\}$
+  \item $\text{Maybe}(\{a\}) = 1 + \{a\} = \{\text{Nothing}, \text{Just } a\}$
+\end{itemize}
+\end{example}
+
+\begin{example}[Lists (up to length 2)]
+$\text{List}_2(X) = 1 + X + X^2$ with generating function $1 + x + x^2$.
+
+For $X = \{a, b\}$: $|\text{List}_2(\{a,b\})| = 1 + 2 + 4 = 7$.
+
+These are: $[]$, $[a]$, $[b]$, $[a,a]$, $[a,b]$, $[b,a]$, $[b,b]$.
+\end{example}
+
+\begin{example}[Full lists]
+$\text{List}(X) = 1 + X + X^2 + X^3 + \cdots = \frac{1}{1-X}$ (formal power series).
+
+The recursive definition $\text{List}(X) = 1 + X \times \text{List}(X)$ encodes this.
+\end{example}
+
+\subsection{Functors on Morphisms}
+
+For a polynomial functor to be a true functor, we need its action on morphisms.
+
+\begin{example}[Maybe as a functor]
+Given $f: A \to B$, define $\text{Maybe}(f): \text{Maybe}(A) \to \text{Maybe}(B)$ by:
+\[
+\text{Maybe}(f)(\text{Nothing}) = \text{Nothing} \qquad \text{Maybe}(f)(\text{Just } a) = \text{Just } f(a)
+\]
+This is \texttt{fmap} for the Maybe functor!
+\end{example}
+
+\begin{programmingnote}
+The functor laws $F(\id) = \id$ and $F(g \circ f) = F(g) \circ F(f)$ are exactly the laws that \texttt{fmap} must satisfy in Haskell:
+\begin{verbatim}
+fmap id = id
+fmap (g . f) = fmap g . fmap f
+\end{verbatim}
+\end{programmingnote}
+
+\subsection{Combinatorial Species (Advanced)}
+
+\begin{definition}[Species]
+A \textbf{species} is a functor $F: \mathcal{B} \to \Set$ where $\mathcal{B}$ is the category of finite sets and bijections.
+
+$F(A)$ = ``$F$-structures on the set $A$''
+
+$F(\sigma)$ = ``relabeling by bijection $\sigma$''
+\end{definition}
+
+\begin{example}[Species of linear orders]
+$L(A) = \{\text{linear orderings of } A\}$. We have $|L(\{1,2,3\})| = 3! = 6$.
+\end{example}
+
+\begin{example}[Species of graphs]
+$G(A) = \{\text{simple graphs with vertex set } A\}$. We have $|G(\{1,2,3\})| = 2^3 = 8$.
+\end{example}
+
+The theory of species provides a categorified approach to generating functions.
+
+\subsection{Exercises}
+
+\begin{exercise}
+What polynomial functor represents ``a pair where the first component is from a 3-element set''? What is its generating function?
+\end{exercise}
+
+\begin{exercise}
+Express the type \texttt{Either (a, b) c} as a polynomial in $a$, $b$, $c$. How many inhabitants does \texttt{Either (Bool, Bool) ()} have?
+\end{exercise}
+
+\begin{exercise}
+Verify the functor laws for Maybe: $\text{Maybe}(\id) = \id$ and $\text{Maybe}(g \circ f) = \text{Maybe}(g) \circ \text{Maybe}(f)$.
+\end{exercise}
+
+\begin{exercise}
+The type of binary trees with data at leaves is $\text{Tree}(A) = A + \text{Tree}(A)^2$. Expand the first few terms of this as a power series in $A$. What is the coefficient of $A^3$? (It counts binary tree shapes with 3 leaves.)
+\end{exercise}
+
+%=============================================================================
+\section{Weeks 6--7: Graphs and Free Categories}
+%=============================================================================
+
+\subsection{Graphs Generate Categories}
+
+\begin{definition}[Quiver/Directed graph]
+A \textbf{quiver} (or directed graph) $Q$ consists of:
+\begin{itemize}
+  \item A set $Q_0$ of \textbf{vertices}
+  \item A set $Q_1$ of \textbf{edges}
+  \item Source and target functions $s, t: Q_1 \to Q_0$
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Free category on a graph]
+The \textbf{free category} $\text{Path}(Q)$ on a quiver $Q$ has:
+\begin{itemize}
+  \item Objects: vertices of $Q$
+  \item Morphisms: directed paths in $Q$ (including empty paths)
+  \item Composition: path concatenation
+  \item Identity: empty path at each vertex
+\end{itemize}
+\end{definition}
+
+\begin{example}
+For the graph $1 \xrightarrow{a} 2 \xrightarrow{b} 3$:
+
+$\text{Path}(Q)$ has morphisms: $\id_1, \id_2, \id_3, a, b, b \circ a$.
+\end{example}
+
+\begin{example}
+For a cycle $1 \xrightarrow{a} 2 \xrightarrow{b} 3 \xrightarrow{c} 1$:
+
+$\text{Path}(Q)$ is infinite! From 1 to 1 we have: $\id_1, cba, (cba)^2, (cba)^3, \ldots$
+\end{example}
+
+\subsection{Diagrams as Functors}
+
+\begin{definition}
+A \textbf{diagram of shape $J$ in category $\mathcal{C}$} is a functor $D: J \to \mathcal{C}$.
+\end{definition}
+
+The shape $J$ is often a small category like:
+\begin{itemize}
+  \item $\bullet \to \bullet$: picks out a morphism
+  \item $\bullet \rightrightarrows \bullet$: picks out a parallel pair
+  \item A commutative square: picks out a commuting square in $\mathcal{C}$
+\end{itemize}
+
+\begin{application}[Database schemas]
+A database schema is a quiver where vertices are tables and edges are foreign key relationships. A database instance is a functor from $\text{Path}(\text{Schema})$ to $\Set$:
+\begin{itemize}
+  \item Each table $T$ maps to a set $F(T)$ of rows
+  \item Each foreign key $e: T \to T'$ maps to a function $F(e): F(T) \to F(T')$
+\end{itemize}
+\end{application}
+
+\subsection{Adjacency Matrices Count Paths}
+
+\begin{theorem}
+For the free category $\text{Path}(Q)$, if $A$ is the adjacency matrix of $Q$, then:
+\[
+(A^n)_{ij} = \text{number of paths of length } n \text{ from } i \text{ to } j
+\]
+\end{theorem}
+
+This explains the graph-theoretic interpretation of matrix powers!
+
+\subsection{Exercises}
+
+\begin{exercise}
+For the graph $a \xrightarrow{f} b \xrightarrow{g} c$, $c \xrightarrow{h} b$:
+\begin{enumerate}[label=(\alph*)]
+  \item List all morphisms from $a$ to $c$ in $\text{Path}(Q)$.
+  \item List all morphisms from $b$ to $b$.
+  \item Is $\text{Path}(Q)$ finite or infinite?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+Draw a database schema for: Users, Posts, Comments, where Posts have authors (Users) and Comments reference both a Post and a User. Write down what a functor from this schema to $\Set$ looks like.
+\end{exercise}
+
+%=============================================================================
+\section{Week 8: Initial Algebras and Catamorphisms}
+%=============================================================================
+
+\subsection{F-Algebras}
+
+\begin{definition}[F-algebra]
+Let $F: \mathcal{C} \to \mathcal{C}$ be an endofunctor. An \textbf{$F$-algebra} is a pair $(A, \alpha)$ where:
+\begin{itemize}
+  \item $A$ is an object (the \textbf{carrier})
+  \item $\alpha: F(A) \to A$ is a morphism (the \textbf{structure map})
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Algebra homomorphism]
+A \textbf{homomorphism} $h: (A, \alpha) \to (B, \beta)$ of $F$-algebras is a morphism $h: A \to B$ such that:
+\[
+\begin{tikzcd}
+F(A) \arrow[r, "\alpha"] \arrow[d, "F(h)"'] & A \arrow[d, "h"] \\
+F(B) \arrow[r, "\beta"'] & B
+\end{tikzcd}
+\]
+commutes, i.e., $h \circ \alpha = \beta \circ F(h)$.
+\end{definition}
+
+\begin{example}[Algebras for $F(X) = 1 + X$]
+An $F$-algebra $(A, \alpha)$ consists of:
+\begin{itemize}
+  \item A set $A$
+  \item A function $\alpha: 1 + A \to A$, i.e., we specify:
+  \begin{itemize}
+    \item $z = \alpha(*) \in A$ (the ``zero'')
+    \item $s(a) = \alpha(a)$ for each $a \in A$ (the ``successor'')
+  \end{itemize}
+\end{itemize}
+So an $F$-algebra is $(A, z, s)$ with $z \in A$ and $s: A \to A$.
+\end{example}
+
+\subsection{Initial Algebras}
+
+\begin{definition}[Initial algebra]
+An \textbf{initial $F$-algebra} $(\mu F, \text{in})$ is an $F$-algebra such that for every $F$-algebra $(A, \alpha)$, there exists a \emph{unique} homomorphism $\llbracket \alpha \rrbracket: \mu F \to A$.
+
+This unique morphism is called a \textbf{catamorphism} (or \textbf{fold}).
+\end{definition}
+
+\begin{keyresult}[Lambek's Lemma]
+If $(\mu F, \text{in})$ is an initial $F$-algebra, then $\text{in}: F(\mu F) \to \mu F$ is an \textbf{isomorphism}.
+
+Therefore: $\mu F \cong F(\mu F)$.
+\end{keyresult}
+
+This is exactly what recursive type definitions mean!
+
+\begin{example}[Natural numbers]
+For $F(X) = 1 + X$, the initial algebra is $(\N, [\text{zero}, \text{succ}])$ where:
+\begin{itemize}
+  \item $\text{zero}: 1 \to \N$ picks out $0$
+  \item $\text{succ}: \N \to \N$ is the successor function
+\end{itemize}
+
+For any $(A, z, s)$, the unique catamorphism $\llbracket z, s \rrbracket: \N \to A$ is:
+\[
+\llbracket z, s \rrbracket(0) = z \qquad \llbracket z, s \rrbracket(n+1) = s(\llbracket z, s \rrbracket(n))
+\]
+This is primitive recursion!
+\end{example}
+
+\begin{example}[Lists]
+For $F_A(X) = 1 + A \times X$, an algebra gives ``nil'' and ``cons.''
+
+The initial algebra is $(List(A), [\text{nil}, \text{cons}])$.
+
+The catamorphism is \texttt{foldr}:
+\begin{verbatim}
+foldr f z []     = z
+foldr f z (x:xs) = f x (foldr f z xs)
+\end{verbatim}
+\end{example}
+
+\begin{example}[Binary trees]
+For $F_A(X) = A + X \times X$, the initial algebra is binary trees with data at leaves.
+
+Examples of catamorphisms:
+\begin{itemize}
+  \item Sum: $\text{leaf}(a) = a$, $\text{node}(x, y) = x + y$
+  \item Height: $\text{leaf}(a) = 0$, $\text{node}(x, y) = 1 + \max(x, y)$
+  \item Flatten: $\text{leaf}(a) = [a]$, $\text{node}(x, y) = x \mathbin{+\!\!+} y$
+\end{itemize}
+\end{example}
+
+\subsection{Why Structural Recursion Terminates}
+
+The initiality property guarantees:
+\begin{enumerate}
+  \item \textbf{Existence:} A recursive definition gives a function
+  \item \textbf{Uniqueness:} The function is well-defined
+  \item \textbf{Correctness:} It satisfies the recursive equations
+\end{enumerate}
+
+If recursion didn't terminate, no function would exist (violating existence).
+
+\subsection{Catamorphism Fusion}
+
+\begin{theorem}[Fusion]
+If $h: (A, \alpha) \to (B, \beta)$ is an algebra homomorphism, then:
+\[
+h \circ \llbracket \alpha \rrbracket = \llbracket \beta \rrbracket
+\]
+\end{theorem}
+
+\begin{programmingnote}
+This is the basis for \textbf{deforestation} and \textbf{fusion} optimizations:
+\begin{verbatim}
+map f . map g = map (f . g)   -- fuse two traversals into one
+sum . map f  = foldr (\x a -> f x + a) 0
+\end{verbatim}
+\end{programmingnote}
+
+\subsection{Exercises}
+
+\begin{exercise}
+For $F(X) = 1 + X$:
+\begin{enumerate}[label=(\alph*)]
+  \item Define an $F$-algebra on $\{\text{even}, \text{odd}\}$ with $z = \text{even}$ and $s = \text{flip}$.
+  \item Compute the unique catamorphism from $\N$ to this algebra.
+  \item What function does this catamorphism compute?
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+For $F_\N(X) = 1 + \N \times X$:
+\begin{enumerate}[label=(\alph*)]
+  \item Define an algebra on $\N$ that computes the sum of a list.
+  \item Define an algebra on $\N$ that computes the length of a list.
+  \item Define an algebra on $\N$ that computes the product of a list.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+Verify Lambek's Lemma for natural numbers: show explicitly that $[\text{zero}, \text{succ}]: 1 + \N \to \N$ is an isomorphism by constructing its inverse.
+\end{exercise}
+
+\begin{exercise}
+Express each tree traversal (preorder, inorder, postorder) as a catamorphism by specifying the algebra.
+\end{exercise}
+
+%=============================================================================
+\section{Week 9: Coalgebras and Automata}
+%=============================================================================
+
+\subsection{F-Coalgebras}
+
+Coalgebras are \textbf{dual} to algebras---arrows reversed.
+
+\begin{definition}[F-coalgebra]
+Let $F: \mathcal{C} \to \mathcal{C}$ be an endofunctor. An \textbf{$F$-coalgebra} is a pair $(A, \alpha)$ where:
+\begin{itemize}
+  \item $A$ is an object (the \textbf{state space})
+  \item $\alpha: A \to F(A)$ is a morphism (the \textbf{observation/transition map})
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Coalgebra homomorphism]
+A homomorphism $h: (A, \alpha) \to (B, \beta)$ is a morphism $h: A \to B$ such that:
+\[
+\begin{tikzcd}
+A \arrow[r, "\alpha"] \arrow[d, "h"'] & F(A) \arrow[d, "F(h)"] \\
+B \arrow[r, "\beta"'] & F(B)
+\end{tikzcd}
+\]
+commutes, i.e., $\beta \circ h = F(h) \circ \alpha$.
+\end{definition}
+
+\subsection{Deterministic Finite Automata as Coalgebras}
+
+\begin{theorem}
+A DFA over alphabet $\Sigma$ is exactly a coalgebra for the functor:
+\[
+F(X) = 2 \times X^\Sigma
+\]
+where $2 = \{\text{accept}, \text{reject}\}$ and $X^\Sigma$ denotes functions $\Sigma \to X$.
+\end{theorem}
+
+A coalgebra $(Q, \langle o, \delta \rangle)$ consists of:
+\begin{itemize}
+  \item $Q$: set of states
+  \item $o: Q \to 2$: output function (is this state accepting?)
+  \item $\delta: Q \to Q^\Sigma$: transition function
+\end{itemize}
+
+\subsection{Final Coalgebras}
+
+\begin{definition}[Final coalgebra]
+A \textbf{final $F$-coalgebra} $(\nu F, \text{out})$ is an $F$-coalgebra such that for every $F$-coalgebra $(A, \alpha)$, there exists a unique homomorphism $\llparenthesis \alpha \rrparenthesis: A \to \nu F$.
+
+This unique morphism is called an \textbf{anamorphism} (or \textbf{unfold}).
+\end{definition}
+
+\begin{theorem}
+For $F(X) = 2 \times X^\Sigma$, the final coalgebra is:
+\[
+(\mathcal{P}(\Sigma^*), \langle \varepsilon?, \text{derivatives} \rangle)
+\]
+where:
+\begin{itemize}
+  \item $\mathcal{P}(\Sigma^*)$ is the set of all languages over $\Sigma$
+  \item $\varepsilon?(L) = \text{accept}$ iff $\varepsilon \in L$
+  \item $\partial_a(L) = \{w : aw \in L\}$ (Brzozowski derivative)
+\end{itemize}
+\end{theorem}
+
+The unique coalgebra morphism from any DFA to this final coalgebra maps each state to \textbf{the language it accepts}!
+
+\subsection{Bisimulation}
+
+\begin{definition}[Bisimulation]
+Two states (possibly in different automata) are \textbf{bisimilar} if they map to the same element of the final coalgebra.
+\end{definition}
+
+For DFAs: bisimilar states accept the same language.
+
+\subsection{Streams as a Final Coalgebra}
+
+\begin{theorem}
+For $F(X) = A \times X$, the final coalgebra is:
+\[
+(A^\omega, \langle \text{head}, \text{tail} \rangle)
+\]
+where $A^\omega$ is the set of infinite streams over $A$.
+\end{theorem}
+
+The isomorphism $A^\omega \cong A \times A^\omega$ says: ``a stream is a head plus a tail.''
+
+\begin{example}[Generating streams]
+The Fibonacci sequence as an anamorphism:
+\begin{verbatim}
+fibs = unfold (\(a,b) -> (a, (b, a+b))) (0, 1)
+     = [0, 1, 1, 2, 3, 5, 8, 13, ...]
+\end{verbatim}
+\end{example}
+
+\subsection{Algebra vs Coalgebra: Summary}
+
+\begin{center}
+\begin{tabular}{lcc}
+\textbf{Concept} & \textbf{Algebra} & \textbf{Coalgebra} \\
+\hline
+Structure map & $F(A) \to A$ & $A \to F(A)$ \\
+Universal object & Initial & Final \\
+Universal morphism & Catamorphism (fold) & Anamorphism (unfold) \\
+Canonical example & Natural numbers, lists, trees & Streams, automata \\
+Data & Finite (inductive) & Potentially infinite (coinductive) \\
+Perspective & Constructors & Observers/destructors \\
+\end{tabular}
+\end{center}
+
+\subsection{Exercises}
+
+\begin{exercise}
+Write the DFA accepting ``strings ending in 01'' as an $F$-coalgebra for $F(X) = 2 \times X^{\{0,1\}}$.
+\end{exercise}
+
+\begin{exercise}
+Compute the Brzozowski derivatives $\partial_0(L)$ and $\partial_1(L)$ for $L = \{w : w \text{ has even number of 1s}\}$.
+\end{exercise}
+
+\begin{exercise}
+Define the stream of powers of 2 as an anamorphism.
+\end{exercise}
+
+\begin{exercise}
+Two DFAs have state sets $Q_1 = \{a, b\}$ and $Q_2 = \{x, y, z\}$. State $a$ accepts $\{0^n1^n : n \geq 0\}$ (note: not regular, but pretend). State $x$ accepts all strings. Are $a$ and $x$ bisimilar? Why or why not?
+\end{exercise}
+
+%=============================================================================
+\section{Week 10: Monoids and Cost}
+%=============================================================================
+
+\subsection{Monoids as One-Object Categories}
+
+\begin{definition}[Monoid]
+A \textbf{monoid} $(M, \cdot, e)$ is:
+\begin{itemize}
+  \item A set $M$
+  \item An associative binary operation $\cdot: M \times M \to M$
+  \item An identity element $e \in M$ with $e \cdot m = m \cdot e = m$
+\end{itemize}
+\end{definition}
+
+\begin{theorem}
+A monoid is exactly a category with one object.
+\begin{itemize}
+  \item The single object: call it $*$
+  \item Morphisms $* \to *$: elements of $M$
+  \item Composition: the monoid operation
+  \item Identity: $e$
+\end{itemize}
+\end{theorem}
+
+\begin{example}[Common monoids]
+\begin{center}
+\begin{tabular}{lccc}
+\textbf{Monoid} & \textbf{Set} & \textbf{Operation} & \textbf{Identity} \\
+\hline
+$(\N, +, 0)$ & natural numbers & addition & 0 \\
+$(\N, \times, 1)$ & natural numbers & multiplication & 1 \\
+$(\Sigma^*, \cdot, \varepsilon)$ & strings & concatenation & empty string \\
+$(\N \cup \{\infty\}, \max, 0)$ & extended naturals & maximum & 0 \\
+$(\N \cup \{\infty\}, \min, \infty)$ & extended naturals & minimum & $\infty$ \\
+\end{tabular}
+\end{center}
+\end{example}
+
+\subsection{Free Monoids}
+
+\begin{definition}[Free monoid]
+The \textbf{free monoid} on a set $\Sigma$ is $(\Sigma^*, \cdot, \varepsilon)$---strings with concatenation.
+\end{definition}
+
+\begin{theorem}[Universal property]
+For any monoid $M$ and function $f: \Sigma \to M$, there exists a unique monoid homomorphism $f^*: \Sigma^* \to M$ extending $f$.
+\end{theorem}
+
+\subsection{Regular Languages and Syntactic Monoids}
+
+\begin{theorem}
+A language $L \subseteq \Sigma^*$ is regular if and only if there exists:
+\begin{enumerate}
+  \item A finite monoid $M$
+  \item A monoid homomorphism $h: \Sigma^* \to M$
+  \item A subset $F \subseteq M$
+\end{enumerate}
+such that $L = h^{-1}(F)$.
+\end{theorem}
+
+The minimal such $M$ is the \textbf{syntactic monoid} of $L$.
+
+\begin{example}
+For $L = \{w : |w|_1 \equiv 0 \pmod{3}\}$ (number of 1s divisible by 3):
+
+The syntactic monoid is $\Z_3$ with $h(0) = 0$, $h(1) = 1$.
+\end{example}
+
+\subsection{Cost Monoids}
+
+\begin{definition}[Cost monoid]
+A \textbf{cost monoid} is a monoid used to track computational resources:
+\begin{itemize}
+  \item $(\N, +, 0)$: counting operations (sequential)
+  \item $(\N, \max, 0)$: parallel time (max of parallel branches)
+  \item $(\N \times \N, +, (0,0))$: tracking time AND space
+\end{itemize}
+\end{definition}
+
+\begin{example}[Merge sort cost]
+$T(n) = 2T(n/2) + \Theta(n)$
+
+Using $(\N, +, 0)$: compose costs of subproblems and merge step.
+
+Using $(\N, \max, 0)$ for parallel: $T(n) = T(n/2) + \Theta(\log n) = \Theta(\log^2 n)$.
+\end{example}
+
+\subsection{Enriched Categories (Brief)}
+
+A \textbf{category enriched over a monoidal category $V$} replaces hom-sets with objects of $V$.
+
+\begin{example}[Weighted graphs]
+A weighted graph with weights in $(\R_{\geq 0} \cup \{\infty\}, \min, \infty)$ is an enriched category:
+\begin{itemize}
+  \item Objects: vertices
+  \item $\Hom(u, v)$: edge weight ($\infty$ if no edge)
+  \item Composition: $d(u, w) = \min_v (d(u, v) + d(v, w))$
+\end{itemize}
+This is exactly the structure that shortest-path algorithms exploit!
+\end{example}
+
+\subsection{Exercises}
+
+\begin{exercise}
+Verify that $(\N, \max, 0)$ is a monoid.
+\end{exercise}
+
+\begin{exercise}
+How many monoid structures are there on the set $\{0, 1\}$? List them all.
+\end{exercise}
+
+\begin{exercise}
+Show that the length function $|\cdot|: \Sigma^* \to \N$ is a monoid homomorphism.
+\end{exercise}
+
+\begin{exercise}
+Find the syntactic monoid of $L = \{w \in \{a,b\}^* : w \text{ contains } ab\}$.
+\end{exercise}
+
+\begin{exercise}
+Model the cost of linear search and binary search using the cost monoid $(\N, +, 0)$.
+\end{exercise}
+
+%=============================================================================
+\section{Conclusion: The Categorical Perspective}
+%=============================================================================
+
+\subsection{Recurring Themes}
+
+Throughout this companion, we've seen several recurring ideas:
+
+\textbf{1. Universal Properties.} Many constructions are characterized by being ``the best'' solution to a problem: products, coproducts, free constructions, initial and final objects.
+
+\textbf{2. Functors Preserve Structure.} Structure-preserving maps (functors, homomorphisms) are often more important than the structures themselves.
+
+\textbf{3. Duality.} Many concepts come in pairs: products/coproducts, monos/epis, algebras/coalgebras, initial/final. Understanding one often gives the other ``for free.''
+
+\textbf{4. Diagrams as Specifications.} Commutative diagrams express equations. When we say ``this diagram commutes,'' we're stating an invariant that implementations must satisfy.
+
+\subsection{Where to Go From Here}
+
+\begin{itemize}
+  \item \textbf{Seven Sketches in Compositionality} by Fong \& Spivak: applied category theory, free online
+  \item \textbf{Category Theory for Programmers} by Milewski: Haskell-focused, free online
+  \item \textbf{Algebra of Programming} by Bird \& de Moor: folds, unfolds, and program calculation
+  \item \textbf{Categories for the Working Mathematician} by Mac Lane: the classic reference
+\end{itemize}
+
+\end{document}
