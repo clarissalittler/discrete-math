@@ -1,6 +1,7 @@
 \section{Week 9: Regular Expressions and Finite Automata}
 \subsection*{Reading}
-Epp \S 12.1--12.3.
+Epp \S 12.1--12.3. Supplemental: CFGs and PDAs.\\
+\textbf{Category theory companion:} Week 9 (\texttt{category\_theory\_companion.pdf}).
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -163,7 +164,8 @@ where $\hat{\delta}$ is the extended transition function.
 \end{definition}
 
 \begin{theorem}[Minimization]
-Every regular language has a unique (up to isomorphism) minimum-state DFA. It is obtained by merging equivalent states.
+Every regular language has a unique minimum-state DFA (up to isomorphism).\\
+It is obtained by merging equivalent states.
 \end{theorem}
 
 \begin{definition}[Table-filling algorithm]
@@ -196,6 +198,45 @@ To prove a language $L$ is \emph{not} regular using the pumping lemma:
   \item Contradiction: $L$ is not regular.
 \end{enumerate}
 \end{strategy}
+
+\subsection*{Context-free grammars}
+
+\begin{definition}[Context-free grammar]
+A CFG is a 4-tuple $(V, \Sigma, R, S)$ where:
+\begin{itemize}
+  \item $V$ is a set of variables (nonterminals)
+  \item $\Sigma$ is a set of terminals (alphabet)
+  \item $R$ is a set of production rules of the form $A \to \alpha$, where $A \in V$ and $\alpha \in (V \cup \Sigma)^*$
+  \item $S \in V$ is the start symbol
+\end{itemize}
+The language $L(G)$ is the set of strings in $\Sigma^*$ derivable from $S$.
+\end{definition}
+
+\begin{definition}[Derivation and parse tree]
+We write $S \Rightarrow^* w$ if $w$ can be derived from $S$ by repeatedly applying production rules.
+A \textbf{parse tree} records the rule applications that produce $w$.
+\end{definition}
+
+\begin{example}
+The grammar with rules $S \to aSb \mid \varepsilon$ generates $L = \{a^n b^n : n \geq 0\}$.
+For example, $S \Rightarrow aSb \Rightarrow aaSbb \Rightarrow aabb$.
+\end{example}
+
+\begin{remark}
+A grammar is \textbf{ambiguous} if some string has two different parse trees. Ambiguity complicates parsing and language reasoning.
+\end{remark}
+
+\subsection*{Pushdown automata}
+
+\begin{definition}[Pushdown automaton (PDA)]
+A \textbf{pushdown automaton} is like an NFA with a stack. Formally it is a 6-tuple
+$(Q, \Sigma, \Gamma, \delta, q_0, F)$ where $\Gamma$ is the stack alphabet and
+$\delta$ reads an input symbol (or $\varepsilon$) and the top of the stack, then updates the state and stack.
+\end{definition}
+
+\begin{theorem}[CFG-PDA equivalence]
+A language is context-free iff it is recognized by a pushdown automaton.
+\end{theorem}
 
 \subsection*{Worked examples}
 
@@ -363,6 +404,7 @@ Test: $110_2 = 6$. Path: $q_0 \xrightarrow{1} q_1 \xrightarrow{1} q_0 \xrightarr
 
 \begin{goingdeeper}[Going Deeper: Duality and Observation]
 Week 8 introduced \emph{initial algebras} for understanding recursive data structures like trees. This week, we glimpse the dual concept: \emph{coalgebras} for understanding systems with observable behavior, like automata.
+For more detail, see the Category Theory Companion, Week 9.
 
 \subsubsection*{Algebras vs Coalgebras}
 
@@ -394,6 +436,13 @@ Formally, a DFA over alphabet $\Sigma$ is a coalgebra for the pattern:
 Q \to \{0, 1\} \times Q^\Sigma
 \]
 where $Q^\Sigma$ means ``a function from $\Sigma$ to $Q$.''
+
+\subsubsection*{Automata as Actions of the Free Monoid}
+The set of all strings $\Sigma^*$ is the \textbf{free monoid} on $\Sigma$. A DFA induces a transition action:
+\[
+\delta^*: Q \times \Sigma^* \to Q
+\]
+that applies a whole string at once. Categorically, this is a functor from the one-object category $\Sigma^*$ to $\Set$, sending the single object to $Q$ and each word to its transition function. This makes automata into dynamical systems driven by strings.
 
 \subsubsection*{Streams: Another Coalgebra}
 
@@ -489,4 +538,10 @@ This is exactly what DFA minimization does: merge bisimilar states!
   \item Prove that $L = \{a^{n^2} : n \geq 0\}$ is not regular.
 
   \item Given DFAs for $L_1$ and $L_2$, construct a DFA for $L_1 \setminus L_2$.
+
+  \item Give a CFG for $L = \{0^n1^n : n \geq 0\}$ and derive the string $000111$.
+
+  \item Show that the grammar with rules $S \to SS \mid a$ is ambiguous by finding two distinct parse trees for $aa$.
+
+  \item Describe (in words) a PDA that recognizes $L = \{a^n b^n : n \geq 0\}$, and trace its stack contents on input $aabb$.
 \end{enumerate}

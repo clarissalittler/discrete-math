@@ -1,6 +1,7 @@
 \section{Week 6: Expected Value and Introduction to Graphs}
 \subsection*{Reading}
-Epp \S 9.8; 10.1; 10.2.
+Epp \S 9.8; 10.1; 10.2.\\
+\textbf{Category theory companion:} Weeks 6--7 (\texttt{category\_theory\_companion.pdf}).
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -181,6 +182,19 @@ $H$ is an \textbf{induced subgraph} if $E'$ contains all edges of $G$ whose endp
 \begin{definition}[Graph complement]
 The \textbf{complement} $\overline{G}$ of a simple graph $G = (V, E)$ has the same vertices as $G$, and two vertices are adjacent in $\overline{G}$ iff they are not adjacent in $G$.
 \end{definition}
+
+\begin{goingdeeper}[Category Lens: Parts and Graphs]
+This week connects probability and graphs to two categorical ideas: \emph{parts} and \emph{structure-preserving maps}.
+For more detail, see the Category Theory Companion, Weeks 6--7.
+
+\subsubsection*{Parts and Predicates}
+Events are subsets of a sample space. In category language, subsets of $A$ are \emph{parts} of $A$ and correspond to characteristic functions $A \to 2$.
+If $f: A \to B$, the preimage map $f^{-1}: \Pow(B) \to \Pow(A)$ is \emph{contravariant} and preserves unions and intersections. This is a categorical way to explain why pulling back events behaves nicely under functions.
+
+\subsubsection*{Graphs as a Category}
+There is a category $\cat{Graph}$ whose objects are graphs and whose morphisms are \textbf{graph homomorphisms} (vertex maps that preserve adjacency).
+There is a forgetful functor $U: \cat{Graph} \to \Set$ sending a graph to its vertex set. This lets us reuse set-based reasoning while respecting graph structure.
+\end{goingdeeper}
 
 \subsection*{Worked examples}
 

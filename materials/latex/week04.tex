@@ -1,6 +1,7 @@
 \section{Week 4: Counting and Probability I}
 \subsection*{Reading}
-Epp \S 9.1--9.4.
+Epp \S 9.1--9.4, 9.9.\\
+\textbf{Category theory companion:} Weeks 4--5 (\texttt{category\_theory\_companion.pdf}).
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -87,6 +88,69 @@ By inclusion-exclusion:
 \[
 |A_2 \cup A_3 \cup A_5| = 50 + 33 + 20 - 16 - 10 - 6 + 3 = 74
 \]
+\end{example}
+
+\subsection*{Conditional Probability and Independence}
+
+\begin{definition}[Conditional probability]
+If $P(B) > 0$, the conditional probability of $A$ given $B$ is:
+\[
+P(A \mid B) = \frac{P(A \cap B)}{P(B)}
+\]
+\end{definition}
+
+\begin{theorem}[Multiplication rule]
+\[
+P(A \cap B) = P(A \mid B)\,P(B)
+\]
+More generally:
+\[
+P(A \cap B \cap C) = P(A)\,P(B \mid A)\,P(C \mid A \cap B)
+\]
+\end{theorem}
+
+\begin{definition}[Independence]
+Events $A$ and $B$ are \textbf{independent} if:
+\[
+P(A \cap B) = P(A)P(B)
+\]
+Equivalently (when $P(B) > 0$), $P(A \mid B) = P(A)$.
+\end{definition}
+
+\begin{example}
+Two cards are drawn from a standard deck without replacement. Let $A$ = ``first card is an ace'' and $B$ = ``second card is an ace''.
+\[
+P(A) = \frac{4}{52} = \frac{1}{13}, \quad P(B \mid A) = \frac{3}{51} = \frac{1}{17}
+\]
+So $P(A \cap B) = \frac{1}{13} \cdot \frac{1}{17} = \frac{1}{221}$. Since $P(B) = \frac{1}{13}$, we have $P(A \cap B) \neq P(A)P(B)$, so $A$ and $B$ are not independent.
+\end{example}
+
+\subsection*{Law of Total Probability and Bayes' Rule}
+
+\begin{theorem}[Law of total probability]
+If $\{B_1, \ldots, B_k\}$ is a partition of $S$ with $P(B_i) > 0$, then:
+\[
+P(A) = \sum_{i=1}^{k} P(A \mid B_i)P(B_i)
+\]
+\end{theorem}
+
+\begin{theorem}[Bayes' rule]
+Under the same assumptions:
+\[
+P(B_j \mid A) = \frac{P(A \mid B_j)P(B_j)}{\sum_{i=1}^{k} P(A \mid B_i)P(B_i)}
+\]
+\end{theorem}
+
+\begin{example}
+A factory has two machines. $M_1$ produces 70\% of items with a 2\% defect rate; $M_2$ produces 30\% with a 5\% defect rate.
+\[
+P(D) = 0.7 \cdot 0.02 + 0.3 \cdot 0.05 = 0.029
+\]
+If an item is defective, then:
+\[
+P(M_2 \mid D) = \frac{0.3 \cdot 0.05}{0.029} = \frac{15}{29} \approx 0.517
+\]
+So a defective item is slightly more likely to come from $M_2$.
 \end{example}
 
 \subsection*{Derangements}
@@ -379,6 +443,7 @@ Prove: Among any 5 points placed inside a unit square, at least two are within d
 
 \begin{goingdeeper}[Going Deeper: The Algebra of Types]
 The counting rules we've learned---multiplication and addition---have a surprising connection to types in programming. This connection reveals why these rules are so fundamental.
+For more detail, see the Category Theory Companion, Weeks 4--5.
 
 \subsubsection*{Types Have Sizes}
 
@@ -413,6 +478,13 @@ This is exactly the multiplication and addition rules for counting!
 \[
 \texttt{Left True, Left False, Right ()}
 \]
+
+\subsubsection*{Function Types as Exponentials (Map Objects)}
+Function types correspond to \textbf{exponentials} in category theory. In $\Set$, the object $B^A$ is the set of all functions $A \to B$. It comes with an \emph{evaluation} map:
+\[
+\mathrm{ev}: B^A \times A \to B, \quad \mathrm{ev}(f, a) = f(a)
+\]
+The universal property says: any $g: X \times A \to B$ uniquely corresponds to a map $\tilde{g}: X \to B^A$ (``currying'').
 
 \subsubsection*{Why the Names ``Product'' and ``Sum''?}
 
@@ -484,4 +556,12 @@ These type operations satisfy the same laws as arithmetic:
   \item How many permutations of $\{1, 2, 3, 4, 5, 6\}$ have at least one fixed point? (Hint: Use complement counting with derangements.)
 
   \item Use inclusion-exclusion to count the number of surjective functions from a 4-element set to a 3-element set. (Hint: Let $A_i$ be functions missing element $i$ in the image.)
+
+  \item Two fair dice are rolled. Let $A$ be the event ``the sum is even'' and $B$ be the event ``the sum is at least 10.'' Compute $P(A \mid B)$ and determine whether $A$ and $B$ are independent.
+
+  \item A box contains 3 fair coins and 1 double-headed coin. A coin is chosen uniformly at random and flipped once. If it lands heads, what is the probability the chosen coin was double-headed?
+
+  \item A test for a disease has sensitivity 0.95 and false positive rate 0.02. If 1\% of the population has the disease, compute the probability that a person who tests positive actually has the disease.
+
+  \item Suppose $P(A)=0.4$, $P(B)=0.5$, and $P(A \cap B)=0.2$. Compute $P(A \mid B)$ and $P(A \cup B)$, and determine whether $A$ and $B$ are independent.
 \end{enumerate}

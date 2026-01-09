@@ -1,6 +1,7 @@
 \section{Week 2: Functions and Cardinality}
 \subsection*{Reading}
-Epp \S 7.1--7.4.
+Epp \S 7.1--7.4.\\
+\textbf{Category theory companion:} Week 1--2 (\texttt{category\_theory\_companion.pdf}).
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -170,6 +171,7 @@ So for every $c \in C$, we found $b \in B$ with $g(b) = c$. Thus $g$ is surjecti
 
 \begin{goingdeeper}[Going Deeper: The Art of Diagram Chasing]
 Building on Week 1's introduction to diagrams, we now develop \emph{diagram chasing} as a proof technique and encounter our first \emph{universal property}.
+For more detail, see the Category Theory Companion, Week 1--2.
 
 \subsubsection*{Diagram Chasing as Proof}
 
@@ -213,6 +215,21 @@ A \arrow[r, "f"] & B \arrow[r, shift left, "g"] \arrow[r, shift right, "h"'] & X
 \end{tikzcd}
 \quad\text{(right cancellation)}
 \]
+
+\subsubsection*{Isomorphisms, Sections, and Retractions}
+A map $f: A \to B$ is an \textbf{isomorphism} if there exists $g: B \to A$ with $g \circ f = \id_A$ and $f \circ g = \id_B$. In $\Set$, isomorphisms are exactly bijections.
+
+A \textbf{section} (right inverse) is a map $s: B \to A$ with $f \circ s = \id_B$. A \textbf{retraction} (left inverse) is a map $r: B \to A$ with $r \circ f = \id_A$:
+\[
+\begin{tikzcd}
+A \arrow[r, "f"] & B \arrow[l, bend left, "s"] \\
+A \arrow[r, "f"] & B \arrow[l, bend right, "r"']
+\end{tikzcd}
+\]
+Sections force $f$ to be surjective; retractions force $f$ to be injective.
+
+\subsubsection*{Idempotents and Retracts}
+A map $p: A \to A$ is \textbf{idempotent} if $p \circ p = p$. In $\Set$, idempotents correspond to ``projection onto a subset'': if $p = i \circ r$ with $r \circ i = \id_B$, then $p$ projects $A$ onto the retract $B$.
 
 \subsubsection*{The ``Unique Arrow'' Pattern}
 

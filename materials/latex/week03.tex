@@ -1,6 +1,7 @@
 \section{Week 3: Relations and Modular Arithmetic}
 \subsection*{Reading}
-Epp \S 8.1--8.4.
+Epp \S 8.1--8.5.\\
+\textbf{Category theory companion:} Week 3 (\texttt{category\_theory\_companion.pdf}).
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -52,6 +53,55 @@ A relation $R$ on $A$ is a \textbf{partial order} if it is reflexive, antisymmet
 \begin{definition}[Total order]
 A partial order $\leq$ on $A$ is a \textbf{total order} if for all $a, b \in A$, either $a \leq b$ or $b \leq a$.
 \end{definition}
+
+\subsection*{Posets and Hasse diagrams}
+
+\begin{definition}[Minimal/maximal vs least/greatest]
+Let $(P, \leq)$ be a poset.
+\begin{itemize}
+  \item $m \in P$ is \textbf{minimal} if there is no $x \in P$ with $x < m$.
+  \item $m \in P$ is \textbf{maximal} if there is no $x \in P$ with $m < x$.
+  \item $\ell \in P$ is the \textbf{least element} if $\ell \leq x$ for all $x \in P$.
+  \item $g \in P$ is the \textbf{greatest element} if $x \leq g$ for all $x \in P$.
+\end{itemize}
+Least/greatest elements are unique if they exist; minimal/maximal elements need not be unique.
+\end{definition}
+
+\begin{definition}[Hasse diagram]
+For a finite poset, the \textbf{Hasse diagram} is obtained by:
+\begin{itemize}
+  \item Drawing one vertex per element.
+  \item Drawing an edge upward from $a$ to $b$ if $b$ \emph{covers} $a$ (i.e., $a < b$ and there is no $c$ with $a < c < b$).
+  \item Omitting self-loops and edges implied by transitivity.
+\end{itemize}
+\end{definition}
+
+\begin{example}
+The divisibility poset on $\{1, 2, 3, 6\}$ has Hasse diagram:
+\[
+\begin{tikzcd}
+ & 6 & \\
+2 \arrow[ur] & & 3 \arrow[ul] \\
+ & 1 \arrow[ul] \arrow[ur] &
+\end{tikzcd}
+\]
+Here 1 is least; 6 is greatest; 2 and 3 are incomparable.
+\end{example}
+
+\begin{definition}[Bounds, meet, join, lattice]
+Let $S \subseteq P$.
+\begin{itemize}
+  \item $u$ is an \textbf{upper bound} of $S$ if $x \leq u$ for all $x \in S$.
+  \item $l$ is a \textbf{lower bound} of $S$ if $l \leq x$ for all $x \in S$.
+  \item The \textbf{least upper bound} (join) of $\{a,b\}$ is denoted $a \vee b$.
+  \item The \textbf{greatest lower bound} (meet) of $\{a,b\}$ is denoted $a \wedge b$.
+\end{itemize}
+A poset is a \textbf{lattice} if every pair has both a meet and a join.
+\end{definition}
+
+\begin{remark}
+A \textbf{linear extension} is a total order that is consistent with the partial order. For finite posets, a linear extension can be found by repeatedly removing a minimal element (this is the same idea as topological sorting a DAG).
+\end{remark}
 
 \begin{definition}[Congruence modulo $n$]
 For integers $a, b$ and positive integer $n$, we say $a$ is \textbf{congruent} to $b$ modulo $n$, written $a \equiv b \pmod{n}$, if $n$ divides $a - b$. Equivalently:
@@ -410,6 +460,7 @@ Row $i$, column $j$ is 1 iff $i \mid j$. This is reflexive (diagonal is 1), anti
 
 \begin{goingdeeper}[Going Deeper: Preorders---The Simplest Categories]
 This week we discover that the arrow-and-diagram language from Weeks 1--2 applies beautifully to familiar structures: preorders. This gives us concrete, easy-to-visualize categories to practice with.
+For more detail, see the Category Theory Companion, Week 3.
 
 \subsubsection*{Preorders You Already Know}
 
@@ -469,6 +520,19 @@ Such a structure-preserving map between categories is called a \textbf{functor}.
   \item $|S|: (\Pow(X), \subseteq) \to (\N, \leq)$ (cardinality, when $X$ is finite)
   \item $n \mapsto 2n: (\N, \leq) \to (\N, \leq)$
 \end{itemize}
+
+\subsubsection*{Galois Connections (Adjunctions for Orders)}
+A \textbf{Galois connection} between preorders $(P, \leq)$ and $(Q, \leq)$ is a pair of monotone maps $F: P \to Q$ and $G: Q \to P$ such that:
+\[
+F(p) \leq q \iff p \leq G(q)
+\]
+This is the preorder version of an adjunction, one of the key ideas in category theory.
+
+\textbf{Example.} The inclusion $\iota: \Z \to \R$ is left adjoint to floor:
+\[
+\iota(n) \leq x \iff n \leq \lfloor x \rfloor
+\]
+Similarly, ceiling is left adjoint to inclusion: $x \leq \iota(n) \iff \lceil x \rceil \leq n$.
 
 \subsubsection*{Products and Coproducts in Preorders}
 
@@ -559,4 +623,12 @@ A relation can be both (e.g., $=$), neither, or just one. The identity relation 
   \item What are the last two digits of $7^{2024}$?
 
   \item Prove Fermat's Little Theorem for $a = 2$ and $p = 5$ by direct computation.
+
+  \item Draw the Hasse diagram for divisibility on $\{1,2,3,6,12\}$. Identify all minimal and maximal elements, and state whether a least or greatest element exists.
+
+  \item In $(\Pow(\{1,2,3\}), \subseteq)$, compute $\{1,2\} \wedge \{2,3\}$ and $\{1,2\} \vee \{2,3\}$.
+
+  \item Consider a poset with relations $a < b$, $a < c$, $b < d$, $c < d$. Give one linear extension and one different linear extension.
+
+  \item Does the poset $(\Z, \leq)$ have minimal or maximal elements? Does it have a least or greatest element? Justify your answers.
 \end{enumerate}

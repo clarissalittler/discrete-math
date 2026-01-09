@@ -1,6 +1,7 @@
 \section{Week 1: Set Theory}
 \subsection*{Reading}
-Epp \S 6.1--6.4.
+Epp \S 6.1--6.4.\\
+\textbf{Category theory companion:} Week 1--2 (\texttt{category\_theory\_companion.pdf}).
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -146,6 +147,7 @@ Therefore $A \cup (A \cap B) = A$. \qed
 
 \begin{goingdeeper}[Going Deeper: Arrows and Diagrams]
 This begins a running thread through the course: learning to think in terms of \emph{arrows} and \emph{diagrams}. These tools will illuminate structures throughout discrete mathematics.
+For more detail, see the Category Theory Companion, Week 1--2.
 
 \subsubsection*{Functions as Arrows}
 
@@ -158,6 +160,15 @@ We've been writing $f: A \to B$ for functions. The arrow notation isn't accident
   \item \textbf{Identity arrows exist:} Every set $A$ has an identity function $\id_A: A \to A$ with $\id_A(x) = x$.
   \item \textbf{Identities are neutral:} $f \circ \id_A = f$ and $\id_B \circ f = f$.
 \end{itemize}
+
+\subsubsection*{Elements as Maps from 1}
+In $\Set$, a singleton set $1 = \{*\}$ is special. Every element $a \in A$ corresponds to a unique map $1 \to A$ that sends $*$ to $a$. In categorical language, \emph{elements of $A$ are its points}, i.e., arrows $1 \to A$.
+
+\subsubsection*{Terminal and Initial Objects}
+The singleton set $1$ is a \textbf{terminal object}: for every set $A$, there is exactly one map $A \to 1$. The empty set $0$ is an \textbf{initial object}: for every set $A$, there is exactly one map $0 \to A$. Thinking in terms of arrows makes ``elements'' and ``emptiness'' uniform across categories.
+
+\subsubsection*{Products via Universal Properties}
+The Cartesian product $A \times B$ is the categorical product: for any $X$ with maps $f: X \to A$ and $g: X \to B$, there is a unique map $\langle f, g \rangle: X \to A \times B$ making the projection triangle commute. This universal property will reappear in many disguises.
 
 \subsubsection*{Diagrams as Visual Equations}
 

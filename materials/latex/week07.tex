@@ -1,6 +1,7 @@
 \section{Week 7: Graph Theory I --- Paths and Connectivity}
 \subsection*{Reading}
-Epp \S 10.1--10.3.
+Epp \S 10.1--10.3.\\
+\textbf{Category theory companion:} Weeks 6--7 (\texttt{category\_theory\_companion.pdf}).
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -398,6 +399,7 @@ Euler has a simple characterization (degree conditions). Hamiltonian does not.
 
 \begin{goingdeeper}[Going Deeper: Graphs Generate Categories]
 The categorical thread continues: graphs give rise to categories, and this perspective illuminates why adjacency matrices count paths.
+For more detail, see the Category Theory Companion, Weeks 6--7.
 
 \subsubsection*{The Free Category on a Graph}
 
@@ -448,6 +450,11 @@ Length-$k$ paths & $A^k$ \\
 Identity (length-0 path) & $I$ (identity matrix)
 \end{tabular}
 \end{center}
+
+\subsubsection*{Connected Components as a Functor}
+There is a functor $\pi_0: \cat{Graph} \to \Set$ that sends a graph to its set of connected components. A graph homomorphism $f: G \to H$ induces a function $\pi_0(f)$ by sending each component of $G$ to the component of $H$ containing its image.
+
+This functor captures the idea that ``connectivity'' is preserved by structure-preserving maps.
 
 \subsubsection*{Quotient Categories: Imposing Relations}
 

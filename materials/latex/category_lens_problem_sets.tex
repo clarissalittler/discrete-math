@@ -1,0 +1,83 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+
+% Number sets
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Pow}{\mathcal{P}}
+\newcommand{\Set}{\mathbf{Set}}
+\newcommand{\id}{\mathrm{id}}
+
+\begin{document}
+\title{CS251 Category Lens Problem Sets}
+\author{Optional Enrichment (1--2 problems per week)}
+\date{}
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{Week 1: Arrows, Points, and Products}
+\begin{enumerate}[label=(\alph*)]
+  \item Let $A = \{a, b\}$. List all morphisms $1 \to A$ in $\Set$ and match each to an element of $A$.
+  \item Let $X = \{1,2\}$, $A = \{a,b\}$, $B = \{c,d\}$. Define $f: X \to A$ by $f(1)=a, f(2)=b$ and $g: X \to B$ by $g(1)=d, g(2)=c$. Construct the unique map $\langle f,g \rangle: X \to A \times B$ and verify that $\pi_1 \circ \langle f,g \rangle = f$ and $\pi_2 \circ \langle f,g \rangle = g$.
+\end{enumerate}
+
+\section{Week 2: Isomorphisms, Sections, and Idempotents}
+\begin{enumerate}[label=(\alph*)]
+  \item Suppose $f: A \to B$ has a right inverse $s: B \to A$ with $f \circ s = \id_B$. Prove that $f$ is surjective.
+  \item Let $A = \{1,2,3\}$ and define $p: A \to A$ by $p(1)=1$, $p(2)=1$, $p(3)=3$. Show that $p$ is idempotent. Find a subset $B \subseteq A$ and maps $r: A \to B$, $i: B \to A$ such that $p = i \circ r$ and $r \circ i = \id_B$.
+\end{enumerate}
+
+\section{Week 3: Preorders as Categories}
+\begin{enumerate}[label=(\alph*)]
+  \item In the divisibility preorder on $\{1,2,3,6\}$, compute the meet and join of $2$ and $3$.
+  \item Let $F: \Pow(\{1,2,3\}) \to \N$ be $F(S) = |S|$. Prove that $F$ is monotone with respect to $\subseteq$ and $\leq$.
+\end{enumerate}
+
+\section{Week 4: Products, Sums, and Exponentials}
+\begin{enumerate}[label=(\alph*)]
+  \item Let $|A|=2$ and $|B|=3$. Compute $|B^A|$ and interpret it as the number of functions $A \to B$.
+  \item Let $X = \{x,y\}$, $A = \{0,1\}$, $B = \{a,b\}$. Define $g: X \times A \to B$ by
+  $g(x,0)=a$, $g(x,1)=b$, $g(y,0)=b$, $g(y,1)=a$. Write the curried map $\tilde{g}: X \to B^A$ explicitly.
+\end{enumerate}
+
+\section{Week 5: Subsets as Maps to 2}
+\begin{enumerate}[label=(\alph*)]
+  \item For $A = \{1,2,3,4\}$, describe the bijection between subsets $S \subseteq A$ and characteristic maps $\chi_S: A \to 2$. How many maps have exactly two elements mapped to $1$?
+  \item Let $c: 2 \to 2$ swap $0$ and $1$. Show that the complement of $S$ corresponds to the composite $c \circ \chi_S$.
+\end{enumerate}
+
+\section{Week 6: Parts and Graph Homomorphisms}
+\begin{enumerate}[label=(\alph*)]
+  \item Prove that for any function $f: A \to B$ and subsets $S,T \subseteq B$, we have $f^{-1}(S \cup T) = f^{-1}(S) \cup f^{-1}(T)$.
+  \item Let $G$ have vertices $\{1,2,3\}$ and edges $\{1,2\}$, $\{2,3\}$. Let $H$ be the triangle graph on $\{a,b,c\}$. Show that the map $h(1)=a$, $h(2)=b$, $h(3)=c$ is a graph homomorphism. Give a different vertex map that is not a homomorphism.
+\end{enumerate}
+
+\section{Week 7: Free Categories and Components}
+\begin{enumerate}[label=(\alph*)]
+  \item For the directed graph $1 \to 2 \to 3$, list all morphisms from $1$ to $3$ in $\mathbf{Path}(G)$. How many length-2 paths are there? Verify using the adjacency matrix.
+  \item Let $G$ have vertices $\{1,2,3,4\}$ and edges $\{1,2\}$, $\{2,3\}$. Compute $\pi_0(G)$ (the connected components).
+\end{enumerate}
+
+\section{Week 8: Initial Algebras and Folds}
+\begin{enumerate}[label=(\alph*)]
+  \item Define an algebra for binary trees that computes the number of leaves. Write the fold equations.
+  \item Let $t$ be a tree with a root whose left subtree is a single leaf and whose right subtree has two leaves. Use your fold to compute the number of leaves of $t$.
+\end{enumerate}
+
+\section{Week 9: Coalgebras and Automata}
+\begin{enumerate}[label=(\alph*)]
+  \item Consider the DFA over $\Sigma = \{0,1\}$ that accepts strings with an even number of $1$'s. Write the coalgebra map $Q \to 2 \times Q^\Sigma$ explicitly (name the states and indicate output and transitions).
+  \item For the same DFA, compute $\delta^*(q_0, 1011)$ where $q_0$ is the start state.
+\end{enumerate}
+
+\section{Week 10: Monoids and Adjunctions}
+\begin{enumerate}[label=(\alph*)]
+  \item Let $\Sigma = \{a,b\}$. Define a monoid homomorphism $h: \Sigma^* \to (\N, +, 0)$ by $h(a)=1$ and $h(b)=2$. Compute $h(\texttt{abba})$.
+  \item Describe the one-object category corresponding to the monoid $(\N, +, 0)$: what are its morphisms and how is composition defined?
+\end{enumerate}
+
+\end{document}

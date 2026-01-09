@@ -5,6 +5,7 @@
 \usepackage{tikz}
 \usetikzlibrary{automata,positioning,arrows,graphs,graphs.standard}
 \usepackage{tikz-cd}
+\usepackage{stmaryrd}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{tcolorbox}
@@ -199,6 +200,39 @@ Conversely, suppose $f$ is injective and $f \circ g = f \circ h$. For any $x$, $
 In other categories, mono $\neq$ injective and epi $\neq$ surjective! For example, in the category of rings, the inclusion $\Z \hookrightarrow \Q$ is epic but not surjective.
 \end{warning}
 
+\subsection{Sections, Retractions, and Idempotents}
+
+\begin{definition}[Section and retraction]
+Given $f: A \to B$:
+\begin{itemize}
+  \item A \textbf{section} (right inverse) is a map $s: B \to A$ with $f \circ s = \id_B$.
+  \item A \textbf{retraction} (left inverse) is a map $r: B \to A$ with $r \circ f = \id_A$.
+\end{itemize}
+\end{definition}
+
+Sections make $f$ split-epi; retractions make $f$ split-mono. Diagrammatically:
+\[
+\begin{tikzcd}
+A \arrow[r, "f"] & B \arrow[l, bend left, "s"] \\
+A \arrow[r, "f"] & B \arrow[l, bend right, "r"']
+\end{tikzcd}
+\]
+
+\begin{definition}[Idempotent]
+A map $p: A \to A$ is \textbf{idempotent} if $p \circ p = p$.
+\end{definition}
+
+In $\Set$, idempotents correspond to \emph{retracts}: if $p = i \circ r$ with $r \circ i = \id_B$, then $p$ projects $A$ onto the subset $B$.
+
+\subsection{Terminal and Initial Objects}
+
+\begin{definition}[Terminal and initial objects]
+An object $1$ is \textbf{terminal} if for every $A$ there exists a unique map $A \to 1$.
+An object $0$ is \textbf{initial} if for every $A$ there exists a unique map $0 \to A$.
+\end{definition}
+
+In $\Set$, any singleton is terminal and the empty set is initial. Elements of a set $A$ can be seen as maps $1 \to A$ (``points'' of $A$).
+
 \subsection{Universal Properties: Products and Coproducts}
 
 The deepest insights come from \emph{universal properties}---characterizations that uniquely determine a construction up to isomorphism.
@@ -242,7 +276,7 @@ case x of
 
 \begin{exercise}
 Let $A = \{1, 2, 3\}$ and $B = \{a, b\}$.
-\begin{enumerate}[label=(\alph*)}
+\begin{enumerate}[label=(\alph*)]
   \item How many morphisms are there in $\Hom(A, B)$?
   \item How many morphisms are there in $\Hom(B, A)$?
   \item How many of the morphisms $A \to B$ are epimorphisms?
@@ -277,6 +311,23 @@ The \textbf{exponential} $B^A$ in $\Set$ is the set of all functions from $A$ to
 The universal property says: for any $g: X \times A \to B$, there exists a unique $\tilde{g}: X \to B^A$ such that $\varepsilon \circ (\tilde{g} \times \id_A) = g$.
 
 Interpret this in programming: what is $\tilde{g}$ doing? (Hint: currying.)
+\end{exercise}
+
+\begin{exercise}
+Show that elements of a set $A$ correspond bijectively to morphisms $1 \to A$ in $\Set$, where $1$ is a singleton.
+\end{exercise}
+
+\begin{exercise}
+Let $f: A \to B$.
+\begin{enumerate}[label=(\alph*)]
+  \item If there exists $s: B \to A$ with $f \circ s = \id_B$, prove that $f$ is surjective.
+  \item If there exists $r: B \to A$ with $r \circ f = \id_A$, prove that $f$ is injective.
+\end{enumerate}
+\end{exercise}
+
+\begin{exercise}
+Let $p: A \to A$ be idempotent in $\Set$, and let $B = \{p(a) : a \in A\}$.
+Construct maps $r: A \to B$ and $i: B \to A$ such that $p = i \circ r$ and $r \circ i = \id_B$.
 \end{exercise}
 
 %=============================================================================
@@ -352,7 +403,7 @@ Many ``forgetful'' functors forget structure:
 \end{itemize}
 \end{example}
 
-\subsection{The Category $\Rel$}
+\subsection{The Category \texorpdfstring{$\Rel$}{Rel}}
 
 \begin{definition}[The category $\Rel$]
 The category $\Rel$ has:
@@ -499,6 +550,18 @@ fmap (g . f) = fmap g . fmap f
 \end{verbatim}
 \end{programmingnote}
 
+\subsection{Map Objects and Currying}
+
+\begin{definition}[Exponential / map object]
+In $\Set$, the \textbf{map object} $B^A$ is the set of all functions $A \to B$ with evaluation:
+\[
+\mathrm{ev}: B^A \times A \to B, \quad \mathrm{ev}(f, a) = f(a)
+\]
+It satisfies the universal property: for any $g: X \times A \to B$, there exists a unique $\tilde{g}: X \to B^A$ such that $\mathrm{ev} \circ (\tilde{g} \times \id_A) = g$.
+\end{definition}
+
+This is \textbf{currying}. It explains why $|B^A| = |B|^{|A|}$ and why ``functions are a kind of object.''
+
 \subsection{Combinatorial Species (Advanced)}
 
 \begin{definition}[Species]
@@ -514,7 +577,8 @@ $L(A) = \{\text{linear orderings of } A\}$. We have $|L(\{1,2,3\})| = 3! = 6$.
 \end{example}
 
 \begin{example}[Species of graphs]
-$G(A) = \{\text{simple graphs with vertex set } A\}$. We have $|G(\{1,2,3\})| = 2^3 = 8$.
+$G(A) = \{\text{simple graphs with vertex set } A\}$.\\
+We have $|G(\{1,2,3\})| = 2^3 = 8$.
 \end{example}
 
 The theory of species provides a categorified approach to generating functions.
@@ -537,9 +601,47 @@ Verify the functor laws for Maybe: $\text{Maybe}(\id) = \id$ and $\text{Maybe}(g
 The type of binary trees with data at leaves is $\text{Tree}(A) = A + \text{Tree}(A)^2$. Expand the first few terms of this as a power series in $A$. What is the coefficient of $A^3$? (It counts binary tree shapes with 3 leaves.)
 \end{exercise}
 
+\begin{exercise}
+Let $A = \{1, 2\}$ and $B = \{a, b, c\}$. List the elements of $B^A$ and describe the evaluation map $\mathrm{ev}: B^A \times A \to B$.
+\end{exercise}
+
+\begin{exercise}
+Show that the currying correspondence $g: X \times A \to B \leftrightarrow \tilde{g}: X \to B^A$ is bijective. (Hint: give explicit formulas in both directions.)
+\end{exercise}
+
 %=============================================================================
 \section{Weeks 6--7: Graphs and Free Categories}
 %=============================================================================
+
+\subsection{Endomaps and Dynamical Systems}
+
+\begin{definition}[Endomap]
+An \textbf{endomap} on a set $X$ is a function $a: X \to X$.
+\end{definition}
+
+\begin{definition}[Category of endomaps]
+The category $\cat{End}$ has:
+\begin{itemize}
+  \item Objects: pairs $(X, a)$ with $a: X \to X$
+  \item Morphisms $f: (X, a) \to (Y, b)$: functions $f: X \to Y$ such that $f \circ a = b \circ f$
+\end{itemize}
+\end{definition}
+
+This encodes \emph{discrete-time dynamical systems}. Iterating $a$ gives the time evolution $a^n$, and a morphism $f$ is a structure-preserving map between dynamics.
+
+\begin{note}
+A discrete-time dynamical system is equivalently a functor from the one-object category $\N$ (with composition given by addition) to $\Set$.
+\end{note}
+
+\subsection{Parts, Predicates, and the Power Set}
+
+The power set $\Pow(A)$ collects all \emph{parts} of $A$. Each subset $S \subseteq A$ corresponds to a characteristic map $\chi_S: A \to 2$.
+
+For a function $f: A \to B$, the \textbf{preimage} $f^{-1}: \Pow(B) \to \Pow(A)$ is contravariant and preserves unions and intersections:
+\[
+f^{-1}(S \cup T) = f^{-1}(S) \cup f^{-1}(T), \quad f^{-1}(S \cap T) = f^{-1}(S) \cap f^{-1}(T)
+\]
+This is the categorical origin of ``pulling back predicates.''
 
 \subsection{Graphs Generate Categories}
 
@@ -606,6 +708,14 @@ For the free category $\text{Path}(Q)$, if $A$ is the adjacency matrix of $Q$, t
 
 This explains the graph-theoretic interpretation of matrix powers!
 
+\subsection{Connected Components Functor}
+
+Let $\pi_0: \cat{Graph} \to \Set$ send a graph to its set of connected components. A graph homomorphism $f: G \to H$ induces a function $\pi_0(f)$ by mapping each component of $G$ to the component of $H$ containing its image.
+
+\begin{remark}
+The functor $\pi_0$ preserves coproducts (disjoint unions). In more advanced treatments, it is left adjoint to the discrete-graph functor.
+\end{remark}
+
 \subsection{Exercises}
 
 \begin{exercise}
@@ -619,6 +729,18 @@ For the graph $a \xrightarrow{f} b \xrightarrow{g} c$, $c \xrightarrow{h} b$:
 
 \begin{exercise}
 Draw a database schema for: Users, Posts, Comments, where Posts have authors (Users) and Comments reference both a Post and a User. Write down what a functor from this schema to $\Set$ looks like.
+\end{exercise}
+
+\begin{exercise}
+Let $(X, a)$ and $(Y, b)$ be endomaps, and let $f: X \to Y$ satisfy $f \circ a = b \circ f$. Prove by induction on $n$ that $f \circ a^n = b^n \circ f$ for all $n \geq 0$.
+\end{exercise}
+
+\begin{exercise}
+Show that $f^{-1}$ preserves unions and intersections: for any $f: A \to B$ and $S, T \subseteq B$, prove $f^{-1}(S \cup T) = f^{-1}(S) \cup f^{-1}(T)$ and $f^{-1}(S \cap T) = f^{-1}(S) \cap f^{-1}(T)$.
+\end{exercise}
+
+\begin{exercise}
+Compute $\pi_0(G)$ for a graph $G$ with vertices $\{1,2,3,4\}$ and edges $\{1,2\}, \{2,3\}$. Then describe $\pi_0$ on a graph homomorphism that collapses $\{1,2,3\}$ to a single vertex in a 2-vertex graph.
 \end{exercise}
 
 %=============================================================================
@@ -885,7 +1007,8 @@ Write the DFA accepting ``strings ending in 01'' as an $F$-coalgebra for $F(X) =
 \end{exercise}
 
 \begin{exercise}
-Compute the Brzozowski derivatives $\partial_0(L)$ and $\partial_1(L)$ for $L = \{w : w \text{ has even number of 1s}\}$.
+Compute the Brzozowski derivatives $\partial_0(L)$ and $\partial_1(L)$\\
+for $L = \{w : w \text{ has even number of 1s}\}$.
 \end{exercise}
 
 \begin{exercise}
@@ -944,6 +1067,14 @@ The \textbf{free monoid} on a set $\Sigma$ is $(\Sigma^*, \cdot, \varepsilon)$--
 \begin{theorem}[Universal property]
 For any monoid $M$ and function $f: \Sigma \to M$, there exists a unique monoid homomorphism $f^*: \Sigma^* \to M$ extending $f$.
 \end{theorem}
+
+\subsection{Free/Forgetful Adjunction}
+Let $U: \cat{Mon} \to \Set$ be the forgetful functor (drop the operation) and $F: \Set \to \cat{Mon}$ be the free monoid functor ($F(\Sigma) = \Sigma^*$).
+The universal property above says precisely that $F \dashv U$:
+\[
+\Hom_{\cat{Mon}}(\Sigma^*, M) \cong \Hom_{\Set}(\Sigma, U(M))
+\]
+Adjunctions generalize ``free constructions'' across mathematics.
 
 \subsection{Regular Languages and Syntactic Monoids}
 
@@ -1017,6 +1148,10 @@ Find the syntactic monoid of $L = \{w \in \{a,b\}^* : w \text{ contains } ab\}$.
 \end{exercise}
 
 \begin{exercise}
+Let $U: \cat{Mon} \to \Set$ be the forgetful functor and $F: \Set \to \cat{Mon}$ the free monoid functor. Prove that giving a monoid homomorphism $h: \Sigma^* \to M$ is equivalent to giving a function $\Sigma \to U(M)$.
+\end{exercise}
+
+\begin{exercise}
 Model the cost of linear search and binary search using the cost monoid $(\N, +, 0)$.
 \end{exercise}
 
@@ -1032,7 +1167,8 @@ Throughout this companion, we've seen several recurring ideas:
 
 \textbf{2. Functors Preserve Structure.} Structure-preserving maps (functors, homomorphisms) are often more important than the structures themselves.
 
-\textbf{3. Duality.} Many concepts come in pairs: products/coproducts, monos/epis, algebras/coalgebras, initial/final. Understanding one often gives the other ``for free.''
+\textbf{3. Duality.} Many concepts come in pairs: products/coproducts, monos/epis,\\
+algebras/coalgebras, initial/final. Understanding one often gives the other ``for free.''
 
 \textbf{4. Diagrams as Specifications.} Commutative diagrams express equations. When we say ``this diagram commutes,'' we're stating an invariant that implementations must satisfy.
 

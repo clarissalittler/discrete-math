@@ -1,6 +1,7 @@
 \section{Week 10: Analysis of Algorithm Efficiency}
 \subsection*{Reading}
-Epp \S 11.1--11.5.
+Epp \S 11.1--11.5.\\
+\textbf{Category theory companion:} Week 10 (\texttt{category\_theory\_companion.pdf}).
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -182,6 +183,39 @@ $T(n) = 2T(n-1) + O(1)$ & $O(2^n)$ & Fibonacci (naive) \\
 \end{itemize}
 Usually, we report worst-case complexity.
 \end{definition}
+
+\subsection*{Complexity classes and reductions}
+
+\begin{definition}[Decision problem]
+A \textbf{decision problem} has a yes/no answer for each input. Complexity classes are typically defined for decision problems.
+\end{definition}
+
+\begin{definition}[Classes P and NP]
+\begin{itemize}
+  \item $\mathbf{P}$: problems solvable in polynomial time by a deterministic algorithm.
+  \item $\mathbf{NP}$: problems whose solutions can be \emph{verified} in polynomial time (equivalently, solvable by a nondeterministic polynomial-time algorithm).
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Reductions, NP-hard, NP-complete]
+A polynomial-time reduction from $A$ to $B$ (written $A \leq_p B$) transforms instances of $A$ into instances of $B$ preserving yes/no answers.
+\begin{itemize}
+  \item $B$ is \textbf{NP-hard} if every problem in NP reduces to $B$.
+  \item $B$ is \textbf{NP-complete} if $B \in \textbf{NP}$ and $B$ is NP-hard.
+\end{itemize}
+\end{definition}
+
+\begin{strategy}
+To prove a problem $B$ is NP-complete:
+\begin{enumerate}
+  \item Show $B \in \mathbf{NP}$ (solutions are verifiable in poly time).
+  \item Reduce a known NP-complete problem $A$ to $B$ in polynomial time.
+\end{enumerate}
+\end{strategy}
+
+\begin{example}[Common NP-complete problems]
+SAT, 3-SAT, CLIQUE, VERTEX COVER, HAMILTONIAN CYCLE, and SUBSET SUM are all NP-complete.
+\end{example}
 
 \subsection*{Worked examples}
 
@@ -384,6 +418,7 @@ If $T(1) = 1$: $T(n) = \frac{n(n+1)}{2} = \Theta(n^2)$.
 \begin{goingdeeper}[Going Deeper: Monoids—Categories with One Object]
 
 Throughout this course, we've seen how categories unify different areas of mathematics. We end with a beautiful observation: \emph{monoids are categories with exactly one object}.
+For more detail, see the Category Theory Companion, Week 10.
 
 \subsubsection*{Monoids: The Definition}
 
@@ -595,4 +630,10 @@ for i = 1 to n:
   \item Prove: $f(n) = o(g(n))$ implies $f(n) = O(g(n))$.
 
   \item A recursive algorithm satisfies $T(n) = T(n/3) + T(2n/3) + n$. Prove $T(n) = O(n \log n)$.
+
+  \item If $A \leq_p B$ and $B \in \mathbf{P}$, what can you conclude about $A$? Justify.
+
+  \item Explain why HAMILTONIAN CYCLE is in $\mathbf{NP}$.
+
+  \item Outline a polynomial-time reduction from CLIQUE to VERTEX COVER (state how $k$ changes and what graph transformation you use).
 \end{enumerate}

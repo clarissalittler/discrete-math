@@ -1,6 +1,7 @@
 \section{Week 8: Trees and Graph Algorithms}
 \subsection*{Reading}
-Epp \S 10.4--10.6.
+Epp \S 10.4--10.6. Supplemental: matchings and flows.\\
+\textbf{Category theory companion:} Week 8 (\texttt{category\_theory\_companion.pdf}).
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -149,6 +150,57 @@ Sort edges by weight. Add edges in order, skipping those that would create a cyc
 \textbf{Time complexity:} $O(|E| \log |E|)$ (dominated by sorting).
 \end{theorem}
 
+\subsection*{Matchings in bipartite graphs}
+
+\begin{definition}[Matching]
+A \textbf{matching} is a set of edges with no shared endpoints. A \textbf{maximum matching} has the largest possible size. A \textbf{perfect matching} covers every vertex.
+\end{definition}
+
+\begin{theorem}[Hall's marriage theorem]
+Let $G = (X \cup Y, E)$ be a bipartite graph. There is a matching that covers all vertices of $X$ iff for every subset $S \subseteq X$:
+\[
+|N(S)| \geq |S|
+\]
+where $N(S)$ is the set of neighbors of $S$ in $Y$.
+\end{theorem}
+
+\begin{example}
+Let $X = \{1,2,3\}$, $Y = \{a,b,c\}$, and edges $\{1a, 1b, 2b, 3b, 3c\}$. For any $S \subseteq X$:
+\[
+|N(\{1\})| = 2,\; |N(\{2\})| = 1,\; |N(\{3\})| = 2,\; |N(\{2,3\})| = 2,\; |N(\{1,2,3\})| = 3
+\]
+Hall's condition holds, so a matching covering $X$ exists (e.g., $\{1a, 2b, 3c\}$).
+\end{example}
+
+\begin{remark}
+Maximum matchings can be found by \textbf{augmenting paths}: repeatedly flip edges along a path that alternates between unmatched and matched edges to increase the matching size.
+\end{remark}
+
+\subsection*{Network flows}
+
+\begin{definition}[Flow network]
+A \textbf{flow network} is a directed graph with a source $s$, sink $t$, and nonnegative capacities $c(u,v)$ on edges.
+A flow assigns values $f(u,v)$ satisfying:
+\begin{itemize}
+  \item \textbf{Capacity constraint:} $0 \leq f(u,v) \leq c(u,v)$
+  \item \textbf{Flow conservation:} For all $v \neq s,t$, $\sum_u f(u,v) = \sum_w f(v,w)$
+\end{itemize}
+The \textbf{value} of the flow is the total outflow from $s$.
+\end{definition}
+
+\begin{definition}[Cut]
+An $s$-$t$ \textbf{cut} is a partition $(S, T)$ with $s \in S$ and $t \in T$.
+Its \textbf{capacity} is $\sum_{u \in S, v \in T} c(u,v)$.
+\end{definition}
+
+\begin{theorem}[Max-flow min-cut]
+The maximum value of an $s$-$t$ flow equals the minimum capacity of any $s$-$t$ cut.
+\end{theorem}
+
+\begin{remark}
+The Ford--Fulkerson method repeatedly finds an augmenting path in the residual graph until no such path remains.
+\end{remark}
+
 \subsection*{Worked examples}
 
 \begin{example}
@@ -257,6 +309,7 @@ Total edges: $\sum_{i=1}^k (n_i - 1) = \sum_{i=1}^k n_i - k = n - k$.
 
 \begin{goingdeeper}[Going Deeper: Trees as Initial Algebras and the Universality of Fold]
 There's a deep reason why recursive functions on trees always terminate, and why the ``fold'' pattern is so universal. Trees are \emph{initial algebras}, and fold is the unique map from an initial object.
+For more detail, see the Category Theory Companion, Week 8.
 
 \textbf{The recursive structure of trees.} Notice that a binary tree is either:
 \begin{itemize}
@@ -365,4 +418,10 @@ Natural numbers are too: $\N = 1 + \N$ with ``algebra'' $(z, s)$ giving primitiv
   \item How many spanning trees does the cycle $C_n$ have?
 
   \item Prove: In any tree, the sum of all vertex degrees equals $2(n-1)$.
+
+  \item Let $X = \{1,2,3\}$ and $Y = \{a,b,c\}$ with edges $\{1a, 1b, 2b, 2c, 3c\}$. Use Hall's theorem to decide whether there is a matching that covers $X$, and find one if it exists.
+
+  \item Find a maximum matching in the bipartite graph with $X=\{u,v,w\}$, $Y=\{x,y,z\}$, and edges $\{ux, uy, vx, vy, wz\}$.
+
+  \item Compute the maximum flow value in a network with edges $s \to a$ (3), $s \to b$ (2), $a \to b$ (1), $a \to t$ (2), $b \to t$ (3). Give one maximum flow and a minimum cut.
 \end{enumerate}

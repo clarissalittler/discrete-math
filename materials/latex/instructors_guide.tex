@@ -73,6 +73,7 @@
 \rhead{CS 251: Discrete Mathematics}
 \lhead{Instructor's Guide}
 \rfoot{Page \thepage}
+\setlength{\headheight}{14pt}
 
 \title{\textbf{CS 251: Discrete Mathematics}\\[0.5em]\Large Instructor's Guide\\[0.3em]\normalsize 10-Week Quarter, Two 2-Hour Sessions per Week}
 \author{Course Materials with Category Theory Enrichment}
@@ -93,6 +94,7 @@
 \subsection{Course Philosophy}
 
 This course introduces discrete mathematics with an emphasis on \textbf{mathematical maturity} and \textbf{proof fluency}. While covering standard topics (sets, functions, relations, counting, graphs), we incorporate ``Going Deeper'' sections that connect to category theory and type theory---giving students a glimpse of the elegant abstractions underlying discrete structures.
+The Category Theory Companion (aligned by week) provides optional readings and exercises; the weekly notes include short Category Lens inserts that reference it.
 
 \subsection{Prerequisites}
 Students should have completed a first course covering:
@@ -107,13 +109,17 @@ Chapter 0 provides a refresher on these topics for the first class session.
 \subsection{Course Materials}
 \begin{itemize}
     \item \textbf{Primary:} Course notes (Weeks 0--10 LaTeX documents)
+    \item \textbf{Supplementary:} Category Theory Companion\\
+    \texttt{materials/latex/category\_theory\_companion.pdf}
+    \item \textbf{Supplementary:} Category Lens problem sets\\
+    \texttt{materials/latex/category\_lens\_problem\_sets.pdf}
     \item \textbf{Supplementary:} Agda developments for each week
     \item \textbf{Reference:} Epp, \textit{Discrete Mathematics with Applications} (optional)
 \end{itemize}
 
 \subsection{Assessment Suggestions}
 \begin{itemize}
-    \item Weekly problem sets (60\%)---mix of computation and proof
+    \item Weekly problem sets (60\%)---mix of computation and proof; optionally include 1--2 Category Lens problems
     \item Theorem proving projects (40\%)---two projects, described in Section~\ref{sec:projects}
 \end{itemize}
 
@@ -217,6 +223,9 @@ Students often struggle with the \textit{structure} of proofs. Emphasize that pr
 Emphasize the bidirectional nature of set equality proofs.
 \end{classbbox}
 
+\textbf{Category Lens pacing (Class B, 5--10 min):}\\
+Use the arrows/points/terminal object box; point students to the Category Theory Companion Week 1--2 and the Week 1 problem set.
+
 \begin{agdabox}
 \textbf{File:} \texttt{Week01\_SetTheory.agda}
 
@@ -293,6 +302,9 @@ Students often write ``Let $x \in A \cup B$'' without considering both cases. Dr
 \textbf{Key Theorem:} $f$ has a two-sided inverse if and only if $f$ is bijective.
 \end{classbbox}
 
+\textbf{Category Lens pacing (Class B, 5--10 min):}\\
+Use the sections/retractions/idempotents box; point students to the Category Theory Companion Week 1--2 and the Week 2 problem set.
+
 \begin{agdabox}
 \textbf{File:} \texttt{Week02\_Functions.agda}
 
@@ -328,6 +340,7 @@ The notation $g \circ f$ (``$g$ after $f$'') confuses students because $f$ appea
     \item Properties: reflexive, symmetric, transitive, antisymmetric
     \item Equivalence relations
     \item Equivalence classes and partitions
+    \item Partial orders; Hasse diagrams
 \end{itemize}
 
 \textbf{Learning Goals:}
@@ -335,6 +348,7 @@ The notation $g \circ f$ (``$g$ after $f$'') confuses students because $f$ appea
     \item Test whether a relation has specific properties
     \item Prove a relation is an equivalence relation
     \item Compute equivalence classes and understand the partition correspondence
+    \item Draw Hasse diagrams and identify minimal/maximal/least/greatest elements
 \end{itemize}
 
 \textbf{Warm-up:} For each relation on $\mathbb{Z}$, identify which properties it has:
@@ -370,6 +384,9 @@ The notation $g \circ f$ (``$g$ after $f$'') confuses students because $f$ appea
 \textbf{Application:} ISBN check digits, credit card validation (Luhn algorithm).
 \end{classbbox}
 
+\textbf{Category Lens pacing (Class B, 5--10 min):}\\
+Use the preorders-as-categories and Galois connection box; assign Companion Week 3 and the Week 3 problem set.
+
 \begin{agdabox}
 \textbf{File:} \texttt{Week03\_RelationsMod.agda}
 
@@ -390,31 +407,27 @@ Students often confuse ``$a \equiv b \pmod{n}$'' with ``$a = b \mod n$.'' Emphas
 
 \newpage
 %=============================================================================
-\section{Week 4: Basic Counting}
+\section{Week 4: Counting and Probability I}
 %=============================================================================
 
 \begin{classabox}
 \textbf{Topics:}
 \begin{itemize}
+    \item Sample spaces and events; equally likely probability
     \item Counting principles: sum rule, product rule
-    \item Permutations (with and without repetition)
-    \item Combinations; binomial coefficients $\binom{n}{k}$
-    \item Pascal's triangle and Pascal's identity
+    \item Permutations and arrangements with restrictions
+    \item Addition rule and inclusion--exclusion (two or three sets)
+    \item Pigeonhole principle
 \end{itemize}
 
 \textbf{Learning Goals:}
 \begin{itemize}
-    \item Identify when to use sum vs. product rule
-    \item Distinguish between permutations and combinations
-    \item Compute binomial coefficients using Pascal's identity
+    \item Build sample spaces and compute basic probabilities
+    \item Apply sum/product rules and inclusion--exclusion
+    \item Use the pigeonhole principle in proofs
 \end{itemize}
 
-\textbf{Warm-up:} A license plate has 3 letters followed by 3 digits. How many plates are possible if:
-\begin{enumerate}
-    \item Repetition is allowed?
-    \item No repetition is allowed?
-    \item The letters must spell a word? (Define ``word'' loosely)
-\end{enumerate}
+\textbf{Warm-up:} Two coins are flipped. List the sample space and compute the probability of exactly one head.
 \end{classabox}
 
 \begin{activitybox}
@@ -424,23 +437,23 @@ Students often confuse ``$a \equiv b \pmod{n}$'' with ``$a = b \mod n$.'' Emphas
 \begin{classbbox}
 \textbf{Topics:}
 \begin{itemize}
-    \item Binomial theorem
-    \item Combinatorial proofs
-    \item Counting with repetition (multisets)
-    \item Stars and bars technique
+    \item Complement counting and derangements
+    \item Conditional probability and independence
+    \item Bayes' theorem and total probability
 \end{itemize}
 
 \textbf{Learning Goals:}
 \begin{itemize}
-    \item Apply the binomial theorem to expand $(x + y)^n$
-    \item Write combinatorial proofs of identities
-    \item Use stars and bars for distribution problems
+    \item Use complement counting to simplify problems
+    \item Compute conditional probabilities and test independence
+    \item Apply Bayes' theorem in inverse-probability settings
 \end{itemize}
 
-\textbf{Key Identity:} $\binom{n}{0} + \binom{n}{1} + \cdots + \binom{n}{n} = 2^n$
-
-\textbf{Combinatorial Proof:} Both sides count subsets of an $n$-element set.
+\textbf{Application:} Medical testing (sensitivity, specificity, false positives).
 \end{classbbox}
+
+\textbf{Category Lens pacing (Class B, 5--10 min):}\\
+Use the algebra-of-types box and mention exponentials/currying; assign Companion Weeks 4--5 and the Week 4 problem set.
 
 \begin{agdabox}
 \textbf{File:} \texttt{Week04\_CountingProb1.agda}
@@ -455,6 +468,81 @@ Key concepts:
 \end{agdabox}
 
 \begin{tipbox}
+For conditional probability problems, require students to define events clearly and write
+$P(A \mid B) = P(A \cap B)/P(B)$ before computing. Tree diagrams help avoid missed cases.
+\end{tipbox}
+
+\newpage
+%=============================================================================
+\section{Week 5: Counting and Probability II}
+%=============================================================================
+
+\begin{classabox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Combinations and binomial coefficients
+    \item Binomial theorem and Pascal's identity
+    \item Stars and bars (combinations with repetition)
+    \item Multinomial coefficients
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Decide when order matters and use combinations correctly
+    \item Apply the binomial theorem and Pascal's identity
+    \item Solve distribution problems with stars and bars
+\end{itemize}
+
+\textbf{Warm-up:} How many 5-card hands contain exactly 2 aces?
+\end{classabox}
+
+\begin{activitybox}
+\textbf{Stars and Bars Workshop:} Give 3--4 distribution problems (cookies to kids, identical balls into bins, integer solutions). Have groups translate each into $x_1 + \cdots + x_k = n$ and compute $\binom{n+k-1}{k-1}$.
+
+Have students:
+\begin{enumerate}
+    \item Identify the ``stars'' and the ``bars''
+    \item Write one small example explicitly
+    \item Compare answers across groups for consistency
+\end{enumerate}
+\end{activitybox}
+
+\begin{classbbox}
+\textbf{Topics:}
+\begin{itemize}
+    \item Recurrence relations for sequences
+    \item Solving simple linear recurrences
+    \item Generating functions (optional enrichment)
+\end{itemize}
+
+\textbf{Learning Goals:}
+\begin{itemize}
+    \item Write recurrences for counting problems
+    \item Solve first- and second-order recurrences with constant coefficients
+    \item Interpret generating functions as algebraic encodings of sequences
+\end{itemize}
+
+\textbf{Application:} Tiling and Fibonacci-style counting problems.
+\end{classbbox}
+
+\textbf{Category Lens pacing (Class B, 5--10 min):}\\
+Use the ``subsets as maps to 2'' lens; assign Companion Weeks 4--5 and the Week 5 problem set.
+
+\begin{agdabox}
+\textbf{File:} \texttt{Week05\_CountingProb2.agda}
+
+Key concepts:
+\begin{itemize}
+    \item \texttt{choose} and Pascal's identity
+    \item \texttt{starsAndBars} and \texttt{multichoose}
+    \item \texttt{multinomial} and basic combinatorial identities
+    \item Optional enrichment: inclusion-exclusion and derangements
+\end{itemize}
+
+\textbf{Going Deeper:} Recurrences arise naturally from combinatorial decompositions (e.g., tilings and Fibonacci numbers). Use them to reinforce induction.
+\end{agdabox}
+
+\begin{tipbox}
 For stars and bars problems, always have students:
 \begin{enumerate}
     \item Identify what the ``stars'' represent
@@ -462,78 +550,6 @@ For stars and bars problems, always have students:
     \item Write out a small example explicitly
 \end{enumerate}
 The formula $\binom{n+k-1}{k-1}$ is easy to misremember; understanding beats memorization.
-\end{tipbox}
-
-\newpage
-%=============================================================================
-\section{Week 5: Advanced Counting and Probability}
-%=============================================================================
-
-\begin{classabox}
-\textbf{Topics:}
-\begin{itemize}
-    \item Inclusion-exclusion principle (2 sets, 3 sets, general)
-    \item Derangements
-    \item Stirling numbers of the second kind
-    \item Multinomial coefficients
-\end{itemize}
-
-\textbf{Learning Goals:}
-\begin{itemize}
-    \item Apply inclusion-exclusion to count unions
-    \item Derive and apply the derangement formula
-    \item Understand Stirling numbers as partition counts
-\end{itemize}
-
-\textbf{Warm-up:} In a class of 30 students, 18 play soccer, 15 play basketball, and 10 play both. How many play neither sport?
-\end{classabox}
-
-\begin{activitybox}
-\textbf{Hat Check Problem:} Present the classic problem: $n$ people check their hats, and hats are returned randomly. What's the probability nobody gets their own hat?
-
-Have students:
-\begin{enumerate}
-    \item Compute $D(n)/n!$ for $n = 1, 2, 3, 4, 5$
-    \item Notice the pattern approaching $1/e \approx 0.368$
-    \item Derive the recurrence $D(n) = (n-1)(D(n-1) + D(n-2))$
-\end{enumerate}
-\end{activitybox}
-
-\begin{classbbox}
-\textbf{Topics:}
-\begin{itemize}
-    \item Probability axioms and basic probability
-    \item Conditional probability
-    \item Independence
-    \item Bayes' theorem
-\end{itemize}
-
-\textbf{Learning Goals:}
-\begin{itemize}
-    \item Compute probabilities using counting techniques
-    \item Apply conditional probability and identify independence
-    \item Use Bayes' theorem for ``inverse'' probability problems
-\end{itemize}
-
-\textbf{Application:} Medical testing (sensitivity, specificity, false positive rates).
-\end{classbbox}
-
-\begin{agdabox}
-\textbf{File:} \texttt{Week05\_CountingProb2.agda}
-
-Key concepts:
-\begin{itemize}
-    \item \texttt{derangement} function with recurrence relation
-    \item \texttt{stirling2} for Stirling numbers
-    \item \texttt{inclusionExclusion2} and \texttt{inclusionExclusion3}
-    \item Probability as pairs of naturals (numerator, denominator)
-\end{itemize}
-
-\textbf{Going Deeper:} The formula $D(n) \approx n!/e$ is a beautiful example of how continuous mathematics (the exponential function) emerges from discrete counting.
-\end{agdabox}
-
-\begin{tipbox}
-Bayes' theorem problems are notoriously confusing. Use tree diagrams consistently and have students label every branch with both the conditional probability and the joint probability. The visual representation prevents many common errors.
 \end{tipbox}
 
 \newpage
@@ -589,6 +605,9 @@ Guide students through:
 
 \textbf{Application:} Expected number of comparisons in randomized quicksort.
 \end{classbbox}
+
+\textbf{Category Lens pacing (Class B, 5--10 min):}\\
+Use the parts/predicates and graph-homomorphism lens when introducing graphs; assign Companion Weeks 6--7 and the Week 6 problem set.
 
 \begin{agdabox}
 \textbf{File:} \texttt{Week06\_ExpectationGraphs.agda}
@@ -654,6 +673,9 @@ The coupon collector problem is excellent for building intuition about linearity
 \textbf{Historical Note:} The Seven Bridges of K\"onigsberg problem (1736) launched graph theory.
 \end{classbbox}
 
+\textbf{Category Lens pacing (Class B, 5--10 min):}\\
+Use the free-category-on-a-graph and connected-components lens; assign Companion Weeks 6--7 and the Week 7 problem set.
+
 \begin{agdabox}
 \textbf{File:} \texttt{Week07\_GraphTheoryI.agda}
 
@@ -705,9 +727,11 @@ Follow-up question: Given preorder and postorder only, can you always reconstruc
 \begin{classbbox}
 \textbf{Topics:}
 \begin{itemize}
-    \item Spanning trees; counting spanning trees (Cayley's formula: $n^{n-2}$)
+    \item Spanning trees; BFS/DFS spanning trees
     \item Minimum spanning trees: Kruskal's and Prim's algorithms
-    \item Shortest paths: BFS, Dijkstra's algorithm
+    \item Shortest paths: BFS, Dijkstra's, Bellman-Ford
+    \item Matchings in bipartite graphs (Hall's theorem)
+    \item Network flows (max-flow min-cut)
     \item Folds on trees (catamorphisms)
 \end{itemize}
 
@@ -715,9 +739,14 @@ Follow-up question: Given preorder and postorder only, can you always reconstruc
 \begin{itemize}
     \item Find MSTs using greedy algorithms
     \item Trace Dijkstra's algorithm
+    \item Use Hall's theorem to certify matchings
+    \item Compute a max flow and identify a minimum cut
     \item Express tree computations as folds
 \end{itemize}
 \end{classbbox}
+
+\textbf{Category Lens pacing (Class B, 5--10 min):}\\
+Use the initial-algebra/fold lens at the end of the traversal section; assign Companion Week 8 and the Week 8 problem set.
 
 \begin{agdabox}
 \textbf{File:} \texttt{Week08\_TreesAlgorithms.agda}
@@ -783,6 +812,8 @@ Groups present their solutions and peer-review for correctness.
     \item Equivalence of DFA and NFA (subset construction)
     \item Equivalence of regular expressions and finite automata
     \item Pumping lemma (informal)
+    \item Context-free grammars (CFG) and ambiguity
+    \item Pushdown automata (PDA) and CFG--PDA equivalence
 \end{itemize}
 
 \textbf{Learning Goals:}
@@ -790,8 +821,13 @@ Groups present their solutions and peer-review for correctness.
     \item Convert NFAs to DFAs
     \item Convert regular expressions to NFAs
     \item Use the pumping lemma to prove languages are not regular
+    \item Write simple CFGs and derive example strings
+    \item Describe a PDA for $a^n b^n$-type languages
 \end{itemize}
 \end{classbbox}
+
+\textbf{Category Lens pacing (Class B, 5--10 min):}\\
+Use the coalgebra/automata lens and mention the free-monoid action; assign Companion Week 9 and the Week 9 problem set.
 
 \begin{agdabox}
 \textbf{File:} \texttt{Week09\_RegexAutomata.agda}
@@ -812,7 +848,7 @@ The subset construction can produce exponentially many states. Work through a sm
 
 \newpage
 %=============================================================================
-\section{Week 10: Complexity andTic-Tac-Toe}
+\section{Week 10: Complexity and Tic-Tac-Toe}
 %=============================================================================
 
 \begin{classabox}
@@ -822,6 +858,7 @@ The subset construction can produce exponentially many states. Work through a sm
     \item Big-$\Omega$ and Big-$\Theta$
     \item Analyzing recursive algorithms (recurrence relations)
     \item Master theorem
+    \item Complexity classes overview (P, NP)
 \end{itemize}
 
 \textbf{Learning Goals:}
@@ -829,6 +866,7 @@ The subset construction can produce exponentially many states. Work through a sm
     \item Determine asymptotic complexity of algorithms
     \item Set up and solve simple recurrences
     \item Apply the master theorem
+    \item Distinguish P vs. NP at a high level
 \end{itemize}
 
 \textbf{Warm-up:} Rank these functions by growth rate:
@@ -842,21 +880,24 @@ $n^2$, $2^n$, $n \log n$, $n!$, $\log n$, $n^{1.5}$, $n$
 \begin{classbbox}
 \textbf{Topics:}
 \begin{itemize}
-    \item Game trees
-    \item Minimax algorithm
-    \item Tic-Tac-Toe analysis
+    \item Complexity classes: P, NP, NP-complete
+    \item Polynomial-time reductions (conceptual)
+    \item Optional: game trees and minimax
     \item Course review and synthesis
 \end{itemize}
 
 \textbf{Learning Goals:}
 \begin{itemize}
-    \item Build game trees for simple games
-    \item Apply minimax to determine optimal play
+    \item Explain what it means for a problem to be NP-complete
+    \item Recognize the role of reductions in complexity
     \item Synthesize course material: sets, functions, counting, graphs, trees
 \end{itemize}
 
-\textbf{Final Activity:} Tic-Tac-Toe is solved (always a draw with optimal play). Walk through the game tree analysis using minimax.
+\textbf{Final Activity:} Optional: Tic-Tac-Toe is solved (always a draw with optimal play). Walk through the game tree analysis using minimax.
 \end{classbbox}
+
+\textbf{Category Lens pacing (Class B, 5--10 min):}\\
+Use the monoids-as-one-object-categories lens and the free/forgetful adjunction; assign Companion Week 10 and the Week 10 problem set.
 
 \begin{agdabox}
 \textbf{File:} \texttt{Week10\_Efficiency.agda}
@@ -864,11 +905,10 @@ $n^2$, $2^n$, $n \log n$, $n!$, $\log n$, $n^{1.5}$, $n$
 Key concepts:
 \begin{itemize}
     \item Big-O as a relation: eventually bounded
-    \item \texttt{GameTree} data type
-    \item \texttt{minimax} function for game evaluation
+    \item Optional: \texttt{GameTree} data type and \texttt{minimax}
 \end{itemize}
 
-\textbf{Going Deeper:} Complexity theory connects to category theory through the Curry-Howard correspondence: programs are proofs, and asymptotic complexity measures ``how hard'' a proof is to construct.
+\textbf{Going Deeper:} Complexity theory connects to logic via the idea that proofs correspond to programs; reductions formalize how difficulty transfers between problems.
 \end{agdabox}
 
 \begin{tipbox}
@@ -897,14 +937,14 @@ Each problem set should include:
 \midrule
 1 & Prove $(A \cap B) \cup (A \cap B^c) = A$. Compute $|\mathcal{P}(\mathcal{P}(\{1,2\}))|$. \\
 2 & Show $f(x) = 2x + 1$ is bijective $\mathbb{R} \to \mathbb{R}$. Prove composition of bijections is bijective. \\
-3 & Find all $x$ with $3x \equiv 5 \pmod{7}$. Prove congruence mod $n$ is an equivalence relation. \\
-4 & Count 8-bit strings with exactly three 1s. Prove $\binom{n}{k} = \binom{n}{n-k}$ combinatorially. \\
-5 & Use inclusion-exclusion to count permutations of MISSISSIPPI with no adjacent S's. Compute $D(6)$. \\
+3 & Draw a Hasse diagram for divisibility on $\{1,2,3,6,12\}$. Find all $x$ with $3x \equiv 5 \pmod{7}$. \\
+4 & Use inclusion-exclusion to count integers in $\{1,\ldots,100\}$ divisible by 2 or 3 or 5. Compute a conditional probability from a medical test scenario. \\
+5 & Solve a stars and bars distribution problem. Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with given initial conditions. \\
 6 & Find $E[X]$ where $X$ = sum of two dice. Expected value of max of two dice. \\
 7 & Determine if two given graphs are isomorphic. Find $\chi(C_7)$ and $\chi(K_{3,3})$. \\
-8 & Prove every tree is bipartite. Trace Dijkstra on a weighted graph. \\
-9 & Design DFA for $\{w \in \{0,1\}^* : w \text{ has 010 as substring}\}$. Convert to regex. \\
-10 & Solve $T(n) = 2T(n/2) + n$. Draw partial game tree for tic-tac-toe from given position. \\
+8 & Prove every tree is bipartite. Use Hall's theorem to certify a matching. \\
+9 & Design DFA for $\{w \in \{0,1\}^* : w \text{ has 010 as substring}\}$. Give a CFG for $\{0^n1^n\}$. \\
+10 & Solve $T(n) = 2T(n/2) + n$. Explain why HAMILTONIAN CYCLE is in $\mathbf{NP}$. \\
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -970,55 +1010,70 @@ Week08 & Express operations as folds, prove fold laws & Medium--Hard \\
 %=============================================================================
 
 The ``Going Deeper'' sections introduce category theory and type theory concepts at an accessible level. Here's guidance on presenting these topics:
+Each week now has a matching section in the Category Theory Companion, which can be assigned as optional reading or used for extra problems.
 
-\subsection{Week 1: Boolean Algebras}
-\textbf{Key Message:} Sets with $\cup$, $\cap$, and complement form an algebraic structure.
+\subsection{Week 1: Arrows, Points, and Terminal Objects}
+\textbf{Key Message:} Elements are maps $1 \to A$; sets and functions form a category with terminal and initial objects.
 
-\textbf{Accessibility:} Very accessible. Students can verify the axioms using Venn diagrams.
+\textbf{Accessibility:} Very accessible. Use arrows and small-set examples.
 
-\textbf{Connection:} Same structure appears in logic (AND, OR, NOT) and circuits.
+\textbf{Connection:} Universal properties begin here (products, terminal object).
 
-\subsection{Week 2: Functions as Category}
-\textbf{Key Message:} Composition satisfies simple laws; these laws define a ``category.''
+\subsection{Week 2: Isomorphisms, Sections, and Retractions}
+\textbf{Key Message:} Bijections are isomorphisms; left/right inverses are retractions/sections; idempotents record retracts.
 
-\textbf{Accessibility:} Moderately accessible. Focus on the three laws without formal category theory.
+\textbf{Accessibility:} Moderately accessible. Use concrete functions and small diagrams.
 
-\textbf{Connection:} Same pattern appears everywhere (matrices, types, proofs).
+\textbf{Connection:} ``Division of maps'' and categorical cancellation.
 
-\subsection{Week 3: Equivalence and Quotients}
-\textbf{Key Message:} Equivalence relations create ``new types'' by identifying elements.
+\subsection{Week 3: Preorders as Categories}
+\textbf{Key Message:} Preorders are thin categories; monotone maps are functors; Galois connections are adjunctions for orders.
 
-\textbf{Accessibility:} Conceptually challenging. Use $\mathbb{Z}_n$ as the primary example.
+\textbf{Accessibility:} Accessible with divisibility and subset examples.
 
-\textbf{Connection:} Quotients appear in abstract algebra (groups, rings).
+\textbf{Connection:} Meets/joins as products/coproducts in a preorder.
 
-\subsection{Weeks 4--5: Counting and Bijections}
-\textbf{Key Message:} Counting arguments are bijections in disguise.
+\subsection{Weeks 4--5: Products, Sums, and Exponentials}
+\textbf{Key Message:} Counting rules mirror categorical constructions: sums, products, and map objects $B^A$ (currying).
 
-\textbf{Accessibility:} Very accessible. Combinatorial proofs become ``find the bijection.''
+\textbf{Accessibility:} Very accessible with type-counting and binomial examples.
 
-\textbf{Connection:} Cardinality of types; combinatorial species.
+\textbf{Connection:} Subsets as maps to $2$; bijections as structure-preserving maps.
 
-\subsection{Week 7: Graph Homomorphisms}
-\textbf{Key Message:} Colorings are special homomorphisms; invariants detect non-existence.
+\subsection{Week 6: Parts and Predicates}
+\textbf{Key Message:} Power sets describe ``parts'' of an object; preimage maps preserve structure.
 
-\textbf{Accessibility:} Accessible with concrete examples.
+\textbf{Accessibility:} Accessible via events and characteristic functions.
 
-\textbf{Connection:} Functors preserve structure; contravariant functors for colorings.
+\textbf{Connection:} Probability as measures on parts; logic via $A \to 2$.
+
+\subsection{Week 7: Graphs Generate Categories}
+\textbf{Key Message:} The free category on a graph formalizes paths; adjacency matrices count morphisms; connected components form a functor.
+
+\textbf{Accessibility:} Accessible with concrete graphs and paths.
+
+\textbf{Connection:} Functorial invariants and structure-preserving maps.
 
 \subsection{Week 8: Initial Algebras and Folds}
-\textbf{Key Message:} Recursive data types are ``initial algebras''; folds are universal maps.
+\textbf{Key Message:} Recursive data types are initial algebras; folds are unique maps out of them.
 
-\textbf{Accessibility:} Most challenging. Focus on the pattern, not the theory.
+\textbf{Accessibility:} Most challenging. Focus on the pattern and examples.
 
-\textbf{Connection:} Catamorphisms, anamorphisms, recursion schemes.
+\textbf{Connection:} Catamorphisms and recursion schemes.
 
-\subsection{Week 9: Kleene Algebras}
-\textbf{Key Message:} Regular expressions form an algebraic structure.
+\subsection{Week 9: Coalgebras and Automata}
+\textbf{Key Message:} DFAs are coalgebras; automata are actions of the free monoid.
 
-\textbf{Accessibility:} Accessible at the axiomatic level.
+\textbf{Accessibility:} Moderate. Use small DFAs as examples.
 
-\textbf{Connection:} Coalgebras, final coalgebras, bisimulation.
+\textbf{Connection:} Final coalgebras and language semantics.
+
+\subsection{Week 10: Monoids and Adjunctions}
+\textbf{Key Message:} Monoids are one-object categories; free/forgetful adjunction explains $\Sigma^*$.
+
+\textbf{Accessibility:} Moderate.
+
+\textbf{Connection:} Cost monoids and resource tracking.
 
 \newpage
 %=============================================================================
@@ -1178,6 +1233,7 @@ Optional presentations where students share their Project 2 work. Each presenter
 \subsection{Recommended Reading}
 \begin{itemize}
     \item \textbf{Primary Text:} Epp, \textit{Discrete Mathematics with Applications}
+    \item \textbf{Course Companion:} Category Theory Companion (aligned by week)
     \item \textbf{Proof Writing:} Hammack, \textit{Book of Proof} (free online)
     \item \textbf{Graph Theory:} West, \textit{Introduction to Graph Theory}
     \item \textbf{Category Theory (gentle):} Lawvere \& Schanuel, \textit{Conceptual Mathematics}
