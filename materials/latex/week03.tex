@@ -1,7 +1,18 @@
 \section{Week 3: Relations and Modular Arithmetic}
+
+\textit{Or: ``When 7 and 2 are secretly the same number''}
+
 \subsection*{Reading}
 Epp \S 8.1--8.5.\\
 \textbf{Category theory companion:} Week 3 (\texttt{category\_theory\_companion.pdf}).
+
+\subsection*{Why Relations?}
+
+So far we've talked about sets and functions. Functions are special---every input goes to exactly one output. But lots of interesting relationships aren't like that. ``Is a sibling of'' isn't a function (you can have multiple siblings). ``Divides'' isn't a function (3 divides many numbers). ``Is the same color as'' isn't a function (many things share a color).
+
+Relations are the general framework for talking about how elements of sets can be connected. They turn out to be everywhere: equivalence relations give us a way to identify things that are ``the same in some sense,'' and partial orders give us hierarchies and dependencies.
+
+And modular arithmetic? That's what happens when you decide that some numbers should be treated as equivalent---and it's the mathematics that makes computer science work, from hash tables to cryptography.
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -14,65 +25,98 @@ Epp \S 8.1--8.5.\\
 
 \subsection*{Key definitions and facts}
 
+\subsubsection*{What Is a Relation?}
+
 \begin{definition}[Relation]
-A \textbf{relation} from set $A$ to set $B$ is a subset $R \subseteq A \times B$. We write $aRb$ or $(a,b) \in R$ to indicate that $a$ is related to $b$. A relation on $A$ is a relation from $A$ to $A$.
+A \textbf{relation} from set $A$ to set $B$ is a subset $R \subseteq A \times B$. We write $aRb$ or $(a,b) \in R$ to indicate that $a$ is related to $b$.
+
+A relation \emph{on} $A$ is a relation from $A$ to itself (a subset of $A \times A$).
 \end{definition}
+
+That's it. A relation is just a set of pairs. No requirements about every element having something related to it, or having at most one thing related. Just: which pairs are ``in'' the relation?
+
+\subsubsection*{Properties of Relations}
+
+Relations can have various nice properties. Here are the important ones:
 
 \begin{definition}[Properties of relations]
 Let $R$ be a relation on set $A$.
 \begin{itemize}
-  \item $R$ is \textbf{reflexive} if $aRa$ for all $a \in A$.
-  \item $R$ is \textbf{symmetric} if $aRb$ implies $bRa$ for all $a,b \in A$.
-  \item $R$ is \textbf{antisymmetric} if $aRb$ and $bRa$ imply $a = b$ for all $a,b \in A$.
-  \item $R$ is \textbf{transitive} if $aRb$ and $bRc$ imply $aRc$ for all $a,b,c \in A$.
-  \item $R$ is \textbf{irreflexive} if $\neg(aRa)$ for all $a \in A$.
-  \item $R$ is \textbf{total} if $aRb$ or $bRa$ for all $a,b \in A$.
+  \item $R$ is \textbf{reflexive} if $aRa$ for all $a \in A$. (Everything is related to itself.)
+  \item $R$ is \textbf{symmetric} if $aRb$ implies $bRa$ for all $a,b \in A$. (If $a$ relates to $b$, then $b$ relates to $a$.)
+  \item $R$ is \textbf{antisymmetric} if $aRb$ and $bRa$ together imply $a = b$. (The only way to have mutual relation is to be the same element.)
+  \item $R$ is \textbf{transitive} if $aRb$ and $bRc$ imply $aRc$. (Chains collapse.)
+  \item $R$ is \textbf{irreflexive} if $\neg(aRa)$ for all $a \in A$. (Nothing relates to itself.)
+  \item $R$ is \textbf{total} (or \textbf{connex}) if for all $a,b \in A$, either $aRb$ or $bRa$. (Everything is comparable.)
 \end{itemize}
 \end{definition}
 
+\begin{commonmistake}
+\textbf{Symmetric and antisymmetric are not opposites!} A relation can be both (like equality: $a = b$ and $b = a$ implies $a = b$, trivially). A relation can be neither. The identity relation $\{(a,a) : a \in A\}$ is both symmetric and antisymmetric.
+\end{commonmistake}
+
+\subsubsection*{Equivalence Relations}
+
+The combination reflexive + symmetric + transitive is special enough to get its own name.
+
 \begin{definition}[Equivalence relation]
-A relation $R$ on a set $A$ is an \textbf{equivalence relation} if it is reflexive, symmetric, and transitive. For an equivalence relation $\sim$, the \textbf{equivalence class} of $a$ is:
+A relation $R$ on a set $A$ is an \textbf{equivalence relation} if it is reflexive, symmetric, and transitive.
+
+For an equivalence relation $\sim$, the \textbf{equivalence class} of $a$ is:
 \[
 [a] = \{x \in A : x \sim a\}
 \]
+This is the set of all elements equivalent to $a$.
 \end{definition}
+
+Equivalence relations are the mathematical way of saying ``these things should be considered the same.'' Fractions: $1/2$ and $2/4$ are equivalent. Angles: $0°$ and $360°$ are equivalent. Integers mod 5: 7 and 2 are equivalent.
 
 \begin{theorem}[Equivalence classes partition]
 If $\sim$ is an equivalence relation on $A$, then:
 \begin{enumerate}
   \item Every element belongs to exactly one equivalence class.
-  \item Two equivalence classes are either identical or disjoint.
+  \item Two equivalence classes are either identical or disjoint (no partial overlap).
   \item The equivalence classes partition $A$: $A = \bigsqcup_{a \in A} [a]$.
 \end{enumerate}
 \end{theorem}
+
+This is a beautiful result: equivalence relations and partitions are two views of the same thing. Give me an equivalence relation, I'll show you a partition. Give me a partition, I'll define an equivalence relation (two things are equivalent iff they're in the same piece).
+
+\subsubsection*{Partial Orders}
+
+Different combination: reflexive + antisymmetric + transitive. This gives hierarchies instead of equivalences.
 
 \begin{definition}[Partial order]
 A relation $R$ on $A$ is a \textbf{partial order} if it is reflexive, antisymmetric, and transitive. The pair $(A, R)$ is called a \textbf{partially ordered set} (poset).
 \end{definition}
 
 \begin{definition}[Total order]
-A partial order $\leq$ on $A$ is a \textbf{total order} if for all $a, b \in A$, either $a \leq b$ or $b \leq a$.
+A partial order $\leq$ on $A$ is a \textbf{total order} (or \textbf{linear order}) if for all $a, b \in A$, either $a \leq b$ or $b \leq a$.
 \end{definition}
+
+The usual $\leq$ on numbers is a total order. Divisibility on positive integers is a partial order but not total ($2 \nmid 3$ and $3 \nmid 2$). Subset inclusion on $\Pow(X)$ is a partial order.
 
 \subsection*{Posets and Hasse diagrams}
 
 \begin{definition}[Minimal/maximal vs least/greatest]
-Let $(P, \leq)$ be a poset.
+Let $(P, \leq)$ be a poset. These concepts sound similar but differ:
 \begin{itemize}
-  \item $m \in P$ is \textbf{minimal} if there is no $x \in P$ with $x < m$.
-  \item $m \in P$ is \textbf{maximal} if there is no $x \in P$ with $m < x$.
-  \item $\ell \in P$ is the \textbf{least element} if $\ell \leq x$ for all $x \in P$.
-  \item $g \in P$ is the \textbf{greatest element} if $x \leq g$ for all $x \in P$.
+  \item $m \in P$ is \textbf{minimal} if there is no $x \in P$ with $x < m$. (Nothing is strictly below it.)
+  \item $m \in P$ is \textbf{maximal} if there is no $x \in P$ with $m < x$. (Nothing is strictly above it.)
+  \item $\ell \in P$ is the \textbf{least element} if $\ell \leq x$ for all $x \in P$. (It's below everything.)
+  \item $g \in P$ is the \textbf{greatest element} if $x \leq g$ for all $x \in P$. (It's above everything.)
 \end{itemize}
-Least/greatest elements are unique if they exist; minimal/maximal elements need not be unique.
+Least/greatest elements, if they exist, are unique. But there can be multiple minimal/maximal elements.
 \end{definition}
 
+The difference: minimal means ``nothing below,'' least means ``below everything.'' In a total order these coincide, but in a partial order, you can have multiple minimal elements that are incomparable to each other.
+
 \begin{definition}[Hasse diagram]
-For a finite poset, the \textbf{Hasse diagram} is obtained by:
+For a finite poset, the \textbf{Hasse diagram} is a visual representation:
 \begin{itemize}
-  \item Drawing one vertex per element.
-  \item Drawing an edge upward from $a$ to $b$ if $b$ \emph{covers} $a$ (i.e., $a < b$ and there is no $c$ with $a < c < b$).
-  \item Omitting self-loops and edges implied by transitivity.
+  \item Draw one vertex per element.
+  \item Draw an edge upward from $a$ to $b$ if $b$ \emph{covers} $a$ (meaning $a < b$ and there's nothing between them).
+  \item Omit self-loops and edges implied by transitivity.
 \end{itemize}
 \end{definition}
 
@@ -85,23 +129,25 @@ The divisibility poset on $\{1, 2, 3, 6\}$ has Hasse diagram:
  & 1 \arrow[ul] \arrow[ur] &
 \end{tikzcd}
 \]
-Here 1 is least; 6 is greatest; 2 and 3 are incomparable.
+Here 1 is least (it divides everything); 6 is greatest (everything divides it); 2 and 3 are incomparable (neither divides the other).
 \end{example}
 
 \begin{definition}[Bounds, meet, join, lattice]
-Let $S \subseteq P$.
+Let $S \subseteq P$ be a subset of a poset.
 \begin{itemize}
   \item $u$ is an \textbf{upper bound} of $S$ if $x \leq u$ for all $x \in S$.
-  \item $l$ is a \textbf{lower bound} of $S$ if $l \leq x$ for all $x \in S$.
-  \item The \textbf{least upper bound} (join) of $\{a,b\}$ is denoted $a \vee b$.
-  \item The \textbf{greatest lower bound} (meet) of $\{a,b\}$ is denoted $a \wedge b$.
+  \item $\ell$ is a \textbf{lower bound} of $S$ if $\ell \leq x$ for all $x \in S$.
+  \item The \textbf{least upper bound} (lub, join, supremum) of $\{a,b\}$ is denoted $a \vee b$.
+  \item The \textbf{greatest lower bound} (glb, meet, infimum) of $\{a,b\}$ is denoted $a \wedge b$.
 \end{itemize}
 A poset is a \textbf{lattice} if every pair has both a meet and a join.
 \end{definition}
 
-\begin{remark}
-A \textbf{linear extension} is a total order that is consistent with the partial order. For finite posets, a linear extension can be found by repeatedly removing a minimal element (this is the same idea as topological sorting a DAG).
-\end{remark}
+In divisibility, $a \wedge b = \gcd(a,b)$ and $a \vee b = \text{lcm}(a,b)$. In subset inclusion, $A \wedge B = A \cap B$ and $A \vee B = A \cup B$.
+
+\subsection*{Modular Arithmetic}
+
+Now for the payoff: treating numbers as equivalent when they differ by a multiple of $n$.
 
 \begin{definition}[Congruence modulo $n$]
 For integers $a, b$ and positive integer $n$, we say $a$ is \textbf{congruent} to $b$ modulo $n$, written $a \equiv b \pmod{n}$, if $n$ divides $a - b$. Equivalently:
@@ -109,6 +155,8 @@ For integers $a, b$ and positive integer $n$, we say $a$ is \textbf{congruent} t
 a \equiv b \pmod{n} \iff a \bmod n = b \bmod n \iff \exists k \in \Z: a = b + kn
 \]
 \end{definition}
+
+So $17 \equiv 3 \pmod{7}$ because $17 - 3 = 14 = 7 \times 2$. And $-2 \equiv 5 \pmod{7}$ because $-2 - 5 = -7 = 7 \times (-1)$.
 
 \begin{theorem}[Congruence is an equivalence relation]
 For any positive integer $n$, congruence modulo $n$ is an equivalence relation on $\Z$. The equivalence classes are the \textbf{residue classes}:
@@ -118,7 +166,9 @@ For any positive integer $n$, congruence modulo $n$ is an equivalence relation o
 The set of residue classes is denoted $\Z_n$ or $\Z/n\Z$.
 \end{theorem}
 
-\begin{theorem}[Modular arithmetic]
+This is why clock arithmetic works: on a 12-hour clock, 14:00 is the same as 2:00 because $14 \equiv 2 \pmod{12}$.
+
+\begin{theorem}[Modular arithmetic preserves operations]
 For all $a, b, c, d \in \Z$ and positive integer $n$:
 \begin{enumerate}
   \item If $a \equiv b \pmod{n}$ and $c \equiv d \pmod{n}$, then $a + c \equiv b + d \pmod{n}$.
@@ -126,6 +176,8 @@ For all $a, b, c, d \in \Z$ and positive integer $n$:
   \item If $a \equiv b \pmod{n}$, then $a^k \equiv b^k \pmod{n}$ for all $k \geq 0$.
 \end{enumerate}
 \end{theorem}
+
+This is crucial: we can do arithmetic within equivalence classes. We don't need to keep track of the actual numbers, just their remainders. This makes modular arithmetic computationally efficient---compute with small numbers, get correct answers about big numbers.
 
 \begin{definition}[Modular inverse]
 For $a \in \Z_n$, the \textbf{modular inverse} of $a$ modulo $n$ is an integer $b$ such that $ab \equiv 1 \pmod{n}$. We write $b = a^{-1} \pmod{n}$.
@@ -135,6 +187,10 @@ For $a \in \Z_n$, the \textbf{modular inverse} of $a$ modulo $n$ is an integer $
 The integer $a$ has a modular inverse modulo $n$ if and only if $\gcd(a, n) = 1$.
 \end{theorem}
 
+So $3$ has an inverse mod $7$ (since $\gcd(3,7) = 1$), but $4$ has no inverse mod $6$ (since $\gcd(4,6) = 2 \neq 1$).
+
+\subsection*{The Euclidean Algorithm}
+
 \begin{theorem}[Division algorithm]
 For any integers $a$ and $b$ with $b > 0$, there exist unique integers $q$ (quotient) and $r$ (remainder) such that:
 \[
@@ -143,22 +199,26 @@ a = bq + r \quad \text{and} \quad 0 \leq r < b
 \end{theorem}
 
 \begin{theorem}[Euclidean algorithm]
-For positive integers $a$ and $b$, $\gcd(a, b)$ can be computed by repeatedly applying: $\gcd(a, b) = \gcd(b, a \bmod b)$, until one argument becomes 0.
+For positive integers $a$ and $b$, $\gcd(a, b)$ can be computed by repeatedly applying: $\gcd(a, b) = \gcd(b, a \bmod b)$, until one argument becomes 0. The last nonzero remainder is the gcd.
 \end{theorem}
+
+This is fast---the number of steps is at most $O(\log(\min(a,b)))$.
 
 \begin{theorem}[Extended Euclidean algorithm (Bézout's identity)]
 For any positive integers $a$ and $b$, there exist integers $x$ and $y$ such that:
 \[
 ax + by = \gcd(a, b)
 \]
+The extended Euclidean algorithm computes $x$ and $y$ by working backwards through the division steps.
 \end{theorem}
 
-\begin{strategy}
-To find the modular inverse of $a$ modulo $n$ when $\gcd(a,n) = 1$:
+\begin{strategy}[Finding modular inverses]
+To find $a^{-1} \pmod{n}$ when $\gcd(a,n) = 1$:
 \begin{enumerate}
   \item Use the extended Euclidean algorithm to find $x, y$ with $ax + ny = 1$.
   \item Then $a^{-1} \equiv x \pmod{n}$.
 \end{enumerate}
+Why? Because $ax + ny = 1$ means $ax \equiv 1 \pmod{n}$.
 \end{strategy}
 
 \subsection*{Representations of relations}
@@ -170,13 +230,12 @@ M_{ij} = \begin{cases} 1 & \text{if } a_i R a_j \\ 0 & \text{otherwise} \end{cas
 \]
 \end{definition}
 
-\begin{proposition}[Matrix properties]
+\begin{proposition}[Reading properties from the matrix]
 For a relation matrix $M$:
 \begin{itemize}
   \item $R$ is reflexive iff all diagonal entries are 1.
-  \item $R$ is symmetric iff $M = M^T$ (matrix is symmetric).
-  \item $R$ is antisymmetric iff $M_{ij} = 1$ and $M_{ji} = 1$ imply $i = j$.
-  \item $R$ is transitive iff $M^2$ (Boolean matrix product) has no 1 where $M$ has 0.
+  \item $R$ is symmetric iff $M = M^T$ (the matrix is symmetric).
+  \item $R$ is antisymmetric iff $M_{ij} = 1$ and $M_{ji} = 1$ together imply $i = j$.
 \end{itemize}
 \end{proposition}
 
@@ -185,6 +244,8 @@ A relation $R$ on $A$ can be represented as a directed graph (digraph) with vert
 \end{definition}
 
 \subsection*{Closures}
+
+Sometimes a relation is \emph{almost} reflexive or transitive. Closures let us ``fix it up.''
 
 \begin{definition}[Closure]
 The \textbf{reflexive closure} of $R$ is the smallest reflexive relation containing $R$: $R \cup \{(a,a) : a \in A\}$.
@@ -195,12 +256,14 @@ The \textbf{transitive closure} of $R$, denoted $R^+$, is the smallest transitiv
 \end{definition}
 
 \begin{theorem}[Computing transitive closure]
-$R^+ = R \cup R^2 \cup R^3 \cup \cdots$ where $R^n = R \circ R^{n-1}$ (relation composition). For finite sets, $R^+ = R \cup R^2 \cup \cdots \cup R^n$ where $|A| = n$.
+$R^+ = R \cup R^2 \cup R^3 \cup \cdots$ where $R^n$ is the $n$-fold composition of $R$. For finite sets with $|A| = n$, we have $R^+ = R \cup R^2 \cup \cdots \cup R^n$.
 \end{theorem}
+
+The transitive closure captures reachability: $a R^+ b$ means you can get from $a$ to $b$ by following $R$-edges.
 
 \subsection*{Worked examples}
 
-\begin{example}
+\begin{example}[Verifying congruence is an equivalence relation]
 Show that congruence modulo $n$ is an equivalence relation on $\Z$.
 
 \emph{Proof.}
@@ -209,16 +272,16 @@ Show that congruence modulo $n$ is an equivalence relation on $\Z$.
 
   \item \textbf{Symmetric:} Suppose $a \equiv b \pmod{n}$. Then $n \mid (a - b)$, so $a - b = nk$ for some integer $k$. Then $b - a = -nk = n(-k)$, so $n \mid (b - a)$. Thus $b \equiv a \pmod{n}$.
 
-  \item \textbf{Transitive:} Suppose $a \equiv b \pmod{n}$ and $b \equiv c \pmod{n}$. Then $a - b = nj$ and $b - c = nk$ for integers $j, k$. Adding: $a - c = (a - b) + (b - c) = nj + nk = n(j + k)$. So $n \mid (a - c)$, and $a \equiv c \pmod{n}$. \qed
+  \item \textbf{Transitive:} Suppose $a \equiv b \pmod{n}$ and $b \equiv c \pmod{n}$. Then $a - b = nj$ and $b - c = nk$ for integers $j, k$. Adding: $a - c = nj + nk = n(j + k)$. So $n \mid (a - c)$, and $a \equiv c \pmod{n}$. \qed
 \end{itemize}
 \end{example}
 
-\begin{example}
+\begin{example}[Finding a modular inverse]
 Find the inverse of $3$ modulo $7$.
 
 \emph{Solution.} We need $x$ such that $3x \equiv 1 \pmod{7}$.
 
-\textbf{Method 1 (Trial):} Check $3 \cdot 1 = 3$, $3 \cdot 2 = 6$, $3 \cdot 3 = 9 \equiv 2$, $3 \cdot 4 = 12 \equiv 5$, $3 \cdot 5 = 15 \equiv 1 \pmod{7}$. So $3^{-1} \equiv 5 \pmod{7}$.
+\textbf{Method 1 (Trial):} Just try small values: $3 \cdot 1 = 3$, $3 \cdot 2 = 6$, $3 \cdot 3 = 9 \equiv 2$, $3 \cdot 4 = 12 \equiv 5$, $3 \cdot 5 = 15 \equiv 1 \pmod{7}$. So $3^{-1} \equiv 5 \pmod{7}$.
 
 \textbf{Method 2 (Extended Euclidean):}
 \begin{align*}
@@ -228,23 +291,23 @@ Find the inverse of $3$ modulo $7$.
 So $(-2) \cdot 3 + 1 \cdot 7 = 1$, meaning $3^{-1} \equiv -2 \equiv 5 \pmod{7}$.
 \end{example}
 
-\begin{example}
+\begin{example}[Equivalence classes from a relation]
 Let $A = \{1, 2, 3, 4\}$ and $R = \{(1,1), (1,2), (2,1), (2,2), (3,3), (3,4), (4,3), (4,4)\}$. Show this is an equivalence relation and find the equivalence classes.
 
-\emph{Solution.}
+\emph{Solution.} Check the three properties:
 \begin{itemize}
   \item \textbf{Reflexive:} $(1,1), (2,2), (3,3), (4,4) \in R$. \checkmark
-  \item \textbf{Symmetric:} For each $(a,b) \in R$ with $a \neq b$: $(1,2) \in R$ and $(2,1) \in R$; $(3,4) \in R$ and $(4,3) \in R$. \checkmark
-  \item \textbf{Transitive:} Check all pairs: $(1,2), (2,1) \Rightarrow (1,1) \in R$; $(3,4), (4,3) \Rightarrow (3,3) \in R$. All other transitive requirements are satisfied. \checkmark
+  \item \textbf{Symmetric:} For each $(a,b) \in R$ with $a \neq b$, we need $(b,a) \in R$. We have $(1,2)$ and $(2,1)$; $(3,4)$ and $(4,3)$. \checkmark
+  \item \textbf{Transitive:} Check chains: $(1,2), (2,1) \Rightarrow (1,1) \in R$; $(3,4), (4,3) \Rightarrow (3,3) \in R$; etc. All implied pairs are present. \checkmark
 \end{itemize}
 
 Equivalence classes: $[1] = [2] = \{1, 2\}$ and $[3] = [4] = \{3, 4\}$.
 
-The partition is $\{\{1,2\}, \{3,4\}\}$.
+The partition is $\{\{1,2\}, \{3,4\}\}$---two blocks, each containing elements that are equivalent to each other.
 \end{example}
 
-\begin{example}
-Use the Euclidean algorithm to find $\gcd(252, 105)$.
+\begin{example}[Euclidean algorithm]
+Find $\gcd(252, 105)$.
 
 \emph{Solution.}
 \begin{align*}
@@ -252,28 +315,30 @@ Use the Euclidean algorithm to find $\gcd(252, 105)$.
 105 &= 2 \cdot 42 + 21 \\
 42 &= 2 \cdot 21 + 0
 \end{align*}
-So $\gcd(252, 105) = 21$.
+So $\gcd(252, 105) = 21$ (the last nonzero remainder).
 \end{example}
 
-\begin{example}
-Use the extended Euclidean algorithm to express $\gcd(252, 105)$ as a linear combination.
+\begin{example}[Extended Euclidean algorithm]
+Express $\gcd(252, 105)$ as a linear combination of 252 and 105.
 
-\emph{Solution.} Working backwards:
+\emph{Solution.} Work backwards through the Euclidean algorithm steps:
 \begin{align*}
-21 &= 105 - 2 \cdot 42 \\
-   &= 105 - 2 \cdot (252 - 2 \cdot 105) \\
+21 &= 105 - 2 \cdot 42 && \text{(from the second step)}\\
+   &= 105 - 2 \cdot (252 - 2 \cdot 105) && \text{(substitute for 42)}\\
    &= 105 - 2 \cdot 252 + 4 \cdot 105 \\
    &= 5 \cdot 105 + (-2) \cdot 252
 \end{align*}
 So $21 = 5 \cdot 105 + (-2) \cdot 252$.
+
+Check: $5 \times 105 - 2 \times 252 = 525 - 504 = 21$. \checkmark
 \end{example}
 
-\begin{example}[Toy RSA example]
-This example illustrates RSA arithmetic (not secure for real use). Let $p = 5$ and $q = 11$, so $n = pq = 55$ and $\phi(n) = (p-1)(q-1) = 4 \cdot 10 = 40$.
+\begin{example}[Toy RSA]
+This example illustrates RSA arithmetic (not secure for real use!). Let $p = 5$ and $q = 11$, so $n = pq = 55$ and $\phi(n) = (p-1)(q-1) = 4 \cdot 10 = 40$.
 
-Choose public exponent $e = 3$ (which is coprime to 40). Find the private exponent $d$ such that $ed \equiv 1 \pmod{40}$.
+Choose public exponent $e = 3$ (coprime to 40). Find the private exponent $d$ such that $ed \equiv 1 \pmod{40}$.
 
-\emph{Solution.} We need $3d \equiv 1 \pmod{40}$. Using trial or the extended Euclidean algorithm:
+\emph{Solution.} We need $3d \equiv 1 \pmod{40}$. Using extended Euclidean:
 \[
 40 = 13 \cdot 3 + 1 \implies 1 = 40 - 13 \cdot 3
 \]
@@ -281,26 +346,28 @@ So $d \equiv -13 \equiv 27 \pmod{40}$. Check: $3 \cdot 27 = 81 = 2 \cdot 40 + 1 
 
 \textbf{Encryption:} To encrypt message $m = 12$, compute $c \equiv m^e \pmod{n}$:
 \[
-c \equiv 12^3 = 1728 \equiv 1728 - 31 \cdot 55 = 1728 - 1705 = 23 \pmod{55}
+c \equiv 12^3 = 1728 \equiv 1728 - 31 \cdot 55 = 23 \pmod{55}
 \]
 
-\textbf{Decryption:} To decrypt, compute $c^d \pmod{n}$. We have $23^{27} \pmod{55}$.
+\textbf{Decryption:} Compute $c^d \pmod{n}$. Using repeated squaring:
+$23^2 = 529 \equiv 34 \pmod{55}$, $23^4 \equiv 34^2 = 1156 \equiv 1 \pmod{55}$.
 
-Using repeated squaring modulo 55:
-$23^2 = 529 \equiv 529 - 9 \cdot 55 = 34$, $23^4 \equiv 34^2 = 1156 \equiv 1156 - 21 \cdot 55 = 1$, so $23^{27} = 23^{24} \cdot 23^3 = (23^4)^6 \cdot 23^3 \equiv 1^6 \cdot 23^3 = 12167 \equiv 12 \pmod{55}$.
+So $23^{27} = 23^{24} \cdot 23^3 = (23^4)^6 \cdot 23^3 \equiv 1^6 \cdot 12167 \equiv 12 \pmod{55}$.
 
-We recover the original message $m = 12$!
+We recover the original message! This is how RSA encryption works (with much larger primes).
 \end{example}
 
-\begin{example}
-Prove that if $R$ is symmetric and transitive, and every element is related to some element, then $R$ is reflexive.
+\begin{example}[A subtlety about relation properties]
+Prove: If $R$ is symmetric and transitive, and every element is related to \emph{something}, then $R$ is reflexive.
 
-\emph{Proof.} Let $a \in A$. By assumption, there exists $b$ such that $aRb$. By symmetry, $bRa$. By transitivity (using $aRb$ and $bRa$), we get $aRa$. Since $a$ was arbitrary, $R$ is reflexive. \qed
+\emph{Proof.} Let $a \in A$. By assumption, there exists some $b$ such that $aRb$. By symmetry, $bRa$. By transitivity (using $aRb$ and $bRa$), we get $aRa$. Since $a$ was arbitrary, $R$ is reflexive. \qed
+
+This is a cute trick: you might think symmetric + transitive would be enough, but you also need ``everything relates to something'' to bootstrap reflexivity.
 \end{example}
 
 \subsection*{Advanced number theory}
 
-The following theorems are powerful tools for modular arithmetic, especially in cryptography and algorithm design.
+The following theorems are powerful tools for modular arithmetic, especially in cryptography.
 
 \begin{definition}[Euler's totient function]
 For a positive integer $n$, \textbf{Euler's totient function} $\phi(n)$ counts the integers from 1 to $n$ that are coprime to $n$:
@@ -311,13 +378,13 @@ For a positive integer $n$, \textbf{Euler's totient function} $\phi(n)$ counts t
 
 \begin{theorem}[Computing $\phi(n)$]
 \begin{itemize}
-  \item If $p$ is prime: $\phi(p) = p - 1$
-  \item If $p$ is prime: $\phi(p^k) = p^k - p^{k-1} = p^{k-1}(p - 1)$
-  \item If $\gcd(m, n) = 1$: $\phi(mn) = \phi(m)\phi(n)$ \quad (multiplicative)
+  \item If $p$ is prime: $\phi(p) = p - 1$ (everything except $p$ is coprime to $p$)
+  \item If $p$ is prime: $\phi(p^k) = p^{k-1}(p - 1)$
+  \item If $\gcd(m, n) = 1$: $\phi(mn) = \phi(m)\phi(n)$ (multiplicative)
 \end{itemize}
 In general, if $n = p_1^{a_1} p_2^{a_2} \cdots p_k^{a_k}$, then:
 \[
-\phi(n) = n \prod_{p \mid n} \left(1 - \frac{1}{p}\right) = n \cdot \frac{p_1 - 1}{p_1} \cdot \frac{p_2 - 1}{p_2} \cdots \frac{p_k - 1}{p_k}
+\phi(n) = n \prod_{p \mid n} \left(1 - \frac{1}{p}\right)
 \]
 \end{theorem}
 
@@ -328,7 +395,7 @@ Compute $\phi(12)$.
 \[
 \phi(12) = 12 \cdot \left(1 - \frac{1}{2}\right) \cdot \left(1 - \frac{1}{3}\right) = 12 \cdot \frac{1}{2} \cdot \frac{2}{3} = 4
 \]
-We can verify: the integers from 1 to 12 coprime to 12 are $\{1, 5, 7, 11\}$. Indeed, $|\{1, 5, 7, 11\}| = 4$.
+Verify: the integers from 1 to 12 coprime to 12 are $\{1, 5, 7, 11\}$. Indeed, there are 4.
 \end{example}
 
 \begin{theorem}[Fermat's Little Theorem]
@@ -346,7 +413,7 @@ Compute $2^{100} \bmod 7$.
 
 Write $100 = 6 \cdot 16 + 4$. Then:
 \[
-2^{100} = 2^{6 \cdot 16 + 4} = (2^6)^{16} \cdot 2^4 \equiv 1^{16} \cdot 16 \equiv 16 \equiv 2 \pmod{7}
+2^{100} = (2^6)^{16} \cdot 2^4 \equiv 1^{16} \cdot 16 \equiv 16 \equiv 2 \pmod{7}
 \]
 \end{example}
 
@@ -358,17 +425,6 @@ a^{\phi(n)} \equiv 1 \pmod{n}
 This generalizes Fermat's Little Theorem (when $n = p$ is prime, $\phi(p) = p-1$).
 \end{theorem}
 
-\begin{example}
-Compute $7^{222} \bmod 12$.
-
-\emph{Solution.} Since $\gcd(7, 12) = 1$ and $\phi(12) = 4$, Euler's theorem gives $7^4 \equiv 1 \pmod{12}$.
-
-Write $222 = 4 \cdot 55 + 2$. Then:
-\[
-7^{222} = (7^4)^{55} \cdot 7^2 \equiv 1^{55} \cdot 49 \equiv 49 \equiv 1 \pmod{12}
-\]
-\end{example}
-
 \begin{keyresult}
 Euler's Theorem explains \emph{why RSA works}. If $n = pq$ with primes $p, q$, and $ed \equiv 1 \pmod{\phi(n)}$, then for any message $m$ coprime to $n$:
 \[
@@ -377,8 +433,8 @@ Euler's Theorem explains \emph{why RSA works}. If $n = pq$ with primes $p, q$, a
 Decryption recovers the original message!
 \end{keyresult}
 
-\begin{theorem}[Chinese Remainder Theorem (CRT)]
-Let $n_1, n_2, \ldots, n_k$ be pairwise coprime positive integers (i.e., $\gcd(n_i, n_j) = 1$ for $i \neq j$). Then for any integers $a_1, a_2, \ldots, a_k$, the system of congruences:
+\begin{theorem}[Chinese Remainder Theorem]
+Let $n_1, \ldots, n_k$ be pairwise coprime positive integers. Then for any $a_1, \ldots, a_k$, the system:
 \begin{align*}
 x &\equiv a_1 \pmod{n_1} \\
 x &\equiv a_2 \pmod{n_2} \\
@@ -388,65 +444,24 @@ x &\equiv a_k \pmod{n_k}
 has a unique solution modulo $N = n_1 n_2 \cdots n_k$.
 \end{theorem}
 
-\begin{strategy}
-To solve a CRT system with two moduli $n_1$ and $n_2$:
-\begin{enumerate}
-  \item From $x \equiv a_1 \pmod{n_1}$, write $x = a_1 + n_1 t$ for some integer $t$.
-  \item Substitute into $x \equiv a_2 \pmod{n_2}$: solve $a_1 + n_1 t \equiv a_2 \pmod{n_2}$ for $t$.
-  \item Compute $x = a_1 + n_1 t$.
-\end{enumerate}
-\end{strategy}
-
 \begin{example}
-Solve the system:
-\begin{align*}
-x &\equiv 2 \pmod{3} \\
-x &\equiv 3 \pmod{5}
-\end{align*}
+Solve: $x \equiv 2 \pmod{3}$, $x \equiv 3 \pmod{5}$.
 
 \emph{Solution.} From the first equation: $x = 2 + 3t$ for some integer $t$.
 
 Substitute into the second: $2 + 3t \equiv 3 \pmod{5}$, so $3t \equiv 1 \pmod{5}$.
 
-To find $3^{-1} \pmod{5}$: $3 \cdot 2 = 6 \equiv 1 \pmod{5}$, so $t \equiv 2 \pmod{5}$.
+Find $3^{-1} \pmod{5}$: $3 \cdot 2 = 6 \equiv 1$, so $t \equiv 2 \pmod{5}$.
 
-Thus $t = 2 + 5s$ for some $s$, and:
-\[
-x = 2 + 3(2 + 5s) = 8 + 15s
-\]
+Thus $x = 2 + 3 \cdot 2 = 8$. Check: $8 = 2 + 2 \cdot 3 \equiv 2 \pmod{3}$ and $8 = 3 + 1 \cdot 5 \equiv 3 \pmod{5}$. \checkmark
+
 So $x \equiv 8 \pmod{15}$.
-
-\textbf{Check:} $8 = 2 + 2 \cdot 3$, so $8 \equiv 2 \pmod 3$. \checkmark \quad $8 = 3 + 1 \cdot 5$, so $8 \equiv 3 \pmod 5$. \checkmark
 \end{example}
 
-\begin{example}
-Find the last two digits of $3^{100}$.
-
-\emph{Solution.} We need $3^{100} \bmod 100$. Since $100 = 4 \cdot 25$ and $\gcd(4, 25) = 1$, we use CRT.
-
-\textbf{Modulo 4:} $3^2 = 9 \equiv 1 \pmod{4}$, so $3^{100} = (3^2)^{50} \equiv 1 \pmod{4}$.
-
-\textbf{Modulo 25:} $\phi(25) = 25(1 - 1/5) = 20$. By Euler, $3^{20} \equiv 1 \pmod{25}$.
-
-Since $100 = 20 \cdot 5$: $3^{100} = (3^{20})^5 \equiv 1 \pmod{25}$.
-
-\textbf{Combine using CRT:} We need $x$ with $x \equiv 1 \pmod{4}$ and $x \equiv 1 \pmod{25}$.
-
-Both congruences give $x \equiv 1$, so $x \equiv 1 \pmod{100}$.
-
-The last two digits of $3^{100}$ are $\boxed{01}$.
-\end{example}
-
-\begin{commonmistake}
-\textbf{Forgetting the coprimality requirement.} Fermat's Little Theorem requires $\gcd(a, p) = 1$. For example, $3^5 \not\equiv 1 \pmod{5}$ because $\gcd(3, 5) = 1$... wait, that's wrong! Let's check: $3^4 = 81 \equiv 1 \pmod 5$. \checkmark
-
-But $5^4 \not\equiv 1 \pmod 5$ because $\gcd(5, 5) = 5 \neq 1$. In fact, $5^4 \equiv 0 \pmod 5$.
-\end{commonmistake}
-
-\begin{example}
+\begin{example}[Divisibility matrix]
 Write the relation matrix for ``divides'' on $\{1, 2, 3, 4\}$.
 
-\emph{Solution.} $a \mid b$ means $a$ divides $b$.
+\emph{Solution.} $M_{ij} = 1$ iff $i \mid j$.
 \[
 M = \begin{pmatrix}
 1 & 1 & 1 & 1 \\
@@ -455,11 +470,12 @@ M = \begin{pmatrix}
 0 & 0 & 0 & 1
 \end{pmatrix}
 \]
-Row $i$, column $j$ is 1 iff $i \mid j$. This is reflexive (diagonal is 1), antisymmetric (if $i \mid j$ and $j \mid i$ with $i,j \geq 1$, then $i = j$), and transitive. So divisibility is a partial order.
+Reading properties: diagonal is all 1s (reflexive), matrix is not symmetric (not symmetric), and it's antisymmetric and transitive. So divisibility is a partial order.
 \end{example}
 
-\begin{goingdeeper}[Going Deeper: Preorders---The Simplest Categories]
+\begin{goingdeeper}[Going Deeper: Preorders as Categories]
 This week we discover that the arrow-and-diagram language from Weeks 1--2 applies beautifully to familiar structures: preorders. This gives us concrete, easy-to-visualize categories to practice with.
+
 For more detail, see the Category Theory Companion, Week 3.
 
 \subsubsection*{Preorders You Already Know}
@@ -469,12 +485,11 @@ A \emph{preorder} is a set with a reflexive and transitive relation. You've seen
   \item $(\N, \leq)$: natural numbers with ``less than or equal to''
   \item $(\Pow(X), \subseteq)$: subsets of $X$ ordered by inclusion
   \item $(Div_n, \mid)$: divisors of $n$ ordered by divisibility
-  \item $(\Z, \leq)$: integers with the usual ordering
 \end{itemize}
 
-\subsubsection*{Preorders as Categories}
+\subsubsection*{Preorders ARE Categories}
 
-Here's the key insight: \textbf{a preorder IS a category}. Given $(P, \leq)$:
+Here's the key insight: a preorder \emph{is} a category. Given $(P, \leq)$:
 \begin{itemize}
   \item \textbf{Objects:} Elements of $P$
   \item \textbf{Arrows:} There is exactly one arrow $a \to b$ if $a \leq b$, and no arrow otherwise
@@ -482,109 +497,39 @@ Here's the key insight: \textbf{a preorder IS a category}. Given $(P, \leq)$:
   \item \textbf{Composition:} $a \leq b$ and $b \leq c$ imply $a \leq c$ (transitivity)
 \end{itemize}
 
-This is called a \emph{thin category}: between any two objects, there's \emph{at most one} arrow. The existence of an arrow $a \to b$ simply records that $a \leq b$.
+This is called a \emph{thin category}: between any two objects, there's at most one arrow. The existence of an arrow just records that $a \leq b$.
 
-\textbf{Example: Divisibility.} Consider $(\{1, 2, 3, 6\}, \mid)$:
-\[
-\begin{tikzcd}
- & 6 & \\
-2 \arrow[ur] & & 3 \arrow[ul] \\
- & 1 \arrow[ul] \arrow[ur] &
-\end{tikzcd}
-\]
-We have arrows $1 \to 2$ (since $1 \mid 2$), $2 \to 6$, etc. The composite $1 \to 2 \to 6$ equals the direct arrow $1 \to 6$ (both just say $1 \mid 6$).
+\subsubsection*{Monotone Functions = Functors}
 
-\subsubsection*{What Composition Means Here}
-
-In a preorder category, composition is \emph{invisible}---there's only one arrow between any two comparable elements anyway. But it corresponds exactly to \textbf{transitivity}:
-\[
-\text{Arrow } a \to b \text{ and arrow } b \to c \text{ compose to give arrow } a \to c
-\]
-This is just: $a \leq b$ and $b \leq c$ imply $a \leq c$.
-
-\subsubsection*{Monotone Functions = Structure-Preserving Maps}
-
-In Weeks 1--2, we emphasized that the arrows between objects matter as much as the objects themselves. What are the ``good'' maps between preorders?
-
-A function $f: P \to Q$ between preorders is \textbf{monotone} (or order-preserving) if:
-\[
-a \leq b \implies f(a) \leq f(b)
-\]
-In categorical language: \emph{if there's an arrow $a \to b$, then there's an arrow $f(a) \to f(b)$}. The function $f$ ``preserves arrows.''
-
-Such a structure-preserving map between categories is called a \textbf{functor}.
-
-\textbf{Examples of monotone functions:}
-\begin{itemize}
-  \item $\lfloor \cdot \rfloor: (\R, \leq) \to (\Z, \leq)$ (floor function)
-  \item $|S|: (\Pow(X), \subseteq) \to (\N, \leq)$ (cardinality, when $X$ is finite)
-  \item $n \mapsto 2n: (\N, \leq) \to (\N, \leq)$
-\end{itemize}
-
-\subsubsection*{Galois Connections (Adjunctions for Orders)}
-A \textbf{Galois connection} between preorders $(P, \leq)$ and $(Q, \leq)$ is a pair of monotone maps $F: P \to Q$ and $G: Q \to P$ such that:
-\[
-F(p) \leq q \iff p \leq G(q)
-\]
-This is the preorder version of an adjunction, one of the key ideas in category theory.
-
-\textbf{Example.} The inclusion $\iota: \Z \to \R$ is left adjoint to floor:
-\[
-\iota(n) \leq x \iff n \leq \lfloor x \rfloor
-\]
-Similarly, ceiling is left adjoint to inclusion: $x \leq \iota(n) \iff \lceil x \rceil \leq n$.
+A function $f: P \to Q$ between preorders is \textbf{monotone} if $a \leq b$ implies $f(a) \leq f(b)$. In categorical language: if there's an arrow $a \to b$, then there's an arrow $f(a) \to f(b)$. The function preserves arrows---it's a \textbf{functor}.
 
 \subsubsection*{Products and Coproducts in Preorders}
 
-The universal properties from Week 2 specialize nicely to preorders:
+The universal properties specialize nicely:
 \begin{itemize}
-  \item \textbf{Product} of $a$ and $b$ = greatest lower bound (meet): the largest $c$ with $c \leq a$ and $c \leq b$
-  \item \textbf{Coproduct} of $a$ and $b$ = least upper bound (join): the smallest $c$ with $a \leq c$ and $b \leq c$
+  \item \textbf{Product} of $a$ and $b$ = greatest lower bound (meet)
+  \item \textbf{Coproduct} of $a$ and $b$ = least upper bound (join)
 \end{itemize}
 
-\textbf{Example.} In $(\{1, 2, 3, 6\}, \mid)$:
-\begin{itemize}
-  \item Product of 2 and 3 is $\gcd(2, 3) = 1$
-  \item Coproduct of 2 and 3 is $\text{lcm}(2, 3) = 6$
-\end{itemize}
+In divisibility: product $= \gcd$, coproduct $= \text{lcm}$.
+In subset inclusion: product $= \cap$, coproduct $= \cup$.
 
 \subsubsection*{Exercises: Preorders as Categories}
 
 \begin{enumerate}
-  \item Draw the divisibility preorder on $\{1, 2, 4, 8\}$ as a diagram with arrows. Is this a total order (every two elements comparable)?
+  \item Draw the divisibility preorder on $\{1, 2, 4, 8\}$ as a diagram with arrows. Is this a total order?
 
-  \item List all arrows in the preorder $(\Pow(\{1, 2\}), \subseteq)$. How many are there? (Don't forget identity arrows!)
+  \item List all arrows in $(\Pow(\{1, 2\}), \subseteq)$. (Don't forget identities!)
 
-  \item Verify that transitivity is composition: In $\{1, 2, 4, 8\}$ with divisibility, we have $1 \mid 2$ and $2 \mid 4$. Draw this as composing arrows $1 \to 2 \to 4$, giving $1 \to 4$.
+  \item Is $f(n) = n^2$ monotone from $(\N, \leq)$ to $(\N, \leq)$? What about from $(\Z, \leq)$ to $(\Z, \leq)$?
 
-  \item Is the floor function $\lfloor \cdot \rfloor: \R \to \Z$ monotone? Prove or disprove.
+  \item In $(\{1, 2, 3, 6\}, \mid)$, what is the product (glb) of 2 and 3? The coproduct (lub)?
 
-  \item Is the function $f(n) = n^2$ monotone from $(\Z, \leq)$ to $(\Z, \leq)$? What about from $(\N, \leq)$ to $(\N, \leq)$?
+  \item Verify that $\gcd(6, 10)$ satisfies the universal property of products in divisibility.
 
-  \item In $(\{1, 2, 3, 6\}, \mid)$, what is the product (greatest lower bound) of 2 and 3? What is their coproduct (least upper bound)?
-
-  \item \textbf{Universal property check:} In divisibility, verify that $\gcd(6, 10)$ satisfies: for any $d$ with $d \mid 6$ and $d \mid 10$, we have $d \mid \gcd(6, 10)$.
-
-  \item Draw the diagram expressing the universal property of $\gcd(a, b)$ using arrows in a divisibility preorder.
-
-  \item How many monotone functions are there from $(\{0, 1\}, \leq)$ to $(\{a, b, c\}, \leq)$ where $a \leq b \leq c$? (Hint: Where can 0 go? Then where can 1 go?)
-
-  \item Give an example of a function $\{1, 2, 3\} \to \{1, 2, 3\}$ that is NOT monotone for the usual $\leq$.
-
-  \item \textbf{Functors compose:} Prove that if $f: P \to Q$ and $g: Q \to R$ are both monotone, then $g \circ f: P \to R$ is monotone.
-
-  \item \textbf{Challenge:} In $(\Pow(\{1, 2, 3\}), \subseteq)$, what is the product (greatest lower bound) of $\{1, 2\}$ and $\{2, 3\}$? The coproduct (least upper bound)? Verify using the universal property.
+  \item Prove: if $f: P \to Q$ and $g: Q \to R$ are monotone, then $g \circ f$ is monotone.
 \end{enumerate}
 \end{goingdeeper}
-
-\begin{commonmistake}
-\textbf{Confusing symmetric and antisymmetric.} These are \emph{not} opposites!
-\begin{itemize}
-  \item Symmetric: $aRb \Rightarrow bRa$
-  \item Antisymmetric: $aRb \land bRa \Rightarrow a = b$
-\end{itemize}
-A relation can be both (e.g., $=$), neither, or just one. The identity relation $\{(a,a) : a \in A\}$ is both symmetric and antisymmetric.
-\end{commonmistake}
 
 \subsection*{Practice}
 \begin{enumerate}
@@ -598,7 +543,7 @@ A relation can be both (e.g., $=$), neither, or just one. The identity relation 
 
   \item Let $R = \{(a,b) \in \Z \times \Z : a \leq b\}$. Which properties does $R$ have: reflexive, symmetric, antisymmetric, transitive?
 
-  \item Find $\gcd(1071, 462)$ and express it as a linear combination of $1071$ and $462$.
+  \item Find $\gcd(1071, 462)$ and express it as a linear combination.
 
   \item Solve $17x \equiv 1 \pmod{43}$.
 
@@ -612,23 +557,15 @@ A relation can be both (e.g., $=$), neither, or just one. The identity relation 
 
   \item Show that the intersection of two equivalence relations on $A$ is an equivalence relation.
 
-  \item Compute $\phi(60)$ using the formula.
+  \item Compute $\phi(60)$.
 
   \item Use Fermat's Little Theorem to find $5^{302} \bmod 7$.
 
-  \item Use Euler's Theorem to find $3^{340} \bmod 11$.
-
-  \item Solve the system: $x \equiv 1 \pmod{4}$, $x \equiv 2 \pmod{5}$, $x \equiv 3 \pmod{7}$.
+  \item Solve: $x \equiv 1 \pmod{4}$, $x \equiv 2 \pmod{5}$, $x \equiv 3 \pmod{7}$.
 
   \item What are the last two digits of $7^{2024}$?
 
-  \item Prove Fermat's Little Theorem for $a = 2$ and $p = 5$ by direct computation.
-
-  \item Draw the Hasse diagram for divisibility on $\{1,2,3,6,12\}$. Identify all minimal and maximal elements, and state whether a least or greatest element exists.
+  \item Draw the Hasse diagram for divisibility on $\{1,2,3,6,12\}$. Identify minimal, maximal, least, and greatest elements.
 
   \item In $(\Pow(\{1,2,3\}), \subseteq)$, compute $\{1,2\} \wedge \{2,3\}$ and $\{1,2\} \vee \{2,3\}$.
-
-  \item Consider a poset with relations $a < b$, $a < c$, $b < d$, $c < d$. Give one linear extension and one different linear extension.
-
-  \item Does the poset $(\Z, \leq)$ have minimal or maximal elements? Does it have a least or greatest element? Justify your answers.
 \end{enumerate}

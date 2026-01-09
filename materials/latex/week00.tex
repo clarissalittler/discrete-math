@@ -1,11 +1,15 @@
 \section{Chapter 0: Proof Refresher}
 
-This chapter reviews the proof techniques and logical foundations from the first quarter. Use it as a reference throughout the course.
+\textit{Or: ``How to convince someone you're right, rigorously''}
+
+This chapter reviews the proof techniques and logical foundations from the first quarter. Think of it as a reference card you can flip back to throughout the course. If anything here feels unfamiliar rather than ``oh right, that,'' you may want to spend extra time with the readings.
 
 \subsection*{Propositional Logic Review}
 
+Let's start with the building blocks. A \textbf{proposition} is a statement that is either true or false---no maybes, no ``it depends,'' no quantum superpositions. ``It's raining'' is a proposition. ``Is it raining?'' is not (it's a question). ``This statement is false'' is not (it's a paradox, and we don't allow those).
+
 \begin{definition}[Logical connectives]
-Let $P$ and $Q$ be propositions (statements that are either true or false).
+Let $P$ and $Q$ be propositions.
 
 \begin{center}
 \begin{tabular}{clc}
@@ -20,6 +24,8 @@ $P \leftrightarrow Q$ & Biconditional (IFF) & $P$ and $Q$ have the same truth va
 \end{center}
 \end{definition}
 
+The one that trips everyone up is implication. ``$P \to Q$'' is true whenever $P$ is false \emph{or} $Q$ is true. This means ``if pigs fly, then I'm the queen of England'' is a \emph{true} statement (because pigs don't fly). This feels weird, but it's the definition that makes mathematics work. We'll just have to live with it.
+
 \begin{theorem}[Key equivalences]
 The following are logically equivalent (have the same truth table):
 \begin{align*}
@@ -30,40 +36,52 @@ P \to Q &\not\equiv Q \to P \quad \text{(converse is NOT equivalent!)}
 \end{align*}
 \end{theorem}
 
+That last line deserves emphasis. ``If it's raining, the ground is wet'' does \emph{not} mean ``if the ground is wet, it's raining.'' Someone could have turned on the sprinklers. The converse of a true statement can be false. This mistake shows up constantly in student proofs.
+
 \subsection*{Predicate Logic Review}
 
+Propositional logic lets us talk about specific statements. But what about ``all even numbers are divisible by 2'' or ``there exists a prime greater than 100''? For that, we need \textbf{quantifiers}.
+
 \begin{definition}[Quantifiers]
-Let $P(x)$ be a predicate (a statement depending on variable $x$) over domain $D$.
+Let $P(x)$ be a \textbf{predicate}---a statement that depends on a variable $x$ and becomes true or false once you plug in a specific value.
 
-\textbf{Universal quantifier:} $\forall x \in D.\, P(x)$ means ``for all $x$ in $D$, $P(x)$ holds.''
+\textbf{Universal quantifier:} $\forall x \in D.\, P(x)$ means ``for all $x$ in domain $D$, $P(x)$ holds.'' To prove this, you need to show $P(x)$ for \emph{every} possible $x$. No exceptions.
 
-\textbf{Existential quantifier:} $\exists x \in D.\, P(x)$ means ``there exists some $x$ in $D$ such that $P(x)$ holds.''
+\textbf{Existential quantifier:} $\exists x \in D.\, P(x)$ means ``there exists some $x$ in $D$ such that $P(x)$ holds.'' To prove this, you need to find \emph{one} example.
 \end{definition}
 
 \begin{theorem}[Negating quantifiers]
+Here's how negation interacts with quantifiers:
 \begin{align*}
 \neg(\forall x.\, P(x)) &\equiv \exists x.\, \neg P(x) \\
 \neg(\exists x.\, P(x)) &\equiv \forall x.\, \neg P(x)
 \end{align*}
-To negate ``all cats are black,'' say ``there exists a cat that is not black.''
+
+In English: the negation of ``all cats are black'' isn't ``no cats are black''---it's ``there exists a cat that isn't black.'' You only need one counterexample to disprove a universal claim.
 \end{theorem}
 
 \begin{theorem}[Quantifier order matters]
 \[
 \forall x.\, \exists y.\, P(x,y) \quad \not\equiv \quad \exists y.\, \forall x.\, P(x,y)
 \]
-\textbf{Example.} Let $P(x,y)$ mean ``$y > x$'' over $\mathbb{R}$.
+This is subtle but crucial. Let $P(x,y)$ mean ``$y > x$'' over $\mathbb{R}$:
 \begin{itemize}
-  \item $\forall x.\, \exists y.\, (y > x)$: For every number, there's a larger one. \textbf{True.}
-  \item $\exists y.\, \forall x.\, (y > x)$: There's a number larger than all others. \textbf{False.}
+  \item $\forall x.\, \exists y.\, (y > x)$: ``For every number, there's a larger one.'' \textbf{True.} (Given any $x$, take $y = x + 1$.)
+  \item $\exists y.\, \forall x.\, (y > x)$: ``There's a number larger than all others.'' \textbf{False.} (No largest real number exists.)
 \end{itemize}
+
+The difference: in the first, $y$ can depend on $x$ (different $x$, different $y$). In the second, you must pick a single $y$ that works for \emph{all} $x$ simultaneously. That's a much stronger requirement.
 \end{theorem}
 
 \subsection*{Proof Techniques}
 
+Now for the main event: how to actually prove things. There are several standard approaches, and part of mathematical maturity is recognizing which technique fits which situation.
+
 \needspace{12\baselineskip}
 \begin{strategy}[Direct proof]
 To prove $P \to Q$: Assume $P$ is true, then show $Q$ follows.
+
+This is the most straightforward approach. You start with what you're given and push forward until you reach what you want.
 
 \textbf{Template:}
 \begin{quote}
@@ -72,11 +90,13 @@ To prove $P \to Q$: Assume $P$ is true, then show $Q$ follows.
 
 \textbf{Example.} Prove: If $n$ is even, then $n^2$ is even.
 
-\emph{Proof.} Assume $n$ is even. Then $n = 2k$ for some integer $k$. So $n^2 = (2k)^2 = 4k^2 = 2(2k^2)$. Since $2k^2$ is an integer, $n^2$ is even. \qed
+\emph{Proof.} Assume $n$ is even. Then $n = 2k$ for some integer $k$. (This is what ``even'' means---we're unpacking the definition.) So $n^2 = (2k)^2 = 4k^2 = 2(2k^2)$. Since $2k^2$ is an integer, $n^2$ has the form $2 \cdot (\text{integer})$, which is the definition of even. \qed
 \end{strategy}
 
 \begin{strategy}[Proof by contrapositive]
-To prove $P \to Q$: Prove $\neg Q \to \neg P$ instead (they're equivalent).
+To prove $P \to Q$: Prove $\neg Q \to \neg P$ instead (they're logically equivalent).
+
+Why would you do this? Sometimes $\neg Q$ gives you more to work with than $P$ does. If you're stuck on a direct proof, try the contrapositive.
 
 \textbf{Template:}
 \begin{quote}
@@ -85,11 +105,17 @@ To prove $P \to Q$: Prove $\neg Q \to \neg P$ instead (they're equivalent).
 
 \textbf{Example.} Prove: If $n^2$ is odd, then $n$ is odd.
 
-\emph{Proof.} We prove the contrapositive: if $n$ is even, then $n^2$ is even. Assume $n$ is even. Then $n = 2k$, so $n^2 = 4k^2 = 2(2k^2)$, which is even. \qed
+\emph{Proof.} We prove the contrapositive: if $n$ is even, then $n^2$ is even.
+
+Assume $n$ is even. Then $n = 2k$ for some integer $k$. So $n^2 = 4k^2 = 2(2k^2)$, which is even. \qed
+
+(Notice this is almost the same as the previous example. The contrapositive often turns a ``weird'' statement into a more natural one.)
 \end{strategy}
 
 \begin{strategy}[Proof by contradiction]
 To prove $P$: Assume $\neg P$ and derive a contradiction.
+
+This is the ``suppose not'' approach. You assume the opposite of what you want to prove, then show this leads somewhere impossible. The logic is: if assuming $\neg P$ leads to nonsense, then $P$ must be true.
 
 \textbf{Template:}
 \begin{quote}
@@ -98,11 +124,21 @@ To prove $P$: Assume $\neg P$ and derive a contradiction.
 
 \textbf{Example.} Prove: $\sqrt{2}$ is irrational.
 
-\emph{Proof.} Suppose for contradiction that $\sqrt{2} = a/b$ where $a, b$ are integers with no common factors. Then $2 = a^2/b^2$, so $a^2 = 2b^2$. Thus $a^2$ is even, so $a$ is even; write $a = 2c$. Then $4c^2 = 2b^2$, so $b^2 = 2c^2$, meaning $b$ is also even. But then $a$ and $b$ share factor 2, contradicting our assumption. \qed
+\emph{Proof.} Suppose for contradiction that $\sqrt{2}$ is rational. Then $\sqrt{2} = a/b$ where $a, b$ are integers with no common factors (we've reduced to lowest terms).
+
+Squaring both sides: $2 = a^2/b^2$, so $a^2 = 2b^2$. This means $a^2$ is even, so $a$ is even (we proved this above). Write $a = 2c$ for some integer $c$.
+
+Substituting: $(2c)^2 = 2b^2$, so $4c^2 = 2b^2$, so $b^2 = 2c^2$. This means $b^2$ is even, so $b$ is even.
+
+But now both $a$ and $b$ are even---they share a factor of 2. This contradicts our assumption that $a/b$ was in lowest terms. \qed
+
+(This is one of the oldest proofs in mathematics, attributed to the ancient Greeks. Legend has it that Hippasus was drowned for revealing it.)
 \end{strategy}
 
 \begin{strategy}[Proof by cases]
-To prove $P$: Partition into exhaustive cases and prove each.
+To prove $P$: Partition into exhaustive cases and prove $P$ in each one.
+
+Sometimes a statement is true for different reasons in different situations. Rather than finding one unified argument, you can just handle each situation separately.
 
 \textbf{Template:}
 \begin{quote}
@@ -113,23 +149,27 @@ To prove $P$: Partition into exhaustive cases and prove each.
 
 \textbf{Example.} Prove: For any integer $n$, $n^2 + n$ is even.
 
-\emph{Proof.} Case 1: $n$ is even. Then $n^2$ is even, so $n^2 + n$ is even + even = even.
+\emph{Proof.} Every integer is either even or odd. We handle each case.
 
-Case 2: $n$ is odd. Then $n^2$ is odd, so $n^2 + n$ is odd + odd = even.
+\emph{Case 1: $n$ is even.} Then $n^2$ is even (proved earlier). So $n^2 + n$ is even + even = even. \checkmark
 
-Every integer is either even or odd, so $n^2 + n$ is always even. \qed
+\emph{Case 2: $n$ is odd.} Then $n^2$ is odd (similar argument). So $n^2 + n$ is odd + odd = even. \checkmark
+
+Since every integer is either even or odd, we've covered all cases. \qed
 \end{strategy}
 
 \subsection*{Mathematical Induction}
+
+Induction is how we prove statements about all natural numbers (or anything else we can line up in a sequence). The idea is beautifully simple: prove the first case, then prove that each case implies the next. Like dominoes.
 
 \begin{strategy}[Weak induction]
 To prove $\forall n \geq n_0.\, P(n)$:
 \begin{enumerate}
   \item \textbf{Base case:} Prove $P(n_0)$.
-  \item \textbf{Inductive step:} Prove $P(k) \to P(k+1)$ for arbitrary $k \geq n_0$.
+  \item \textbf{Inductive step:} Prove that $P(k) \to P(k+1)$ for an arbitrary $k \geq n_0$.
 \end{enumerate}
 
-\textbf{Why it works:} Base case gives $P(n_0)$. Inductive step gives $P(n_0) \to P(n_0+1)$, so $P(n_0+1)$. Inductive step again gives $P(n_0+1) \to P(n_0+2)$, so $P(n_0+2)$. And so on forever.
+\textbf{Why it works:} The base case establishes $P(n_0)$. The inductive step gives us $P(n_0) \to P(n_0+1)$, so $P(n_0+1)$ is true. The inductive step again gives $P(n_0+1) \to P(n_0+2)$, so $P(n_0+2)$ is true. And so on, forever. We've built an infinite chain of implications, starting from a known truth.
 \end{strategy}
 
 \begin{example}
@@ -137,25 +177,36 @@ Prove: $\displaystyle\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$ for all $n \geq 1$.
 
 \emph{Proof.} By induction on $n$.
 
-\textbf{Base case} ($n = 1$): $\sum_{i=1}^{1} i = 1 = \frac{1 \cdot 2}{2}$. \checkmark
+\textbf{Base case} ($n = 1$): The left side is $\sum_{i=1}^{1} i = 1$. The right side is $\frac{1 \cdot 2}{2} = 1$. They match. \checkmark
 
-\textbf{Inductive step:} Assume $\sum_{i=1}^{k} i = \frac{k(k+1)}{2}$ for some $k \geq 1$. Then:
+\textbf{Inductive step:} Assume the formula holds for some $k \geq 1$:
 \[
-\sum_{i=1}^{k+1} i = \left(\sum_{i=1}^{k} i\right) + (k+1) = \frac{k(k+1)}{2} + (k+1) = \frac{k(k+1) + 2(k+1)}{2} = \frac{(k+1)(k+2)}{2}
+\sum_{i=1}^{k} i = \frac{k(k+1)}{2} \quad \text{(this is our \textbf{inductive hypothesis})}
 \]
-This is the formula with $n = k+1$. \checkmark
+
+We need to prove it holds for $k+1$:
+\begin{align*}
+\sum_{i=1}^{k+1} i &= \left(\sum_{i=1}^{k} i\right) + (k+1) && \text{(peel off the last term)} \\
+&= \frac{k(k+1)}{2} + (k+1) && \text{(apply inductive hypothesis!)} \\
+&= \frac{k(k+1) + 2(k+1)}{2} && \text{(common denominator)} \\
+&= \frac{(k+1)(k+2)}{2} && \text{(factor)}
+\end{align*}
+
+This is exactly the formula with $n = k+1$. \checkmark
 
 By induction, the formula holds for all $n \geq 1$. \qed
 \end{example}
 
+The key move in the inductive step is the second line: we \emph{used} the inductive hypothesis. If your inductive step doesn't reference the assumption $P(k)$, something's wrong---either your proof has a bug, or you didn't need induction in the first place.
+
 \begin{strategy}[Strong induction]
 To prove $\forall n \geq n_0.\, P(n)$:
 \begin{enumerate}
-  \item \textbf{Base case(s):} Prove $P(n_0)$ (and possibly $P(n_0+1), \ldots$).
-  \item \textbf{Inductive step:} Prove $\bigl[P(n_0) \land P(n_0+1) \land \cdots \land P(k)\bigr] \to P(k+1)$.
+  \item \textbf{Base case(s):} Prove $P(n_0)$ (and possibly several more).
+  \item \textbf{Inductive step:} Assume $P(n_0), P(n_0+1), \ldots, P(k)$ all hold. Prove $P(k+1)$.
 \end{enumerate}
 
-Use strong induction when proving $P(k+1)$ requires cases smaller than $k$ (not just $k$ itself).
+The difference from weak induction: you get to assume $P$ holds for \emph{all} values up to $k$, not just $k$ itself. Use strong induction when proving $P(k+1)$ requires jumping back further than just one step.
 \end{strategy}
 
 \begin{example}
@@ -163,16 +214,20 @@ Prove: Every integer $n \geq 2$ can be written as a product of primes.
 
 \emph{Proof.} By strong induction on $n$.
 
-\textbf{Base case} ($n = 2$): 2 is prime, so it's a product of primes (just itself). \checkmark
+\textbf{Base case} ($n = 2$): 2 is prime, so it's a ``product of primes'' (a product with one factor). \checkmark
 
-\textbf{Inductive step:} Assume every integer from 2 to $k$ can be written as a product of primes. Consider $k + 1$.
+\textbf{Inductive step:} Assume every integer from 2 to $k$ can be written as a product of primes. We need to show $k + 1$ can too.
 
-\emph{Case 1:} $k+1$ is prime. Then $k+1$ is a product of primes (itself). \checkmark
+\emph{Case 1: $k+1$ is prime.} Then $k+1$ is trivially a product of primes. \checkmark
 
-\emph{Case 2:} $k+1$ is composite. Then $k+1 = ab$ where $2 \leq a, b \leq k$. By the inductive hypothesis, both $a$ and $b$ are products of primes. So $k+1 = ab$ is also a product of primes. \checkmark
+\emph{Case 2: $k+1$ is composite.} Then $k+1 = ab$ where $2 \leq a, b < k+1$. (Both factors are smaller than $k+1$ but at least 2.)
+
+Since $a \leq k$ and $b \leq k$, the inductive hypothesis applies to both. So $a$ is a product of primes and $b$ is a product of primes. Therefore $k+1 = ab$ is also a product of primes. \checkmark
 
 By strong induction, every $n \geq 2$ is a product of primes. \qed
 \end{example}
+
+(This is half of the Fundamental Theorem of Arithmetic. The other half---that the factorization is unique---requires more work.)
 
 \begin{strategy}[Structural induction]
 To prove a property $P$ holds for all elements of a recursively-defined set $S$:
@@ -180,28 +235,37 @@ To prove a property $P$ holds for all elements of a recursively-defined set $S$:
   \item \textbf{Base case(s):} Prove $P$ for each base element of $S$.
   \item \textbf{Inductive step(s):} For each recursive rule, assume $P$ holds for the inputs and prove $P$ for the output.
 \end{enumerate}
+
+This is induction generalized beyond numbers. If you've defined a data structure recursively (trees, lists, formulas, etc.), structural induction is the natural way to prove things about it.
 \end{strategy}
 
 \begin{example}
 Define binary trees recursively:
 \begin{itemize}
   \item \textbf{Base:} A single node $\bullet$ is a binary tree.
-  \item \textbf{Recursive:} If $T_1$ and $T_2$ are binary trees, then the tree with a root connected to $T_1$ (left) and $T_2$ (right) is a binary tree.
+  \item \textbf{Recursive:} If $T_1$ and $T_2$ are binary trees, then the tree with a root node connected to $T_1$ (left) and $T_2$ (right) is a binary tree.
 \end{itemize}
 
-Prove: Every binary tree has one more node than it has internal nodes (nodes with children).
+Prove: Every binary tree has one more leaf than internal node.
 
-\emph{Proof.} Let $P(T)$ be: ``$T$ has one more leaf than internal node.''
+\emph{Proof.} By structural induction. Let $P(T)$ be the statement ``$T$ has one more leaf than internal node.''
 
-\textbf{Base case:} A single node $\bullet$ has 1 leaf and 0 internal nodes. $1 = 0 + 1$. \checkmark
+\textbf{Base case:} A single node $\bullet$ has 1 leaf (itself) and 0 internal nodes. Since $1 = 0 + 1$, we have one more leaf than internal node. \checkmark
 
-\textbf{Inductive step:} Suppose $T_1$ has $\ell_1$ leaves, $i_1$ internal nodes (with $\ell_1 = i_1 + 1$), and similarly $T_2$ has $\ell_2 = i_2 + 1$. Form tree $T$ with root connected to $T_1$ and $T_2$.
+\textbf{Inductive step:} Suppose $T_1$ has $\ell_1$ leaves and $i_1$ internal nodes with $\ell_1 = i_1 + 1$. Similarly, $T_2$ has $\ell_2 = i_2 + 1$.
 
-In $T$: The root is a new internal node. All leaves of $T_1$ and $T_2$ are still leaves. So:
+Form tree $T$ by connecting a new root to $T_1$ and $T_2$. In $T$:
+\begin{itemize}
+  \item The leaves are exactly the leaves of $T_1$ and $T_2$ (the new root isn't a leaf).
+  \item The internal nodes are the internal nodes of $T_1$ and $T_2$, plus the new root.
+\end{itemize}
+
+So:
 \begin{align*}
 \text{leaves}(T) &= \ell_1 + \ell_2 \\
-\text{internal}(T) &= i_1 + i_2 + 1 \quad \text{(the root)}
+\text{internal}(T) &= i_1 + i_2 + 1
 \end{align*}
+
 Check: $\ell_1 + \ell_2 = (i_1 + 1) + (i_2 + 1) = (i_1 + i_2 + 1) + 1 = \text{internal}(T) + 1$. \checkmark
 
 By structural induction, every binary tree has one more leaf than internal node. \qed
@@ -209,71 +273,95 @@ By structural induction, every binary tree has one more leaf than internal node.
 
 \subsection*{Common Inference Rules}
 
+These are the ``legal moves'' in formal reasoning. You'll use them implicitly in most proofs.
+
 \begin{center}
 \begin{tabular}{lll}
-\textbf{Name} & \textbf{Rule} & \textbf{Meaning} \\
+\textbf{Name} & \textbf{Rule} & \textbf{In English} \\
 \hline
-Modus ponens & $P, \; P \to Q \;\vdash\; Q$ & If $P$ and $P \to Q$, conclude $Q$ \\
-Modus tollens & $\neg Q, \; P \to Q \;\vdash\; \neg P$ & If $\neg Q$ and $P \to Q$, conclude $\neg P$ \\
-Hypothetical syllogism & $P \to Q, \; Q \to R \;\vdash\; P \to R$ & Chain implications \\
-Disjunctive syllogism & $P \lor Q, \; \neg P \;\vdash\; Q$ & Eliminate one disjunct \\
-Conjunction & $P, \; Q \;\vdash\; P \land Q$ & Combine facts \\
-Simplification & $P \land Q \;\vdash\; P$ & Extract from conjunction \\
-Addition & $P \;\vdash\; P \lor Q$ & Weaken to disjunction \\
-Resolution & $P \lor Q, \; \neg P \lor R \;\vdash\; Q \lor R$ & Combine disjunctions \\
+Modus ponens & $P, \; P \to Q \;\vdash\; Q$ & ``If $P$ and `$P$ implies $Q$', then $Q$'' \\
+Modus tollens & $\neg Q, \; P \to Q \;\vdash\; \neg P$ & ``If not $Q$ and `$P$ implies $Q$', then not $P$'' \\
+Hypothetical syllogism & $P \to Q, \; Q \to R \;\vdash\; P \to R$ & Chain implications together \\
+Disjunctive syllogism & $P \lor Q, \; \neg P \;\vdash\; Q$ & ``It's $P$ or $Q$, and not $P$, so $Q$'' \\
+Conjunction & $P, \; Q \;\vdash\; P \land Q$ & Combine two facts \\
+Simplification & $P \land Q \;\vdash\; P$ & Extract one part of an AND \\
+Addition & $P \;\vdash\; P \lor Q$ & Weaken to a disjunction \\
+Resolution & $P \lor Q, \; \neg P \lor R \;\vdash\; Q \lor R$ & The workhorse of automated theorem provers \\
 \end{tabular}
 \end{center}
+
+Modus ponens and modus tollens are the two you'll use most. Modus ponens is ``forward reasoning'' (from premise to conclusion). Modus tollens is ``backward reasoning'' (from failure of conclusion to failure of premise).
 
 \subsection*{Existential and Universal Proofs}
 
 \begin{strategy}[Proving $\exists x.\, P(x)$]
-Exhibit a specific witness $c$ and show $P(c)$ holds.
+Find a specific witness $c$ and show $P(c)$ holds.
+
+This is often the easiest type of proof: just produce an example.
 
 \textbf{Example.} Prove: There exists an integer $n$ such that $n^2 = n$.
 
 \emph{Proof.} Take $n = 1$. Then $1^2 = 1$. \qed
+
+(Or take $n = 0$. There are often multiple witnesses.)
 \end{strategy}
 
 \begin{strategy}[Proving $\forall x.\, P(x)$]
-Let $x$ be an arbitrary element of the domain and prove $P(x)$.
+Let $x$ be an \emph{arbitrary} element of the domain and prove $P(x)$ without assuming anything special about $x$.
+
+The word ``arbitrary'' is key. You can't say ``let $x = 5$'' because then you've only proved $P(5)$, not $P(x)$ for all $x$.
 
 \textbf{Example.} Prove: For all integers $n$, if $n$ is odd, then $n^2$ is odd.
 
-\emph{Proof.} Let $n$ be an arbitrary odd integer. Then $n = 2k + 1$ for some integer $k$. So $n^2 = (2k+1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1$, which is odd. \qed
+\emph{Proof.} Let $n$ be an arbitrary odd integer. Then $n = 2k + 1$ for some integer $k$.
+
+So $n^2 = (2k+1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1$.
+
+This has the form $2m + 1$ where $m = 2k^2 + 2k$ is an integer, so $n^2$ is odd. \qed
 \end{strategy}
 
 \begin{strategy}[Disproving $\forall x.\, P(x)$]
 Find a counterexample: a specific $c$ where $P(c)$ is false.
 
+Remember: the negation of ``for all $x$, $P(x)$'' is ``there exists an $x$ where $P(x)$ fails.'' One counterexample is enough.
+
 \textbf{Example.} Disprove: For all primes $p$, $2^p - 1$ is prime.
 
-\emph{Counterexample.} $p = 11$ is prime, but $2^{11} - 1 = 2047 = 23 \times 89$. \qed
+\emph{Counterexample.} Let $p = 11$, which is prime. Then $2^{11} - 1 = 2047 = 23 \times 89$. Since 2047 is composite, the claim is false. \qed
+
+(Numbers of the form $2^p - 1$ are called Mersenne numbers. When they're prime, they're Mersenne primes. Finding large Mersenne primes is an active area of number theory.)
 \end{strategy}
 
 \subsection*{Common Pitfalls}
 
+Here's where students most often go wrong. Read these carefully---you'll probably make at least one of these mistakes this quarter, and recognizing it quickly will save you grief.
+
 \begin{commonmistake}
-\textbf{Assuming what you're trying to prove.} In a direct proof of $P \to Q$, you assume $P$, not $Q$. If you find yourself writing ``Assume $Q$...'' you've gone wrong.
+\textbf{Assuming what you're trying to prove.} In a direct proof of $P \to Q$, you assume $P$, not $Q$. If you find yourself writing ``Assume $Q$...'' in a direct proof, you've gone circular. The whole point is to \emph{derive} $Q$ from other things.
 \end{commonmistake}
 
 \begin{commonmistake}
-\textbf{Confusing the converse.} $P \to Q$ is NOT equivalent to $Q \to P$. Proving ``if it's raining, the ground is wet'' does not prove ``if the ground is wet, it's raining.''
+\textbf{Confusing implication with its converse.} $P \to Q$ is NOT the same as $Q \to P$. Proving ``if $n$ is even, then $n^2$ is even'' does \emph{not} prove ``if $n^2$ is even, then $n$ is even.'' (The latter happens to be true, but it requires a separate proof.)
 \end{commonmistake}
 
 \begin{commonmistake}
-\textbf{Induction: not using the hypothesis.} In the inductive step, you must actually use the assumption $P(k)$ to prove $P(k+1)$. If your proof of $P(k+1)$ doesn't reference $P(k)$, either the proof is wrong or you didn't need induction.
+\textbf{Induction: not using the hypothesis.} In the inductive step, you \emph{must} use the assumption that $P(k)$ holds. If your proof of $P(k+1)$ doesn't mention $P(k)$ anywhere, either:
+\begin{itemize}
+  \item Your proof has a gap (most likely), or
+  \item You didn't actually need induction (rare, but possible)
+\end{itemize}
 \end{commonmistake}
 
 \begin{commonmistake}
-\textbf{Induction: wrong base case.} If your claim is $\forall n \geq 5.\, P(n)$, your base case must be $n = 5$, not $n = 1$.
+\textbf{Induction: wrong base case.} If your claim is ``for all $n \geq 5$, $P(n)$,'' your base case must be $n = 5$, not $n = 0$ or $n = 1$. The base case is where your chain of dominoes starts.
 \end{commonmistake}
 
 \begin{commonmistake}
-\textbf{Proof by example.} Checking $P(1), P(2), P(3)$ does not prove $\forall n.\, P(n)$. You need a general argument (or induction).
+\textbf{Proof by example.} Checking that $P(1), P(2), P(3)$ are true does \emph{not} prove $\forall n.\, P(n)$. You need either a general argument or proper induction. ``It worked for the first few cases'' is not a proof.
 \end{commonmistake}
 
 \begin{commonmistake}
-\textbf{Existential overgeneralization.} From ``there exists an $x$ with property $P$,'' you cannot conclude that \emph{every} $x$ has property $P$.
+\textbf{Existential overgeneralization.} From ``there exists an $x$ with property $P$,'' you cannot conclude that every $x$ has property $P$. Just because some integer is even doesn't mean all integers are even.
 \end{commonmistake}
 
 \subsection*{Practice}
@@ -281,23 +369,35 @@ Find a counterexample: a specific $c$ where $P(c)$ is false.
 \begin{enumerate}
   \item Prove by induction: $\displaystyle\sum_{i=1}^{n} i^2 = \frac{n(n+1)(2n+1)}{6}$.
 
-  \item Prove by induction: $n! > 2^n$ for all $n \geq 4$.
+  \item Prove by induction: $n! > 2^n$ for all $n \geq 4$. (What's the base case?)
 
-  \item Prove by strong induction: Every amount of postage $\geq 12$ cents can be made using 4-cent and 5-cent stamps.
+  \item Prove by strong induction: Every amount of postage $\geq 12$ cents can be made using 4-cent and 5-cent stamps. (Hint: you'll need multiple base cases.)
 
   \item Prove by contrapositive: If $n^2$ is divisible by 3, then $n$ is divisible by 3.
 
-  \item Prove by contradiction: There are infinitely many primes.
+  \item Prove by contradiction: There are infinitely many primes. (This is Euclid's proof, one of the most beautiful in mathematics.)
 
-  \item Prove or disprove: For all integers $a, b, c$, if $a \mid bc$, then $a \mid b$ or $a \mid c$.
+  \item Prove or disprove: For all integers $a, b, c$, if $a \mid bc$, then $a \mid b$ or $a \mid c$. (The notation $a \mid b$ means ``$a$ divides $b$.'')
 
-  \item Prove by structural induction: For any arithmetic expression built from integers using $+$ and $\times$, the result is an integer. (Define the set of arithmetic expressions recursively first.)
+  \item Prove by structural induction: For any arithmetic expression built from integers using $+$ and $\times$, the result is an integer. (First, define the set of arithmetic expressions recursively.)
 
-  \item Negate the following statement and determine which is true: ``For every $\epsilon > 0$, there exists $\delta > 0$ such that for all $x$, if $|x| < \delta$ then $|f(x)| < \epsilon$.''
+  \item Negate the following statement, then determine which version (original or negation) is true:
 
-  \item Find the error in this ``proof'': \emph{Claim: All horses are the same color.}
+  ``For every $\epsilon > 0$, there exists $\delta > 0$ such that for all $x$, if $|x| < \delta$ then $|f(x)| < \epsilon$.''
 
-  \emph{``Proof'' by induction:} Base case: One horse is trivially the same color as itself. Inductive step: Assume any $k$ horses are the same color. Given $k+1$ horses, remove one; the remaining $k$ are the same color. Put it back and remove a different one; those $k$ are the same color too. So all $k+1$ are the same color. \qed
+  (This is related to the definition of a limit at 0.)
+
+  \item Find the error in this ``proof'':
+
+  \emph{Claim: All horses are the same color.}
+
+  \emph{``Proof'' by induction on the number of horses:}
+
+  Base case: One horse is trivially the same color as itself. \checkmark
+
+  Inductive step: Assume any group of $k$ horses are the same color. Given $k+1$ horses, remove one; the remaining $k$ are the same color (by the inductive hypothesis). Put that horse back and remove a \emph{different} one; those $k$ horses are also the same color. Since the two groups overlap, all $k+1$ horses are the same color. \qed
+
+  (Where exactly does this argument fail?)
 
   \item Prove: For all sets $A$ and $B$, if $A \subseteq B$, then $\mathcal{P}(A) \subseteq \mathcal{P}(B)$.
 \end{enumerate}
