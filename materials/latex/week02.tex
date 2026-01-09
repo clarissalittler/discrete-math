@@ -83,6 +83,16 @@ Why these names? ``Injective'' suggests that $A$ is ``injected'' into $B$ withou
 
 The old-fashioned terms ``one-to-one'' and ``onto'' are still common, but they're less systematic. I'll use both interchangeably.
 
+\begin{keyresult}[Category-theoretic terminology]
+These three properties have categorical names that you'll see in the companion material:
+\begin{itemize}
+  \item An injective function is a \textbf{monomorphism} (``mono'' = one, because each output comes from at most one input)
+  \item A surjective function is an \textbf{epimorphism} (``epi'' = upon, because every output is ``reached'')
+  \item A bijective function is an \textbf{isomorphism} (``iso'' = equal, because it establishes a perfect correspondence)
+\end{itemize}
+In categories beyond sets, these concepts generalize in subtle ways---monomorphisms and epimorphisms are defined by cancellation properties rather than element-wise conditions. But in $\Set$, they coincide with injection and surjection.
+\end{keyresult}
+
 \begin{definition}[Inverse function]
 If $f: A \to B$ is bijective, then there exists a unique function $f^{-1}: B \to A$ satisfying:
 \begin{itemize}
@@ -314,15 +324,27 @@ A \arrow[r, "f"] & B \arrow[r, shift left, "g"] \arrow[r, shift right, "h"'] & X
 \quad\text{(right cancellation)}
 \]
 
-\subsubsection*{Isomorphisms, Sections, and Retractions}
+\subsubsection*{Monomorphisms, Epimorphisms, and Isomorphisms}
 
-A map $f: A \to B$ is an \textbf{isomorphism} if there exists $g: B \to A$ with $g \circ f = \id_A$ and $f \circ g = \id_B$. In $\Set$, isomorphisms are exactly the bijections.
+We introduced the categorical names earlier. Now let's see why category theorists use different definitions than the set-theoretic ones.
 
-But we can have one-sided inverses:
+A \textbf{monomorphism} is a map $f: A \to B$ that is \emph{left-cancellable}: if $f \circ g = f \circ h$, then $g = h$. In $\Set$, this is equivalent to being injective.
+
+An \textbf{epimorphism} is a map $f: A \to B$ that is \emph{right-cancellable}: if $g \circ f = h \circ f$, then $g = h$. In $\Set$, this is equivalent to being surjective.
+
+An \textbf{isomorphism} is a map $f: A \to B$ for which there exists $g: B \to A$ with $g \circ f = \id_A$ and $f \circ g = \id_B$. In $\Set$, isomorphisms are exactly the bijections.
+
+\textbf{Why the cancellation definitions?} Because they make sense in any category, even when there are no ``elements'' to talk about. In $\Set$, the definitions coincide with injection/surjection. But in other categories (groups, rings, topological spaces), they can differ in surprising ways.
+
+\subsubsection*{Sections and Retractions}
+
+We can have one-sided inverses:
 \begin{itemize}
-  \item A \textbf{section} (right inverse) is $s: B \to A$ with $f \circ s = \id_B$. This forces $f$ to be surjective.
-  \item A \textbf{retraction} (left inverse) is $r: B \to A$ with $r \circ f = \id_A$. This forces $f$ to be injective.
+  \item A \textbf{section} (right inverse) of $f: A \to B$ is a map $s: B \to A$ with $f \circ s = \id_B$. If $f$ has a section, $f$ must be an epimorphism (surjective in $\Set$).
+  \item A \textbf{retraction} (left inverse) of $f: A \to B$ is a map $r: B \to A$ with $r \circ f = \id_A$. If $f$ has a retraction, $f$ must be a monomorphism (injective in $\Set$).
 \end{itemize}
+
+In $\Set$, a function has a section iff it's surjective (you can ``pick'' a preimage for each output), and has a retraction iff it's injective and $A$ is nonempty (you can ``invert'' on the image and send everything else somewhere).
 
 \subsubsection*{Universal Property of Products}
 

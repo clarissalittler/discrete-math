@@ -82,6 +82,57 @@ If $\sim$ is an equivalence relation on $A$, then:
 
 This is a beautiful result: equivalence relations and partitions are two views of the same thing. Give me an equivalence relation, I'll show you a partition. Give me a partition, I'll define an equivalence relation (two things are equivalent iff they're in the same piece).
 
+\subsubsection*{Quotienting: The Art of Controlled Forgetting}
+
+Here's the deeper idea behind equivalence relations: they let us \emph{forget} certain distinctions while remembering others. The resulting structure---the \textbf{quotient set}---is often exactly what we need.
+
+\begin{definition}[Quotient set]
+If $\sim$ is an equivalence relation on $A$, the \textbf{quotient set} (or \textbf{quotient of $A$ by $\sim$}) is:
+\[
+A / {\sim} = \{[a] : a \in A\}
+\]
+This is the set of equivalence classes. Its elements are not elements of $A$, but \emph{sets} of elements of $A$ that we've decided to treat as identical.
+\end{definition}
+
+The notation $A/{\sim}$ is read ``$A$ mod $\sim$'' or ``$A$ quotiented by $\sim$.'' Think of it as ``$A$, but with equivalent elements collapsed together.''
+
+\begin{example}[Integers mod $n$]
+The prototypical example: $\Z/{\equiv_n}$ (usually written $\Z_n$ or $\Z/n\Z$) is the integers where we've identified numbers that differ by multiples of $n$. The elements are $[0], [1], \ldots, [n-1]$, and arithmetic on these classes is well-defined.
+\end{example}
+
+\begin{example}[Rational numbers]
+Here's one you've used since grade school without thinking about it. A fraction $a/b$ is really an equivalence class of pairs: $\frac{1}{2}$ and $\frac{2}{4}$ are the same rational number because $(1, 2) \sim (2, 4)$ under the relation $(a, b) \sim (c, d) \iff ad = bc$. The rationals $\Q$ are a quotient of $\Z \times (\Z \setminus \{0\})$.
+\end{example}
+
+\begin{definition}[Quotient map]
+The \textbf{quotient map} (or \textbf{canonical projection}) is the function $\pi: A \to A/{\sim}$ defined by $\pi(a) = [a]$. It sends each element to its equivalence class.
+
+This function is always surjective (every class has a representative). It's injective only when $\sim$ is equality (otherwise distinct elements can map to the same class).
+\end{definition}
+
+\begin{keyresult}[The universal property of quotients]
+The quotient map $\pi: A \to A/{\sim}$ has a crucial property: if $f: A \to B$ is any function that ``respects'' the equivalence relation (meaning $a \sim a'$ implies $f(a) = f(a')$), then $f$ factors uniquely through $\pi$:
+\[
+\begin{tikzcd}
+A \arrow[r, "f"] \arrow[d, "\pi"'] & B \\
+A/{\sim} \arrow[ur, dashed, "\bar{f}"'] &
+\end{tikzcd}
+\]
+There exists a unique $\bar{f}: A/{\sim} \to B$ with $f = \bar{f} \circ \pi$. We define $\bar{f}([a]) = f(a)$, and this is well-defined precisely because $f$ respects $\sim$.
+
+In plain English: if a function gives the same output for equivalent inputs, it's really a function on equivalence classes, not on elements.
+\end{keyresult}
+
+This universal property explains why quotients are so useful: they're the ``right'' way to define functions that don't distinguish between equivalent elements.
+
+\begin{example}[Modular arithmetic, revisited]
+Why is it okay to do arithmetic in $\Z_n$? Addition and multiplication on $\Z$ respect congruence: if $a \equiv a'$ and $b \equiv b'$, then $a + b \equiv a' + b'$ and $ab \equiv a'b'$. The operations ``descend'' to well-defined operations on $\Z/n\Z$ by the universal property.
+\end{example}
+
+\begin{commonmistake}
+\textbf{Confusing elements with equivalence classes.} The elements of $A/{\sim}$ are sets, not elements of $A$. When we write $[a] = [b]$, we mean $a \sim b$, which is a statement about $a$ and $b$ in $A$. But $[a]$ itself is a single element of the quotient. This takes some getting used to.
+\end{commonmistake}
+
 \subsubsection*{Partial Orders}
 
 Different combination: reflexive + antisymmetric + transitive. This gives hierarchies instead of equivalences.

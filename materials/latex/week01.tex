@@ -10,7 +10,7 @@ Epp \S 6.1--6.4.\\
 
 Here's a question that seems like it should be easy: what do we mean when we say ``the even numbers'' or ``all the students in this class'' or ``every program that halts''?
 
-We're gesturing at \emph{collections}. Bags of stuff. And you might think---reasonably!---that this is so obvious it doesn't need formalization. Surely we can just... talk about collections without making a federal case out of it?
+We're gesturing at \emph{collections}. Bags of stuff. And you might think---reasonably!---that this is so obvious it doesn't need formalization. Surely we can just talk about collections without making a federal case out of it?
 
 Well. Mathematicians tried that in the late 1800s, and it went \emph{spectacularly} badly. Bertrand Russell came along and said ``okay, consider the collection of all collections that don't contain themselves'' and the whole edifice caught fire. We'll get to that disaster later. For now, just know: sets are the careful, paradox-avoiding way we talk about collections in mathematics.
 
@@ -29,7 +29,7 @@ Well. Mathematicians tried that in the late 1800s, and it went \emph{spectacular
 
 A \textbf{set} is a collection of distinct objects where duplicates don't count (writing $\{1, 1, 2\}$ is the same as $\{1, 2\}$) and order doesn't matter ($\{1, 2\} = \{2, 1\}$).
 
-That's... basically it. A bag of things. The things in the bag are called \textbf{elements} or \textbf{members}, and we write $x \in A$ to mean ``$x$ is in the set $A$.''
+That's basically it. A bag of things. The things in the bag are called \textbf{elements} or \textbf{members}, and we write $x \in A$ to mean ``$x$ is in the set $A$.''
 
 Now, you might reasonably ask: what counts as a ``thing''? Can sets contain other sets? Can a set contain itself? What about the set of all sets?
 
@@ -98,7 +98,7 @@ For all sets $A, B, C$:
 $(A \cup B)^c = A^c \cap B^c$ and $(A \cap B)^c = A^c \cup B^c$.
 \end{theorem}
 
-If these look exactly like the logical equivalences from Week 0... that's because they are. The Boolean algebra structure is the same; we're just using $\cup$ instead of $\lor$ and $\cap$ instead of $\land$.
+If these look exactly like the logical equivalences from Week 0, that's because they are. The Boolean algebra structure is the same; we're just using $\cup$ instead of $\lor$ and $\cap$ instead of $\land$.
 
 \subsubsection*{The Power Set (Where Things Get Meta)}
 
@@ -112,7 +112,7 @@ Yes, we're making a set whose elements are themselves sets. This is allowed and 
 
 Try this before reading on: list all subsets of $\{1, 2\}$.
 
-...
+(Take a moment to write them down before continuing.)
 
 Got them? There are four:
 \[
@@ -163,7 +163,7 @@ Modern set theory (ZFC) fixes this by being very careful about which collections
 \begin{example}[Boolean-style simplification]
 Simplify the set expression $(A \cap B) \cup (A \cap B^c)$.
 
-\emph{Solution.} If you stare at this for a moment, you might notice we're taking things in $A$ that are also in $B$, then unioning with things in $A$ that \emph{aren't} in $B$. That sounds like... just everything in $A$?
+\emph{Solution.} If you stare at this for a moment, you might notice we're taking things in $A$ that are also in $B$, then unioning with things in $A$ that \emph{aren't} in $B$. That sounds like just everything in $A$.
 
 Let's verify with algebra. Factor out $A$ using distributivity:
 \[
@@ -290,7 +290,7 @@ We've been writing $f: A \to B$ for functions. The arrow notation isn't accident
   \item \textbf{Identities are neutral:} $f \circ \id_A = f$ and $\id_B \circ f = f$.
 \end{itemize}
 
-If this looks like the axioms for... something... you're onto something. We'll return to this.
+If this looks like the axioms for something more general, you're onto something. We'll return to this.
 
 \subsubsection*{Elements as Maps from 1}
 In the category of sets, a singleton set $1 = \{*\}$ is special. Every element $a \in A$ corresponds to a unique map $1 \to A$ that sends $*$ to $a$. In categorical language, \emph{elements of $A$ are arrows from $1$ to $A$}.
