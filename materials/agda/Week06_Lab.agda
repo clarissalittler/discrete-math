@@ -17,3 +17,6 @@ exercise-totalWeightCons v w xs = {!!}
 
 exercise-indicatorTrue : {S : Set} (s : S) -> Eq (indicator (\_ -> true) s) one
 exercise-indicatorTrue s = {!!}
+
+exercise-indicatorFalse : {S : Set} (s : S) -> Eq (indicator (\_ -> false) s) zero
+exercise-indicatorFalse s = {!!}

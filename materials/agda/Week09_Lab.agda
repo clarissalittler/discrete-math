@@ -15,3 +15,6 @@ exercise-runNil d s = {!!}
 
 exercise-litMatches : {A : Set} (a : A) -> Matches (lit a) (a :: [])
 exercise-litMatches a = {!!}
+
+exercise-nullableEps : {A : Set} -> Eq (nullable (eps {A})) true
+exercise-nullableEps = {!!}

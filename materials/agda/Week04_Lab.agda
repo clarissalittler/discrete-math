@@ -16,3 +16,6 @@ exercise-countSubsetsZero = {!!}
 
 exercise-factorialTwo : Eq (Factorial (succ (succ zero))) (succ (succ zero))
 exercise-factorialTwo = {!!}
+
+exercise-countFunctionsZero : (codomain : Nat) -> Eq (countFunctions zero codomain) one
+exercise-countFunctionsZero codomain = {!!}

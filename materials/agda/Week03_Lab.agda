@@ -15,3 +15,6 @@ exercise-symClosureSym x y r = {!!}
 
 exercise-modEqSym : {n a b : Nat} -> ModEq n a b -> ModEq n b a
 exercise-modEqSym proof = {!!}
+
+exercise-modEqRefl : (n a : Nat) -> ModEq n a a
+exercise-modEqRefl n a = {!!}

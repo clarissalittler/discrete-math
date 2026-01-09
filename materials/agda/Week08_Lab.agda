@@ -15,3 +15,6 @@ exercise-binLeavesLeaf = {!!}
 
 exercise-preorderLeaf : {A : Set} -> Eq (preorder (leaf {A})) []
 exercise-preorderLeaf = {!!}
+
+exercise-binHeightLeaf : {A : Set} -> Eq (binHeight (leaf {A})) zero
+exercise-binHeightLeaf = {!!}

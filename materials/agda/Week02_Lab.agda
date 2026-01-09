@@ -19,3 +19,7 @@ exercise-leftInverseInjective left x y fx=fy = {!!}
 exercise-preimageSubset : {A B : Set} (f : A -> B) {P Q : Pred B} ->
   P ⊆ Q -> Preimage f P ⊆ Preimage f Q
 exercise-preimageSubset f pq x pfx = {!!}
+
+exercise-composeAssoc : {A B C D : Set} {f : A -> B} {g : B -> C} {h : C -> D} ->
+  (x : A) -> Eq (((h ∘ g) ∘ f) x) ((h ∘ (g ∘ f)) x)
+exercise-composeAssoc x = {!!}

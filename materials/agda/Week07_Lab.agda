@@ -14,3 +14,8 @@ exercise-walkLengthSingle = {!!}
 exercise-walkStartSingle : {n : Nat} {g : MatrixGraph n} {v : Fin n} ->
   Eq (walkStart (single {g = g} {v = v})) v
 exercise-walkStartSingle = {!!}
+
+exercise-walkLengthStep : {n : Nat} {g : MatrixGraph n} {u v : Fin n} {rest : List (Fin n)} ->
+  (e : Edge g u v) -> (w : Walk g (v :: rest)) ->
+  Eq (walkLength (step e w)) (succ (walkLength w))
+exercise-walkLengthStep e w = {!!}

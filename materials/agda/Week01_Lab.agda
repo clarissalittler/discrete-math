@@ -16,3 +16,6 @@ exercise-emptySubset P x e = {!!}
 exercise-unionMono : {A : Set} {P P' Q Q' : Pred A} ->
   P ⊆ P' -> Q ⊆ Q' -> (P ∪ Q) ⊆ (P' ∪ Q')
 exercise-unionMono pp' qq' x pq = {!!}
+
+exercise-intersectComm : {A : Set} (P Q : Pred A) -> SetEq (P ∩ Q) (Q ∩ P)
+exercise-intersectComm P Q = {!!}

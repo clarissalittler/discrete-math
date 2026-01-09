@@ -12,3 +12,6 @@ exercise-linearBigO = {!!}
 
 exercise-bigThetaRefl : (f : Nat -> Nat) -> BigTheta f f
 exercise-bigThetaRefl f = {!!}
+
+exercise-bigORefl : (f : Nat -> Nat) -> BigO f f
+exercise-bigORefl f = {!!}

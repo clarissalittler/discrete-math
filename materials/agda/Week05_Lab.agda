@@ -19,3 +19,6 @@ exercise-choose52 : Eq (choose (succ (succ (succ (succ (succ zero)))))
                       (succ (succ (succ (succ (succ
                        (succ (succ (succ (succ (succ zero))))))))))
 exercise-choose52 = {!!}
+
+exercise-sumRowSucc : (n : Nat) -> Eq (sumRow (succ n)) (sumRow n + sumRow n)
+exercise-sumRowSucc n = {!!}

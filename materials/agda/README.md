@@ -3,6 +3,7 @@
 This folder contains two kinds of files:
 - WeekXX_*.agda: completed developments aligned with weekly notes.
 - WeekXX_Lab.agda: optional lab sheets with holes.
+- TUTORIAL.md: longer-form guide to the Agda materials.
 
 Quick start (CLI)
 - agda -i materials/agda materials/agda/Week01_Lab.agda
