@@ -1,47 +1,86 @@
 \section{Week 5: Counting and Probability II}
+
+\textit{Or: ``The art of choosing without caring about order''}
+
 \subsection*{Reading}
 Epp \S 9.5--9.7; 5.6--5.7. Supplemental: generating functions.\\
 \textbf{Category theory companion:} Weeks 4--5 (\texttt{category\_theory\_companion.pdf}).
+
+\subsection*{Why Combinations?}
+
+Last week we counted permutations---arrangements where order matters. But often we don't care about order: a committee is just a set of people, not a sequence. A poker hand is the same hand regardless of which card you drew first. A subset is a subset.
+
+This leads to binomial coefficients, one of the most important tools in discrete mathematics. They show up everywhere: in probability, in algebra (the binomial theorem), in Pascal's triangle, in combinatorial proofs. Master these and you've mastered a significant chunk of counting.
 
 \subsection*{Learning objectives}
 \begin{itemize}
   \item Compute combinations and binomial coefficients.
   \item Count with repetition using stars and bars.
   \item Use Pascal's identity and the binomial theorem.
-  \item Apply counting techniques to probability problems.
+  \item Set up and solve basic recurrence relations.
 \end{itemize}
 
 \subsection*{Key definitions and facts}
+
+\subsubsection*{Binomial Coefficients}
+
 \begin{definition}[Binomial coefficient]
-$\binom{n}{k}=\dfrac{n!}{k!(n-k)!}$ counts $k$-element subsets of an $n$-element set.
-Equivalently, it is the number of ways to choose $k$ items from $n$ items without regard to order.
+The \textbf{binomial coefficient} $\binom{n}{k}$ (read ``$n$ choose $k$'') is:
+\[
+\binom{n}{k} = \frac{n!}{k!(n-k)!}
+\]
+It counts the number of ways to choose $k$ items from $n$ items without regard to order. Equivalently, it counts $k$-element subsets of an $n$-element set.
 \end{definition}
+
+Why the formula? Start with the $k$-permutations: $P(n, k) = \frac{n!}{(n-k)!}$ ways to choose $k$ items in order. But each subset gets counted $k!$ times (once for each ordering of its elements). Divide out: $\binom{n}{k} = \frac{P(n,k)}{k!} = \frac{n!}{k!(n-k)!}$.
 
 \begin{theorem}[Pascal's identity]
 For $1 \leq k \leq n$:
 \[
 \binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}
 \]
-\emph{Combinatorial proof:} Consider element $n$. Either it's in the subset (choose $k-1$ more from $n-1$) or it's not (choose $k$ from $n-1$).
 \end{theorem}
+
+\emph{Combinatorial proof:} Focus on element $n$. Every $k$-subset either contains $n$ or doesn't.
+\begin{itemize}
+  \item Subsets containing $n$: choose $k-1$ more from the other $n-1$ elements $\Rightarrow \binom{n-1}{k-1}$
+  \item Subsets not containing $n$: choose all $k$ from the other $n-1$ elements $\Rightarrow \binom{n-1}{k}$
+\end{itemize}
+Add them up. \qed
+
+This identity gives Pascal's triangle, where each entry is the sum of the two above it.
 
 \begin{theorem}[Binomial theorem]
-$(x+y)^n=\sum_{k=0}^n \binom{n}{k}x^{n-k}y^k$.
+For any $x, y$ and non-negative integer $n$:
+\[
+(x+y)^n = \sum_{k=0}^n \binom{n}{k} x^{n-k} y^k
+\]
 \end{theorem}
 
-\begin{theorem}[Stars and bars]
-The number of ways to place $n$ identical objects into $k$ distinct bins is $\binom{n+k-1}{k-1}$.
-Equivalently, this counts non-negative integer solutions to $x_1 + x_2 + \cdots + x_k = n$.
-\end{theorem}
+Why? When you expand $(x+y)^n = (x+y)(x+y)\cdots(x+y)$, each term in the expansion comes from choosing $x$ or $y$ from each factor. The coefficient of $x^{n-k}y^k$ counts how many ways to choose $y$ from exactly $k$ of the $n$ factors, which is $\binom{n}{k}$.
 
 \begin{theorem}[Useful identities]
 \begin{itemize}
-  \item $\binom{n}{k} = \binom{n}{n-k}$ (symmetry)
-  \item $\sum_{k=0}^{n} \binom{n}{k} = 2^n$ (total subsets)
-  \item $\sum_{k=0}^{n} (-1)^k \binom{n}{k} = 0$ (alternating sum)
-  \item $\binom{n}{0} + \binom{n}{2} + \cdots = \binom{n}{1} + \binom{n}{3} + \cdots = 2^{n-1}$
+  \item $\binom{n}{k} = \binom{n}{n-k}$ \quad (symmetry: choosing what to include = choosing what to exclude)
+  \item $\sum_{k=0}^{n} \binom{n}{k} = 2^n$ \quad (total number of subsets)
+  \item $\sum_{k=0}^{n} (-1)^k \binom{n}{k} = 0$ \quad (alternating sum; set $x = 1, y = -1$ in binomial theorem)
+  \item $\binom{n}{0} + \binom{n}{2} + \cdots = \binom{n}{1} + \binom{n}{3} + \cdots = 2^{n-1}$ \quad (even and odd sized subsets)
 \end{itemize}
 \end{theorem}
+
+\subsubsection*{Stars and Bars}
+
+\begin{theorem}[Stars and bars]
+The number of ways to place $n$ identical objects into $k$ distinct bins is:
+\[
+\binom{n+k-1}{k-1}
+\]
+Equivalently, this counts non-negative integer solutions to $x_1 + x_2 + \cdots + x_k = n$.
+\end{theorem}
+
+\emph{Why it works:} Represent the objects as stars (*) and use bars (|) to separate bins. Example with $n=5$ objects in $k=3$ bins: $**|*|**$ represents $(2, 1, 2)$.
+
+Any arrangement is a string of $n$ stars and $k-1$ bars, totaling $n + k - 1$ symbols. We choose which $k-1$ positions are bars: $\binom{n+k-1}{k-1}$.
 
 \begin{definition}[Multinomial coefficient]
 The number of ways to partition $n$ objects into groups of sizes $k_1, k_2, \ldots, k_r$ (where $k_1 + \cdots + k_r = n$) is:
@@ -50,127 +89,149 @@ The number of ways to partition $n$ objects into groups of sizes $k_1, k_2, \ldo
 \]
 \end{definition}
 
-\subsection*{Recurrence relations for sequences}
+This generalizes the binomial coefficient: $\binom{n}{k} = \binom{n}{k, n-k}$.
+
+\subsection*{Recurrence relations}
 
 \begin{definition}[Recurrence relation]
-A \textbf{recurrence relation} defines a sequence $\{a_n\}$ by expressing $a_n$ in terms of earlier terms (and initial conditions).
-Example: $a_0 = 1, a_1 = 1$, and $a_n = a_{n-1} + a_{n-2}$ for $n \geq 2$ (Fibonacci numbers).
+A \textbf{recurrence relation} defines a sequence $\{a_n\}$ by expressing $a_n$ in terms of earlier terms, together with initial conditions.
 \end{definition}
 
+For example, the Fibonacci sequence: $F_0 = 0, F_1 = 1$, and $F_n = F_{n-1} + F_{n-2}$ for $n \geq 2$.
+
 \begin{theorem}[Second-order linear homogeneous recurrences]
-If $a_n = c_1 a_{n-1} + c_2 a_{n-2}$ for $n \geq 2$, then the \textbf{characteristic equation} is
+If $a_n = c_1 a_{n-1} + c_2 a_{n-2}$ for $n \geq 2$, then the \textbf{characteristic equation} is:
 \[
-r^2 = c_1 r + c_2
+r^2 = c_1 r + c_2 \quad \text{or equivalently} \quad r^2 - c_1 r - c_2 = 0
 \]
-If the roots are distinct $r_1, r_2$, then $a_n = \alpha r_1^n + \beta r_2^n$.
-If there is a repeated root $r$, then $a_n = (\alpha + \beta n) r^n$.
-Constants are determined from the initial conditions.
+\begin{itemize}
+  \item If roots are distinct ($r_1 \neq r_2$): $a_n = \alpha r_1^n + \beta r_2^n$
+  \item If roots are repeated ($r_1 = r_2 = r$): $a_n = (\alpha + \beta n) r^n$
+\end{itemize}
+Constants $\alpha, \beta$ are determined from initial conditions.
 \end{theorem}
 
 \begin{example}
 Solve $a_n = 2a_{n-1} + 1$ with $a_0 = 0$.
 
-\emph{Solution.} Unroll the recurrence:
-\[
-a_n = 2a_{n-1} + 1 = 2(2a_{n-2} + 1) + 1 = 2^2 a_{n-2} + 2 + 1
-\]
-Continuing gives $a_n = 2^n a_0 + (2^{n-1} + \cdots + 2 + 1) = 2^n - 1$.
+\emph{Solution.} This is inhomogeneous (the $+1$ term). One approach: unroll.
+\begin{align*}
+a_n &= 2a_{n-1} + 1 = 2(2a_{n-2} + 1) + 1 = 4a_{n-2} + 2 + 1 \\
+&= 8a_{n-3} + 4 + 2 + 1 = \cdots = 2^n a_0 + (2^{n-1} + \cdots + 2 + 1) \\
+&= 0 + (2^n - 1) = 2^n - 1
+\end{align*}
+Check: $a_0 = 2^0 - 1 = 0$ \checkmark, $a_1 = 2 \cdot 0 + 1 = 1 = 2^1 - 1$ \checkmark.
 \end{example}
 
 \begin{goingdeeper}[Going Deeper: Generating Functions]
-The \textbf{ordinary generating function} of a sequence $\{a_n\}$ is:
+The \textbf{ordinary generating function} (OGF) of a sequence $\{a_n\}$ is the formal power series:
 \[
 A(x) = \sum_{n=0}^{\infty} a_n x^n
 \]
-\textbf{Example 1 (constant sequence).} If $a_n = 1$ for all $n$, then:
+
+\textbf{Example 1 (constant sequence).} If $a_n = 1$ for all $n$:
 \[
-A(x) = 1 + x + x^2 + \cdots = \frac{1}{1 - x}
+A(x) = 1 + x + x^2 + \cdots = \frac{1}{1-x}
 \]
 
-\textbf{Example 2 (Fibonacci).} Let $F_0 = 0$, $F_1 = 1$, and $F_n = F_{n-1} + F_{n-2}$.
-If $F(x) = \sum_{n \geq 0} F_n x^n$, then the recurrence gives:
+\textbf{Example 2 (Fibonacci).} Let $F(x) = \sum_{n \geq 0} F_n x^n$. The recurrence $F_n = F_{n-1} + F_{n-2}$ translates to:
 \[
-F(x) - x = xF(x) + x^2 F(x) \quad \Rightarrow \quad F(x) = \frac{x}{1 - x - x^2}
+F(x) - x = x F(x) + x^2 F(x) \quad \Rightarrow \quad F(x) = \frac{x}{1 - x - x^2}
 \]
-Generating functions provide a systematic way to solve recurrences and count combinatorial objects.
+Partial fractions give the closed form for $F_n$.
+
+Generating functions are a powerful technique for solving recurrences and counting. The algebraic manipulation of series encodes combinatorial reasoning.
 \end{goingdeeper}
 
 \begin{goingdeeper}[Category Lens: Subsets as Maps to 2]
 In $\Set$, every subset $S \subseteq A$ corresponds to a \textbf{characteristic function}:
 \[
-\chi_S: A \to 2, \quad \chi_S(a) = \begin{cases} 1 & \text{if } a \in S \\ 0 & \text{if } a \notin S \end{cases}
+\chi_S: A \to 2, \quad \chi_S(a) = \begin{cases} 1 & \text{if } a \in S \\ 0 & \text{otherwise} \end{cases}
 \]
-So the set of all subsets of $A$ is the exponential object $2^A$.
+where $2 = \{0, 1\}$.
+
+So the set of all subsets of $A$ is the exponential object $2^A$ (the set of all functions from $A$ to $2$).
+
 \begin{itemize}
-  \item $|2^A| = 2^{|A|}$ explains the total number of subsets.
-  \item $\binom{n}{k}$ counts functions $A \to 2$ with exactly $k$ elements mapped to $1$.
+  \item $|2^A| = 2^{|A|}$ explains why there are $2^n$ subsets of an $n$-element set.
+  \item $\binom{n}{k}$ counts functions $A \to 2$ where exactly $k$ elements map to $1$.
 \end{itemize}
-This reframes binomial coefficients as counting \emph{maps} rather than subsets.
+
+This reframes binomial coefficients as counting \emph{maps} rather than subsets---a perspective that generalizes to other categories.
 \end{goingdeeper}
 
 \subsection*{Worked examples}
-\begin{example}
-How many solutions are there to $x_1+x_2+x_3=7$ with $x_i\ge 0$?
 
-\emph{Solution.} Using stars and bars: we have 7 stars and need 2 bars to separate into 3 groups.
-Total positions: $7 + 2 = 9$. Choose 2 positions for bars: $\binom{9}{2} = \frac{9 \cdot 8}{2} = 36$.
-\end{example}
+\begin{example}[Stars and bars]
+How many non-negative integer solutions are there to $x_1 + x_2 + x_3 = 7$?
 
-\begin{example}
-Prove $\sum_{k=0}^{n} \binom{n}{k} = 2^n$.
-
-\emph{Proof 1 (Binomial theorem):} Set $x = y = 1$ in $(x+y)^n = \sum_{k=0}^n \binom{n}{k}x^{n-k}y^k$.
-
-\emph{Proof 2 (Combinatorial):} LHS counts all subsets of an $n$-element set (choose 0, or 1, or 2, ..., or $n$ elements). RHS: each element is either in or out, giving $2^n$ choices. \qed
-\end{example}
-
-\begin{example}
-How many ways can the letters of MISSISSIPPI be arranged?
-
-\emph{Solution.} Total 11 letters: M(1), I(4), S(4), P(2).
-Using the multinomial coefficient: $\binom{11}{1,4,4,2} = \frac{11!}{1! \cdot 4! \cdot 4! \cdot 2!} = \frac{39916800}{1 \cdot 24 \cdot 24 \cdot 2} = 34650$.
-\end{example}
-
-\begin{example}
-Prove Pascal's identity: $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$.
-
-\emph{Algebraic proof:}
-\begin{align*}
-\binom{n-1}{k-1} + \binom{n-1}{k} &= \frac{(n-1)!}{(k-1)!(n-k)!} + \frac{(n-1)!}{k!(n-k-1)!} \\
-&= \frac{(n-1)! \cdot k + (n-1)! \cdot (n-k)}{k!(n-k)!} \\
-&= \frac{(n-1)! \cdot n}{k!(n-k)!} = \frac{n!}{k!(n-k)!} = \binom{n}{k}
-\end{align*}
-\end{example}
-
-\begin{example}
-Use the binomial theorem to expand $(2x - 1)^4$.
-
-\emph{Solution.} By the binomial theorem with $a = 2x$ and $b = -1$:
-\begin{align*}
-(2x - 1)^4 &= \sum_{k=0}^{4} \binom{4}{k} (2x)^{4-k} (-1)^k \\
-&= \binom{4}{0}(2x)^4 - \binom{4}{1}(2x)^3 + \binom{4}{2}(2x)^2 - \binom{4}{3}(2x) + \binom{4}{4} \\
-&= 1 \cdot 16x^4 - 4 \cdot 8x^3 + 6 \cdot 4x^2 - 4 \cdot 2x + 1 \\
-&= 16x^4 - 32x^3 + 24x^2 - 8x + 1
-\end{align*}
-\end{example}
-
-\begin{example}
-How many positive integer solutions are there to $x_1 + x_2 + x_3 = 10$?
-
-\emph{Solution.} Since we want \emph{positive} integers ($x_i \geq 1$), substitute $y_i = x_i - 1$ so $y_i \geq 0$. Then:
-\[
-(y_1 + 1) + (y_2 + 1) + (y_3 + 1) = 10 \implies y_1 + y_2 + y_3 = 7
-\]
-Now we count non-negative integer solutions using stars and bars. We have 7 stars and need 2 bars to separate into 3 groups:
+\emph{Solution.} We have 7 identical ``units'' to distribute among 3 distinct variables. By stars and bars:
 \[
 \binom{7 + 3 - 1}{3 - 1} = \binom{9}{2} = \frac{9 \cdot 8}{2} = 36
 \]
 \end{example}
 
-\begin{example}
+\begin{example}[Proving a sum identity]
+Prove $\sum_{k=0}^{n} \binom{n}{k} = 2^n$.
+
+\emph{Proof 1 (Binomial theorem):} Set $x = y = 1$ in $(x+y)^n = \sum_{k=0}^n \binom{n}{k}x^{n-k}y^k$. Get $2^n = \sum_{k=0}^n \binom{n}{k}$.
+
+\emph{Proof 2 (Combinatorial):} The LHS counts subsets by size (0-subsets + 1-subsets + ... + $n$-subsets). The RHS counts subsets directly: each element is in or out, $2^n$ choices. Both count all subsets. \qed
+\end{example}
+
+\begin{example}[Arrangements with repetition]
+How many ways can the letters of MISSISSIPPI be arranged?
+
+\emph{Solution.} Total 11 letters with repetitions: M(1), I(4), S(4), P(2).
+
+Using the multinomial coefficient:
+\[
+\binom{11}{1,4,4,2} = \frac{11!}{1! \cdot 4! \cdot 4! \cdot 2!} = \frac{39916800}{1 \cdot 24 \cdot 24 \cdot 2} = 34650
+\]
+\end{example}
+
+\begin{example}[Pascal's identity algebraically]
+Prove $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$ algebraically.
+
+\emph{Proof.}
+\begin{align*}
+\binom{n-1}{k-1} + \binom{n-1}{k} &= \frac{(n-1)!}{(k-1)!(n-k)!} + \frac{(n-1)!}{k!(n-k-1)!}
+\end{align*}
+Common denominator is $k!(n-k)!$:
+\begin{align*}
+&= \frac{(n-1)! \cdot k}{k!(n-k)!} + \frac{(n-1)! \cdot (n-k)}{k!(n-k)!} \\
+&= \frac{(n-1)![k + (n-k)]}{k!(n-k)!} = \frac{(n-1)! \cdot n}{k!(n-k)!} = \frac{n!}{k!(n-k)!} = \binom{n}{k}
+\end{align*}
+\end{example}
+
+\begin{example}[Binomial expansion]
+Expand $(2x - 1)^4$.
+
+\emph{Solution.} By the binomial theorem with $a = 2x$ and $b = -1$:
+\begin{align*}
+(2x - 1)^4 &= \sum_{k=0}^{4} \binom{4}{k} (2x)^{4-k} (-1)^k \\
+&= (2x)^4 - 4(2x)^3 + 6(2x)^2 - 4(2x) + 1 \\
+&= 16x^4 - 32x^3 + 24x^2 - 8x + 1
+\end{align*}
+\end{example}
+
+\begin{example}[Positive integer solutions]
+How many positive integer solutions are there to $x_1 + x_2 + x_3 = 10$?
+
+\emph{Solution.} For positive integers ($x_i \geq 1$), substitute $y_i = x_i - 1$ so $y_i \geq 0$:
+\[
+(y_1 + 1) + (y_2 + 1) + (y_3 + 1) = 10 \implies y_1 + y_2 + y_3 = 7
+\]
+Now count non-negative solutions by stars and bars:
+\[
+\binom{7 + 3 - 1}{3 - 1} = \binom{9}{2} = 36
+\]
+\end{example}
+
+\begin{example}[Committee with constraints]
 A committee of 5 is chosen from 6 men and 4 women. How many committees have at least 2 women?
 
-\emph{Solution.} ``At least 2 women'' means 2, 3, or 4 women. Count each case:
+\emph{Solution.} ``At least 2 women'' means 2, 3, or 4 women:
 \begin{itemize}
   \item 2 women, 3 men: $\binom{4}{2} \binom{6}{3} = 6 \cdot 20 = 120$
   \item 3 women, 2 men: $\binom{4}{3} \binom{6}{2} = 4 \cdot 15 = 60$
@@ -178,44 +239,45 @@ A committee of 5 is chosen from 6 men and 4 women. How many committees have at l
 \end{itemize}
 Total: $120 + 60 + 6 = 186$.
 
-\emph{Alternative (complement):} Total committees: $\binom{10}{5} = 252$. Committees with fewer than 2 women:
-\begin{itemize}
-  \item 0 women: $\binom{4}{0}\binom{6}{5} = 6$
-  \item 1 woman: $\binom{4}{1}\binom{6}{4} = 4 \cdot 15 = 60$
-\end{itemize}
-Answer: $252 - 6 - 60 = 186$. \checkmark
+\emph{Alternative (complement):} Total committees: $\binom{10}{5} = 252$. Fewer than 2 women: $\binom{4}{0}\binom{6}{5} + \binom{4}{1}\binom{6}{4} = 6 + 60 = 66$. Answer: $252 - 66 = 186$. \checkmark
 \end{example}
 
-\begin{example}
+\begin{example}[Distributing identical objects]
 In how many ways can 10 identical apples be distributed among 4 children?
 
-\emph{Solution.} This is distributing $n = 10$ identical objects into $k = 4$ distinct bins. By stars and bars:
+\emph{Solution.} This is stars and bars with $n = 10$ objects, $k = 4$ bins:
 \[
-\binom{10 + 4 - 1}{4 - 1} = \binom{13}{3} = \frac{13 \cdot 12 \cdot 11}{3 \cdot 2 \cdot 1} = \frac{1716}{6} = 286
+\binom{10 + 4 - 1}{4 - 1} = \binom{13}{3} = \frac{13 \cdot 12 \cdot 11}{6} = 286
 \]
 \end{example}
 
-\begin{example}
-Prove combinatorially: $\binom{n}{0} + \binom{n}{1} + \binom{n}{2} + \cdots + \binom{n}{n} = 2^n$.
+\begin{example}[Vandermonde's identity]
+Prove $\binom{m+n}{r} = \sum_{k=0}^{r} \binom{m}{k}\binom{n}{r-k}$.
 
-\emph{Proof.} The LHS counts subsets of an $n$-element set by size: there are $\binom{n}{k}$ subsets of size $k$.
-
-The RHS counts subsets directly: each of the $n$ elements is either in or out of the subset, giving $2^n$ choices.
-
-Both count the same thing (total number of subsets), so they're equal. \qed
+\emph{Combinatorial proof:} The LHS counts $r$-subsets of a set with $m$ red and $n$ blue elements. The RHS counts the same by cases: choose $k$ red elements and $r-k$ blue elements, for each possible $k$. \qed
 \end{example}
 
 \subsection*{Practice}
 \begin{enumerate}
   \item Compute $\binom{12}{5}$.
+
   \item How many 8-card poker hands contain exactly 3 hearts?
-  \item Prove Pascal's identity: $\binom{n}{k}=\binom{n-1}{k}+\binom{n-1}{k-1}$.
+
+  \item Prove Pascal's identity combinatorially.
+
   \item Use the binomial theorem to expand $(2x-1)^5$.
+
   \item How many positive integer solutions are there to $x_1 + x_2 + x_3 + x_4 = 15$?
-  \item Prove: $\binom{n}{0}^2 + \binom{n}{1}^2 + \cdots + \binom{n}{n}^2 = \binom{2n}{n}$.
+
+  \item Prove: $\binom{n}{0}^2 + \binom{n}{1}^2 + \cdots + \binom{n}{n}^2 = \binom{2n}{n}$. (Hint: think about choosing $n$ items from $2n$.)
+
   \item A committee of 5 is to be chosen from 6 men and 4 women. How many committees have at least 2 women?
+
   \item Solve the recurrence $a_n = 3a_{n-1} - 2$ with $a_0 = 1$.
+
   \item Solve the recurrence $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$, $a_1 = 2$.
-  \item Let $t_n$ be the number of ways to tile a $2 \times n$ board with dominoes. Write a recurrence for $t_n$ with initial conditions and compute $t_5$.
+
+  \item Let $t_n$ be the number of ways to tile a $2 \times n$ board with $1 \times 2$ dominoes. Find a recurrence for $t_n$ with initial conditions, and compute $t_5$.
+
   \item Find the ordinary generating function for the sequence $a_n = n$ for $n \geq 0$.
 \end{enumerate}
