@@ -262,6 +262,55 @@ Therefore $(0, 1)$ is uncountable. \qed
 This is Cantor's diagonal argument, and it's one of the most important proofs in mathematics. It shows there are ``more'' real numbers than natural numbers, even though both sets are infinite. The proof generalizes: for any set $A$, the power set $\Pow(A)$ is strictly larger than $A$.
 \end{example}
 
+\begin{keyresult}[Most functions are incomputable]
+Here's a striking application of cardinality to computer science: \textbf{almost all} functions from $\N$ to $\N$ cannot be computed by any program.
+
+The argument is beautifully simple, requiring only two facts about cardinality.
+
+\textbf{Fact 1: There are uncountably many functions $\N \to \N$.}
+
+Consider the set of all functions $f: \N \to \N$. We'll show $|\N \to \N| = |\Pow(\N)| = |\R|$.
+
+For any subset $S \subseteq \N$, define its \emph{characteristic function} $\chi_S: \N \to \N$ by:
+\[
+\chi_S(n) = \begin{cases} 1 & \text{if } n \in S \\ 0 & \text{if } n \notin S \end{cases}
+\]
+This gives an injection from $\Pow(\N)$ into $(\N \to \N)$: different subsets have different characteristic functions. So $|\Pow(\N)| \leq |\N \to \N|$.
+
+Conversely, we can encode any function $f: \N \to \N$ as a subset of $\N \times \N$ (its graph), and $|\N \times \N| = |\N|$, so $|\N \to \N| \leq |\Pow(\N \times \N)| = |\Pow(\N)|$.
+
+Therefore $|\N \to \N| = |\Pow(\N)| = 2^{\aleph_0} = |\R|$, which is uncountable.
+
+\textbf{Fact 2: There are only countably many programs.}
+
+A program is a finite string of symbols from some finite alphabet (ASCII characters, say, or the syntax of your favorite programming language). How many such strings are there?
+
+\begin{itemize}
+  \item There are finitely many strings of length 0 (just the empty string).
+  \item There are finitely many strings of length 1 (one for each alphabet symbol).
+  \item There are finitely many strings of length 2, length 3, and so on.
+\end{itemize}
+
+The set of all finite strings is the union:
+\[
+\Sigma^* = \Sigma^0 \cup \Sigma^1 \cup \Sigma^2 \cup \Sigma^3 \cup \cdots
+\]
+This is a countable union of finite sets, which is countable. (In fact, you can list strings in ``shortlex'' order: all length-0 strings, then all length-1 strings alphabetically, then length-2, and so on.)
+
+\textbf{The Conclusion.}
+
+Every computable function is computed by some program. So the set of computable functions is at most as large as the set of programs:
+\[
+|\{\text{computable functions } \N \to \N\}| \leq |\{\text{programs}\}| = \aleph_0
+\]
+
+But we just showed $|\{\text{all functions } \N \to \N\}| = 2^{\aleph_0}$, which is strictly larger than $\aleph_0$.
+
+Therefore: there are uncountably many functions, but only countably many programs. The computable functions are a \emph{measure-zero} subset of all functions. In a very precise sense, if you picked a random function $\N \to \N$, the probability that it's computable is zero.
+
+This argument doesn't tell us \emph{which} functions are incomputable---for that, you need specific examples like the halting problem. But it tells us that incomputability is the norm, not the exception. The functions we can actually compute are infinitesimally rare among all the functions that mathematically exist.
+\end{keyresult}
+
 \begin{example}[Surjective composition test]
 Let $f: A \to B$ and $g: B \to C$. Prove that if $g \circ f$ is surjective, then $g$ is surjective.
 
