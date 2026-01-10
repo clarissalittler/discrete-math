@@ -269,7 +269,7 @@ The argument is beautifully simple, requiring only two facts about cardinality.
 
 \textbf{Fact 1: There are uncountably many functions $\N \to \N$.}
 
-Consider the set of all functions $f: \N \to \N$. We'll show $|\N \to \N| = |\Pow(\N)| = |\R|$.
+Consider the set of all functions $f: \N \to \N$. By the general formula for function spaces, $|A \to B| = |B|^{|A|}$, so $|\N \to \N| = \aleph_0^{\aleph_0}$. We'll show this equals $|\Pow(\N)| = 2^{\aleph_0} = |\R|$.
 
 For any subset $S \subseteq \N$, define its \emph{characteristic function} $\chi_S: \N \to \N$ by:
 \[
@@ -279,7 +279,7 @@ This gives an injection from $\Pow(\N)$ into $(\N \to \N)$: different subsets ha
 
 Conversely, we can encode any function $f: \N \to \N$ as a subset of $\N \times \N$ (its graph), and $|\N \times \N| = |\N|$, so $|\N \to \N| \leq |\Pow(\N \times \N)| = |\Pow(\N)|$.
 
-Therefore $|\N \to \N| = |\Pow(\N)| = 2^{\aleph_0} = |\R|$, which is uncountable.
+Therefore $|\N \to \N| = \aleph_0^{\aleph_0} = |\Pow(\N)| = 2^{\aleph_0} = |\R|$, which is uncountable.
 
 \textbf{Fact 2: There are only countably many programs.}
 
