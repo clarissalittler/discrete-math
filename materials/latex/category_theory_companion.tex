@@ -78,7 +78,11 @@
 \maketitle
 
 \begin{abstract}
-These notes provide a comprehensive introduction to category theory, developed in parallel with the CS251 discrete mathematics curriculum. Each section corresponds to a week of the main course and introduces categorical concepts that illuminate and generalize the core material. This companion is intended for motivated students who want to see deeper connections between discrete mathematics, programming, and abstract algebra.
+Category theory is sometimes called ``abstract nonsense''---and honestly, when you first encounter it, the abstraction can feel unmotivated. Why care about ``objects and morphisms'' when you could just talk about sets and functions?
+
+Here's the secret: category theory isn't about being abstract for its own sake. It's about noticing that the \emph{same patterns} keep appearing across different areas of mathematics and computer science. Once you see these patterns, you can transfer intuition from one domain to another. You understand \emph{why} certain constructions work, not just \emph{that} they work.
+
+These notes develop category theory alongside the CS251 curriculum, introducing categorical concepts when they illuminate the discrete math you're already learning. Think of this as a second lens on the same material---one that reveals hidden structure and connections.
 \end{abstract}
 
 \tableofcontents
@@ -88,9 +92,19 @@ These notes provide a comprehensive introduction to category theory, developed i
 \section{Week 1--2: The Category of Sets}
 %=============================================================================
 
+\subsection*{Why Categories?}
+
+Here's a question that sounds almost too simple: what do we really need to know about a mathematical object?
+
+One answer: we need to know what it \emph{is}---its internal structure. A set is a collection of elements. A group is a set with an operation satisfying certain axioms. And so on.
+
+But there's another answer, one that turns out to be surprisingly powerful: we can understand an object by understanding how it \emph{relates} to other objects. What are the functions from this set to that one? Which functions preserve the structure we care about?
+
+This is the categorical perspective. Instead of asking ``what is a set?'', we ask ``what are the functions between sets?'' Instead of asking ``what is a group?'', we ask ``what are the group homomorphisms?'' The objects matter, but the \emph{morphisms}---the structure-preserving maps---matter more.
+
 \subsection{Categories: Objects and Morphisms}
 
-The central insight of category theory is that mathematical structures are best understood not in isolation, but through the \emph{structure-preserving maps} between them. Instead of asking ``what is a set?'', we ask ``what are the functions between sets?''
+Let's make this precise.
 
 \begin{definition}[Category]
 A \textbf{category} $\mathcal{C}$ consists of:
@@ -109,29 +123,36 @@ subject to:
 
 We write $f: A \to B$ to indicate $f \in \Hom(A, B)$.
 
+That's the formal definition, and it might seem like a lot of abstraction for not much payoff. But here's the thing: this definition captures an enormous range of mathematical structures. Once you prove something about categories in general, you get theorems about sets, groups, topological spaces, programming languages, and more---all for free.
+
 \begin{example}[The category $\Set$]
-The category $\Set$ has:
+The most fundamental example: the category $\Set$ has:
 \begin{itemize}
   \item Objects: all sets
   \item Morphisms: functions between sets
   \item Composition: function composition
   \item Identity: the identity function $\id_A(x) = x$
 \end{itemize}
+This is the category you've been working in all along---you just didn't call it that.
 \end{example}
 
 \begin{example}[Counting morphisms]
 In $\Set$, how many morphisms are there from $A = \{1, 2\}$ to $B = \{a, b, c\}$?
 
-Each element of $A$ can map to any element of $B$, so there are $|B|^{|A|} = 3^2 = 9$ morphisms.
+Each element of $A$ can map to any element of $B$ independently, so there are $|B|^{|A|} = 3^2 = 9$ morphisms. This is the same counting argument from Week 2's material on functions---but now we're calling these functions ``morphisms'' to emphasize that they're the \emph{relationships} we care about.
 \end{example}
 
 \subsection{Commutative Diagrams}
 
-A powerful notation for expressing equations between morphisms.
+Category theorists love diagrams. And once you get used to them, you'll love them too.
+
+A diagram is just a picture showing objects as dots (or labels) and morphisms as arrows between them. The magic happens when we say a diagram \emph{commutes}.
 
 \begin{definition}[Commutative diagram]
 A diagram of objects and morphisms \textbf{commutes} if all paths between any two objects give the same composite morphism.
 \end{definition}
+
+In other words: if there are two different ways to get from $A$ to $C$ by following arrows, they compose to the same morphism.
 
 \begin{example}
 The triangle:
@@ -141,7 +162,7 @@ A \arrow[r, "f"] \arrow[dr, "h"'] & B \arrow[d, "g"] \\
  & C
 \end{tikzcd}
 \]
-commutes if and only if $g \circ f = h$.
+commutes if and only if $g \circ f = h$. There are two paths from $A$ to $C$: the direct route $h$, and the two-step route $f$ then $g$. Commutativity says they're the same function.
 \end{example}
 
 \begin{example}
@@ -152,16 +173,20 @@ A \arrow[r, "f"] \arrow[d, "h"'] & B \arrow[d, "g"] \\
 C \arrow[r, "k"'] & D
 \end{tikzcd}
 \]
-commutes if and only if $g \circ f = k \circ h$.
+commutes if and only if $g \circ f = k \circ h$. Going across-then-down equals going down-then-across.
 \end{example}
 
+Why do we draw pictures instead of just writing equations? Two reasons. First, our visual system is remarkably good at tracking paths---much better than parsing nested compositions like $k \circ h \circ g^{-1} \circ f$. Second, the diagrams make structure visible. You can see at a glance how objects relate.
+
 \begin{programmingnote}
-Commutative diagrams are the ``type signatures'' of mathematics. In programming terms, they express that two different implementations compute the same result. The equation $g \circ f = h$ says: ``composing $f$ then $g$ is the same as just doing $h$.''
+Commutative diagrams are like type-directed specifications. The diagram says ``these two ways of computing a result must agree,'' without specifying \emph{how} to compute them. This is why diagrams appear in API documentation: they express invariants that implementations must satisfy.
 \end{programmingnote}
 
 \subsection{Monomorphisms, Epimorphisms, and Isomorphisms}
 
-The categorical approach characterizes injectivity and surjectivity \emph{without mentioning elements}.
+In Week 2, you learned about injective, surjective, and bijective functions. Those definitions talked about elements: ``every element of $B$ is hit'' or ``no two elements map to the same thing.''
+
+But here's a remarkable fact: we can characterize these properties \emph{without mentioning elements at all}. We just need to talk about how functions compose.
 
 \begin{definition}[Monomorphism]
 A morphism $f: A \to B$ is a \textbf{monomorphism} (or \textbf{mono}) if it is left-cancellable:
@@ -170,6 +195,8 @@ A morphism $f: A \to B$ is a \textbf{monomorphism} (or \textbf{mono}) if it is l
 \]
 \end{definition}
 
+Think about what this says: if two paths into $A$ become equal after applying $f$, they must have been equal all along. The function $f$ doesn't create any ``collisions'' that weren't already there.
+
 \begin{definition}[Epimorphism]
 A morphism $f: A \to B$ is an \textbf{epimorphism} (or \textbf{epi}) if it is right-cancellable:
 \[
@@ -177,9 +204,13 @@ A morphism $f: A \to B$ is an \textbf{epimorphism} (or \textbf{epi}) if it is ri
 \]
 \end{definition}
 
+This says: if two paths out of $B$ agree when preceded by $f$, they must agree everywhere. The function $f$ ``reaches enough'' of $B$ that you can't hide disagreements.
+
 \begin{definition}[Isomorphism]
 A morphism $f: A \to B$ is an \textbf{isomorphism} if there exists $g: B \to A$ such that $g \circ f = \id_A$ and $f \circ g = \id_B$. We write $A \cong B$.
 \end{definition}
+
+Isomorphisms are the ``perfect'' morphisms: they have a two-sided inverse, so $A$ and $B$ are interchangeable as far as the category is concerned.
 
 \begin{theorem}
 In $\Set$:
@@ -191,16 +222,22 @@ In $\Set$:
 \end{theorem}
 
 \begin{proof}
-(Mono $\iff$ injective) Suppose $f$ is mono and $f(a) = f(b)$. Define $g, h: \{*\} \to A$ by $g(*) = a$, $h(*) = b$. Then $f \circ g = f \circ h$, so $g = h$, hence $a = b$.
+(Mono $\iff$ injective) Suppose $f$ is mono and $f(a) = f(b)$. Here's the trick: define $g, h: \{*\} \to A$ by $g(*) = a$, $h(*) = b$. These are functions from a one-element set that ``pick out'' $a$ and $b$. Then $f \circ g = f \circ h$ (both send $*$ to $f(a) = f(b)$), so by the mono property, $g = h$, hence $a = b$.
 
 Conversely, suppose $f$ is injective and $f \circ g = f \circ h$. For any $x$, $f(g(x)) = f(h(x))$, so $g(x) = h(x)$ by injectivity. Thus $g = h$.
 \end{proof}
 
+So in $\Set$, the categorical definitions recover exactly what we already knew. Why bother with the new terminology?
+
 \begin{warning}
-In other categories, mono $\neq$ injective and epi $\neq$ surjective! For example, in the category of rings, the inclusion $\Z \hookrightarrow \Q$ is epic but not surjective.
+Because in other categories, mono $\neq$ injective and epi $\neq$ surjective! For example, in the category of rings, the inclusion $\Z \hookrightarrow \Q$ is epic but not surjective. (The rationals aren't ``hit'' by integers, but any two ring homomorphisms out of $\Q$ that agree on $\Z$ must agree everywhere---because a ring homomorphism is determined by where it sends 1.)
+
+The cancellation definitions are the ``right'' generalizations. They capture the essential property without relying on elements.
 \end{warning}
 
 \subsection{Sections, Retractions, and Idempotents}
+
+Sometimes a morphism doesn't have a full inverse, but it has a one-sided inverse. These partial inverses turn out to be important.
 
 \begin{definition}[Section and retraction]
 Given $f: A \to B$:
@@ -210,32 +247,38 @@ Given $f: A \to B$:
 \end{itemize}
 \end{definition}
 
-Sections make $f$ split-epi; retractions make $f$ split-mono. Diagrammatically:
-\[
-\begin{tikzcd}
-A \arrow[r, "f"] & B \arrow[l, bend left, "s"] \\
-A \arrow[r, "f"] & B \arrow[l, bend right, "r"']
-\end{tikzcd}
-\]
+The terminology might seem arbitrary, but it has geometric origins. Think of $f: A \to B$ as projecting a space onto a smaller one. A section ``lifts'' points back up; a retraction ``pulls back'' the projection.
+
+If $f$ has a section, then $f$ must be surjective (in $\Set$)---the section provides a way to ``choose'' a preimage for every element of $B$. If $f$ has a retraction, then $f$ must be injective---you can ``undo'' $f$ on its image.
 
 \begin{definition}[Idempotent]
 A map $p: A \to A$ is \textbf{idempotent} if $p \circ p = p$.
 \end{definition}
 
-In $\Set$, idempotents correspond to \emph{retracts}: if $p = i \circ r$ with $r \circ i = \id_B$, then $p$ projects $A$ onto the subset $B$.
+Idempotents are ``projection-like'' maps. Once you've applied $p$, applying it again does nothing---you've already projected onto the image. In $\Set$, every idempotent $p: A \to A$ corresponds to a subset $B = \{p(a) : a \in A\}$ with inclusion $i: B \to A$ and retraction $r: A \to B$ such that $p = i \circ r$.
+
+This connection between idempotents and subobjects generalizes to other categories, and it's surprisingly useful in programming (think: caching, memoization, normalization).
 
 \subsection{Terminal and Initial Objects}
+
+Some objects are special because of how \emph{uniquely} they relate to everything else.
 
 \begin{definition}[Terminal and initial objects]
 An object $1$ is \textbf{terminal} if for every $A$ there exists a unique map $A \to 1$.
 An object $0$ is \textbf{initial} if for every $A$ there exists a unique map $0 \to A$.
 \end{definition}
 
-In $\Set$, any singleton is terminal and the empty set is initial. Elements of a set $A$ can be seen as maps $1 \to A$ (``points'' of $A$).
+In $\Set$, any singleton $\{*\}$ is terminal---there's exactly one function from any set to a one-element set (send everything to $*$). The empty set is initial---there's exactly one function from $\emptyset$ to any set (the empty function, which vacuously satisfies the definition of a function).
+
+Here's a lovely perspective: elements of a set $A$ correspond bijectively to morphisms $1 \to A$. A map from a singleton ``picks out'' a point. So category theory lets us talk about ``elements'' without ever mentioning elements---we just talk about maps from terminal objects. This is called the \textbf{generalized element} perspective.
 
 \subsection{Universal Properties: Products and Coproducts}
 
-The deepest insights come from \emph{universal properties}---characterizations that uniquely determine a construction up to isomorphism.
+Now we come to one of the deepest ideas in category theory: \textbf{universal properties}.
+
+The usual way to define Cartesian products is: $A \times B = \{(a, b) : a \in A, b \in B\}$. That's a fine definition, but it's very specific to sets. What if we want products in other categories?
+
+The categorical approach is different. Instead of saying what a product \emph{is}, we say what a product \emph{does}. We characterize it by its relationship to everything else.
 
 \begin{definition}[Product]
 A \textbf{product} of objects $A$ and $B$ is an object $A \times B$ together with morphisms $\pi_1: A \times B \to A$ and $\pi_2: A \times B \to B$ such that:
@@ -249,7 +292,9 @@ A & A \times B \arrow[l, "\pi_1"] \arrow[r, "\pi_2"'] & B
 \]
 \end{definition}
 
-In $\Set$, the Cartesian product $A \times B = \{(a, b) : a \in A, b \in B\}$ with projections $\pi_1(a,b) = a$ and $\pi_2(a,b) = b$ satisfies this universal property.
+Read this carefully: the product is ``the best way to map into $A$ and $B$ simultaneously.'' Any other way to do it factors uniquely through the product. The dashed arrow is determined by $f$ and $g$---that's the universal property.
+
+In $\Set$, the Cartesian product $A \times B = \{(a, b) : a \in A, b \in B\}$ with projections $\pi_1(a,b) = a$ and $\pi_2(a,b) = b$ satisfies this. The unique map is $\langle f, g \rangle(x) = (f(x), g(x))$.
 
 \begin{definition}[Coproduct]
 A \textbf{coproduct} of objects $A$ and $B$ is an object $A + B$ together with morphisms $\iota_1: A \to A + B$ and $\iota_2: B \to A + B$ such that:
@@ -263,13 +308,16 @@ A \arrow[r, "\iota_1"] \arrow[dr, "f"'] & A + B \arrow[d, dashed, "{[f, g]}"] & 
 \]
 \end{definition}
 
+Notice the arrows are reversed! Coproducts are ``dual'' to products. The coproduct is ``the best way to map out of $A$ or $B$.'' In $\Set$, this is the disjoint union.
+
 \begin{programmingnote}
-Products correspond to \texttt{pair} types or \texttt{struct}s. Coproducts correspond to \texttt{Either} types or \texttt{union}s. The morphism $[f, g]$ is pattern matching:
+Products correspond to \texttt{pair} types, \texttt{struct}s, or records. Coproducts correspond to \texttt{Either} types, tagged unions, or \texttt{enum}s. The unique morphism $[f, g]$ is pattern matching:
 \begin{verbatim}
 case x of
   Left a  -> f(a)
   Right b -> g(b)
 \end{verbatim}
+The universal property says this is \emph{the} way to consume a sum type: you must handle both cases, and that determines a unique function.
 \end{programmingnote}
 
 \subsection{Exercises}
@@ -334,25 +382,33 @@ Construct maps $r: A \to B$ and $i: B \to A$ such that $p = i \circ r$ and $r \c
 \section{Week 3: Preorders as Categories and Functors}
 %=============================================================================
 
+\subsection*{Why View Preorders as Categories?}
+
+Here's something that might seem like overkill: taking a simple concept (preorders) and dressing it up in categorical language. But this perspective reveals that preorders and categories are the \emph{same idea at different levels of richness}.
+
+A category has objects and morphisms, with possibly many morphisms between any two objects. A preorder has elements and relationships, with at most one relationship between any two elements (either $a \leq b$ or not). Preorders are ``thin'' categories---and once you see this, concepts from one world transfer to the other.
+
 \subsection{Preorders Are Categories}
 
 \begin{definition}[Preorder]
-A \textbf{preorder} $(P, \leq)$ is a set $P$ with a relation $\leq$ that is reflexive and transitive.
+A \textbf{preorder} $(P, \leq)$ is a set $P$ with a relation $\leq$ that is reflexive ($a \leq a$) and transitive ($a \leq b$ and $b \leq c$ imply $a \leq c$).
 \end{definition}
 
 \begin{theorem}
 Every preorder $(P, \leq)$ corresponds to a category:
 \begin{itemize}
   \item Objects: elements of $P$
-  \item Morphisms: there is exactly one morphism $a \to b$ iff $a \leq b$
-  \item Identity: $a \leq a$ (reflexivity)
-  \item Composition: $a \leq b$ and $b \leq c$ imply $a \leq c$ (transitivity)
+  \item Morphisms: there is exactly one morphism $a \to b$ iff $a \leq b$ (and none otherwise)
+  \item Identity: provided by reflexivity ($a \leq a$)
+  \item Composition: provided by transitivity
 \end{itemize}
-Such a category is called \textbf{thin} (at most one morphism between any two objects).
+Such a category is called \textbf{thin}---at most one morphism between any two objects.
 \end{theorem}
 
+The category axioms (identity laws, associativity) are automatically satisfied because there's at most one morphism between any pair of objects. Any two composites with the same domain and codomain must be equal---there's only one morphism they could be!
+
 \begin{example}
-Consider divisibility on $\{1, 2, 3, 6\}$. As a category:
+Consider divisibility on $\{1, 2, 3, 6\}$, where $a \leq b$ means $a \mid b$. As a category:
 \[
 \begin{tikzcd}
  & 6 & \\
@@ -360,14 +416,21 @@ Consider divisibility on $\{1, 2, 3, 6\}$. As a category:
  & 1 \arrow[ul] \arrow[ur] &
 \end{tikzcd}
 \]
-The arrow $1 \to 6$ exists (via composition $1 \to 2 \to 6$) but is not drawn separately.
+The arrow $1 \to 6$ exists (since $1 \mid 6$) and equals the composition $1 \to 2 \to 6$. We don't draw it separately because it's the unique morphism---no extra information.
 \end{example}
 
 \begin{example}
-The power set $(\Pow(X), \subseteq)$ is a preorder category. Products are intersections (greatest lower bounds) and coproducts are unions (least upper bounds).
+The power set $(\Pow(X), \subseteq)$ is a preorder category. What are products and coproducts here?
+\begin{itemize}
+  \item The product of $A$ and $B$ is their intersection $A \cap B$---the greatest lower bound.
+  \item The coproduct of $A$ and $B$ is their union $A \cup B$---the least upper bound.
+\end{itemize}
+The universal properties of products/coproducts \emph{become} the definitions of greatest lower bound and least upper bound. Category theory unifies these concepts.
 \end{example}
 
 \subsection{Functors}
+
+If categories are the ``stages'' on which mathematics plays out, functors are the ``translations'' between stages. A functor takes objects to objects and morphisms to morphisms, while respecting the categorical structure.
 
 \begin{definition}[Functor]
 A \textbf{functor} $F: \mathcal{C} \to \mathcal{D}$ between categories consists of:
@@ -382,28 +445,37 @@ such that:
 \end{itemize}
 \end{definition}
 
+The key insight: a functor preserves the \emph{structure} of how things compose. If you have a commutative diagram in $\mathcal{C}$, applying $F$ gives a commutative diagram in $\mathcal{D}$.
+
 \begin{theorem}
 A functor between preorder categories is exactly a \textbf{monotone function}: $a \leq b \implies F(a) \leq F(b)$.
 \end{theorem}
 
+This is satisfying: monotone functions are the ``structure-preserving maps'' for preorders, and functors are the ``structure-preserving maps'' for categories. When we view preorders as thin categories, these concepts coincide.
+
 \begin{example}[Power set functor]
-Define $\Pow: \Set \to \Set$ by:
+Here's a functor $\Pow: \Set \to \Set$ that you've been using all along:
 \begin{itemize}
-  \item On objects: $\Pow(A) = \{S : S \subseteq A\}$
+  \item On objects: $\Pow(A) = \{S : S \subseteq A\}$ (power set)
   \item On morphisms: $\Pow(f)(S) = \{f(x) : x \in S\}$ (direct image)
 \end{itemize}
-Verify: $\Pow(\id_A)(S) = S$ and $\Pow(g \circ f) = \Pow(g) \circ \Pow(f)$.
+Given a function $f: A \to B$, we get a function $\Pow(f): \Pow(A) \to \Pow(B)$ that pushes subsets forward.
+
+Check the functor laws: $\Pow(\id_A)(S) = \{\id_A(x) : x \in S\} = S$, so $\Pow(\id_A) = \id_{\Pow(A)}$. And $\Pow(g \circ f)(S) = \{(g \circ f)(x) : x \in S\} = \{g(f(x)) : x \in S\} = \Pow(g)(\Pow(f)(S))$.
 \end{example}
 
-\begin{example}[Forgetful functor]
-Many ``forgetful'' functors forget structure:
+\begin{example}[Forgetful functors]
+Some functors ``forget'' structure:
 \begin{itemize}
-  \item $U: \cat{Grp} \to \Set$ forgets the group operation
-  \item $U: \cat{Top} \to \Set$ forgets the topology
+  \item $U: \cat{Grp} \to \Set$ takes a group to its underlying set, forgetting the operation
+  \item $U: \cat{Top} \to \Set$ takes a topological space to its underlying set, forgetting which sets are open
 \end{itemize}
+These are called \emph{forgetful functors}. They're useful because they let us compare structured objects via their underlying sets.
 \end{example}
 
 \subsection{The Category \texorpdfstring{$\Rel$}{Rel}}
+
+Here's a category that generalizes $\Set$ in an interesting direction.
 
 \begin{definition}[The category $\Rel$]
 The category $\Rel$ has:
@@ -411,19 +483,30 @@ The category $\Rel$ has:
   \item Objects: sets
   \item Morphisms $R: A \to B$: relations $R \subseteq A \times B$
   \item Composition: $S \circ R = \{(a, c) : \exists b.\, (a, b) \in R \land (b, c) \in S\}$
-  \item Identity: $\Delta_A = \{(a, a) : a \in A\}$
+  \item Identity: $\Delta_A = \{(a, a) : a \in A\}$ (the diagonal relation)
 \end{itemize}
 \end{definition}
 
-There is a functor $\Set \to \Rel$ sending each function to its graph (a functional relation).
+In $\Set$, a morphism $A \to B$ relates each element of $A$ to \emph{exactly one} element of $B$. In $\Rel$, a morphism can relate each element of $A$ to \emph{zero, one, or many} elements of $B$. Functions are the ``deterministic'' special case.
+
+There's a functor $\Set \to \Rel$ that sends each function $f: A \to B$ to its graph $\{(a, f(a)) : a \in A\}$. So $\Set$ embeds inside $\Rel$.
 
 \begin{example}
 Let $R = \{(1, a), (1, b), (2, c)\} \subseteq \{1, 2\} \times \{a, b, c\}$ and $S = \{(a, x), (b, x), (c, y)\} \subseteq \{a, b, c\} \times \{x, y\}$.
 
-Then $S \circ R = \{(1, x), (2, y)\}$.
+To compute $S \circ R$: for each pair $(i, z)$, check if there's an intermediate element $j$ with $(i, j) \in R$ and $(j, z) \in S$.
+\begin{itemize}
+  \item $(1, x)$: yes, via $j = a$ or $j = b$
+  \item $(1, y)$: no intermediate works
+  \item $(2, x)$: no, because $(2, a)$ and $(2, b)$ aren't in $R$
+  \item $(2, y)$: yes, via $j = c$
+\end{itemize}
+So $S \circ R = \{(1, x), (2, y)\}$.
 \end{example}
 
 \subsection{Galois Connections (Adjunctions for Preorders)}
+
+Galois connections are one of those ideas that, once you see them, you start finding them everywhere.
 
 \begin{definition}[Galois connection]
 Let $(P, \leq)$ and $(Q, \leq)$ be preorders. A \textbf{Galois connection} is a pair of monotone functions $F: P \to Q$ and $G: Q \to P$ such that:
@@ -433,17 +516,19 @@ F(p) \leq q \iff p \leq G(q)
 We write $F \dashv G$ (``$F$ is left adjoint to $G$'').
 \end{definition}
 
+The condition says: asking ``is $F(p)$ below $q$?'' is the same as asking ``is $p$ below $G(q)$?'' The functions $F$ and $G$ are ``mates''---they translate questions between the two preorders.
+
 \begin{example}[Floor and ceiling]
-Between $(\R, \leq)$ and $(\Z, \leq)$:
+Consider $(\R, \leq)$ and $(\Z, \leq)$, with the inclusion $\iota: \Z \to \R$ viewing integers as real numbers.
 \begin{itemize}
-  \item $\iota \dashv \lfloor \cdot \rfloor$: the inclusion $\iota: \Z \to \R$ is left adjoint to floor
-  \item $\lceil \cdot \rceil \dashv \iota$: ceiling is left adjoint to inclusion
+  \item $\iota \dashv \lfloor \cdot \rfloor$: For integer $n$ and real $x$: $n \leq x \iff n \leq \lfloor x \rfloor$. (If $n$ is at most $x$, then $n$ is at most the floor of $x$, and vice versa.)
+  \item $\lceil \cdot \rceil \dashv \iota$: For real $x$ and integer $n$: $x \leq n \iff \lceil x \rceil \leq n$. (If $x$ is at most $n$, then the ceiling of $x$ is at most $n$.)
 \end{itemize}
-This means: $\iota(n) \leq x \iff n \leq \lfloor x \rfloor$ and $x \leq \iota(n) \iff \lceil x \rceil \leq n$.
+Floor and ceiling are ``best approximations'' from different directions---that's what the adjunction captures.
 \end{example}
 
 \begin{keyresult}
-Galois connections are the ``preorder version'' of adjunctions, one of the most important concepts in category theory. They appear throughout computer science: in abstract interpretation, type inference, and database query optimization.
+Galois connections are the ``preorder version'' of adjunctions, which are arguably the most important concept in category theory. Left adjoints preserve colimits (like unions); right adjoints preserve limits (like intersections). This pattern appears everywhere: in abstract interpretation (approximating program behavior), type inference (finding most general types), and database queries (optimizing joins).
 \end{keyresult}
 
 \subsection{Exercises}
@@ -477,9 +562,17 @@ Explain why the argument is contravariant using the substitution principle.
 \section{Weeks 4--5: Polynomial Functors and Counting}
 %=============================================================================
 
+\subsection*{Why Connect Types and Counting?}
+
+Here's something that might seem like a coincidence but isn't.
+
+When you count the elements of a product type $A \times B$, you multiply: $|A \times B| = |A| \times |B|$. When you count the elements of a sum type $A + B$, you add: $|A + B| = |A| + |B|$. And when you count functions $A \to B$, you exponentiate: $|A \to B| = |B|^{|A|}$.
+
+The \emph{notation} for types follows the same rules as the \emph{arithmetic} of counting. This isn't a coincidence---it reflects a deep connection between algebra (polynomials, generating functions) and type theory (data structures, recursive types).
+
 \subsection{Types Have Sizes}
 
-A surprising connection between algebra and type theory:
+Let's make this precise:
 
 \begin{center}
 \begin{tabular}{lcc}
@@ -494,94 +587,121 @@ Function $A \to B$ & $B^A$ & $|B|^{|A|}$ \\
 \end{tabular}
 \end{center}
 
-This is not coincidence---it reflects deep structure.
+The notation $B^A$ for function types makes sense: there are $|B|^{|A|}$ ways to assign an output in $B$ to each input in $A$. The algebraic notation reflects the combinatorics.
 
 \subsection{Polynomial Functors}
+
+Now we can describe data types using polynomial expressions.
 
 \begin{definition}[Polynomial functor]
 A \textbf{polynomial functor} $F: \Set \to \Set$ has the form:
 \[
 F(X) = A_0 + A_1 \times X + A_2 \times X^2 + A_3 \times X^3 + \cdots
 \]
-where the $A_i$ are fixed sets and $X^n = X \times X \times \cdots \times X$ ($n$ times).
+where the $A_i$ are fixed sets (``coefficient sets'') and $X^n = X \times X \times \cdots \times X$ ($n$ times).
 \end{definition}
 
-The \textbf{generating function} of $F$ is $\sum_i |A_i| x^i$.
+Think of $X$ as a ``slot'' for data. The polynomial describes what shapes of containers you can build, with $A_n$ specifying the ``labels'' for containers holding exactly $n$ elements.
+
+The \textbf{generating function} of $F$ is $\sum_i |A_i| x^i$---the ordinary polynomial you get by replacing sets with their sizes.
 
 \begin{example}[Maybe/Option]
-$\text{Maybe}(X) = 1 + X$ with generating function $1 + x$.
+The simplest interesting polynomial functor: $\text{Maybe}(X) = 1 + X$.
+
+This says: a $\text{Maybe}(X)$ is either an element of $1$ (one choice---call it $\text{Nothing}$) or an element of $X$ (call it $\text{Just } x$).
 \begin{itemize}
   \item $\text{Maybe}(\emptyset) = 1 + \emptyset = 1 = \{\text{Nothing}\}$
   \item $\text{Maybe}(\{a\}) = 1 + \{a\} = \{\text{Nothing}, \text{Just } a\}$
+  \item $\text{Maybe}(\{a, b\}) = 1 + \{a, b\} = \{\text{Nothing}, \text{Just } a, \text{Just } b\}$
 \end{itemize}
+The generating function is $1 + x$, confirming: $|\text{Maybe}(X)| = 1 + |X|$.
 \end{example}
 
-\begin{example}[Lists (up to length 2)]
-$\text{List}_2(X) = 1 + X + X^2$ with generating function $1 + x + x^2$.
+\begin{example}[Lists up to length 2]
+$\text{List}_2(X) = 1 + X + X^2$ describes lists of length at most 2.
+\begin{itemize}
+  \item The $1$ term: the empty list $[]$
+  \item The $X$ term: one-element lists $[x]$
+  \item The $X^2$ term: two-element lists $[x_1, x_2]$
+\end{itemize}
 
 For $X = \{a, b\}$: $|\text{List}_2(\{a,b\})| = 1 + 2 + 4 = 7$.
 
-These are: $[]$, $[a]$, $[b]$, $[a,a]$, $[a,b]$, $[b,a]$, $[b,b]$.
+Explicitly: $[]$, $[a]$, $[b]$, $[a,a]$, $[a,b]$, $[b,a]$, $[b,b]$.
 \end{example}
 
 \begin{example}[Full lists]
-$\text{List}(X) = 1 + X + X^2 + X^3 + \cdots = \frac{1}{1-X}$ (formal power series).
+What about lists of arbitrary length? We need infinitely many terms:
+\[
+\text{List}(X) = 1 + X + X^2 + X^3 + \cdots
+\]
+As a formal power series, this is $\frac{1}{1-X}$. (Don't worry about convergence---we're doing algebra, not analysis.)
 
-The recursive definition $\text{List}(X) = 1 + X \times \text{List}(X)$ encodes this.
+Here's the beautiful part: the recursive definition $\text{List}(X) = 1 + X \times \text{List}(X)$ captures the same idea. A list is either empty ($1$) or a head element ($X$) followed by a tail ($\text{List}(X)$). Solving this equation gives back the infinite sum.
 \end{example}
 
 \subsection{Functors on Morphisms}
 
-For a polynomial functor to be a true functor, we need its action on morphisms.
+We said polynomial functors are functors. That means they act not just on objects (sets) but also on morphisms (functions). Given $f: A \to B$, what is $F(f): F(A) \to F(B)$?
 
 \begin{example}[Maybe as a functor]
 Given $f: A \to B$, define $\text{Maybe}(f): \text{Maybe}(A) \to \text{Maybe}(B)$ by:
 \[
 \text{Maybe}(f)(\text{Nothing}) = \text{Nothing} \qquad \text{Maybe}(f)(\text{Just } a) = \text{Just } f(a)
 \]
-This is \texttt{fmap} for the Maybe functor!
+In words: $\text{Nothing}$ stays $\text{Nothing}$, and $\text{Just } a$ becomes $\text{Just } f(a)$.
 \end{example}
 
 \begin{programmingnote}
-The functor laws $F(\id) = \id$ and $F(g \circ f) = F(g) \circ F(f)$ are exactly the laws that \texttt{fmap} must satisfy in Haskell:
+If you know Haskell (or any language with functors), you'll recognize this as \texttt{fmap}! The functor laws $F(\id) = \id$ and $F(g \circ f) = F(g) \circ F(f)$ are exactly the laws that \texttt{fmap} must satisfy:
 \begin{verbatim}
 fmap id = id
 fmap (g . f) = fmap g . fmap f
 \end{verbatim}
+This isn't a coincidence. Haskell's \texttt{Functor} typeclass is literally the category-theoretic concept.
 \end{programmingnote}
 
 \subsection{Map Objects and Currying}
 
+Here's a question: can we treat ``the set of all functions from $A$ to $B$'' as a first-class object? Yes, and this leads to one of the most useful ideas in functional programming.
+
 \begin{definition}[Exponential / map object]
-In $\Set$, the \textbf{map object} $B^A$ is the set of all functions $A \to B$ with evaluation:
+In $\Set$, the \textbf{map object} (or \textbf{exponential}) $B^A$ is the set of all functions $A \to B$. It comes with an evaluation map:
 \[
 \mathrm{ev}: B^A \times A \to B, \quad \mathrm{ev}(f, a) = f(a)
 \]
-It satisfies the universal property: for any $g: X \times A \to B$, there exists a unique $\tilde{g}: X \to B^A$ such that $\mathrm{ev} \circ (\tilde{g} \times \id_A) = g$.
 \end{definition}
 
-This is \textbf{currying}. It explains why $|B^A| = |B|^{|A|}$ and why ``functions are a kind of object.''
+The universal property says: any function $g: X \times A \to B$ (taking a pair) corresponds to a unique function $\tilde{g}: X \to B^A$ (taking $X$ and returning a function). The correspondence is:
+\[
+\tilde{g}(x) = \lambda a.\, g(x, a)
+\]
+
+This is \textbf{currying}: converting a two-argument function into a function that takes one argument and returns a function of the other. The universal property says currying is a bijection---every way of consuming a pair corresponds to exactly one way of returning a function.
 
 \subsection{Combinatorial Species (Advanced)}
 
+Species are a categorified version of generating functions. Instead of tracking just the \emph{count} of structures, they track the structures themselves, along with how relabeling affects them.
+
 \begin{definition}[Species]
 A \textbf{species} is a functor $F: \mathcal{B} \to \Set$ where $\mathcal{B}$ is the category of finite sets and bijections.
-
-$F(A)$ = ``$F$-structures on the set $A$''
-
-$F(\sigma)$ = ``relabeling by bijection $\sigma$''
+\begin{itemize}
+  \item $F(A)$ = the set of ``$F$-structures on the set $A$''
+  \item $F(\sigma)$ = ``relabeling by the bijection $\sigma$''
+\end{itemize}
 \end{definition}
 
+The fact that $F$ is a functor means relabeling behaves sensibly: relabeling by the identity does nothing, and relabeling twice is the same as relabeling by the composition.
+
 \begin{example}[Species of linear orders]
-$L(A) = \{\text{linear orderings of } A\}$. We have $|L(\{1,2,3\})| = 3! = 6$.
+$L(A) = \{\text{linear orderings of } A\}$. For $A = \{1,2,3\}$, there are $3! = 6$ linear orders. A bijection $\sigma: A \to B$ turns an ordering of $A$ into an ordering of $B$ by relabeling.
 \end{example}
 
 \begin{example}[Species of graphs]
-$G(A) = \{\text{simple graphs with vertex set } A\}$.\\
-We have $|G(\{1,2,3\})| = 2^3 = 8$.
+$G(A) = \{\text{simple graphs with vertex set } A\}$. For $|A| = 3$, there are $2^{\binom{3}{2}} = 2^3 = 8$ graphs (each of the 3 potential edges is present or not).
 \end{example}
 
-The theory of species provides a categorified approach to generating functions.
+Species turn combinatorics into category theory. Operations like ``product of species'' and ``composition of species'' correspond to combining structures, and these operations satisfy algebraic identities that generate combinatorial identities. It's a beautiful theory, though beyond what we can cover here.
 
 \subsection{Exercises}
 
@@ -613,40 +733,60 @@ Show that the currying correspondence $g: X \times A \to B \leftrightarrow \tild
 \section{Weeks 6--7: Graphs and Free Categories}
 %=============================================================================
 
+\subsection*{Why Connect Graphs and Categories?}
+
+Graphs are everywhere in computer science: data structures, networks, state machines, dependency relations. Categories are about composition of morphisms. What's the connection?
+
+It turns out that every graph generates a category in a natural way: the \textbf{free category} on the graph, whose morphisms are paths. And conversely, many categories can be understood as ``graphs with extra structure'' (the composition rules). This section explores that interplay.
+
 \subsection{Endomaps and Dynamical Systems}
 
+Let's start with the simplest kind of graph: one with a single node and edges looping back to it.
+
 \begin{definition}[Endomap]
-An \textbf{endomap} on a set $X$ is a function $a: X \to X$.
+An \textbf{endomap} on a set $X$ is a function $a: X \to X$---a function from a set to itself.
 \end{definition}
 
 \begin{definition}[Category of endomaps]
 The category $\cat{End}$ has:
 \begin{itemize}
-  \item Objects: pairs $(X, a)$ with $a: X \to X$
+  \item Objects: pairs $(X, a)$ where $X$ is a set and $a: X \to X$ is an endomap
   \item Morphisms $f: (X, a) \to (Y, b)$: functions $f: X \to Y$ such that $f \circ a = b \circ f$
 \end{itemize}
 \end{definition}
 
-This encodes \emph{discrete-time dynamical systems}. Iterating $a$ gives the time evolution $a^n$, and a morphism $f$ is a structure-preserving map between dynamics.
+That compatibility condition $f \circ a = b \circ f$ says: applying $a$ then $f$ equals applying $f$ then $b$. In other words, $f$ ``respects the dynamics.''
+
+Think of $(X, a)$ as a discrete-time dynamical system. The set $X$ is the state space, and $a$ is the transition function: $a(x)$ is the state you reach from $x$ after one time step. Iterating gives $a^n(x)$, the state after $n$ steps. A morphism $f$ between dynamical systems translates states while preserving how they evolve.
 
 \begin{note}
-A discrete-time dynamical system is equivalently a functor from the one-object category $\N$ (with composition given by addition) to $\Set$.
+Here's an elegant perspective: a dynamical system $(X, a)$ is the same as a functor from the monoid $(\N, +, 0)$ (viewed as a one-object category) to $\Set$. The single object maps to $X$, and the number $n$ maps to $a^n$.
 \end{note}
 
 \subsection{Parts, Predicates, and the Power Set}
 
-The power set $\Pow(A)$ collects all \emph{parts} of $A$. Each subset $S \subseteq A$ corresponds to a characteristic map $\chi_S: A \to 2$.
+The power set $\Pow(A)$ collects all ``parts'' of $A$---all the ways to select a subset. There's a nice categorical perspective here: subsets correspond to predicates.
 
-For a function $f: A \to B$, the \textbf{preimage} $f^{-1}: \Pow(B) \to \Pow(A)$ is contravariant and preserves unions and intersections:
+Each subset $S \subseteq A$ corresponds to its characteristic function $\chi_S: A \to \{0, 1\}$, where $\chi_S(a) = 1$ iff $a \in S$. So $\Pow(A) \cong (A \to 2)$. Subsets \emph{are} predicates.
+
+Now here's something important about how subsets transform. Given $f: A \to B$:
+\begin{itemize}
+  \item The direct image $f_*: \Pow(A) \to \Pow(B)$ pushes subsets forward: $f_*(S) = \{f(a) : a \in S\}$
+  \item The preimage $f^{-1}: \Pow(B) \to \Pow(A)$ pulls subsets back: $f^{-1}(T) = \{a : f(a) \in T\}$
+\end{itemize}
+
+The preimage is contravariant (it goes ``backwards'') and behaves very nicely:
 \[
 f^{-1}(S \cup T) = f^{-1}(S) \cup f^{-1}(T), \quad f^{-1}(S \cap T) = f^{-1}(S) \cap f^{-1}(T)
 \]
-This is the categorical origin of ``pulling back predicates.''
+It preserves both unions and intersections! This is the categorical origin of ``pulling back predicates'' in logic and type theory.
 
 \subsection{Graphs Generate Categories}
 
+Here's the main event of this section: turning graphs into categories.
+
 \begin{definition}[Quiver/Directed graph]
-A \textbf{quiver} (or directed graph) $Q$ consists of:
+A \textbf{quiver} (category theorists' name for a directed graph) $Q$ consists of:
 \begin{itemize}
   \item A set $Q_0$ of \textbf{vertices}
   \item A set $Q_1$ of \textbf{edges}
@@ -658,62 +798,77 @@ A \textbf{quiver} (or directed graph) $Q$ consists of:
 The \textbf{free category} $\text{Path}(Q)$ on a quiver $Q$ has:
 \begin{itemize}
   \item Objects: vertices of $Q$
-  \item Morphisms: directed paths in $Q$ (including empty paths)
+  \item Morphisms from $u$ to $v$: directed paths from $u$ to $v$ (including the empty path when $u = v$)
   \item Composition: path concatenation
-  \item Identity: empty path at each vertex
+  \item Identity: the empty path at each vertex
 \end{itemize}
 \end{definition}
 
-\begin{example}
-For the graph $1 \xrightarrow{a} 2 \xrightarrow{b} 3$:
+The word ``free'' means: this is the category you get by adding \emph{only} what the category axioms require (identities and composites) and nothing more. No extra equations, no collapsing of paths.
 
-$\text{Path}(Q)$ has morphisms: $\id_1, \id_2, \id_3, a, b, b \circ a$.
+\begin{example}
+For the path graph $1 \xrightarrow{a} 2 \xrightarrow{b} 3$:
+
+The morphisms of $\text{Path}(Q)$ are: $\id_1, \id_2, \id_3$ (the empty paths), $a: 1 \to 2$, $b: 2 \to 3$, and $b \circ a: 1 \to 3$. That's six morphisms total, and the category is finite.
 \end{example}
 
 \begin{example}
 For a cycle $1 \xrightarrow{a} 2 \xrightarrow{b} 3 \xrightarrow{c} 1$:
 
-$\text{Path}(Q)$ is infinite! From 1 to 1 we have: $\id_1, cba, (cba)^2, (cba)^3, \ldots$
+Now $\text{Path}(Q)$ is infinite! The morphisms from 1 to 1 are: $\id_1, cba, (cba)^2, (cba)^3, \ldots$---you can go around the cycle any number of times. Cycles in the graph create infinitely many paths.
 \end{example}
 
 \subsection{Diagrams as Functors}
+
+Here's a beautiful unification: a \emph{diagram} in a category is just a functor from a ``shape'' category.
 
 \begin{definition}
 A \textbf{diagram of shape $J$ in category $\mathcal{C}$} is a functor $D: J \to \mathcal{C}$.
 \end{definition}
 
-The shape $J$ is often a small category like:
+The shape $J$ specifies what kind of diagram we're drawing:
 \begin{itemize}
-  \item $\bullet \to \bullet$: picks out a morphism
-  \item $\bullet \rightrightarrows \bullet$: picks out a parallel pair
-  \item A commutative square: picks out a commuting square in $\mathcal{C}$
+  \item $J = \bullet \to \bullet$ (two objects, one morphism): a diagram of this shape picks out a single morphism in $\mathcal{C}$
+  \item $J = \bullet \rightrightarrows \bullet$ (two objects, two parallel morphisms): picks out a parallel pair
+  \item $J = $ a commutative square: picks out a commuting square in $\mathcal{C}$
 \end{itemize}
 
+The functor $D$ assigns objects and morphisms of $\mathcal{C}$ to the ``slots'' in the shape, preserving composition. Commutativity of the diagram is automatic: if two paths in $J$ are equal (compose to the same morphism), their images under $D$ are equal too.
+
 \begin{application}[Database schemas]
-A database schema is a quiver where vertices are tables and edges are foreign key relationships. A database instance is a functor from $\text{Path}(\text{Schema})$ to $\Set$:
+Here's a practical application: relational databases are functors!
+
+A database schema is a quiver where vertices are tables and edges are foreign key relationships. A database \emph{instance} (actual data) is a functor from $\text{Path}(\text{Schema})$ to $\Set$:
 \begin{itemize}
   \item Each table $T$ maps to a set $F(T)$ of rows
-  \item Each foreign key $e: T \to T'$ maps to a function $F(e): F(T) \to F(T')$
+  \item Each foreign key $e: T \to T'$ maps to a function $F(e): F(T) \to F(T')$ (looking up the referenced row)
 \end{itemize}
+Composition of foreign keys must be respected---if you can get from table $A$ to table $C$ via $B$, either path gives the same function. This is referential integrity!
 \end{application}
 
 \subsection{Adjacency Matrices Count Paths}
 
+Remember from linear algebra: the $(i,j)$ entry of $A^n$ counts paths of length $n$ from vertex $i$ to vertex $j$. Now we can see why.
+
 \begin{theorem}
 For the free category $\text{Path}(Q)$, if $A$ is the adjacency matrix of $Q$, then:
 \[
-(A^n)_{ij} = \text{number of paths of length } n \text{ from } i \text{ to } j
+(A^n)_{ij} = |\Hom_{\text{Path}(Q)}(i, j) \cap \{\text{paths of length } n\}|
 \]
 \end{theorem}
 
-This explains the graph-theoretic interpretation of matrix powers!
+Matrix multiplication is computing composition in the free category, with the ring $(\N, +, \times)$ counting how many ways compositions can happen. The ``free category'' perspective explains why this works: paths are morphisms, and matrix multiplication is tracking compositions.
 
 \subsection{Connected Components Functor}
 
-Let $\pi_0: \cat{Graph} \to \Set$ send a graph to its set of connected components. A graph homomorphism $f: G \to H$ induces a function $\pi_0(f)$ by mapping each component of $G$ to the component of $H$ containing its image.
+Let's see another functor arising from graphs.
+
+Define $\pi_0: \cat{Graph} \to \Set$ by sending a graph to its set of connected components. Given a graph homomorphism $f: G \to H$, we get a function $\pi_0(f): \pi_0(G) \to \pi_0(H)$ by mapping each component of $G$ to the component of $H$ containing its image.
+
+This is a functor: it respects identities and composition. (Check: if $f$ and $g$ are composable graph homomorphisms, the component you land in by doing $f$ then $g$ is the same as doing $g \circ f$ directly.)
 
 \begin{remark}
-The functor $\pi_0$ preserves coproducts (disjoint unions). In more advanced treatments, it is left adjoint to the discrete-graph functor.
+The functor $\pi_0$ has a nice property: it preserves coproducts (disjoint unions). The components of $G \sqcup H$ are the components of $G$ together with the components of $H$. In categorical language, $\pi_0$ is \emph{left adjoint} to the discrete-graph functor (which turns a set into a graph with no edges).
 \end{remark}
 
 \subsection{Exercises}
@@ -747,55 +902,74 @@ Compute $\pi_0(G)$ for a graph $G$ with vertices $\{1,2,3,4\}$ and edges $\{1,2\
 \section{Week 8: Initial Algebras and Catamorphisms}
 %=============================================================================
 
+\subsection*{Why Initial Algebras?}
+
+In the main course this week, you're seeing trees as algebraic datatypes: a tree is either a leaf or a node with subtrees. You're learning that this recursive structure gives you structural recursion (for defining functions) and structural induction (for proving properties).
+
+This section explains \emph{why} that works. The answer involves one of the most beautiful ideas in category theory: initial algebras. An algebraic datatype is an initial algebra for a functor, and the ``fold'' pattern that defines all recursive functions is the unique morphism out of an initial object.
+
+Once you see this, you'll understand why structural recursion always terminates, why there's exactly one function satisfying any given recursive equations, and how the same pattern applies to natural numbers, lists, trees, and any other algebraic datatype.
+
 \subsection{F-Algebras}
+
+Let's start with a general framework for ``things with constructors.''
 
 \begin{definition}[F-algebra]
 Let $F: \mathcal{C} \to \mathcal{C}$ be an endofunctor. An \textbf{$F$-algebra} is a pair $(A, \alpha)$ where:
 \begin{itemize}
-  \item $A$ is an object (the \textbf{carrier})
-  \item $\alpha: F(A) \to A$ is a morphism (the \textbf{structure map})
+  \item $A$ is an object (the \textbf{carrier}---the set of ``values'')
+  \item $\alpha: F(A) \to A$ is a morphism (the \textbf{structure map}---the ``constructors'')
 \end{itemize}
 \end{definition}
 
+The functor $F$ describes the ``shape'' of a single layer of construction. The structure map $\alpha$ says how to build an $A$ from an $F$-shaped collection of $A$s.
+
 \begin{definition}[Algebra homomorphism]
-A \textbf{homomorphism} $h: (A, \alpha) \to (B, \beta)$ of $F$-algebras is a morphism $h: A \to B$ such that:
+A \textbf{homomorphism} $h: (A, \alpha) \to (B, \beta)$ of $F$-algebras is a morphism $h: A \to B$ such that this diagram commutes:
 \[
 \begin{tikzcd}
 F(A) \arrow[r, "\alpha"] \arrow[d, "F(h)"'] & A \arrow[d, "h"] \\
 F(B) \arrow[r, "\beta"'] & B
 \end{tikzcd}
 \]
-commutes, i.e., $h \circ \alpha = \beta \circ F(h)$.
+In equations: $h \circ \alpha = \beta \circ F(h)$.
 \end{definition}
 
+This says: translating via $h$ then constructing in $B$ equals constructing in $A$ then translating. The homomorphism ``respects the constructors.''
+
 \begin{example}[Algebras for $F(X) = 1 + X$]
-An $F$-algebra $(A, \alpha)$ consists of:
+This functor describes ``either nothing, or one thing.'' An $F$-algebra $(A, \alpha)$ consists of:
 \begin{itemize}
   \item A set $A$
-  \item A function $\alpha: 1 + A \to A$, i.e., we specify:
-  \begin{itemize}
-    \item $z = \alpha(*) \in A$ (the ``zero'')
-    \item $s(a) = \alpha(a)$ for each $a \in A$ (the ``successor'')
-  \end{itemize}
+  \item A function $\alpha: 1 + A \to A$
 \end{itemize}
-So an $F$-algebra is $(A, z, s)$ with $z \in A$ and $s: A \to A$.
+But a function from $1 + A$ to $A$ is the same as specifying two things:
+\begin{itemize}
+  \item Where to send the element of $1$: call this $z \in A$ (the ``zero'')
+  \item Where to send each element of $A$: call this $s: A \to A$ (the ``successor'')
+\end{itemize}
+So an $F$-algebra is a triple $(A, z, s)$: a set with a distinguished element and an endofunction. Sound familiar? This is exactly the structure of natural numbers!
 \end{example}
 
 \subsection{Initial Algebras}
 
+Now the key definition. Among all the $F$-algebras, is there a ``most fundamental'' one?
+
 \begin{definition}[Initial algebra]
 An \textbf{initial $F$-algebra} $(\mu F, \text{in})$ is an $F$-algebra such that for every $F$-algebra $(A, \alpha)$, there exists a \emph{unique} homomorphism $\llbracket \alpha \rrbracket: \mu F \to A$.
 
-This unique morphism is called a \textbf{catamorphism} (or \textbf{fold}).
+This unique morphism is called a \textbf{catamorphism} (from Greek ``cata'' = down, ``morph'' = form). In programming, it's called \textbf{fold}.
 \end{definition}
 
-\begin{keyresult}[Lambek's Lemma]
-If $(\mu F, \text{in})$ is an initial $F$-algebra, then $\text{in}: F(\mu F) \to \mu F$ is an \textbf{isomorphism}.
+Think about what initiality means: the initial algebra can map to any other algebra, and there's only one way to do it. The initial algebra is ``the freest''---it has no extra equations beyond what the functor requires.
 
-Therefore: $\mu F \cong F(\mu F)$.
+\begin{keyresult}[Lambek's Lemma]
+If $(\mu F, \text{in})$ is an initial $F$-algebra, then the structure map $\text{in}: F(\mu F) \to \mu F$ is an \textbf{isomorphism}.
+
+In other words: $\mu F \cong F(\mu F)$.
 \end{keyresult}
 
-This is exactly what recursive type definitions mean!
+This is remarkable! It says the initial algebra is a ``fixed point'' of the functor. For $F(X) = 1 + X$, we get $\N \cong 1 + \N$---the natural numbers are ``either zero or a successor of a natural number.'' That's exactly what the recursive definition says!
 
 \begin{example}[Natural numbers]
 For $F(X) = 1 + X$, the initial algebra is $(\N, [\text{zero}, \text{succ}])$ where:
@@ -804,48 +978,56 @@ For $F(X) = 1 + X$, the initial algebra is $(\N, [\text{zero}, \text{succ}])$ wh
   \item $\text{succ}: \N \to \N$ is the successor function
 \end{itemize}
 
-For any $(A, z, s)$, the unique catamorphism $\llbracket z, s \rrbracket: \N \to A$ is:
+Given any algebra $(A, z, s)$---that is, any set with an element $z$ and a function $s$---there's a unique homomorphism $\llbracket z, s \rrbracket: \N \to A$. It's defined by:
 \[
 \llbracket z, s \rrbracket(0) = z \qquad \llbracket z, s \rrbracket(n+1) = s(\llbracket z, s \rrbracket(n))
 \]
-This is primitive recursion!
+This is primitive recursion! The initiality of $\N$ \emph{is} the principle of recursive definition.
 \end{example}
 
 \begin{example}[Lists]
-For $F_A(X) = 1 + A \times X$, an algebra gives ``nil'' and ``cons.''
+For $F_A(X) = 1 + A \times X$, an algebra specifies what to do with ``nil'' (the $1$ case) and ``cons'' (the $A \times X$ case).
 
-The initial algebra is $(List(A), [\text{nil}, \text{cons}])$.
+The initial algebra is $(\text{List}(A), [\text{nil}, \text{cons}])$---lists with the usual constructors.
 
-The catamorphism is \texttt{foldr}:
+The unique catamorphism to any algebra $(B, z, f)$ is exactly \texttt{foldr}:
 \begin{verbatim}
 foldr f z []     = z
 foldr f z (x:xs) = f x (foldr f z xs)
 \end{verbatim}
+Every function defined by ``recursion on the structure of a list'' is a catamorphism.
 \end{example}
 
 \begin{example}[Binary trees]
-For $F_A(X) = A + X \times X$, the initial algebra is binary trees with data at leaves.
+For $F_A(X) = A + X \times X$ (``either a leaf with data, or two subtrees''), the initial algebra is binary trees with data at leaves.
 
-Examples of catamorphisms:
+Catamorphisms are the functions from the main course material:
 \begin{itemize}
-  \item Sum: $\text{leaf}(a) = a$, $\text{node}(x, y) = x + y$
+  \item Sum leaves: $\text{leaf}(a) = a$, $\text{node}(x, y) = x + y$
   \item Height: $\text{leaf}(a) = 0$, $\text{node}(x, y) = 1 + \max(x, y)$
   \item Flatten: $\text{leaf}(a) = [a]$, $\text{node}(x, y) = x \mathbin{+\!\!+} y$
 \end{itemize}
+You specify the ``algebra''---what to do for leaves and how to combine subtree results---and you get a unique function for free.
 \end{example}
 
 \subsection{Why Structural Recursion Terminates}
 
-The initiality property guarantees:
+Here's the deep reason structural recursion works. The initiality property guarantees three things:
 \begin{enumerate}
-  \item \textbf{Existence:} A recursive definition gives a function
-  \item \textbf{Uniqueness:} The function is well-defined
-  \item \textbf{Correctness:} It satisfies the recursive equations
+  \item \textbf{Existence:} There \emph{is} a function satisfying the recursive equations.
+  \item \textbf{Uniqueness:} There's \emph{only one} such function---the definition is unambiguous.
+  \item \textbf{Correctness:} The function actually satisfies the equations (it's a homomorphism).
 \end{enumerate}
 
-If recursion didn't terminate, no function would exist (violating existence).
+Now think about termination. If a recursive definition didn't terminate on some input, then no function would exist for that input---violating existence. But the initial algebra exists, so the catamorphism must be total.
+
+This is why ``structural recursion always terminates'': you're not just following a syntactic pattern, you're constructing the unique homomorphism out of an initial object. The mathematics guarantees it works.
+
+And here's the connection to structural induction: proving a property by structural induction is \emph{defining} a function into the type of proofs. If you can give the base case (a proof for leaves) and the inductive case (a way to combine proofs for subtrees), you've defined a catamorphism---and initiality guarantees it gives a proof for every input.
 
 \subsection{Catamorphism Fusion}
+
+Initial algebras give us a powerful optimization principle.
 
 \begin{theorem}[Fusion]
 If $h: (A, \alpha) \to (B, \beta)$ is an algebra homomorphism, then:
@@ -854,12 +1036,15 @@ h \circ \llbracket \alpha \rrbracket = \llbracket \beta \rrbracket
 \]
 \end{theorem}
 
+In words: if $h$ respects the algebra structures, then folding to $A$ and then applying $h$ equals folding directly to $B$. You can ``fuse'' the post-processing into the fold.
+
 \begin{programmingnote}
-This is the basis for \textbf{deforestation} and \textbf{fusion} optimizations:
+This is the theoretical basis for \textbf{fusion} optimizations in functional compilers:
 \begin{verbatim}
 map f . map g = map (f . g)   -- fuse two traversals into one
-sum . map f  = foldr (\x a -> f x + a) 0
+sum . map f   = foldr (\x a -> f x + a) 0
 \end{verbatim}
+Instead of building an intermediate list (map) and then consuming it (sum), you fold once. The fusion theorem tells you when this transformation is valid.
 \end{programmingnote}
 
 \subsection{Exercises}
@@ -894,9 +1079,17 @@ Express each tree traversal (preorder, inorder, postorder) as a catamorphism by 
 \section{Week 9: Coalgebras and Automata}
 %=============================================================================
 
+\subsection*{Why Coalgebras?}
+
+Algebras are about \emph{construction}: how do you build data? Coalgebras are about \emph{observation}: how do you examine data? How does it behave over time?
+
+This duality is profound. Lists are an initial algebra: you build them from nil and cons, and fold consumes them. Streams (infinite lists) are a final coalgebra: you observe them by taking head and tail, and unfold produces them.
+
+In this section, we'll see how automata---the topic of the main course---are coalgebras. This perspective illuminates what it means for two automata to ``accept the same language'' and gives a beautiful characterization of DFA minimization.
+
 \subsection{F-Coalgebras}
 
-Coalgebras are \textbf{dual} to algebras---arrows reversed.
+Coalgebras are the \textbf{dual} of algebras. Where algebras have structure maps \emph{into} the carrier, coalgebras have structure maps \emph{out of} the carrier.
 
 \begin{definition}[F-coalgebra]
 Let $F: \mathcal{C} \to \mathcal{C}$ be an endofunctor. An \textbf{$F$-coalgebra} is a pair $(A, \alpha)$ where:
@@ -906,6 +1099,8 @@ Let $F: \mathcal{C} \to \mathcal{C}$ be an endofunctor. An \textbf{$F$-coalgebra
 \end{itemize}
 \end{definition}
 
+The arrow goes the other way! Instead of ``how to construct an $A$ from $F$-many $A$s,'' we have ``how to observe an $A$ and get $F$-much information.''
+
 \begin{definition}[Coalgebra homomorphism]
 A homomorphism $h: (A, \alpha) \to (B, \beta)$ is a morphism $h: A \to B$ such that:
 \[
@@ -914,58 +1109,82 @@ A \arrow[r, "\alpha"] \arrow[d, "h"'] & F(A) \arrow[d, "F(h)"] \\
 B \arrow[r, "\beta"'] & F(B)
 \end{tikzcd}
 \]
-commutes, i.e., $\beta \circ h = F(h) \circ \alpha$.
+commutes: $\beta \circ h = F(h) \circ \alpha$.
 \end{definition}
 
+This says: observing in $A$ then translating equals translating then observing in $B$. The homomorphism preserves the observable behavior.
+
 \subsection{Deterministic Finite Automata as Coalgebras}
+
+Here's the payoff: DFAs are coalgebras!
 
 \begin{theorem}
 A DFA over alphabet $\Sigma$ is exactly a coalgebra for the functor:
 \[
 F(X) = 2 \times X^\Sigma
 \]
-where $2 = \{\text{accept}, \text{reject}\}$ and $X^\Sigma$ denotes functions $\Sigma \to X$.
+where $2 = \{\text{accept}, \text{reject}\}$ and $X^\Sigma$ denotes functions from $\Sigma$ to $X$.
 \end{theorem}
+
+Unpack this: from any state, you can observe two things:
+\begin{enumerate}
+  \item Is this state accepting? (That's the $2$ part.)
+  \item For each symbol $a \in \Sigma$, what state do you transition to? (That's the $X^\Sigma$ part.)
+\end{enumerate}
 
 A coalgebra $(Q, \langle o, \delta \rangle)$ consists of:
 \begin{itemize}
-  \item $Q$: set of states
-  \item $o: Q \to 2$: output function (is this state accepting?)
-  \item $\delta: Q \to Q^\Sigma$: transition function
+  \item $Q$: the set of states
+  \item $o: Q \to 2$: the output function (accepting or not?)
+  \item $\delta: Q \to Q^\Sigma$: the transition function (equivalently, $\delta: Q \times \Sigma \to Q$)
 \end{itemize}
 
+That's exactly a DFA! The coalgebra perspective emphasizes what you can \emph{observe} about a state, rather than how states were constructed.
+
 \subsection{Final Coalgebras}
+
+Just as algebras have initial objects, coalgebras have final objects---and they're equally important.
 
 \begin{definition}[Final coalgebra]
 A \textbf{final $F$-coalgebra} $(\nu F, \text{out})$ is an $F$-coalgebra such that for every $F$-coalgebra $(A, \alpha)$, there exists a unique homomorphism $\llparenthesis \alpha \rrparenthesis: A \to \nu F$.
 
-This unique morphism is called an \textbf{anamorphism} (or \textbf{unfold}).
+This unique morphism is called an \textbf{anamorphism} (``ana'' = up) or \textbf{unfold}.
 \end{definition}
 
+The final coalgebra is the ``most complex'' coalgebra: every other coalgebra maps uniquely into it. Where the initial algebra is ``built from nothing,'' the final coalgebra ``observes everything.''
+
 \begin{theorem}
-For $F(X) = 2 \times X^\Sigma$, the final coalgebra is:
+For the DFA functor $F(X) = 2 \times X^\Sigma$, the final coalgebra is:
 \[
 (\mathcal{P}(\Sigma^*), \langle \varepsilon?, \text{derivatives} \rangle)
 \]
 where:
 \begin{itemize}
-  \item $\mathcal{P}(\Sigma^*)$ is the set of all languages over $\Sigma$
-  \item $\varepsilon?(L) = \text{accept}$ iff $\varepsilon \in L$
-  \item $\partial_a(L) = \{w : aw \in L\}$ (Brzozowski derivative)
+  \item $\mathcal{P}(\Sigma^*)$ is the set of \emph{all} languages over $\Sigma$
+  \item $\varepsilon?(L) = \text{accept}$ iff $\varepsilon \in L$ (does $L$ contain the empty string?)
+  \item $\partial_a(L) = \{w : aw \in L\}$ is the Brzozowski derivative (what's left after reading $a$?)
 \end{itemize}
 \end{theorem}
 
-The unique coalgebra morphism from any DFA to this final coalgebra maps each state to \textbf{the language it accepts}!
+The elements of the final coalgebra are \emph{languages}. Each language ``behaves like'' a DFA state: it either accepts or rejects the empty string, and reading a symbol gives you a new language (the derivative).
+
+And here's the beautiful part: the unique coalgebra morphism from any DFA to this final coalgebra sends each state $q$ to \textbf{the language accepted from state $q$}! The finality of languages explains what DFA equivalence means: two states are equivalent iff they map to the same language.
 
 \subsection{Bisimulation}
+
+The coalgebraic perspective gives us a clean definition of equivalence.
 
 \begin{definition}[Bisimulation]
 Two states (possibly in different automata) are \textbf{bisimilar} if they map to the same element of the final coalgebra.
 \end{definition}
 
-For DFAs: bisimilar states accept the same language.
+For DFAs, bisimilarity is language equivalence: two states are bisimilar iff they accept the same language. The minimal DFA is obtained by quotienting by bisimilarity---identifying states that can't be distinguished by any sequence of observations.
+
+This is much more general than DFAs. Bisimulation is the right notion of equivalence for any coalgebraic system: two states are ``the same'' if no sequence of observations can tell them apart.
 
 \subsection{Streams as a Final Coalgebra}
+
+Let's see another final coalgebra, one that produces infinite data rather than classifying finite inputs.
 
 \begin{theorem}
 For $F(X) = A \times X$, the final coalgebra is:
@@ -975,30 +1194,38 @@ For $F(X) = A \times X$, the final coalgebra is:
 where $A^\omega$ is the set of infinite streams over $A$.
 \end{theorem}
 
-The isomorphism $A^\omega \cong A \times A^\omega$ says: ``a stream is a head plus a tail.''
+The structure map sends a stream to its head (an element of $A$) and its tail (another stream). The isomorphism $A^\omega \cong A \times A^\omega$ says: ``an infinite stream is a head followed by another infinite stream.''
+
+Compare to lists: $\text{List}(A) \cong 1 + A \times \text{List}(A)$ (a list is either empty \emph{or} a head and tail). Streams have no ``empty'' case---they go on forever.
 
 \begin{example}[Generating streams]
-The Fibonacci sequence as an anamorphism:
+The Fibonacci sequence as an anamorphism (unfold):
 \begin{verbatim}
 fibs = unfold (\(a,b) -> (a, (b, a+b))) (0, 1)
      = [0, 1, 1, 2, 3, 5, 8, 13, ...]
 \end{verbatim}
+The seed is $(0, 1)$. At each step, output the first component (current Fibonacci number) and update the seed to $(b, a+b)$. The unfold produces an infinite stream---no base case needed.
 \end{example}
 
 \subsection{Algebra vs Coalgebra: Summary}
+
+Here's the duality at a glance:
 
 \begin{center}
 \begin{tabular}{lcc}
 \textbf{Concept} & \textbf{Algebra} & \textbf{Coalgebra} \\
 \hline
-Structure map & $F(A) \to A$ & $A \to F(A)$ \\
-Universal object & Initial & Final \\
+Structure map & $F(A) \to A$ (build) & $A \to F(A)$ (observe) \\
+Universal object & Initial (smallest) & Final (largest) \\
 Universal morphism & Catamorphism (fold) & Anamorphism (unfold) \\
-Canonical example & Natural numbers, lists, trees & Streams, automata \\
+Canonical examples & $\N$, lists, trees & Streams, automata \\
 Data & Finite (inductive) & Potentially infinite (coinductive) \\
 Perspective & Constructors & Observers/destructors \\
+Proof principle & Induction & Coinduction \\
 \end{tabular}
 \end{center}
+
+Algebras and coalgebras are two sides of the same coin. Understanding both gives you a complete picture of recursive and corecursive data.
 
 \subsection{Exercises}
 
@@ -1023,6 +1250,14 @@ Two DFAs have state sets $Q_1 = \{a, b\}$ and $Q_2 = \{x, y, z\}$. State $a$ acc
 \section{Week 10: Monoids and Cost}
 %=============================================================================
 
+\subsection*{Why Monoids?}
+
+A monoid is one of the simplest algebraic structures: a set with an associative operation and an identity. Addition on numbers. Concatenation on strings. Composition of functions.
+
+From the categorical viewpoint, monoids are even simpler: a monoid \emph{is} a category with just one object. All the action is in the morphisms (the monoid elements), and composition is the monoid operation.
+
+This perspective connects monoids to everything we've done. It explains why monoids appear in algorithm analysis (tracking costs), in automata theory (syntactic monoids recognize languages), and in parallel computing (combining results associatively).
+
 \subsection{Monoids as One-Object Categories}
 
 \begin{definition}[Monoid]
@@ -1039,10 +1274,12 @@ A monoid is exactly a category with one object.
 \begin{itemize}
   \item The single object: call it $*$
   \item Morphisms $* \to *$: elements of $M$
-  \item Composition: the monoid operation
-  \item Identity: $e$
+  \item Composition: the monoid operation $\cdot$
+  \item Identity morphism: the identity element $e$
 \end{itemize}
 \end{theorem}
+
+The category axioms (associativity of composition, identity laws) are exactly the monoid axioms. A group is a monoid where every element has an inverse---equivalently, a one-object category where every morphism is an isomorphism.
 
 \begin{example}[Common monoids]
 \begin{center}
@@ -1056,77 +1293,104 @@ $(\N \cup \{\infty\}, \max, 0)$ & extended naturals & maximum & 0 \\
 $(\N \cup \{\infty\}, \min, \infty)$ & extended naturals & minimum & $\infty$ \\
 \end{tabular}
 \end{center}
+Each of these is a one-object category. The morphisms are numbers (or strings), and composition is the operation.
 \end{example}
 
 \subsection{Free Monoids}
 
+The ``free'' construction for monoids is one you already know: strings.
+
 \begin{definition}[Free monoid]
-The \textbf{free monoid} on a set $\Sigma$ is $(\Sigma^*, \cdot, \varepsilon)$---strings with concatenation.
+The \textbf{free monoid} on a set $\Sigma$ (an ``alphabet'') is $(\Sigma^*, \cdot, \varepsilon)$---strings over $\Sigma$ with concatenation.
 \end{definition}
+
+Why ``free''? Because strings impose no equations beyond associativity and identity. The string $ab$ is different from $ba$; the string $aa$ is different from $a$. You get exactly the combinations the monoid axioms allow, and nothing more.
 
 \begin{theorem}[Universal property]
 For any monoid $M$ and function $f: \Sigma \to M$, there exists a unique monoid homomorphism $f^*: \Sigma^* \to M$ extending $f$.
 \end{theorem}
 
+This says: to define a homomorphism out of $\Sigma^*$, you just need to say where each letter goes. The rest is forced by the monoid laws: $f^*(w_1 w_2) = f^*(w_1) \cdot f^*(w_2)$.
+
 \subsection{Free/Forgetful Adjunction}
-Let $U: \cat{Mon} \to \Set$ be the forgetful functor (drop the operation) and $F: \Set \to \cat{Mon}$ be the free monoid functor ($F(\Sigma) = \Sigma^*$).
-The universal property above says precisely that $F \dashv U$:
+
+This universal property is an adjunction in disguise.
+
+Let $U: \cat{Mon} \to \Set$ be the forgetful functor (forget the operation, just keep the underlying set) and $F: \Set \to \cat{Mon}$ be the free monoid functor ($F(\Sigma) = \Sigma^*$).
+
+The universal property says:
 \[
 \Hom_{\cat{Mon}}(\Sigma^*, M) \cong \Hom_{\Set}(\Sigma, U(M))
 \]
-Adjunctions generalize ``free constructions'' across mathematics.
+Monoid homomorphisms from the free monoid correspond bijectively to functions from the generators. This is the free/forgetful adjunction $F \dashv U$.
+
+Adjunctions capture the pattern of ``free constructions'' across mathematics: free groups, free vector spaces, free categories on graphs. The left adjoint builds the free structure; the right adjoint forgets the structure.
 
 \subsection{Regular Languages and Syntactic Monoids}
+
+Here's a beautiful connection between monoids and automata theory.
 
 \begin{theorem}
 A language $L \subseteq \Sigma^*$ is regular if and only if there exists:
 \begin{enumerate}
-  \item A finite monoid $M$
+  \item A \emph{finite} monoid $M$
   \item A monoid homomorphism $h: \Sigma^* \to M$
-  \item A subset $F \subseteq M$
+  \item A subset $F \subseteq M$ (the ``accepting'' elements)
 \end{enumerate}
-such that $L = h^{-1}(F)$.
+such that $L = h^{-1}(F)$ (a string is in $L$ iff its image is in $F$).
 \end{theorem}
 
-The minimal such $M$ is the \textbf{syntactic monoid} of $L$.
+The monoid $M$ is playing the role of the DFA, but algebraically. Reading a string computes a monoid element; accepting means landing in $F$.
+
+The smallest such $M$ that works for a given $L$ is called the \textbf{syntactic monoid} of $L$. It captures exactly the distinctions $L$ makes between strings.
 
 \begin{example}
-For $L = \{w : |w|_1 \equiv 0 \pmod{3}\}$ (number of 1s divisible by 3):
+For $L = \{w : |w|_1 \equiv 0 \pmod{3}\}$ (strings where the number of 1s is divisible by 3):
 
-The syntactic monoid is $\Z_3$ with $h(0) = 0$, $h(1) = 1$.
+The syntactic monoid is $\Z_3 = \{0, 1, 2\}$ with addition mod 3. The homomorphism $h: \{0, 1\}^* \to \Z_3$ sends a string to its count of 1s mod 3. The accepting set is $F = \{0\}$.
 \end{example}
 
 \subsection{Cost Monoids}
 
+Here's a practical application: tracking computational costs.
+
 \begin{definition}[Cost monoid]
-A \textbf{cost monoid} is a monoid used to track computational resources:
+A \textbf{cost monoid} is a monoid used to measure computational resources:
 \begin{itemize}
-  \item $(\N, +, 0)$: counting operations (sequential)
-  \item $(\N, \max, 0)$: parallel time (max of parallel branches)
-  \item $(\N \times \N, +, (0,0))$: tracking time AND space
+  \item $(\N, +, 0)$: counting operations (sequential time---costs add up)
+  \item $(\N, \max, 0)$: parallel time (the slowest branch determines total time)
+  \item $(\N \times \N, +, (0,0))$: tracking time AND space simultaneously
 \end{itemize}
 \end{definition}
 
+The choice of monoid determines how costs combine. Sequential composition adds; parallel composition takes the max.
+
 \begin{example}[Merge sort cost]
-$T(n) = 2T(n/2) + \Theta(n)$
+The recurrence $T(n) = 2T(n/2) + \Theta(n)$ describes merge sort.
 
-Using $(\N, +, 0)$: compose costs of subproblems and merge step.
+Using $(\N, +, 0)$ for sequential time: we add the costs of the two recursive calls and the merge step. This gives $T(n) = \Theta(n \log n)$.
 
-Using $(\N, \max, 0)$ for parallel: $T(n) = T(n/2) + \Theta(\log n) = \Theta(\log^2 n)$.
+Using $(\N, \max, 0)$ for parallel time: the two recursive calls happen simultaneously, so we take the max (not the sum). This gives $T(n) = T(n/2) + \Theta(\log n) = \Theta(\log^2 n)$---much faster when you can parallelize!
 \end{example}
 
 \subsection{Enriched Categories (Brief)}
 
-A \textbf{category enriched over a monoidal category $V$} replaces hom-sets with objects of $V$.
+Here's a glimpse of a more advanced topic that ties together graphs, costs, and categories.
 
-\begin{example}[Weighted graphs]
-A weighted graph with weights in $(\R_{\geq 0} \cup \{\infty\}, \min, \infty)$ is an enriched category:
+A \textbf{category enriched over a monoidal category $V$} replaces hom-sets with objects of $V$. Instead of ``the set of morphisms from $A$ to $B$,'' you have ``a $V$-object measuring the `distance' from $A$ to $B$.''
+
+\begin{example}[Weighted graphs as enriched categories]
+A weighted graph with non-negative weights is a category enriched over $(\R_{\geq 0} \cup \{\infty\}, \min, +, \infty, 0)$:
 \begin{itemize}
   \item Objects: vertices
-  \item $\Hom(u, v)$: edge weight ($\infty$ if no edge)
+  \item $\Hom(u, v)$: the edge weight ($\infty$ if no edge)
   \item Composition: $d(u, w) = \min_v (d(u, v) + d(v, w))$
+  \item Identity: $d(v, v) = 0$
 \end{itemize}
-This is exactly the structure that shortest-path algorithms exploit!
+
+The composition law says: the distance from $u$ to $w$ is the minimum over all intermediate vertices $v$ of going through $v$. This is exactly what shortest-path algorithms compute!
+
+Dijkstra's algorithm, Bellman-Ford, Floyd-Warshall---they're all computing composition in an enriched category.
 \end{example}
 
 \subsection{Exercises}
@@ -1159,26 +1423,37 @@ Model the cost of linear search and binary search using the cost monoid $(\N, +,
 \section{Conclusion: The Categorical Perspective}
 %=============================================================================
 
+\subsection{What Have We Learned?}
+
+If you've made it through this companion, you've seen category theory not as abstract nonsense, but as a \emph{language for patterns}. The same structures appear across mathematics and computer science; category theory gives us vocabulary to recognize and exploit them.
+
 \subsection{Recurring Themes}
 
-Throughout this companion, we've seen several recurring ideas:
+Let's recap the big ideas:
 
-\textbf{1. Universal Properties.} Many constructions are characterized by being ``the best'' solution to a problem: products, coproducts, free constructions, initial and final objects.
+\textbf{1. Universal Properties.} Many constructions are characterized not by \emph{what they are}, but by \emph{what they do}---by their relationship to everything else. Products, coproducts, free constructions, initial and final objects are all defined by universal properties. Once you prove something satisfies a universal property, you get uniqueness (up to isomorphism) for free.
 
-\textbf{2. Functors Preserve Structure.} Structure-preserving maps (functors, homomorphisms) are often more important than the structures themselves.
+\textbf{2. Functors Preserve Structure.} The maps between structures (functors, homomorphisms) are often more revealing than the structures themselves. When you find a functor, you've found a way to translate problems from one domain to another while preserving the essential structure.
 
-\textbf{3. Duality.} Many concepts come in pairs: products/coproducts, monos/epis,\\
-algebras/coalgebras, initial/final. Understanding one often gives the other ``for free.''
+\textbf{3. Duality.} Concepts come in pairs: products/coproducts, monos/epis, algebras/coalgebras, initial/final, fold/unfold. The duality isn't just formal symmetry---it reflects real phenomena. Finite vs.~infinite data. Construction vs.~observation. Understanding one side illuminates the other.
 
-\textbf{4. Diagrams as Specifications.} Commutative diagrams express equations. When we say ``this diagram commutes,'' we're stating an invariant that implementations must satisfy.
+\textbf{4. Diagrams as Specifications.} Commutative diagrams express invariants. When we say ``this diagram commutes,'' we're stating a law that any implementation must satisfy. Diagrams are the ``type signatures'' of mathematics.
+
+\textbf{5. Free Constructions.} Given generators, build the simplest structure containing them. Free monoids (strings), free categories (paths), initial algebras (recursive data). The universal property of free constructions explains why recursive definitions work.
 
 \subsection{Where to Go From Here}
 
+This companion has only scratched the surface. If you want to go deeper:
+
 \begin{itemize}
-  \item \textbf{Seven Sketches in Compositionality} by Fong \& Spivak: applied category theory, free online
-  \item \textbf{Category Theory for Programmers} by Milewski: Haskell-focused, free online
-  \item \textbf{Algebra of Programming} by Bird \& de Moor: folds, unfolds, and program calculation
-  \item \textbf{Categories for the Working Mathematician} by Mac Lane: the classic reference
+  \item \textbf{Seven Sketches in Compositionality} by Fong \& Spivak: applied category theory for working scientists, free online. Emphasizes databases, circuits, and systems.
+  \item \textbf{Category Theory for Programmers} by Milewski: a programmer's introduction, Haskell-focused, free online. Great for connecting category theory to functional programming.
+  \item \textbf{Algebra of Programming} by Bird \& de Moor: folds, unfolds, and program calculation. The definitive text on using category theory for program derivation.
+  \item \textbf{Categories for the Working Mathematician} by Mac Lane: the classic graduate text. Dense but comprehensive.
 \end{itemize}
+
+The categorical perspective isn't just theoretical elegance---it's practical. It tells you why your recursive functions terminate, how to optimize your data transformations, what ``equivalence'' really means for automata, and how to design composable abstractions.
+
+Category theory is a tool. Now you have a sense of how to use it.
 
 \end{document}

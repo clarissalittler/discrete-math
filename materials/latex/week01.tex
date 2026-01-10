@@ -1,7 +1,18 @@
 \section{Week 1: Set Theory}
+
+\textit{Or: ``What even is a collection of things?''}
+
 \subsection*{Reading}
 Epp \S 6.1--6.4.\\
 \textbf{Category theory companion:} Week 1--2 (\texttt{category\_theory\_companion.pdf}).
+
+\subsection*{Why Sets?}
+
+Here's a question that seems like it should be easy: what do we mean when we say ``the even numbers'' or ``all the students in this class'' or ``every program that halts''?
+
+We're gesturing at \emph{collections}. Bags of stuff. And you might think---reasonably!---that this is so obvious it doesn't need formalization. Surely we can just talk about collections without making a federal case out of it?
+
+Well. Mathematicians tried that in the late 1800s, and it went \emph{spectacularly} badly. Bertrand Russell came along and said ``okay, consider the collection of all collections that don't contain themselves'' and the whole edifice caught fire. We'll get to that disaster later. For now, just know: sets are the careful, paradox-avoiding way we talk about collections in mathematics.
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -13,30 +24,64 @@ Epp \S 6.1--6.4.\\
 \end{itemize}
 
 \subsection*{Key definitions and facts}
+
+\subsubsection*{What Is a Set?}
+
+A \textbf{set} is a collection of distinct objects where duplicates don't count (writing $\{1, 1, 2\}$ is the same as $\{1, 2\}$) and order doesn't matter ($\{1, 2\} = \{2, 1\}$).
+
+That's basically it. A bag of things. The things in the bag are called \textbf{elements} or \textbf{members}, and we write $x \in A$ to mean ``$x$ is in the set $A$.''
+
+Now, you might reasonably ask: what counts as a ``thing''? Can sets contain other sets? Can a set contain itself? What about the set of all sets?
+
+These are excellent questions, and the answers are: yes, technically yes but we try to avoid it, and \emph{absolutely not} (that way lies Russell's paradox). Modern set theory (ZFC, if you want to look it up) has careful rules about what you're allowed to construct. For this course, we'll stay in safe territory.
+
+\subsubsection*{Two Ways to Write Sets}
+
+\textbf{Roster notation} is just listing the elements:
+\[
+\{1, 2, 3\}, \quad \{a, b, c\}, \quad \{\text{Alice}, \text{Bob}\}
+\]
+
+This works great for small finite sets. Less great for ``all even integers.''
+
+\textbf{Set-builder notation} describes elements by a property:
+\[
+\{x \in \Z : x \text{ is even}\} = \{x \in \Z : \exists k \in \Z,\, x = 2k\}
+\]
+
+Read the colon as ``such that.'' The thing on the left of the colon is what you're collecting; the thing on the right is the condition it must satisfy.
+
+\begin{warning}[Specify your universe]
+Students often write $\{x : x^2 = 4\}$ when they mean $\{x \in \R : x^2 = 4\}$. Where are you drawing $x$ from? The integers? The reals? The complex numbers? This matters! $\{x \in \N : x^2 = 4\}$ is just $\{2\}$, but $\{x \in \Z : x^2 = 4\} = \{-2, 2\}$.
+\end{warning}
+
+\subsubsection*{Subsets and Equality}
+
 \begin{definition}[Subset and equality]
-For sets $A,B$, $A \subseteq B$ means every element of $A$ is in $B$.
-$A=B$ means $A \subseteq B$ and $B \subseteq A$.
+For sets $A,B$, $A \subseteq B$ means every element of $A$ is in $B$. Think of it as ``$A$ fits inside $B$.''
+
+We define set \textbf{equality} in terms of subsets: $A = B$ means $A \subseteq B$ and $B \subseteq A$.
 \end{definition}
+
+Why define equality this way? Because sets don't have any structure \emph{except} their elements. Two sets are the same if they have exactly the same members. The $\subseteq$-both-ways definition captures this: if everything in $A$ is in $B$, and everything in $B$ is in $A$, then they must have exactly the same elements.
+
+This gives us our main proof technique for showing sets are equal: \textbf{prove inclusion in both directions}. You'll do this a lot.
+
+\subsubsection*{Set Operations (The Boolean Algebra Connection)}
+
+Okay, here's where it gets fun. We can combine sets in ways that mirror logical operations:
 
 \begin{definition}[Set operations]
 Let $A$ and $B$ be sets:
 \begin{itemize}
-  \item \textbf{Union:} $A \cup B = \{x : x \in A \text{ or } x \in B\}$
-  \item \textbf{Intersection:} $A \cap B = \{x : x \in A \text{ and } x \in B\}$
-  \item \textbf{Difference:} $A \setminus B = \{x : x \in A \text{ and } x \notin B\}$
-  \item \textbf{Complement:} $A^c = \{x \in U : x \notin A\}$ (relative to universal set $U$)
+  \item \textbf{Union:} $A \cup B = \{x : x \in A \text{ or } x \in B\}$ \hfill (like logical OR)
+  \item \textbf{Intersection:} $A \cap B = \{x : x \in A \text{ and } x \in B\}$ \hfill (like logical AND)
+  \item \textbf{Difference:} $A \setminus B = \{x : x \in A \text{ and } x \notin B\}$ \hfill (like AND NOT)
+  \item \textbf{Complement:} $A^c = \{x \in U : x \notin A\}$ (relative to universal set $U$) \hfill (like NOT)
 \end{itemize}
 \end{definition}
 
-\begin{definition}[Power set and partition]
-The power set $\Pow(A)$ is the set of all subsets of $A$. If $|A| = n$, then $|\Pow(A)| = 2^n$.
-A partition of $A$ is a collection of nonempty, pairwise disjoint subsets whose union is $A$.
-\end{definition}
-
-\begin{definition}[Cartesian product]
-The Cartesian product $A \times B = \{(a,b) : a \in A, b \in B\}$.
-We have $|A \times B| = |A| \cdot |B|$ for finite sets.
-\end{definition}
+This correspondence isn't a coincidence! Sets form a \textbf{Boolean algebra}, and if you squint, everything we do with sets is secretly logic in disguise. De Morgan's laws? Same for sets as for propositions. If you've written code with boolean conditions, you already know this: \texttt{!(a || b)} is the same as \texttt{!a \&\& !b}. Same idea, different notation.
 
 \begin{theorem}[Set laws]
 For all sets $A, B, C$:
@@ -53,29 +98,84 @@ For all sets $A, B, C$:
 $(A \cup B)^c = A^c \cap B^c$ and $(A \cap B)^c = A^c \cup B^c$.
 \end{theorem}
 
-\begin{remark}[Boolean algebra]
-The set operations form a \textbf{Boolean algebra}: $\cup$ behaves like logical OR, $\cap$ behaves like AND, and complementation behaves like NOT. This correspondence allows you to translate between set identities and logical equivalences. For example, De Morgan's laws for sets correspond exactly to De Morgan's laws for logic: $\neg(P \lor Q) \equiv \neg P \land \neg Q$.
-\end{remark}
+If these look exactly like the logical equivalences from Week 0, that's because they are. The Boolean algebra structure is the same; we're just using $\cup$ instead of $\lor$ and $\cap$ instead of $\land$.
+
+\subsubsection*{The Power Set (Where Things Get Meta)}
+
+\begin{definition}[Power set and partition]
+The \textbf{power set} $\Pow(A)$ is the set of all subsets of $A$. If $|A| = n$, then $|\Pow(A)| = 2^n$.
+
+A \textbf{partition} of $A$ is a collection of nonempty, pairwise disjoint subsets whose union is $A$.
+\end{definition}
+
+Yes, we're making a set whose elements are themselves sets. This is allowed and useful.
+
+Try this before reading on: list all subsets of $\{1, 2\}$.
+
+(Take a moment to write them down before continuing.)
+
+Got them? There are four:
+\[
+\Pow(\{1, 2\}) = \{\emptyset, \{1\}, \{2\}, \{1, 2\}\}
+\]
+
+Notice: $\emptyset$ (the empty set) is a subset of everything, including $\{1, 2\}$. And $\{1, 2\}$ is a subset of itself. Both of these trip people up.
+
+\emph{Why is $|\Pow(A)| = 2^{|A|}$?} Think about it this way: for each element of $A$, you have a binary choice---include it or don't. That's 2 choices per element, so $2^n$ total subsets. (We'll formalize this counting argument in Week 4.)
+
+\subsubsection*{Cartesian Products}
+
+\begin{definition}[Cartesian product]
+The Cartesian product $A \times B = \{(a,b) : a \in A, b \in B\}$.
+We have $|A \times B| = |A| \cdot |B|$ for finite sets.
+\end{definition}
+
+Unlike sets, pairs \emph{do} care about order: $(1, 2) \neq (2, 1)$.
+
+If you've used coordinates in a plane, you've used Cartesian products: $\R^2 = \R \times \R$. The name comes from Descartes, who figured out you could turn geometry into algebra by slapping coordinates on everything.
+
+For finite sets: $|A \times B| = |A| \cdot |B|$. Two elements in $A$, three in $B$? Six pairs. This will be foundational for counting in Week 4.
+
+\subsubsection*{Russell's Paradox (The Promised Disaster)}
+
+\begin{warning}[Russell's paradox]
+Remember when I said ``the set of all sets'' is forbidden? Here's why.
+
+Naive set theory said: any property defines a set. Want the set of all red things? Done. The set of all numbers? Sure. The set of all sets? Why not!
+
+Russell asked: what about $R = \{x : x \notin x\}$---the set of all sets that \emph{don't contain themselves}?
+
+Is $R \in R$?
+\begin{itemize}
+  \item If \textbf{yes}: then by definition of $R$, we need $R \notin R$. Contradiction.
+  \item If \textbf{no}: then $R$ satisfies the condition $R \notin R$, so $R \in R$. Contradiction.
+\end{itemize}
+
+We're cooked either way. This isn't a trick or a puzzle you can wriggle out of---it's a genuine inconsistency in unrestricted set formation.
+
+Modern set theory (ZFC) fixes this by being very careful about which collections count as sets. You can't just conjure sets into existence with any old property. The rules are somewhat technical, but the upshot is: we stay away from self-referential monstrosities, and everything works out.
+\end{warning}
+
+\emph{Philosophical aside:} Some mathematicians find ZFC's restrictions unsatisfying---they're somewhat ad-hoc patches to avoid known paradoxes. Type theory offers a different foundation where Russell's paradox can't even be stated. If you're curious, the Agda materials touch on this.
+
+\subsection*{Worked examples}
 
 \begin{example}[Boolean-style simplification]
 Simplify the set expression $(A \cap B) \cup (A \cap B^c)$.
 
-\emph{Solution.} Factor out $A$ using distributivity:
+\emph{Solution.} If you stare at this for a moment, you might notice we're taking things in $A$ that are also in $B$, then unioning with things in $A$ that \emph{aren't} in $B$. That sounds like just everything in $A$.
+
+Let's verify with algebra. Factor out $A$ using distributivity:
 \[
 (A \cap B) \cup (A \cap B^c) = A \cap (B \cup B^c) = A \cap U = A
 \]
-The key insight is that $B \cup B^c = U$ (law of excluded middle for sets).
+The key insight is that $B \cup B^c = U$ (law of excluded middle for sets---everything is either in $B$ or not in $B$).
 \end{example}
 
-\begin{warning}[Russell's paradox]
-Not every description defines a valid set. Consider $R = \{x : x \notin x\}$---the ``set of all sets that don't contain themselves.'' Is $R \in R$? If yes, then by definition $R \notin R$. If no, then $R \in R$. This contradiction shows that unrestricted set formation leads to paradoxes. Modern set theory (ZFC) avoids this by carefully axiomatizing which collections can be sets.
-\end{warning}
+\begin{example}[Proving the distributive law]
+Prove $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$.
 
-\subsection*{Worked examples}
-\begin{example}
-Prove $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ (Distributive law).
-
-\emph{Proof.} We show mutual inclusion.
+\emph{Proof.} We show mutual inclusion. This is the workhorse technique for set equalities.
 
 ($\subseteq$) Let $x \in A \cap (B \cup C)$. Then $x \in A$ and $x \in B \cup C$.
 Since $x \in B \cup C$, either $x \in B$ or $x \in C$.
@@ -90,18 +190,21 @@ In either case, $x \in A$, and $x \in B$ or $x \in C$, so $x \in B \cup C$.
 Thus $x \in A \cap (B \cup C)$. \qed
 \end{example}
 
-\begin{example}
-Prove De Morgan's law: $(A \cup B)^c = A^c \cap B^c$.
+\begin{example}[De Morgan's law]
+Prove $(A \cup B)^c = A^c \cap B^c$.
 
-\emph{Proof.}
+\emph{Proof.} This one we can do with a chain of if-and-only-ifs:
+
 $x \in (A \cup B)^c$ iff $x \notin A \cup B$
 iff not($x \in A$ or $x \in B$)
-iff ($x \notin A$ and $x \notin B$)
+iff ($x \notin A$ and $x \notin B$) \quad\text{(De Morgan for logic!)}
 iff $x \in A^c$ and $x \in B^c$
 iff $x \in A^c \cap B^c$. \qed
+
+Notice how the set proof \emph{is} the logic proof---we just translated notation.
 \end{example}
 
-\begin{example}
+\begin{example}[Power set enumeration]
 List the power set $\Pow(\{1, 2\})$ and verify that $|\Pow(\{1,2\})| = 2^2$.
 
 \emph{Solution.} The subsets of $\{1, 2\}$ are:
@@ -109,9 +212,21 @@ List the power set $\Pow(\{1, 2\})$ and verify that $|\Pow(\{1,2\})| = 2^2$.
 \Pow(\{1, 2\}) = \{\emptyset, \{1\}, \{2\}, \{1, 2\}\}
 \]
 We have $|\Pow(\{1,2\})| = 4 = 2^2$. \checkmark
+
+A systematic way to list these: for each element, decide in/out. That's a binary string of length 2:
+\begin{center}
+\begin{tabular}{cc|l}
+1 in? & 2 in? & Subset \\ \hline
+no & no & $\emptyset$ \\
+yes & no & $\{1\}$ \\
+no & yes & $\{2\}$ \\
+yes & yes & $\{1, 2\}$
+\end{tabular}
+\end{center}
+This is why $|\Pow(A)| = 2^{|A|}$---each element gives a binary choice.
 \end{example}
 
-\begin{example}
+\begin{example}[Cartesian product]
 Let $A = \{0, 1\}$ and $B = \{a, b, c\}$. Find $A \times B$ and $|A \times B|$.
 
 \emph{Solution.}
@@ -119,25 +234,38 @@ Let $A = \{0, 1\}$ and $B = \{a, b, c\}$. Find $A \times B$ and $|A \times B|$.
 A \times B = \{(0, a), (0, b), (0, c), (1, a), (1, b), (1, c)\}
 \]
 We have $|A \times B| = 6 = 2 \times 3 = |A| \cdot |B|$. \checkmark
+
+Think of it as a grid: rows indexed by $A$, columns by $B$, and each cell is a pair.
 \end{example}
 
-\begin{example}
+\begin{example}[Disproving a false identity]
 Disprove: $(A \cup B) \setminus C = A \cup (B \setminus C)$ for all sets $A, B, C$.
 
-\emph{Solution.} We need a counterexample where removing $C$ from $A \cup B$ differs from keeping $A$ intact and only removing $C$ from $B$. The key is to have elements in $A \cap C$ that are not in $B$.
+\emph{Solution.} When asked to disprove a ``for all'' statement, we need one counterexample. The question is: where does this identity go wrong?
 
-Let $A = \{1\}$, $B = \{2\}$, $C = \{1\}$:
+Think about what each side does:
+\begin{itemize}
+  \item LHS: Take everything in $A$ or $B$, then remove anything in $C$.
+  \item RHS: Keep all of $A$, then add things from $B$ that aren't in $C$.
+\end{itemize}
+
+The difference: the LHS removes $C$ from $A$ too, but the RHS keeps $A$ intact!
+
+So we need: something in $A \cap C$ that's not in $B$. Try $A = \{1\}$, $B = \{2\}$, $C = \{1\}$:
 \begin{itemize}
   \item LHS: $A \cup B = \{1, 2\}$, so $(A \cup B) \setminus C = \{1,2\} \setminus \{1\} = \{2\}$.
   \item RHS: $B \setminus C = \{2\} \setminus \{1\} = \{2\}$, so $A \cup (B \setminus C) = \{1\} \cup \{2\} = \{1, 2\}$.
 \end{itemize}
-Since $\{2\} \neq \{1, 2\}$, the identity fails. The issue is that the LHS removes elements of $C$ from all of $A \cup B$, while the RHS preserves $A$ completely. \qed
+Since $\{2\} \neq \{1, 2\}$, the identity fails. \qed
 \end{example}
 
-\begin{example}
+\begin{example}[Absorption law]
 Prove the absorption law: $A \cup (A \cap B) = A$.
 
-\emph{Proof.}
+\emph{Proof.} Before diving into the formal proof, let's think about why this should be true. $A \cup (A \cap B)$ says: take everything in $A$, and also add things that are in both $A$ and $B$. But wait---things in both $A$ and $B$ are already in $A$! So we're adding nothing new.
+
+Formally:
+
 ($\supseteq$) If $x \in A$, then $x \in A \cup (A \cap B)$ since $x$ is in the first part of the union.
 
 ($\subseteq$) If $x \in A \cup (A \cap B)$, then $x \in A$ or $x \in A \cap B$. In either case, $x \in A$ (since $A \cap B \subseteq A$).
@@ -146,7 +274,8 @@ Therefore $A \cup (A \cap B) = A$. \qed
 \end{example}
 
 \begin{goingdeeper}[Going Deeper: Arrows and Diagrams]
-This begins a running thread through the course: learning to think in terms of \emph{arrows} and \emph{diagrams}. These tools will illuminate structures throughout discrete mathematics.
+This begins a running thread through the course: learning to think in terms of \emph{arrows} and \emph{diagrams}. If you find yourself thinking ``these concepts feel weirdly similar across weeks,'' you're not wrong---and this section will eventually show you why.
+
 For more detail, see the Category Theory Companion, Week 1--2.
 
 \subsubsection*{Functions as Arrows}
@@ -161,14 +290,22 @@ We've been writing $f: A \to B$ for functions. The arrow notation isn't accident
   \item \textbf{Identities are neutral:} $f \circ \id_A = f$ and $\id_B \circ f = f$.
 \end{itemize}
 
+If this looks like the axioms for something more general, you're onto something. We'll return to this.
+
 \subsubsection*{Elements as Maps from 1}
-In $\Set$, a singleton set $1 = \{*\}$ is special. Every element $a \in A$ corresponds to a unique map $1 \to A$ that sends $*$ to $a$. In categorical language, \emph{elements of $A$ are its points}, i.e., arrows $1 \to A$.
+In the category of sets, a singleton set $1 = \{*\}$ is special. Every element $a \in A$ corresponds to a unique map $1 \to A$ that sends $*$ to $a$. In categorical language, \emph{elements of $A$ are arrows from $1$ to $A$}.
+
+This might seem like pointless abstraction, but it pays off: it lets us talk about ``elements'' in contexts where there aren't any literal elements, like in categories of spaces or diagrams.
 
 \subsubsection*{Terminal and Initial Objects}
-The singleton set $1$ is a \textbf{terminal object}: for every set $A$, there is exactly one map $A \to 1$. The empty set $0$ is an \textbf{initial object}: for every set $A$, there is exactly one map $0 \to A$. Thinking in terms of arrows makes ``elements'' and ``emptiness'' uniform across categories.
+The singleton set $1$ is a \textbf{terminal object}: for every set $A$, there is exactly one map $A \to 1$. (What else could it do? Send everything to the only point available.)
+
+The empty set $\emptyset$ is an \textbf{initial object}: for every set $A$, there is exactly one map $\emptyset \to A$. (The empty function---it has no elements to send anywhere, so there's exactly one way to do nothing.)
 
 \subsubsection*{Products via Universal Properties}
-The Cartesian product $A \times B$ is the categorical product: for any $X$ with maps $f: X \to A$ and $g: X \to B$, there is a unique map $\langle f, g \rangle: X \to A \times B$ making the projection triangle commute. This universal property will reappear in many disguises.
+The Cartesian product $A \times B$ is the categorical product: for any set $X$ with maps $f: X \to A$ and $g: X \to B$, there is a unique map $\langle f, g \rangle: X \to A \times B$ making the projection triangles commute.
+
+This ``universal property'' will reappear in many disguises throughout the course. It's a way of defining things by what they \emph{do} rather than what they \emph{are}.
 
 \subsubsection*{Diagrams as Visual Equations}
 
@@ -195,38 +332,31 @@ This commutes if $g \circ f = k \circ h$. Both paths from $A$ to $D$ give the sa
 \subsubsection*{Exercises: Arrows and Diagrams}
 
 \begin{enumerate}
-  \item Draw the diagram representing $h \circ g \circ f = k$ for functions $f: A \to B$, $g: B \to C$, $h: C \to D$, and $k: A \to D$. (Hint: it's a triangle with a long path.)
+  \item Draw the diagram representing $h \circ g \circ f = k$ for functions $f: A \to B$, $g: B \to C$, $h: C \to D$, and $k: A \to D$.
 
-  \item Consider this commutative square:
-  \[
-  \begin{tikzcd}
-  A \arrow[r, "f"] \arrow[d, "h"'] & B \arrow[d, "g"] \\
-  C \arrow[r, "k"'] & D
-  \end{tikzcd}
-  \]
-  Write down the equation this diagram represents.
+  \item Consider the commutative square above. Write down the equation this diagram represents.
 
   \item If the square above commutes, and we also have $m: D \to E$, draw the extended diagram. What new equation(s) can we derive involving $m$?
 
-  \item True or False: If $g \circ f = g \circ f'$, then $f = f'$. Either prove this or give a counterexample with small sets.
+  \item True or False: If $g \circ f = g \circ f'$, then $f = f'$. Either prove this or give a counterexample with small sets. (Hint: think about what properties $g$ would need.)
 
-  \item The identity law says $f \circ \id_A = f$. Draw this as a (degenerate) commutative triangle.
+  \item The identity law says $f \circ \id_A = f$. Draw this as a commutative triangle.
 
   \item Associativity says $(h \circ g) \circ f = h \circ (g \circ f)$. Explain why this means we can unambiguously write $h \circ g \circ f$ without parentheses.
 
-  \item Let $f: \{1,2\} \to \{a,b,c\}$ and $g: \{a,b,c\} \to \{x,y\}$ be given functions. How many functions $h: \{1,2\} \to \{x,y\}$ are there such that the triangle with $f$, $g$, $h$ commutes (i.e., $g \circ f = h$)? Is it always exactly one?
+  \item Let $f: \{1,2\} \to \{a,b,c\}$ and $g: \{a,b,c\} \to \{x,y\}$ be specific (not arbitrary) functions. How many functions $h: \{1,2\} \to \{x,y\}$ make the triangle commute (i.e., $g \circ f = h$)? Is it always exactly one?
 
-  \item \textbf{Diagram chase:} Suppose triangles $g \circ f = h$ and $k \circ g = \ell$ both commute. Prove that $k \circ h = \ell \circ f$ by manipulating composites. (This is ``chasing'' around the combined diagram.)
+  \item \textbf{Diagram chase:} Suppose triangles $g \circ f = h$ and $k \circ g = \ell$ both commute. Prove that $k \circ h = \ell \circ f$ by manipulating composites.
 \end{enumerate}
 \end{goingdeeper}
 
 \subsection*{Practice}
 \begin{enumerate}
-  \item Convert $\{x \in \Z : x^2 < 10\}$ into roster notation.
+  \item Convert $\{x \in \Z : x^2 < 10\}$ into roster notation. (Careful: what integers have squares less than 10?)
   \item Prove $A \setminus B = A \cap B^c$ using the element method.
-  \item List $\Pow(\{a,b,c\})$ and verify its size.
-  \item Give a counterexample showing $A \cap (B \setminus C) = (A \cap B) \setminus C$ can fail.
-  \item Prove the absorption law: $A \cup (A \cap B) = A$.
+  \item List $\Pow(\{a,b,c\})$ and verify its size. (There should be 8 subsets. If you got 7, you forgot one---which?)
+  \item Give a counterexample showing $A \cap (B \setminus C) = (A \cap B) \setminus C$ can fail. (Hint: think about where $C$ ``hits'' differently on each side.)
+  \item Prove the other absorption law: $A \cap (A \cup B) = A$.
   \item If $A$ has 4 elements and $B$ has 3 elements, what is the maximum size of $A \cap B$? The minimum?
-  \item Prove that for any sets $A, B, C$: $(A \cap B) \cup (A \cap C) \cup (B \cap C) \subseteq (A \cup B) \cap (A \cup C) \cap (B \cup C)$.
+  \item Prove that for any sets $A, B, C$: $(A \cap B) \cup (A \cap C) \cup (B \cap C) \subseteq (A \cup B) \cap (A \cup C) \cap (B \cup C)$. (This is a subset, not equality---can you find sets where it's strict?)
 \end{enumerate}

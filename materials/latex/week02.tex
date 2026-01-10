@@ -1,7 +1,18 @@
 \section{Week 2: Functions and Cardinality}
+
+\textit{Or: ``How to match things up, and what happens when you can't''}
+
 \subsection*{Reading}
 Epp \S 7.1--7.4.\\
 \textbf{Category theory companion:} Week 1--2 (\texttt{category\_theory\_companion.pdf}).
+
+\subsection*{Why Functions?}
+
+You've been using functions since algebra class, but we haven't really said what they \emph{are}. In calculus, a function is usually ``a rule that assigns outputs to inputs''---but what counts as a ``rule''? Can we have a function defined differently on every input with no pattern at all?
+
+The answer in discrete mathematics is: yes, absolutely. A function is just a complete assignment of outputs to inputs. No formula required. If I hand you a lookup table that assigns a color to each person in the class, that's a function---even if there's no pattern, even if I just made it up arbitrarily.
+
+This abstraction lets us reason about functions in full generality, which becomes important when we start asking questions like: ``Are there more real numbers than integers?'' The answer requires thinking carefully about what it means to ``pair up'' two infinite sets.
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -13,197 +24,343 @@ Epp \S 7.1--7.4.\\
 \end{itemize}
 
 \subsection*{Key definitions and facts}
+
+\subsubsection*{What Is a Function, Really?}
+
 \begin{definition}[Function]
-A function $f: A \to B$ assigns to each element $a \in A$ exactly one element $f(a) \in B$.
+A \textbf{function} $f: A \to B$ assigns to each element $a \in A$ exactly one element $f(a) \in B$.
 \begin{itemize}
-  \item \textbf{Domain:} the set $A$
-  \item \textbf{Codomain:} the set $B$
-  \item \textbf{Image/Range:} $\{f(a) : a \in A\} \subseteq B$
+  \item \textbf{Domain:} the set $A$ (where inputs come from)
+  \item \textbf{Codomain:} the set $B$ (where outputs are allowed to go)
+  \item \textbf{Image/Range:} $\{f(a) : a \in A\} \subseteq B$ (the outputs that actually get hit)
 \end{itemize}
 \end{definition}
+
+The key phrase is ``exactly one.'' Every input must have an output (the function is defined everywhere on $A$), and each input has only one output (no branching). This rules out things like $\pm\sqrt{x}$, which gives two values for each positive input.
+
+Notice the distinction between codomain and image. If $f: \R \to \R$ is defined by $f(x) = x^2$, the codomain is all of $\R$, but the image is only $[0, \infty)$---the squares. The codomain is where outputs \emph{could} land; the image is where they \emph{actually} land.
 
 \begin{definition}[Image and preimage of sets]
-Let $f: A \to B$ be a function.
+Let $f: A \to B$ be a function. We can apply $f$ to entire sets, not just elements:
 \begin{itemize}
-  \item For $S \subseteq A$, the \textbf{image} of $S$ under $f$ is $f(S) = \{f(x) : x \in S\} \subseteq B$.
-  \item For $T \subseteq B$, the \textbf{preimage} (or inverse image) of $T$ under $f$ is $f^{-1}(T) = \{x \in A : f(x) \in T\} \subseteq A$.
+  \item For $S \subseteq A$, the \textbf{image} of $S$ under $f$ is $f(S) = \{f(x) : x \in S\}$.
+  \item For $T \subseteq B$, the \textbf{preimage} of $T$ under $f$ is $f^{-1}(T) = \{x \in A : f(x) \in T\}$.
 \end{itemize}
 \end{definition}
 
-\begin{warning}
-The notation $f^{-1}(T)$ for preimage does \emph{not} require $f$ to have an inverse function. The preimage $f^{-1}(T)$ is always defined as a set, even when $f$ is not bijective.
+\begin{warning}[Preimage vs.\ inverse]
+The notation $f^{-1}(T)$ for preimage does \emph{not} require $f$ to have an inverse function. The preimage is always defined---it's just asking ``which inputs land in $T$?'' Even if $f$ isn't invertible, this question makes sense.
+
+This notation is unfortunate because it looks like we're applying an inverse function, but we're not. Blame historical accident.
 \end{warning}
+
+\subsubsection*{The Three Types of Functions}
+
+There are three properties a function can have, and they tell you about how completely and efficiently the function ``covers'' its codomain.
 
 \begin{definition}[Injective, surjective, bijective]
 Let $f: A \to B$ be a function.
 \begin{itemize}
-  \item $f$ is \textbf{injective} (one-to-one) if $f(x) = f(y)$ implies $x = y$.
-  \item $f$ is \textbf{surjective} (onto) if for every $b \in B$, there exists $a \in A$ with $f(a) = b$.
+  \item $f$ is \textbf{injective} (one-to-one) if different inputs always give different outputs.
+
+  Formally: $f(x) = f(y)$ implies $x = y$.
+
+  Intuitively: no two inputs collide at the same output. You could ``reverse'' the function on its image.
+
+  \item $f$ is \textbf{surjective} (onto) if every element of $B$ gets hit by something.
+
+  Formally: for every $b \in B$, there exists $a \in A$ with $f(a) = b$.
+
+  Intuitively: the image equals the codomain. Nothing in $B$ is left out.
+
   \item $f$ is \textbf{bijective} if it is both injective and surjective.
+
+  Intuitively: a perfect pairing. Every input goes to a unique output, and every possible output gets hit exactly once.
 \end{itemize}
 \end{definition}
 
+Why these names? ``Injective'' suggests that $A$ is ``injected'' into $B$ without overlap. ``Surjective'' suggests the function goes ``sur'' (French for ``onto'') all of $B$. ``Bijective'' is both: a two-way correspondence.
+
+The old-fashioned terms ``one-to-one'' and ``onto'' are still common, but they're less systematic. I'll use both interchangeably.
+
+\begin{keyresult}[Category-theoretic terminology]
+These three properties have categorical names that you'll see in the companion material:
+\begin{itemize}
+  \item An injective function is a \textbf{monomorphism} (``mono'' = one, because each output comes from at most one input)
+  \item A surjective function is an \textbf{epimorphism} (``epi'' = upon, because every output is ``reached'')
+  \item A bijective function is an \textbf{isomorphism} (``iso'' = equal, because it establishes a perfect correspondence)
+\end{itemize}
+In categories beyond sets, these concepts generalize in subtle ways---monomorphisms and epimorphisms are defined by cancellation properties rather than element-wise conditions. But in $\Set$, they coincide with injection and surjection.
+\end{keyresult}
+
 \begin{definition}[Inverse function]
-If $f: A \to B$ is bijective, then $f^{-1}: B \to A$ exists and satisfies:
-$f^{-1}(f(a)) = a$ for all $a \in A$, and $f(f^{-1}(b)) = b$ for all $b \in B$.
+If $f: A \to B$ is bijective, then there exists a unique function $f^{-1}: B \to A$ satisfying:
+\begin{itemize}
+  \item $f^{-1}(f(a)) = a$ for all $a \in A$ (left inverse: undoes $f$)
+  \item $f(f^{-1}(b)) = b$ for all $b \in B$ (right inverse: $f$ undoes it)
+\end{itemize}
 \end{definition}
+
+Why does $f$ need to be bijective? If $f$ isn't injective, two inputs $a_1 \neq a_2$ might have $f(a_1) = f(a_2) = b$---then what should $f^{-1}(b)$ be? If $f$ isn't surjective, some $b \in B$ has no preimage---then $f^{-1}(b)$ doesn't exist.
+
+\subsubsection*{Composition and Its Properties}
 
 \begin{proposition}[Composition preserves properties]
 Let $f: A \to B$ and $g: B \to C$.
 \begin{itemize}
   \item If $f$ and $g$ are injective, then $g \circ f$ is injective.
   \item If $f$ and $g$ are surjective, then $g \circ f$ is surjective.
-  \item If $f$ and $g$ are bijective, then $g \circ f$ is bijective with $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$.
+  \item If $f$ and $g$ are bijective, then $g \circ f$ is bijective, with $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$.
 \end{itemize}
 \end{proposition}
+
+The inverse formula is worth staring at: $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$. To undo ``first $f$, then $g$,'' you do ``first $g^{-1}$, then $f^{-1}$.'' Like putting on and taking off socks and shoes.
 
 \begin{proposition}[Composition tests]
+Here's a useful diagnostic:
 \begin{itemize}
-  \item If $g \circ f$ is injective, then $f$ is injective.
-  \item If $g \circ f$ is surjective, then $g$ is surjective.
+  \item If $g \circ f$ is injective, then $f$ must be injective (but $g$ might not be).
+  \item If $g \circ f$ is surjective, then $g$ must be surjective (but $f$ might not be).
 \end{itemize}
 \end{proposition}
 
+The logic: if the whole pipeline doesn't have collisions, the first step can't have collisions either. If the whole pipeline hits everything, the last step must hit everything.
+
+\subsubsection*{Comparing Infinite Sets}
+
+Here's where things get interesting. How do you decide if two infinite sets are ``the same size''? You can't count to infinity and compare. Instead, we use functions.
+
 \begin{definition}[Countable and uncountable]
-A set $A$ is \textbf{countably infinite} if there is a bijection $A \leftrightarrow \N$.
+A set $A$ is \textbf{countably infinite} if there is a bijection $A \leftrightarrow \N$. In other words, you can list its elements: $a_1, a_2, a_3, \ldots$ with nothing missing and no repeats.
+
 A set is \textbf{countable} if it is finite or countably infinite.
-A set is \textbf{uncountable} if it is not countable.
+
+A set is \textbf{uncountable} if it is not countable---too big to list.
 \end{definition}
+
+This seems like it should make all infinite sets the same size, but it doesn't. Cantor's great discovery was that some infinities are bigger than others.
 
 \begin{theorem}[Countability results]
 \begin{itemize}
-  \item $\Z$ and $\Q$ are countable.
+  \item $\Z$ is countable. (List: $0, 1, -1, 2, -2, 3, -3, \ldots$)
+  \item $\Q$ is countable. (This is surprising! There are ``so many'' rationals.)
   \item The union of countably many countable sets is countable.
-  \item $\R$ is uncountable (Cantor's diagonal argument).
-  \item $|\Pow(\N)| = |\R| > |\N|$.
+  \item $\R$ is \textbf{uncountable}. (Cantor's diagonal argument---see below.)
+  \item $|\Pow(\N)| = |\R| > |\N|$. The power set of the naturals has more elements than $\N$ itself.
 \end{itemize}
 \end{theorem}
 
+That last point is remarkable: even though $\N$ is infinite, its power set is ``more infinite.'' And you can keep going: $\Pow(\Pow(\N))$ is bigger still. There's an infinite hierarchy of infinities.
+
 \subsection*{Worked examples}
-\begin{example}
+
+\begin{example}[Image and preimage computation]
 Let $f: \Z \to \Z$ be defined by $f(n) = n^2 - 1$. Find $f(\{-2, 0, 3\})$ and $f^{-1}(\{0, 3, 8\})$.
 
 \emph{Solution.}
 
-\textbf{Image:} Compute $f$ on each element of $\{-2, 0, 3\}$:
+\textbf{Image:} Just compute $f$ on each element:
 \begin{itemize}
-  \item $f(-2) = (-2)^2 - 1 = 4 - 1 = 3$
+  \item $f(-2) = (-2)^2 - 1 = 3$
   \item $f(0) = 0^2 - 1 = -1$
-  \item $f(3) = 3^2 - 1 = 9 - 1 = 8$
+  \item $f(3) = 3^2 - 1 = 8$
 \end{itemize}
-Thus $f(\{-2, 0, 3\}) = \{-1, 3, 8\}$.
+So $f(\{-2, 0, 3\}) = \{-1, 3, 8\}$.
 
-\textbf{Preimage:} Find all $n \in \Z$ such that $f(n) = n^2 - 1 \in \{0, 3, 8\}$.
+\textbf{Preimage:} Find all integers $n$ with $f(n) \in \{0, 3, 8\}$. We solve $n^2 - 1 = k$ for each target:
 \begin{itemize}
   \item $n^2 - 1 = 0 \Rightarrow n^2 = 1 \Rightarrow n = \pm 1$
   \item $n^2 - 1 = 3 \Rightarrow n^2 = 4 \Rightarrow n = \pm 2$
   \item $n^2 - 1 = 8 \Rightarrow n^2 = 9 \Rightarrow n = \pm 3$
 \end{itemize}
-Thus $f^{-1}(\{0, 3, 8\}) = \{-3, -2, -1, 1, 2, 3\}$.
+So $f^{-1}(\{0, 3, 8\}) = \{-3, -2, -1, 1, 2, 3\}$.
+
+Notice the preimage has more elements than the target set---that's fine! Multiple inputs can map to the same output.
 \end{example}
 
-\begin{example}
+\begin{example}[Injective but not surjective]
 Let $f:\N\to\N$ be $f(n)=2n$. Show $f$ is injective but not surjective.
 
 \emph{Proof.}
-\textbf{Injective:} Suppose $f(n) = f(m)$, i.e., $2n = 2m$. Dividing by 2, we get $n = m$. Thus $f$ is injective.
 
-\textbf{Not surjective:} Consider $1 \in \N$. If $f(n) = 1$, then $2n = 1$, which has no solution in $\N$. So $1$ is not in the image of $f$. \qed
+\textbf{Injective:} Suppose $f(n) = f(m)$, i.e., $2n = 2m$. Dividing by 2, we get $n = m$. So different inputs give different outputs.
+
+\textbf{Not surjective:} We need to find an element of $\N$ that nothing maps to. Consider $1 \in \N$. If $f(n) = 1$, then $2n = 1$, so $n = 1/2$. But $1/2 \notin \N$. So 1 is not in the image of $f$. \qed
+
+This is an example of an infinite set being in bijection with a proper subset of itself---$\N$ bijects with the even naturals. This is actually a \emph{characteristic} property of infinite sets: a set is infinite if and only if it bijects with a proper subset.
 \end{example}
 
-\begin{example}
+\begin{example}[Composition test]
 Prove: If $g \circ f$ is injective, then $f$ is injective.
 
-\emph{Proof.} Suppose $f(x) = f(y)$. Then $g(f(x)) = g(f(y))$, i.e., $(g \circ f)(x) = (g \circ f)(y)$.
-Since $g \circ f$ is injective, $x = y$. Thus $f$ is injective. \qed
+\emph{Proof.} Suppose $f(x) = f(y)$. We want to show $x = y$.
+
+Applying $g$ to both sides: $g(f(x)) = g(f(y))$, i.e., $(g \circ f)(x) = (g \circ f)(y)$.
+
+Since $g \circ f$ is injective, this implies $x = y$.
+
+Therefore $f$ is injective. \qed
+
+The intuition: if the pipeline $f$ then $g$ doesn't have collisions, then $f$ alone can't have collisions either---any collision in $f$ would survive through $g$ and show up in the composition.
 \end{example}
 
-\begin{example}
+\begin{example}[Bijection between $\Z$ and $\N$]
 Give a bijection between $\Z$ and $\N$.
 
-\emph{Solution.} Define $f: \Z \to \N$ by:
+\emph{Solution.} We need to list all integers in a sequence: each integer appears exactly once. The obvious idea---$0, 1, 2, 3, \ldots$---misses all the negatives. We need to interleave:
+\[
+0, 1, -1, 2, -2, 3, -3, \ldots
+\]
+
+The formula that does this:
 \[
 f(n) = \begin{cases}
 2n & \text{if } n > 0 \\
 -2n + 1 & \text{if } n \leq 0
 \end{cases}
 \]
-This maps: $0 \mapsto 1$, $-1 \mapsto 3$, $1 \mapsto 2$, $-2 \mapsto 5$, $2 \mapsto 4$, etc.
+
+Let's check: $f(0) = 1$, $f(-1) = 3$, $f(1) = 2$, $f(-2) = 5$, $f(2) = 4$, and so on. Positive integers go to even naturals; non-positive integers go to odd naturals. Since every natural is either even or odd (but not both), this is a bijection.
 \end{example}
 
-\begin{example}
+\begin{example}[Checking bijectivity]
 Determine whether $f: \R \to \R$ defined by $f(x) = x^3$ is bijective.
 
 \emph{Solution.}
 
-\textbf{Injective:} Suppose $f(a) = f(b)$, i.e., $a^3 = b^3$. Taking cube roots (which is well-defined on $\R$), we get $a = b$. So $f$ is injective.
+\textbf{Injective:} Suppose $f(a) = f(b)$, i.e., $a^3 = b^3$.
 
-\textbf{Surjective:} For any $y \in \R$, we need $x$ with $x^3 = y$. Take $x = \sqrt[3]{y}$ (cube roots exist for all real numbers, including negatives). Then $f(x) = (\sqrt[3]{y})^3 = y$. So $f$ is surjective.
+Unlike squares, cubes determine their base uniquely (even for negative numbers). Taking cube roots: $a = b$. So $f$ is injective.
+
+\textbf{Surjective:} For any $y \in \R$, we need $x$ with $x^3 = y$.
+
+Take $x = \sqrt[3]{y}$. Cube roots exist for all real numbers (including negatives---this is different from square roots!). Then $f(x) = (\sqrt[3]{y})^3 = y$. So $f$ is surjective.
 
 Since $f$ is both injective and surjective, $f$ is bijective. The inverse is $f^{-1}(y) = \sqrt[3]{y}$.
 \end{example}
 
-\begin{example}
-Prove that $(0, 1)$ is uncountable using Cantor's diagonal argument.
+\begin{example}[Cantor's diagonal argument]
+Prove that the interval $(0, 1)$ is uncountable.
 
-\emph{Proof.} Suppose for contradiction that $(0, 1)$ is countable, so we can list all numbers in $(0, 1)$:
+\emph{Proof.} Suppose for contradiction that $(0, 1)$ is countable. Then we can list all its elements:
 \[
 r_1 = 0.d_{11}d_{12}d_{13}\ldots, \quad r_2 = 0.d_{21}d_{22}d_{23}\ldots, \quad r_3 = 0.d_{31}d_{32}d_{33}\ldots, \quad \ldots
 \]
-where each $d_{ij}$ is a digit. Construct a new number $x = 0.e_1e_2e_3\ldots$ where:
+where $d_{ij}$ is the $j$th decimal digit of $r_i$.
+
+Now construct a new number $x = 0.e_1e_2e_3\ldots$ by going down the diagonal and changing each digit:
 \[
 e_n = \begin{cases} 5 & \text{if } d_{nn} \neq 5 \\ 6 & \text{if } d_{nn} = 5 \end{cases}
 \]
-Then $x \in (0, 1)$ but $x \neq r_n$ for any $n$ (they differ in the $n$th decimal place). This contradicts the assumption that all elements of $(0, 1)$ were listed. Therefore $(0, 1)$ is uncountable. \qed
+
+Then $x \in (0, 1)$ (it's a decimal between 0 and 1), but $x \neq r_n$ for \emph{any} $n$---because $x$ and $r_n$ differ in the $n$th decimal place.
+
+This contradicts our assumption that we listed \emph{all} elements of $(0, 1)$.
+
+Therefore $(0, 1)$ is uncountable. \qed
+
+This is Cantor's diagonal argument, and it's one of the most important proofs in mathematics. It shows there are ``more'' real numbers than natural numbers, even though both sets are infinite. The proof generalizes: for any set $A$, the power set $\Pow(A)$ is strictly larger than $A$.
 \end{example}
 
-\begin{example}
+\begin{keyresult}[Most functions are incomputable]
+Here's a striking application of cardinality to computer science: \textbf{almost all} functions from $\N$ to $\N$ cannot be computed by any program.
+
+The argument is beautifully simple, requiring only two facts about cardinality.
+
+\textbf{Fact 1: There are uncountably many functions $\N \to \N$.}
+
+Consider the set of all functions $f: \N \to \N$. By the general formula for function spaces, $|A \to B| = |B|^{|A|}$, so $|\N \to \N| = \aleph_0^{\aleph_0}$. We'll show this equals $|\Pow(\N)| = 2^{\aleph_0} = |\R|$.
+
+For any subset $S \subseteq \N$, define its \emph{characteristic function} $\chi_S: \N \to \N$ by:
+\[
+\chi_S(n) = \begin{cases} 1 & \text{if } n \in S \\ 0 & \text{if } n \notin S \end{cases}
+\]
+This gives an injection from $\Pow(\N)$ into $(\N \to \N)$: different subsets have different characteristic functions. So $|\Pow(\N)| \leq |\N \to \N|$.
+
+Conversely, we can encode any function $f: \N \to \N$ as a subset of $\N \times \N$ (its graph), and $|\N \times \N| = |\N|$, so $|\N \to \N| \leq |\Pow(\N \times \N)| = |\Pow(\N)|$.
+
+Therefore $|\N \to \N| = \aleph_0^{\aleph_0} = |\Pow(\N)| = 2^{\aleph_0} = |\R|$, which is uncountable.
+
+\textbf{Fact 2: There are only countably many programs.}
+
+A program is a finite string of symbols from some finite alphabet (ASCII characters, say, or the syntax of your favorite programming language). How many such strings are there?
+
+\begin{itemize}
+  \item There are finitely many strings of length 0 (just the empty string).
+  \item There are finitely many strings of length 1 (one for each alphabet symbol).
+  \item There are finitely many strings of length 2, length 3, and so on.
+\end{itemize}
+
+The set of all finite strings is the union:
+\[
+\Sigma^* = \Sigma^0 \cup \Sigma^1 \cup \Sigma^2 \cup \Sigma^3 \cup \cdots
+\]
+This is a countable union of finite sets, which is countable. (In fact, you can list strings in ``shortlex'' order: all length-0 strings, then all length-1 strings alphabetically, then length-2, and so on.)
+
+\textbf{The Conclusion.}
+
+Every computable function is computed by some program. So the set of computable functions is at most as large as the set of programs:
+\[
+|\{\text{computable functions } \N \to \N\}| \leq |\{\text{programs}\}| = \aleph_0
+\]
+
+But we just showed $|\{\text{all functions } \N \to \N\}| = 2^{\aleph_0}$, which is strictly larger than $\aleph_0$.
+
+Therefore: there are uncountably many functions, but only countably many programs. The computable functions are a \emph{measure-zero} subset of all functions. In a very precise sense, if you picked a random function $\N \to \N$, the probability that it's computable is zero.
+
+This argument doesn't tell us \emph{which} functions are incomputable---for that, you need specific examples like the halting problem. But it tells us that incomputability is the norm, not the exception. The functions we can actually compute are infinitesimally rare among all the functions that mathematically exist.
+\end{keyresult}
+
+\begin{example}[Surjective composition test]
 Let $f: A \to B$ and $g: B \to C$. Prove that if $g \circ f$ is surjective, then $g$ is surjective.
 
 \emph{Proof.} Let $c \in C$. We need to find some $b \in B$ with $g(b) = c$.
 
 Since $g \circ f$ is surjective, there exists $a \in A$ with $(g \circ f)(a) = c$, i.e., $g(f(a)) = c$.
 
-Let $b = f(a) \in B$. Then $g(b) = g(f(a)) = c$.
+Let $b = f(a)$. Then $b \in B$ and $g(b) = c$.
 
-So for every $c \in C$, we found $b \in B$ with $g(b) = c$. Thus $g$ is surjective. \qed
+So every element of $C$ is hit by $g$, meaning $g$ is surjective. \qed
+
+Note: this doesn't mean $f$ is surjective! The element $b = f(a)$ we found might not be every element of $B$---just enough to cover what we need.
 \end{example}
 
 \begin{goingdeeper}[Going Deeper: The Art of Diagram Chasing]
 Building on Week 1's introduction to diagrams, we now develop \emph{diagram chasing} as a proof technique and encounter our first \emph{universal property}.
+
 For more detail, see the Category Theory Companion, Week 1--2.
 
 \subsubsection*{Diagram Chasing as Proof}
 
-Given that some diagram commutes, we often want to prove that certain composites are equal. The method: find two paths between the same endpoints and use commutativity.
+When a diagram commutes, we can prove equations between composites by finding different paths. The technique is almost mechanical: follow arrows, use commutativity, conclude equality.
 
-\textbf{Example.} Suppose this diagram commutes:
+\textbf{Example.} Suppose this square commutes (meaning $g \circ f = k \circ h$):
 \[
 \begin{tikzcd}
 A \arrow[r, "f"] \arrow[d, "h"'] & B \arrow[d, "g"] \\
 C \arrow[r, "k"'] & D
 \end{tikzcd}
 \]
-and we also know that $m \circ g = n \circ k$ for some $m, n$. Then:
-\[
-m \circ g \circ f = n \circ k \circ h
-\]
-\emph{Proof:} $m \circ g \circ f = m \circ (g \circ f) = m \circ (k \circ h) = (m \circ k) \circ h$... wait, that's not quite right. Let's be more careful: $m \circ g \circ f = (m \circ g) \circ f = (n \circ k) \circ f$. Hmm, we need $k \circ h = g \circ f$. So: $m \circ g \circ f = m \circ (g \circ f) = m \circ (k \circ h)$. And $(m \circ g) \circ f = (n \circ k) \circ f$...
 
-Actually, the key insight is simpler: from the square, $g \circ f = k \circ h$. So $m \circ g \circ f = m \circ k \circ h$. If additionally $m \circ k = n \circ k$... This shows why we must chase carefully!
+If we extend with another arrow $m: D \to E$, we automatically get:
+\[
+m \circ g \circ f = m \circ k \circ h
+\]
+Because $g \circ f = k \circ h$, so composing with $m$ on the left preserves the equality.
 
 \subsubsection*{Cancellation Properties}
 
-Recall from the main notes that injective functions are ``left-cancellable'':
+Injective functions are ``left-cancellable'':
 \[
 f \circ g = f \circ h \implies g = h \quad \text{(when } f \text{ is injective)}
 \]
-And surjective functions are ``right-cancellable'':
+
+Surjective functions are ``right-cancellable'':
 \[
 g \circ f = h \circ f \implies g = h \quad \text{(when } f \text{ is surjective)}
 \]
 
-These properties can be drawn as diagrams:
+These can be drawn as diagrams:
 \[
 \begin{tikzcd}
 X \arrow[r, shift left, "g"] \arrow[r, shift right, "h"'] & A \arrow[r, "f"] & B
@@ -216,85 +373,76 @@ A \arrow[r, "f"] & B \arrow[r, shift left, "g"] \arrow[r, shift right, "h"'] & X
 \quad\text{(right cancellation)}
 \]
 
-\subsubsection*{Isomorphisms, Sections, and Retractions}
-A map $f: A \to B$ is an \textbf{isomorphism} if there exists $g: B \to A$ with $g \circ f = \id_A$ and $f \circ g = \id_B$. In $\Set$, isomorphisms are exactly bijections.
+\subsubsection*{Monomorphisms, Epimorphisms, and Isomorphisms}
 
-A \textbf{section} (right inverse) is a map $s: B \to A$ with $f \circ s = \id_B$. A \textbf{retraction} (left inverse) is a map $r: B \to A$ with $r \circ f = \id_A$:
-\[
-\begin{tikzcd}
-A \arrow[r, "f"] & B \arrow[l, bend left, "s"] \\
-A \arrow[r, "f"] & B \arrow[l, bend right, "r"']
-\end{tikzcd}
-\]
-Sections force $f$ to be surjective; retractions force $f$ to be injective.
+We introduced the categorical names earlier. Now let's see why category theorists use different definitions than the set-theoretic ones.
 
-\subsubsection*{Idempotents and Retracts}
-A map $p: A \to A$ is \textbf{idempotent} if $p \circ p = p$. In $\Set$, idempotents correspond to ``projection onto a subset'': if $p = i \circ r$ with $r \circ i = \id_B$, then $p$ projects $A$ onto the retract $B$.
+A \textbf{monomorphism} is a map $f: A \to B$ that is \emph{left-cancellable}: if $f \circ g = f \circ h$, then $g = h$. In $\Set$, this is equivalent to being injective.
 
-\subsubsection*{The ``Unique Arrow'' Pattern}
+An \textbf{epimorphism} is a map $f: A \to B$ that is \emph{right-cancellable}: if $g \circ f = h \circ f$, then $g = h$. In $\Set$, this is equivalent to being surjective.
 
-A powerful pattern emerges: \emph{there exists a unique arrow making the diagram commute}. When we have uniqueness:
+An \textbf{isomorphism} is a map $f: A \to B$ for which there exists $g: B \to A$ with $g \circ f = \id_A$ and $f \circ g = \id_B$. In $\Set$, isomorphisms are exactly the bijections.
+
+\textbf{Why the cancellation definitions?} Because they make sense in any category, even when there are no ``elements'' to talk about. In $\Set$, the definitions coincide with injection/surjection. But in other categories (groups, rings, topological spaces), they can differ in surprising ways.
+
+\subsubsection*{Sections and Retractions}
+
+We can have one-sided inverses:
 \begin{itemize}
-  \item Any two arrows satisfying the condition must be equal
-  \item This lets us prove equality by showing both arrows satisfy the same property
+  \item A \textbf{section} (right inverse) of $f: A \to B$ is a map $s: B \to A$ with $f \circ s = \id_B$. If $f$ has a section, $f$ must be an epimorphism (surjective in $\Set$).
+  \item A \textbf{retraction} (left inverse) of $f: A \to B$ is a map $r: B \to A$ with $r \circ f = \id_A$. If $f$ has a retraction, $f$ must be a monomorphism (injective in $\Set$).
 \end{itemize}
+
+In $\Set$, a function has a section iff it's surjective (you can ``pick'' a preimage for each output), and has a retraction iff it's injective and $A$ is nonempty (you can ``invert'' on the image and send everything else somewhere).
 
 \subsubsection*{Universal Property of Products}
 
-The Cartesian product $A \times B$ satisfies a \emph{universal property}: for any set $X$ with functions $f: X \to A$ and $g: X \to B$, there exists a \textbf{unique} function $\langle f, g \rangle: X \to A \times B$ making this diagram commute:
+The Cartesian product $A \times B$ isn't just ``pairs of elements''---it's the \emph{unique} (up to isomorphism) set that satisfies a certain property.
+
+\textbf{Universal property:} For any set $X$ with functions $f: X \to A$ and $g: X \to B$, there exists a \textbf{unique} function $\langle f, g \rangle: X \to A \times B$ making this diagram commute:
 \[
 \begin{tikzcd}
  & X \arrow[dl, "f"'] \arrow[d, dashed, "{\langle f, g \rangle}"] \arrow[dr, "g"] & \\
 A & A \times B \arrow[l, "\pi_1"] \arrow[r, "\pi_2"'] & B
 \end{tikzcd}
 \]
-The function is $\langle f, g \rangle(x) = (f(x), g(x))$. The universal property says this is the \emph{only} way to ``factor through'' $A \times B$.
 
-\textbf{Why uniqueness matters:} If someone gives you another function $h: X \to A \times B$ with $\pi_1 \circ h = f$ and $\pi_2 \circ h = g$, you can immediately conclude $h = \langle f, g \rangle$!
+The function is $\langle f, g \rangle(x) = (f(x), g(x))$. The universal property says: if you want to map into a product, you just need to say where each component goes.
+
+\textbf{Why uniqueness matters:} If someone claims to have another function $h: X \to A \times B$ with $\pi_1 \circ h = f$ and $\pi_2 \circ h = g$, you can immediately conclude $h = \langle f, g \rangle$. Uniqueness lets you prove equality by verifying a property, not by comparing definitions.
 
 \subsubsection*{Exercises: Diagram Chasing}
 
 \begin{enumerate}
-  \item \textbf{Cancellation practice:} Let $f: A \to B$ be injective, and suppose $f \circ g = f \circ h$ for $g, h: X \to A$. Prove $g = h$ by considering what happens element-by-element.
+  \item Let $f: A \to B$ be injective. If $f \circ g = f \circ h$ for $g, h: X \to A$, prove $g = h$ element-by-element.
 
-  \item Draw the diagram expressing ``$f$ is left-cancellable''---show $g$, $h$, and $f$, and indicate the conclusion $g = h$.
+  \item Draw the diagram expressing ``$f$ is left-cancellable.''
 
-  \item If $g \circ f$ is injective, prove that $f$ must be injective. (Hint: Suppose $f(a) = f(b)$ and show $a = b$.)
+  \item If $g \circ f$ is injective, prove $f$ is injective.
 
   \item If $g \circ f$ is injective, must $g$ be injective? Prove or give a counterexample.
 
-  \item If $g \circ f$ is surjective, prove that $g$ must be surjective.
+  \item If $g \circ f$ is surjective, prove $g$ is surjective.
 
   \item If $g \circ f$ is surjective, must $f$ be surjective? Prove or give a counterexample.
 
-  \item \textbf{Product verification:} Let $A = \{1, 2\}$, $B = \{a, b, c\}$, $X = \{*\}$ (a one-element set). Define $f(*) = 1$ and $g(*) = b$. What is $\langle f, g \rangle(*)$?
+  \item Let $A = \{1, 2\}$, $B = \{a, b, c\}$, $X = \{*\}$. If $f(*) = 1$ and $g(*) = b$, what is $\langle f, g \rangle(*)$?
 
-  \item For $A = \{1, 2\}$, $B = \{a, b\}$, $X = \{x, y\}$, define $f(x) = 1$, $f(y) = 2$, $g(x) = a$, $g(y) = b$. Write out $\langle f, g \rangle$ explicitly.
+  \item For $A = \{1, 2\}$, $B = \{a, b\}$, $X = \{x, y\}$ with $f(x) = 1$, $f(y) = 2$, $g(x) = a$, $g(y) = b$, write out $\langle f, g \rangle$ explicitly.
 
-  \item \textbf{Uniqueness in action:} Suppose $h, h': X \to A \times B$ both satisfy $\pi_1 \circ h = f$, $\pi_2 \circ h = g$ and the same for $h'$. Prove $h = h'$ using element-by-element reasoning.
+  \item Suppose $h, h': X \to A \times B$ both satisfy $\pi_1 \circ h = \pi_1 \circ h' = f$ and $\pi_2 \circ h = \pi_2 \circ h' = g$. Prove $h = h'$.
 
-  \item \textbf{Diagram chase:} Given this commuting diagram:
-  \[
-  \begin{tikzcd}
-  A \arrow[r, "f"] \arrow[d, "h"'] & B \arrow[d, "g"] \\
-  C \arrow[r, "k"'] & D
-  \end{tikzcd}
-  \]
-  Prove that $g \circ f = k \circ h$ by writing out what ``the diagram commutes'' means.
-
-  \item If $f: A \to B$ is a bijection with inverse $f^{-1}: B \to A$, draw the two triangles showing $f^{-1} \circ f = \id_A$ and $f \circ f^{-1} = \id_B$.
-
-  \item \textbf{Challenge:} Prove that if $f: A \to B$ has both a left inverse $g$ (meaning $g \circ f = \id_A$) and a right inverse $h$ (meaning $f \circ h = \id_B$), then $g = h$. (Hint: Compute $g \circ f \circ h$ two ways.)
+  \item If $f: A \to B$ has both a left inverse $g$ and a right inverse $h$, prove $g = h$. (Hint: compute $g \circ f \circ h$ two ways.)
 \end{enumerate}
 \end{goingdeeper}
 
 \subsection*{Practice}
 \begin{enumerate}
-  \item Give an explicit bijection between $\Z$ and $\N$.
-  \item Decide whether $f(x)=x^3$ from $\R$ to $\R$ is bijective and justify.
-  \item Prove that if $g\circ f$ is injective, then $f$ is injective.
-  \item Show that a finite set cannot be in bijection with a proper subset of itself.
-  \item Prove that $f: A \to B$ is injective iff there exists $g: B \to A$ with $g \circ f = \text{id}_A$.
-  \item Prove that $f: A \to B$ is surjective iff there exists $g: B \to A$ with $f \circ g = \text{id}_B$.
-  \item Show that the set of all finite subsets of $\N$ is countable.
+  \item Give an explicit bijection between $\Z$ and $\N$. (If you use the one from the notes, verify it's actually a bijection.)
+  \item Decide whether $f(x)=x^3$ from $\R$ to $\R$ is bijective and justify. What about $f(x) = x^3$ from $\R$ to $\R_{\geq 0}$?
+  \item Prove that if $g\circ f$ is injective, then $f$ is injective. (Don't just cite the theorem---write out the proof.)
+  \item Prove that a finite set cannot be in bijection with a proper subset of itself. (This fails for infinite sets!)
+  \item Prove: $f: A \to B$ is injective if and only if there exists $g: B \to A$ with $g \circ f = \id_A$. (Assume $A$ is nonempty.)
+  \item Prove: $f: A \to B$ is surjective if and only if there exists $g: B \to A$ with $f \circ g = \id_B$.
+  \item Show that the set of all \emph{finite} subsets of $\N$ is countable. (Hint: can you encode a finite subset as a single natural number?)
 \end{enumerate}

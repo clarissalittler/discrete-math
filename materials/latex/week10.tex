@@ -1,7 +1,18 @@
 \section{Week 10: Analysis of Algorithm Efficiency}
+
+\textit{Or: ``How long will this take, and why constants don't matter''}
+
 \subsection*{Reading}
 Epp \S 11.1--11.5.\\
 \textbf{Category theory companion:} Week 10 (\texttt{category\_theory\_companion.pdf}).
+
+\subsection*{Why Algorithm Analysis?}
+
+You've written a program. It works. But is it \emph{fast}? Will it still work on inputs a thousand times larger? A million times? Understanding how running time grows with input size separates programs that scale from programs that don't.
+
+Algorithm analysis gives us a language for discussing efficiency without getting bogged down in implementation details. When we say ``merge sort is $O(n \log n)$'' and ``bubble sort is $O(n^2)$,'' we're capturing something essential about these algorithms that holds regardless of the programming language, the compiler, or the hardware.
+
+This week introduces asymptotic notation (big-$O$ and friends), techniques for analyzing loops and recursion, and the master theorem for solving divide-and-conquer recurrences. These tools are fundamental to thinking about algorithms.
 
 \subsection*{Learning objectives}
 \begin{itemize}
@@ -13,6 +24,8 @@ Epp \S 11.1--11.5.\\
 \end{itemize}
 
 \subsection*{Key definitions and facts}
+
+\subsubsection*{Asymptotic Notation}
 
 \begin{definition}[Asymptotic notation]
 Let $f, g: \N \to \R^+$ be functions.
@@ -30,19 +43,23 @@ f(n) \geq c \cdot g(n) \quad \text{for all } n \geq n_0
 \textbf{Big-Theta (tight bound):} $f(n) = \Theta(g(n))$ if $f(n) = O(g(n))$ and $f(n) = \Omega(g(n))$.
 \end{definition}
 
-\begin{theorem}[Limit test for asymptotic notation]
+The notation $f(n) = O(g(n))$ is a slight abuse---it's not really ``equals'' but ``is.'' Think of it as ``$f$ is big-O of $g$'' or ``$f$ grows no faster than $g$.''
+
+Big-$O$ gives upper bounds. Big-$\Omega$ gives lower bounds. Big-$\Theta$ says the function is bounded both above and below---it captures the exact growth rate.
+
+\begin{theorem}[Limit test]
 If $\lim_{n \to \infty} \frac{f(n)}{g(n)} = L$, then:
 \begin{itemize}
-  \item $L = 0 \Rightarrow f(n) = O(g(n))$ but $f(n) \neq \Theta(g(n))$
-  \item $0 < L < \infty \Rightarrow f(n) = \Theta(g(n))$
-  \item $L = \infty \Rightarrow f(n) = \Omega(g(n))$ but $f(n) \neq O(g(n))$
+  \item $L = 0 \Rightarrow f(n) = O(g(n))$ but $f(n) \neq \Theta(g(n))$ (f grows slower)
+  \item $0 < L < \infty \Rightarrow f(n) = \Theta(g(n))$ (same growth rate)
+  \item $L = \infty \Rightarrow f(n) = \Omega(g(n))$ but $f(n) \neq O(g(n))$ (f grows faster)
 \end{itemize}
 \end{theorem}
 
 \begin{definition}[Little-o and little-omega]
-\textbf{Little-o:} $f(n) = o(g(n))$ if $\lim_{n \to \infty} \frac{f(n)}{g(n)} = 0$. This means $f$ grows strictly slower than $g$.
+\textbf{Little-o:} $f(n) = o(g(n))$ means $\lim_{n \to \infty} \frac{f(n)}{g(n)} = 0$. Strictly slower growth.
 
-\textbf{Little-omega:} $f(n) = \omega(g(n))$ if $\lim_{n \to \infty} \frac{f(n)}{g(n)} = \infty$. This means $f$ grows strictly faster than $g$.
+\textbf{Little-omega:} $f(n) = \omega(g(n))$ means $\lim_{n \to \infty} \frac{f(n)}{g(n)} = \infty$. Strictly faster growth.
 \end{definition}
 
 \begin{theorem}[Properties of asymptotic notation]
@@ -60,7 +77,7 @@ If $\lim_{n \to \infty} \frac{f(n)}{g(n)} = L$, then:
 \subsection*{Common complexity classes}
 
 \begin{definition}[Growth rate hierarchy]
-Listed from slowest to fastest growth:
+From slowest to fastest:
 \[
 O(1) \subset O(\log n) \subset O(\sqrt{n}) \subset O(n) \subset O(n \log n) \subset O(n^2) \subset O(n^3) \subset O(2^n) \subset O(n!)
 \]
@@ -75,29 +92,31 @@ $O(\log n)$ & Logarithmic & Binary search \\
 $O(n)$ & Linear & Linear search \\
 $O(n \log n)$ & Linearithmic & Merge sort \\
 $O(n^2)$ & Quadratic & Bubble sort \\
-$O(n^3)$ & Cubic & Matrix multiplication (naive) \\
+$O(n^3)$ & Cubic & Naive matrix multiplication \\
 $O(2^n)$ & Exponential & Subset enumeration \\
-$O(n!)$ & Factorial & Permutation enumeration \\
+$O(n!)$ & Factorial & Permutation enumeration
 \end{tabular}
 \end{center}
+
+The jump from polynomial ($n^k$) to exponential ($2^n$) is critical. Polynomial-time algorithms are ``feasible''; exponential-time algorithms quickly become impractical.
 
 \subsection*{Analyzing code}
 
 \begin{theorem}[Loop analysis]
 \begin{itemize}
-  \item A loop that runs $n$ times with $O(1)$ body: $O(n)$
+  \item A loop running $n$ times with $O(1)$ body: $O(n)$
   \item Two nested loops, each running $n$ times: $O(n^2)$
-  \item Three nested loops, each running $n$ times: $O(n^3)$
-  \item A loop that halves the problem size each iteration: $O(\log n)$
+  \item Three nested loops: $O(n^3)$
+  \item A loop that halves the problem each iteration: $O(\log n)$
 \end{itemize}
 \end{theorem}
 
 \begin{strategy}
 To analyze a loop:
 \begin{enumerate}
-  \item Count how many times the loop body executes.
+  \item Count iterations.
   \item Multiply by the cost of one iteration.
-  \item For nested loops, multiply the counts of each level.
+  \item For nested loops, multiply the iteration counts.
 \end{enumerate}
 \end{strategy}
 
@@ -114,23 +133,26 @@ To analyze a loop:
 \subsection*{Recurrence relations}
 
 \begin{definition}[Recurrence relation]
-A \textbf{recurrence relation} expresses $T(n)$ in terms of $T$ applied to smaller inputs. Common form for divide-and-conquer:
+A \textbf{recurrence relation} expresses $T(n)$ in terms of smaller inputs. Common divide-and-conquer form:
 \[
 T(n) = aT(n/b) + f(n)
 \]
-where $a \geq 1$ is the number of subproblems, $n/b$ is the subproblem size, and $f(n)$ is the work outside the recursive calls.
+where $a \geq 1$ subproblems of size $n/b$ are solved, and $f(n)$ is the work outside recursion.
 \end{definition}
 
 \begin{theorem}[Master theorem]
-For recurrence $T(n) = aT(n/b) + f(n)$ where $a \geq 1$, $b > 1$:
+For $T(n) = aT(n/b) + f(n)$ with $a \geq 1$, $b > 1$:
 
 Let $c = \log_b a$. Compare $f(n)$ with $n^c$:
 
 \textbf{Case 1:} If $f(n) = O(n^{c - \epsilon})$ for some $\epsilon > 0$, then $T(n) = \Theta(n^c)$.
+(Recursion dominates.)
 
 \textbf{Case 2:} If $f(n) = \Theta(n^c \log^k n)$ for some $k \geq 0$, then $T(n) = \Theta(n^c \log^{k+1} n)$.
+(Balanced.)
 
 \textbf{Case 3:} If $f(n) = \Omega(n^{c + \epsilon})$ for some $\epsilon > 0$ and $af(n/b) \leq kf(n)$ for some $k < 1$, then $T(n) = \Theta(f(n))$.
+(Work dominates.)
 \end{theorem}
 
 \begin{theorem}[Common recurrences]
@@ -143,7 +165,7 @@ $T(n) = T(n-1) + O(1)$ & $O(n)$ & Linear recursion \\
 $T(n) = T(n-1) + O(n)$ & $O(n^2)$ & Selection sort \\
 $T(n) = 2T(n/2) + O(1)$ & $O(n)$ & Tree traversal \\
 $T(n) = 2T(n/2) + O(n)$ & $O(n \log n)$ & Merge sort \\
-$T(n) = 2T(n-1) + O(1)$ & $O(2^n)$ & Fibonacci (naive) \\
+$T(n) = 2T(n-1) + O(1)$ & $O(2^n)$ & Naive Fibonacci
 \end{tabular}
 \end{center}
 \end{theorem}
@@ -181,98 +203,106 @@ $T(n) = 2T(n-1) + O(1)$ & $O(2^n)$ & Fibonacci (naive) \\
   \item \textbf{Best case:} Minimum time over all inputs of size $n$.
   \item \textbf{Average case:} Expected time over a probability distribution on inputs.
 \end{itemize}
-Usually, we report worst-case complexity.
+Usually, we report worst-case complexity---it provides guarantees.
 \end{definition}
 
 \subsection*{Complexity classes and reductions}
 
-\begin{definition}[Decision problem]
-A \textbf{decision problem} has a yes/no answer for each input. Complexity classes are typically defined for decision problems.
-\end{definition}
-
-\begin{definition}[Classes P and NP]
+\begin{definition}[P and NP]
 \begin{itemize}
-  \item $\mathbf{P}$: problems solvable in polynomial time by a deterministic algorithm.
-  \item $\mathbf{NP}$: problems whose solutions can be \emph{verified} in polynomial time (equivalently, solvable by a nondeterministic polynomial-time algorithm).
+  \item $\mathbf{P}$: Problems solvable in polynomial time by a deterministic algorithm.
+  \item $\mathbf{NP}$: Problems whose solutions can be \emph{verified} in polynomial time. Equivalently, solvable in polynomial time by a nondeterministic algorithm.
 \end{itemize}
 \end{definition}
 
-\begin{definition}[Reductions, NP-hard, NP-complete]
+$\mathbf{P} \subseteq \mathbf{NP}$ (anything solvable quickly is certainly verifiable quickly). Whether $\mathbf{P} = \mathbf{NP}$ is the most famous open problem in computer science.
+
+\begin{definition}[Reductions and NP-completeness]
 A polynomial-time reduction from $A$ to $B$ (written $A \leq_p B$) transforms instances of $A$ into instances of $B$ preserving yes/no answers.
 \begin{itemize}
   \item $B$ is \textbf{NP-hard} if every problem in NP reduces to $B$.
-  \item $B$ is \textbf{NP-complete} if $B \in \textbf{NP}$ and $B$ is NP-hard.
+  \item $B$ is \textbf{NP-complete} if $B \in \mathbf{NP}$ and $B$ is NP-hard.
 \end{itemize}
 \end{definition}
+
+If any NP-complete problem is in $\mathbf{P}$, then $\mathbf{P} = \mathbf{NP}$. The prevailing belief is that this doesn't happen.
 
 \begin{strategy}
 To prove a problem $B$ is NP-complete:
 \begin{enumerate}
-  \item Show $B \in \mathbf{NP}$ (solutions are verifiable in poly time).
+  \item Show $B \in \mathbf{NP}$ (solutions are verifiable in polynomial time).
   \item Reduce a known NP-complete problem $A$ to $B$ in polynomial time.
 \end{enumerate}
 \end{strategy}
 
 \begin{example}[Common NP-complete problems]
-SAT, 3-SAT, CLIQUE, VERTEX COVER, HAMILTONIAN CYCLE, and SUBSET SUM are all NP-complete.
+SAT, 3-SAT, CLIQUE, VERTEX COVER, HAMILTONIAN CYCLE, SUBSET SUM.
 \end{example}
 
 \subsection*{Worked examples}
 
-\begin{example}
+\begin{example}[Proving big-Theta]
 Show that $3n^2 + 5n + 7 = \Theta(n^2)$.
 
 \emph{Solution.}
 
-\textbf{Upper bound:} For $n \geq 1$: $3n^2 + 5n + 7 \leq 3n^2 + 5n^2 + 7n^2 = 15n^2$. So $3n^2 + 5n + 7 = O(n^2)$ with $c = 15$, $n_0 = 1$.
+\textbf{Upper bound:} For $n \geq 1$:
+\[
+3n^2 + 5n + 7 \leq 3n^2 + 5n^2 + 7n^2 = 15n^2
+\]
+So $3n^2 + 5n + 7 = O(n^2)$ with $c = 15$, $n_0 = 1$.
 
-\textbf{Lower bound:} For $n \geq 1$: $3n^2 + 5n + 7 \geq 3n^2$. So $3n^2 + 5n + 7 = \Omega(n^2)$ with $c = 3$, $n_0 = 1$.
+\textbf{Lower bound:} For $n \geq 1$:
+\[
+3n^2 + 5n + 7 \geq 3n^2
+\]
+So $3n^2 + 5n + 7 = \Omega(n^2)$ with $c = 3$, $n_0 = 1$.
 
 Therefore $3n^2 + 5n + 7 = \Theta(n^2)$.
 \end{example}
 
-\begin{example}
-Order the functions $n \log n$, $n^{1.5}$, $2^n$, $n^3$ by growth rate.
+\begin{example}[Ordering by growth rate]
+Order: $n \log n$, $n^{1.5}$, $2^n$, $n^3$.
 
-\emph{Solution.} Compare using limits:
+\emph{Solution.} Use limits:
 \begin{itemize}
-  \item $\lim_{n \to \infty} \frac{n \log n}{n^{1.5}} = \lim_{n \to \infty} \frac{\log n}{\sqrt{n}} = 0$ (L'Hôpital's). So $n \log n = o(n^{1.5})$.
-  \item $\lim_{n \to \infty} \frac{n^{1.5}}{n^3} = \lim_{n \to \infty} \frac{1}{n^{1.5}} = 0$. So $n^{1.5} = o(n^3)$.
-  \item $\lim_{n \to \infty} \frac{n^3}{2^n} = 0$ (exponential dominates polynomial). So $n^3 = o(2^n)$.
+  \item $\lim \frac{n \log n}{n^{1.5}} = \lim \frac{\log n}{\sqrt{n}} = 0$ (L'Hôpital). So $n \log n = o(n^{1.5})$.
+  \item $\lim \frac{n^{1.5}}{n^3} = \lim \frac{1}{n^{1.5}} = 0$. So $n^{1.5} = o(n^3)$.
+  \item $\lim \frac{n^3}{2^n} = 0$ (exponential dominates). So $n^3 = o(2^n)$.
 \end{itemize}
 
-Order (slowest to fastest): $n \log n \prec n^{1.5} \prec n^3 \prec 2^n$.
+Order: $n \log n \prec n^{1.5} \prec n^3 \prec 2^n$.
 \end{example}
 
-\begin{example}
-Analyze the runtime of nested loops:
+\begin{example}[Nested loops, both to $n$]
+Analyze:
 \begin{verbatim}
 for i = 1 to n:
     for j = 1 to n:
         // O(1) operation
 \end{verbatim}
 
-\emph{Solution.} The inner loop runs $n$ times for each of $n$ iterations of the outer loop. Total iterations: $n \times n = n^2$. Each iteration is $O(1)$. Total: $O(n^2)$.
+\emph{Solution.} Inner loop runs $n$ times per outer iteration. Outer runs $n$ times. Total: $n \times n = n^2$. Complexity: $O(n^2)$.
 \end{example}
 
-\begin{example}
-Analyze the runtime:
+\begin{example}[Nested loops, triangular]
+Analyze:
 \begin{verbatim}
 for i = 1 to n:
     for j = 1 to i:
         // O(1) operation
 \end{verbatim}
 
-\emph{Solution.} The inner loop runs $i$ times. Total iterations:
+\emph{Solution.} Inner loop runs $i$ times. Total iterations:
 \[
 \sum_{i=1}^n i = \frac{n(n+1)}{2} = \Theta(n^2)
 \]
 \end{example}
 
-\begin{example}
-Solve the recurrence $T(n) = 2T(n/2) + n$ with $T(1) = 1$.
+\begin{example}[Master theorem]
+Solve $T(n) = 2T(n/2) + n$ with $T(1) = 1$.
 
-\emph{Solution (Master theorem).} Here $a = 2$, $b = 2$, $f(n) = n$.
+\emph{Solution.} Identify: $a = 2$, $b = 2$, $f(n) = n$.
 
 $c = \log_b a = \log_2 2 = 1$, so $n^c = n$.
 
@@ -281,7 +311,7 @@ Compare: $f(n) = n = \Theta(n^1) = \Theta(n^c \log^0 n)$.
 This is Case 2 with $k = 0$: $T(n) = \Theta(n^c \log^{k+1} n) = \Theta(n \log n)$.
 \end{example}
 
-\begin{example}
+\begin{example}[Expansion method]
 Solve $T(n) = 2T(n/2) + n$ by expansion.
 
 \emph{Solution.}
@@ -299,141 +329,120 @@ T(n) = 2^{\log n} \cdot 1 + n \log n = n + n \log n = \Theta(n \log n)
 \]
 \end{example}
 
-\begin{example}
-Analyze the runtime of binary search.
+\begin{example}[Binary search]
+Analyze binary search.
 
-\emph{Solution.} At each step, the search space is halved. If $T(n)$ is the time for a search in an array of size $n$:
+\emph{Solution.} Each step halves the search space. Recurrence:
 \[
 T(n) = T(n/2) + O(1), \quad T(1) = O(1)
 \]
-By Master theorem: $a = 1$, $b = 2$, $f(n) = O(1)$.
-$c = \log_2 1 = 0$, so $n^c = 1$.
-$f(n) = O(1) = \Theta(n^0)$. Case 2 with $k = 0$: $T(n) = \Theta(\log n)$.
+By master theorem: $a = 1$, $b = 2$, $f(n) = O(1)$. $c = \log_2 1 = 0$, so $n^c = 1$.
+
+$f(n) = \Theta(n^0)$. Case 2 with $k = 0$: $T(n) = \Theta(\log n)$.
 \end{example}
 
-\begin{example}
+\begin{example}[Log factorial]
 Show that $\log(n!) = \Theta(n \log n)$.
 
 \emph{Solution.}
 
-\textbf{Upper bound:} $n! = 1 \cdot 2 \cdots n \leq n^n$, so $\log(n!) \leq n \log n$.
+\textbf{Upper bound:} $n! \leq n^n$, so $\log(n!) \leq n \log n$.
 
-\textbf{Lower bound:} $n! = 1 \cdot 2 \cdots n \geq (n/2)^{n/2}$ (considering only the largest $n/2$ terms), so:
+\textbf{Lower bound:} $n! \geq (n/2)^{n/2}$ (considering only the top half of terms), so:
 \[
-\log(n!) \geq \frac{n}{2} \log \frac{n}{2} = \frac{n}{2} (\log n - 1) = \Omega(n \log n)
+\log(n!) \geq \frac{n}{2} \log \frac{n}{2} = \frac{n}{2}(\log n - 1) = \Omega(n \log n)
 \]
 
 Therefore $\log(n!) = \Theta(n \log n)$.
 \end{example}
 
-\begin{example}
-Prove that $\log n = O(n^\epsilon)$ for any $\epsilon > 0$.
+\begin{example}[Log grows slower than any polynomial]
+Prove $\log n = O(n^\epsilon)$ for any $\epsilon > 0$.
 
-\emph{Proof.} Use the limit test:
+\emph{Proof.} Compute the limit:
 \[
 \lim_{n \to \infty} \frac{\log n}{n^\epsilon}
 \]
-This is an $\infty/\infty$ form, so apply L'Hôpital's rule:
+This is $\infty/\infty$. Apply L'Hôpital:
 \[
 \lim_{n \to \infty} \frac{1/n}{\epsilon n^{\epsilon - 1}} = \lim_{n \to \infty} \frac{1}{\epsilon n^\epsilon} = 0
 \]
-Since the limit is 0, we have $\log n = O(n^\epsilon)$. In fact, $\log n = o(n^\epsilon)$, meaning log grows strictly slower than any positive power of $n$.
+Since the limit is 0, $\log n = O(n^\epsilon)$. In fact, $\log n = o(n^\epsilon)$: log grows strictly slower than any positive power.
 \end{example}
 
-\begin{example}
-Show that $2^{n+1} = \Theta(2^n)$ but $2^{2n} \neq O(2^n)$.
+\begin{example}[Constant factors in exponents matter]
+Show $2^{n+1} = \Theta(2^n)$ but $2^{2n} \neq O(2^n)$.
 
 \emph{Solution.}
 
-\textbf{Part 1:} $2^{n+1} = 2 \cdot 2^n$. So $2^{n+1} \leq 2 \cdot 2^n$ (with $c = 2$) and $2^{n+1} \geq 2 \cdot 2^n$ (with $c = 2$). Thus $2^{n+1} = \Theta(2^n)$.
+\textbf{Part 1:} $2^{n+1} = 2 \cdot 2^n$. So $2^{n+1} = \Theta(2^n)$ with constant 2.
 
-\textbf{Part 2:} $2^{2n} = (2^2)^n = 4^n$. Check if $4^n = O(2^n)$:
+\textbf{Part 2:} $2^{2n} = (2^2)^n = 4^n$.
 \[
 \lim_{n \to \infty} \frac{4^n}{2^n} = \lim_{n \to \infty} 2^n = \infty
 \]
-Since the limit is $\infty$, $4^n$ grows faster than $2^n$, so $2^{2n} \neq O(2^n)$.
+So $4^n$ grows faster than $2^n$, meaning $2^{2n} \neq O(2^n)$.
 
-\textbf{Intuition:} Constant factors in the exponent matter! $2^{cn}$ for $c > 1$ is exponentially larger than $2^n$.
+\textbf{Key insight:} Adding a constant to the exponent is fine; multiplying the exponent is not.
 \end{example}
 
-\begin{example}
-Solve $T(n) = 3T(n/2) + n$ using the Master theorem.
+\begin{example}[Master theorem, Case 1]
+Solve $T(n) = 3T(n/2) + n$.
 
-\emph{Solution.} Identify: $a = 3$, $b = 2$, $f(n) = n$.
+\emph{Solution.} $a = 3$, $b = 2$, $f(n) = n$.
 
-Compute $c = \log_b a = \log_2 3 \approx 1.585$.
+$c = \log_2 3 \approx 1.585$.
 
-Compare $f(n) = n = n^1$ with $n^c = n^{1.585}$.
+Compare $f(n) = n = n^1$ with $n^c = n^{1.585}$. Since $1 < 1.585$, we have $f(n) = O(n^{c - \epsilon})$ for $\epsilon = 0.585$.
 
-Since $1 < 1.585$, we have $f(n) = O(n^{c - \epsilon})$ for $\epsilon = 0.585$.
-
-This is \textbf{Case 1}: $T(n) = \Theta(n^c) = \Theta(n^{\log_2 3})$.
+Case 1: $T(n) = \Theta(n^c) = \Theta(n^{\log_2 3})$.
 \end{example}
 
-\begin{example}
-Analyze the time complexity of this code:
-\begin{verbatim}
-for i = 1 to n:
-    for j = i to n:
-        // O(1) work
-\end{verbatim}
+\begin{example}[Linear recursion]
+Solve $T(n) = T(n-1) + n$ by expansion.
 
-\emph{Solution.} The inner loop runs $n - i + 1$ times for each $i$. Total iterations:
-\[
-\sum_{i=1}^{n} (n - i + 1) = \sum_{k=1}^{n} k = \frac{n(n+1)}{2} = \Theta(n^2)
-\]
-(Substituted $k = n - i + 1$.)
-\end{example}
-
-\begin{example}
-Solve the recurrence $T(n) = T(n-1) + n$ by expansion.
-
-\emph{Solution.} Expand:
+\emph{Solution.}
 \begin{align*}
 T(n) &= T(n-1) + n \\
      &= T(n-2) + (n-1) + n \\
      &= T(n-3) + (n-2) + (n-1) + n \\
      &\vdots \\
      &= T(1) + 2 + 3 + \cdots + n \\
-     &= T(1) + \sum_{k=2}^{n} k = T(1) + \frac{n(n+1)}{2} - 1
+     &= T(1) + \frac{n(n+1)}{2} - 1
 \end{align*}
 If $T(1) = 1$: $T(n) = \frac{n(n+1)}{2} = \Theta(n^2)$.
 \end{example}
 
 \begin{commonmistake}
-\textbf{Treating big-O as equality.} $f = O(g)$ means $f$ is bounded above by $g$, not equal to it. Better to read as ``$f$ is $O(g)$'' rather than ``$f$ equals $O(g)$.''
+\textbf{Treating big-O as equality.} $f = O(g)$ means $f$ is bounded above by $g$, not equal. ``$f$ is $O(g)$'' is more accurate than ``$f$ equals $O(g)$.''
 \end{commonmistake}
 
 \begin{commonmistake}
-\textbf{Confusing worst-case and big-O.} Big-O describes an upper bound on a function. Worst-case describes the maximum over inputs. They're related but distinct concepts.
+\textbf{Confusing worst-case and big-O.} Big-O describes function growth. Worst-case describes inputs. They're related but distinct: worst-case running time \emph{is} a function that can be described with big-O.
 \end{commonmistake}
 
 \begin{commonmistake}
-\textbf{Ignoring the regularity condition in Master theorem Case 3.} Case 3 requires $af(n/b) \leq kf(n)$ for some $k < 1$. This is usually satisfied but should be checked.
+\textbf{Forgetting the regularity condition in Case 3.} The master theorem's Case 3 requires $af(n/b) \leq kf(n)$ for some $k < 1$. Usually satisfied, but verify.
 \end{commonmistake}
 
-%% ================================================================
-%% GOING DEEPER: Monoids—Categories with One Object
-%% ================================================================
-\begin{goingdeeper}[Going Deeper: Monoids—Categories with One Object]
-
-Throughout this course, we've seen how categories unify different areas of mathematics. We end with a beautiful observation: \emph{monoids are categories with exactly one object}.
+\begin{goingdeeper}[Going Deeper: Monoids---Categories with One Object]
+Throughout this course, we've seen how categories unify mathematics. We end with a beautiful observation: \emph{monoids are categories with exactly one object}.
 For more detail, see the Category Theory Companion, Week 10.
 
 \subsubsection*{Monoids: The Definition}
 
-A \textbf{monoid} $(M, \cdot, e)$ is a set $M$ equipped with:
+A \textbf{monoid} $(M, \cdot, e)$ is a set $M$ with:
 \begin{itemize}
   \item A binary operation $\cdot : M \times M \to M$
   \item An identity element $e \in M$
 \end{itemize}
 satisfying:
 \begin{itemize}
-  \item \textbf{Associativity:} $(a \cdot b) \cdot c = a \cdot (b \cdot c)$ for all $a, b, c \in M$
-  \item \textbf{Identity:} $e \cdot a = a = a \cdot e$ for all $a \in M$
+  \item \textbf{Associativity:} $(a \cdot b) \cdot c = a \cdot (b \cdot c)$
+  \item \textbf{Identity:} $e \cdot a = a = a \cdot e$
 \end{itemize}
 
-Compare this to the axioms for a category:
+Compare to category axioms:
 \[
 \begin{array}{c|c}
 \textbf{Monoid} & \textbf{Category} \\
@@ -441,103 +450,40 @@ Compare this to the axioms for a category:
 \text{Elements of } M & \text{Morphisms} \\
 \text{Multiplication } \cdot & \text{Composition } \circ \\
 \text{Identity } e & \text{Identity morphism } \id \\
-\text{Associativity of } \cdot & \text{Associativity of } \circ \\
+\text{Associativity} & \text{Associativity}
 \end{array}
 \]
 
-If a category has only one object $\star$, then \emph{all} morphisms go from $\star$ to $\star$—they can always be composed! The morphisms form a monoid under composition.
-
-\begin{center}
-\begin{tikzcd}[row sep=small, column sep=small]
-& \star \arrow[loop above, "e", distance=2em]
-       \arrow[loop left, "a"', distance=2em]
-       \arrow[loop right, "b", distance=2em]
-       \arrow[loop below, "ab"', distance=2em]
-\end{tikzcd}
-\end{center}
+If a category has only one object $\star$, all morphisms go from $\star$ to $\star$---they can always be composed. The morphisms form a monoid.
 
 \subsubsection*{Examples of Monoids}
 
-\textbf{1. Natural numbers under addition:} $(\N, +, 0)$
-\begin{itemize}
-  \item Elements: $0, 1, 2, 3, \ldots$
-  \item Operation: addition
-  \item Identity: 0 (since $0 + n = n = n + 0$)
-\end{itemize}
-
-\textbf{2. Natural numbers under multiplication:} $(\N, \times, 1)$
-\begin{itemize}
-  \item Same set, different monoid structure!
-  \item Identity: 1 (since $1 \times n = n = n \times 1$)
-\end{itemize}
-
-\textbf{3. Strings under concatenation:} $(\Sigma^*, \cdot, \varepsilon)$
-\begin{itemize}
-  \item Elements: all strings over alphabet $\Sigma$
-  \item Operation: concatenation (e.g., ``$ab$'' $\cdot$ ``$cd$'' $=$ ``$abcd$'')
-  \item Identity: empty string $\varepsilon$
-\end{itemize}
-
-\textbf{4. Functions under composition:} $(A \to A, \circ, \id_A)$
-\begin{itemize}
-  \item Elements: functions from $A$ to itself
-  \item Operation: function composition
-  \item Identity: the identity function
-\end{itemize}
-
-\textbf{5. Complexity classes:} The big-$O$ notation satisfies monoid-like properties:
-\begin{itemize}
-  \item $O(f) \cdot O(g) = O(f \cdot g)$ (product rule)
-  \item $O(1)$ acts as a multiplicative identity
-\end{itemize}
+\begin{enumerate}
+  \item $(\N, +, 0)$: natural numbers under addition.
+  \item $(\N, \times, 1)$: natural numbers under multiplication.
+  \item $(\Sigma^*, \cdot, \varepsilon)$: strings under concatenation (the \emph{free monoid} on $\Sigma$).
+  \item $(A \to A, \circ, \id_A)$: functions from $A$ to itself under composition.
+\end{enumerate}
 
 \subsubsection*{The Free Monoid}
 
-Given any set $\Sigma$ (an ``alphabet''), we can form the \textbf{free monoid} $\Sigma^*$: the set of all finite strings over $\Sigma$, with concatenation as the operation.
+Given alphabet $\Sigma$, the \textbf{free monoid} $\Sigma^*$ is all strings with concatenation. It's ``free'' because it satisfies no equations beyond the monoid axioms.
 
-Why ``free''? Because $\Sigma^*$ is the \emph{most general} monoid generated by $\Sigma$—it satisfies no equations other than the monoid axioms. This is a \textbf{universal property}:
+\textbf{Universal property:} For any monoid $M$ and function $f: \Sigma \to M$, there's a unique monoid homomorphism $\bar{f}: \Sigma^* \to M$ extending $f$.
 
-\begin{quote}
-For any monoid $M$ and any function $f: \Sigma \to M$, there is a \emph{unique} monoid homomorphism $\bar{f}: \Sigma^* \to M$ extending $f$.
-\end{quote}
-
-\[
-\begin{tikzcd}
-\Sigma \arrow[r, "f"] \arrow[d, hook, "\eta"'] & M \\
-\Sigma^* \arrow[ur, dashed, "\exists! \bar{f}"']
-\end{tikzcd}
-\]
-
-The map $\eta: \Sigma \to \Sigma^*$ sends each letter to the one-letter string.
-
-\textbf{Example.} Let $\Sigma = \{a, b\}$ and let $M = (\N, +, 0)$. Define $f(a) = 3$, $f(b) = 5$. The unique extension $\bar{f}: \Sigma^* \to \N$ maps each string to the sum of its letter values:
-\[
-\bar{f}(aabba) = f(a) + f(a) + f(b) + f(b) + f(a) = 3 + 3 + 5 + 5 + 3 = 19
-\]
-
-This is why $\Sigma^*$ appears in automata theory: a DFA computes exactly a monoid homomorphism from the free monoid to a finite monoid!
+This is why $\Sigma^*$ appears in automata theory: a DFA computes a monoid homomorphism from $\Sigma^*$ to a finite monoid.
 
 \subsubsection*{Monoid Homomorphisms}
 
-A \textbf{monoid homomorphism} $\phi: (M, \cdot_M, e_M) \to (N, \cdot_N, e_N)$ is a function $\phi: M \to N$ satisfying:
+A \textbf{monoid homomorphism} $\phi: M \to N$ satisfies:
 \begin{itemize}
-  \item $\phi(a \cdot_M b) = \phi(a) \cdot_N \phi(b)$ \quad (preserves multiplication)
-  \item $\phi(e_M) = e_N$ \quad (preserves identity)
+  \item $\phi(a \cdot b) = \phi(a) \cdot \phi(b)$
+  \item $\phi(e_M) = e_N$
 \end{itemize}
 
-In categorical terms: a homomorphism between one-object categories is exactly a \textbf{functor}!
+In categorical terms: a homomorphism between one-object categories is exactly a functor.
 
-\textbf{Example.} The length function $\text{len}: \Sigma^* \to \N$ is a monoid homomorphism from $(\Sigma^*, \cdot, \varepsilon)$ to $(\N, +, 0)$:
-\begin{itemize}
-  \item $\text{len}(s \cdot t) = \text{len}(s) + \text{len}(t)$
-  \item $\text{len}(\varepsilon) = 0$
-\end{itemize}
-
-\textbf{Example.} The determinant function $\det: \text{GL}_n(\R) \to \R^*$ is a monoid homomorphism:
-\begin{itemize}
-  \item $\det(AB) = \det(A) \cdot \det(B)$
-  \item $\det(I) = 1$
-\end{itemize}
+\textbf{Example:} String length $\text{len}: \Sigma^* \to \N$ is a homomorphism: $\text{len}(s \cdot t) = \text{len}(s) + \text{len}(t)$ and $\text{len}(\varepsilon) = 0$.
 
 \subsubsection*{Connection to Complexity Analysis}
 
@@ -545,73 +491,54 @@ Consider the monoid $(\N, +, 0)$ of running times. When we analyze:
 \[
 T(n) = T(n/2) + O(1)
 \]
-we're saying: the total time is the \emph{sum} (monoid operation) of the recursive time plus the local work. The structure of recurrence relations reflects monoid structure!
+we're adding times (monoid operation) of recursive work plus local work.
 
 For divide-and-conquer with $a$ subproblems:
 \[
 T(n) = \underbrace{T(n/b) + T(n/b) + \cdots + T(n/b)}_{a \text{ terms}} + f(n)
 \]
-The $a$-fold sum uses the monoid structure repeatedly.
+The structure of recurrences reflects monoid structure.
+
+\subsubsection*{The Categorical Perspective: Full Circle}
+
+We began with sets and functions, introduced diagrams, and discovered that many structures---preorders, graphs, automata---are categorical. Now we see that even monoids are secretly categories.
+
+This suggests a powerful principle: \emph{category theory reveals common structure across diverse areas}. Types, proofs, and programs all form categories. The tools we've developed---diagrams, universal properties, functors---are the beginning of a vocabulary for understanding computation, logic, and mathematics as aspects of a unified whole.
 
 \subsubsection*{Exercises: Monoids and Structure}
 
 \begin{enumerate}
-\item Verify that $(\Z, +, 0)$ is a monoid. Is $(\Z, -, 0)$ a monoid? Why or why not?
+  \item Verify that $(\Z, +, 0)$ is a monoid. Is $(\Z, -, 0)$ a monoid? Why or why not?
 
-\item The set $\{0, 1\}$ with operation ``OR'' ($\lor$) and identity 0 forms a monoid. Write out its multiplication table.
+  \item The set $\{0, 1\}$ with OR ($\lor$) and identity 0 forms a monoid. Write its multiplication table.
 
-\item Show that the set of $n \times n$ matrices over $\R$ with matrix multiplication and the identity matrix $I$ forms a monoid. (Note: this is \emph{not} a group—why?)
+  \item Show that $n \times n$ matrices under multiplication with identity $I$ form a monoid.
 
-\item Let $\Sigma = \{0, 1\}$. The \emph{run-length encoding} maps a string to the sequence of run lengths. For example: $00111001 \mapsto [2, 3, 2, 1]$. Is run-length encoding a monoid homomorphism? Prove or give a counterexample.
+  \item Is string length a monoid homomorphism from $(\Sigma^*, \cdot, \varepsilon)$ to $(\N, +, 0)$? Prove it.
 
-\item \textbf{(Important)} Prove that if $\phi: M \to N$ is a monoid homomorphism, then the image $\phi(M) = \{\phi(m) : m \in M\}$ is a submonoid of $N$.
+  \item Prove: If $\phi: M \to N$ is a monoid homomorphism, then $\phi(M)$ is a submonoid of $N$.
 
-\item Let $\text{End}(A)$ be the monoid of functions $A \to A$ under composition. If $|A| = n$, what is $|\text{End}(A)|$? What is the identity element?
+  \item Consider $(\Z_n, +_n, 0)$ where $+_n$ is addition mod $n$. Prove $\phi(k) = k \mod n$ is a homomorphism from $\Z$.
 
-\item Consider the monoid $(\{0, 1, 2, \ldots, n-1\}, +_n, 0)$ where $+_n$ is addition mod $n$. Define a map $\phi: \Z \to \Z_n$ by $\phi(k) = k \mod n$. Prove this is a monoid homomorphism.
+  \item \textbf{Challenge:} $\mathcal{P}(A)$ forms a monoid under union (identity $\emptyset$) and under intersection (identity $A$). Are these monoids isomorphic?
 
-\item \textbf{(Challenge)} The powerset $\mathcal{P}(A)$ forms a monoid under union with $\emptyset$ as identity. It also forms a monoid under intersection with $A$ as identity. Are these monoids isomorphic? (Two monoids are isomorphic if there's a bijective homomorphism between them.)
-
-\item \textbf{(Big-$O$ as Monoid)} Define a relation on functions where $f \sim g$ iff $f = \Theta(g)$. Show that the equivalence classes under $\sim$ form a monoid with multiplication $[f] \cdot [g] = [f \cdot g]$. What is the identity?
-
-\item \textbf{(Connection to Automata)} Recall from Week 9 that a DFA defines a transition function $\delta: Q \times \Sigma \to Q$. Extend this to $\hat{\delta}: Q \times \Sigma^* \to Q$ by:
-\begin{itemize}
-  \item $\hat{\delta}(q, \varepsilon) = q$
-  \item $\hat{\delta}(q, wa) = \delta(\hat{\delta}(q, w), a)$
-\end{itemize}
-Fix a state $q_0$. Show that the map $w \mapsto \hat{\delta}(q_0, -)$ gives a monoid homomorphism from $\Sigma^*$ to the monoid of functions $Q \to Q$.
+  \item Define big-$O$ equivalence: $f \sim g$ iff $f = \Theta(g)$. Show the equivalence classes form a monoid under multiplication.
 \end{enumerate}
-
-\subsubsection*{The Categorical Perspective: Full Circle}
-
-We began this course with sets and functions, introduced diagrams to visualize composition, and discovered that many structures (preorders, graphs, automata) can be viewed categorically. Now we see that even the simplest algebraic structure—a monoid—is secretly a category.
-
-This suggests a powerful principle: \emph{category theory doesn't replace other mathematics; it reveals the common structure underlying diverse areas}. The monoid of complexity classes, the monoid of string concatenation in automata theory, and the monoid of functions under composition are all instances of the same abstract pattern.
-
-As you continue in computer science and mathematics, you'll encounter this pattern repeatedly:
-\begin{itemize}
-  \item Types form categories (where morphisms are functions)
-  \item Proofs form categories (where morphisms witness logical entailment)
-  \item Programs form categories (where morphisms are computations)
-\end{itemize}
-
-The tools you've developed—diagrams, universal properties, functors—are the beginning of a rich vocabulary for understanding computation, logic, and mathematics as aspects of a unified whole.
-
 \end{goingdeeper}
 
 \subsection*{Practice}
 \begin{enumerate}
-  \item Order the functions $n \log n$, $n^{1.5}$, $2^n$, $n^3$ by growth rate.
+  \item Order: $n \log n$, $n^{1.5}$, $2^n$, $n^3$ by growth rate.
 
   \item Show that $3n^2 + 5n + 7$ is $\Theta(n^2)$.
 
-  \item Solve the recurrence $T(n) = 2T(n/2) + n$ with $T(1) = 1$.
+  \item Solve $T(n) = 2T(n/2) + n$ with $T(1) = 1$.
 
   \item Analyze the runtime of binary search.
 
   \item Prove: $\log n = O(n^\epsilon)$ for any $\epsilon > 0$.
 
-  \item Analyze the complexity of:
+  \item Analyze:
 \begin{verbatim}
 for i = 1 to n:
     for j = i to n:
@@ -619,21 +546,21 @@ for i = 1 to n:
             // O(1)
 \end{verbatim}
 
-  \item Solve $T(n) = 3T(n/2) + n$ using the Master theorem.
+  \item Solve $T(n) = 3T(n/2) + n$ using the master theorem.
 
   \item Prove: $(n+1)! = O((n!)^2)$ but $(n+1)! \neq \Theta(n!)$.
 
-  \item Analyze the recurrence $T(n) = T(n-1) + n$ with $T(1) = 1$.
+  \item Analyze $T(n) = T(n-1) + n$ with $T(1) = 1$.
 
-  \item Show that $2^{n+1} = \Theta(2^n)$ but $2^{2n} \neq \Theta(2^n)$.
+  \item Show $2^{n+1} = \Theta(2^n)$ but $2^{2n} \neq \Theta(2^n)$.
 
   \item Prove: $f(n) = o(g(n))$ implies $f(n) = O(g(n))$.
 
   \item A recursive algorithm satisfies $T(n) = T(n/3) + T(2n/3) + n$. Prove $T(n) = O(n \log n)$.
 
-  \item If $A \leq_p B$ and $B \in \mathbf{P}$, what can you conclude about $A$? Justify.
+  \item If $A \leq_p B$ and $B \in \mathbf{P}$, what can you conclude about $A$?
 
   \item Explain why HAMILTONIAN CYCLE is in $\mathbf{NP}$.
 
-  \item Outline a polynomial-time reduction from CLIQUE to VERTEX COVER (state how $k$ changes and what graph transformation you use).
+  \item Outline a reduction from CLIQUE to VERTEX COVER.
 \end{enumerate}

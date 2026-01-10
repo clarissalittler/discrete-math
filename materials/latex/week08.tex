@@ -1,13 +1,26 @@
 \section{Week 8: Trees and Graph Algorithms}
+
+\textit{Or: ``The simplest connected graphs, and how to navigate them efficiently''}
+
 \subsection*{Reading}
 Epp \S 10.4--10.6. Supplemental: matchings and flows.\\
 \textbf{Category theory companion:} Week 8 (\texttt{category\_theory\_companion.pdf}).
+
+\subsection*{Why Trees?}
+
+Trees are the ``Goldilocks'' graphs: they have just enough edges to be connected, but no more. Remove any edge and the graph falls apart. Add any edge and you create a cycle. This makes them the simplest connected structures, and remarkably useful.
+
+File systems are trees. Organizational hierarchies are trees. Parse trees show how programs are structured. Decision trees guide classification. Family trees (well, directed acyclic graphs, really) trace ancestry. Binary search trees enable fast lookup. Spanning trees let us navigate networks efficiently.
+
+The recursive structure of trees---a tree is either a single node or a node with subtrees---makes them perfect for recursive algorithms. But there's something deeper here: this recursive structure isn't just convenient, it's \emph{definitional}. We can define trees by their construction rules (they're ``algebraic datatypes''), and this gives us principled ways to define functions (structural recursion) and prove properties (structural induction). This week we'll see both the practical algorithms and the deeper pattern they exemplify.
 
 \subsection*{Learning objectives}
 \begin{itemize}
   \item Identify trees, forests, and rooted trees.
   \item Use characterizations of trees (connected + acyclic, $|E| = |V| - 1$, etc.).
   \item Understand $m$-ary trees and binary trees.
+  \item \textbf{View trees as algebraic datatypes and define functions by structural recursion.}
+  \item \textbf{Prove properties of trees using structural induction.}
   \item Find spanning trees using BFS and DFS.
   \item Apply shortest-path algorithms (Dijkstra's, Bellman-Ford).
   \item Find minimum spanning trees (Prim's, Kruskal's).
@@ -15,8 +28,10 @@ Epp \S 10.4--10.6. Supplemental: matchings and flows.\\
 
 \subsection*{Key definitions and facts}
 
+\subsubsection*{What Makes a Tree a Tree?}
+
 \begin{definition}[Tree]
-A \textbf{tree} is a connected graph with no cycles. A \textbf{forest} is a graph with no cycles (each connected component is a tree).
+A \textbf{tree} is a connected graph with no cycles. A \textbf{forest} is a graph with no cycles---each connected component is a tree.
 \end{definition}
 
 \begin{theorem}[Characterizations of trees]
@@ -31,22 +46,26 @@ For a graph $G$ on $n$ vertices, the following are equivalent:
 \end{enumerate}
 \end{theorem}
 
+These characterizations reveal the ``barely connected'' nature of trees. With $n-1$ edges, you have the minimum needed for connectivity. One fewer and you're disconnected; one more and you have redundancy (a cycle).
+
 \begin{definition}[Rooted tree]
-A \textbf{rooted tree} is a tree with a designated vertex called the \textbf{root}. This induces a parent-child relationship: every non-root vertex has a unique parent (the neighbor closer to the root) and zero or more children.
+A \textbf{rooted tree} designates one vertex as the \textbf{root}, inducing a parent-child hierarchy: every non-root vertex has a unique parent (the neighbor closer to the root) and zero or more children.
 \begin{itemize}
-  \item The \textbf{depth} of a vertex is its distance from the root.
-  \item The \textbf{height} of the tree is the maximum depth.
-  \item A \textbf{leaf} is a vertex with no children.
-  \item An \textbf{internal vertex} has at least one child.
+  \item \textbf{Depth} of a vertex: distance from the root.
+  \item \textbf{Height} of the tree: maximum depth.
+  \item \textbf{Leaf}: a vertex with no children.
+  \item \textbf{Internal vertex}: a vertex with at least one child.
 \end{itemize}
 \end{definition}
+
+The same underlying tree can be rooted at different vertices, producing different hierarchies. The choice of root is a choice of perspective.
 
 \begin{definition}[$m$-ary tree]
 An \textbf{$m$-ary tree} is a rooted tree where every internal vertex has at most $m$ children.
 \begin{itemize}
-  \item A \textbf{binary tree} is a 2-ary tree.
-  \item A \textbf{full $m$-ary tree} has every internal vertex with exactly $m$ children.
-  \item A \textbf{complete $m$-ary tree} is a full $m$-ary tree where all leaves are at the same depth.
+  \item \textbf{Binary tree}: $m = 2$ (at most two children each).
+  \item \textbf{Full $m$-ary tree}: every internal vertex has exactly $m$ children.
+  \item \textbf{Complete $m$-ary tree}: full, with all leaves at the same depth.
 \end{itemize}
 \end{definition}
 
@@ -54,7 +73,7 @@ An \textbf{$m$-ary tree} is a rooted tree where every internal vertex has at mos
 For a full $m$-ary tree with $i$ internal vertices:
 \begin{enumerate}
   \item Total vertices: $n = mi + 1$
-  \item Leaves: $\ell = (m-1)i + 1 = \frac{(m-1)n + 1}{m}$
+  \item Leaves: $\ell = (m-1)i + 1$
   \item Internal vertices: $i = \frac{n-1}{m} = \frac{\ell - 1}{m - 1}$
 \end{enumerate}
 \end{theorem}
@@ -64,40 +83,195 @@ A binary tree with $\ell$ leaves has height $h$ satisfying:
 \[
 \lceil \log_2 \ell \rceil \leq h \leq \ell - 1
 \]
-The minimum height is achieved by a complete binary tree; the maximum by a ``linear'' tree.
+Minimum height: complete binary tree (perfectly balanced).
+Maximum height: a degenerate ``linear'' tree (essentially a linked list).
 \end{theorem}
 
+This is why balanced trees matter: the difference between $O(\log n)$ and $O(n)$ operations.
+
 \begin{definition}[Spanning tree]
-A \textbf{spanning tree} of a connected graph $G$ is a subgraph that is a tree containing all vertices of $G$.
+A \textbf{spanning tree} of a connected graph $G$ is a subgraph that's a tree containing all vertices of $G$.
 \end{definition}
 
 \begin{theorem}[Existence of spanning trees]
-Every connected graph has a spanning tree. (Proof: Remove edges from cycles until no cycles remain.)
+Every connected graph has a spanning tree.
 \end{theorem}
+
+The proof is constructive: if there's a cycle, remove an edge from it. The graph stays connected (the cycle provided redundancy). Repeat until no cycles remain. You have a spanning tree.
 
 \subsection*{Tree traversals}
 
 \begin{definition}[Binary tree traversals]
-For a binary tree with root $r$, left subtree $L$, and right subtree $R$:
+Three classic ways to visit every node in a binary tree:
 \begin{itemize}
-  \item \textbf{Preorder:} Visit $r$, traverse $L$, traverse $R$
-  \item \textbf{Inorder:} Traverse $L$, visit $r$, traverse $R$
-  \item \textbf{Postorder:} Traverse $L$, traverse $R$, visit $r$
+  \item \textbf{Preorder}: Visit root, traverse left subtree, traverse right subtree.
+  \item \textbf{Inorder}: Traverse left subtree, visit root, traverse right subtree.
+  \item \textbf{Postorder}: Traverse left subtree, traverse right subtree, visit root.
 \end{itemize}
 \end{definition}
 
+The names describe when you visit the root relative to its children. Preorder visits the root first (``pre''), inorder visits it between children (``in''), postorder visits it last (``post'').
+
+For a binary search tree, inorder traversal yields elements in sorted order. This isn't a coincidence---it's why we call it ``in order.''
+
 \begin{definition}[BFS and DFS]
 \begin{itemize}
-  \item \textbf{Breadth-First Search (BFS):} Explore vertices layer by layer (by distance from start). Uses a queue.
-  \item \textbf{Depth-First Search (DFS):} Explore as deep as possible before backtracking. Uses a stack (or recursion).
+  \item \textbf{Breadth-First Search (BFS)}: Explore vertices layer by layer---all vertices at distance 1 from start, then distance 2, etc. Uses a queue.
+  \item \textbf{Depth-First Search (DFS)}: Plunge as deep as possible before backtracking. Uses a stack (or recursion, which implicitly uses the call stack).
 \end{itemize}
 Both produce spanning trees of connected graphs.
 \end{definition}
 
+BFS finds shortest paths (in unweighted graphs). DFS finds paths, but not necessarily shortest ones---it just finds \emph{a} path.
+
+\subsection*{Trees as Algebraic Datatypes}
+
+Here's a shift in perspective that will pay dividends throughout your mathematical career. Instead of thinking of binary trees as a particular kind of graph (connected, acyclic, each node has at most two children), think of them as defined by their \emph{construction rules}:
+
+\begin{definition}[Binary tree as algebraic datatype]
+A \textbf{binary tree with data of type $A$} is either:
+\begin{itemize}
+  \item A \textbf{leaf} containing a value $a \in A$, or
+  \item A \textbf{node} with a left subtree and a right subtree (both binary trees with data of type $A$)
+\end{itemize}
+That's it. Those are the only ways to build a binary tree.
+\end{definition}
+
+This is called an \emph{algebraic} or \emph{inductive} definition. We specify the type by saying exactly how to construct its elements. You might write this in symbols as:
+\[
+\text{Tree}(A) = A + \text{Tree}(A) \times \text{Tree}(A)
+\]
+where $+$ means ``or'' (disjoint union) and $\times$ means ``and'' (product). The tree type is a solution to this equation---in fact, the \emph{smallest} solution, which turns out to be important.
+
+Why does this perspective matter? Because it gives us two powerful tools for free.
+
+\subsubsection*{Defining Functions by Recursion on Structure}
+
+When you define a datatype by its constructors, you get a recipe for defining functions on it: just say what to do for each constructor.
+
+\begin{example}[Counting leaves]
+To define a function $\textit{countLeaves}: \text{Tree}(A) \to \N$, we just need two cases:
+\begin{align*}
+\textit{countLeaves}(\text{Leaf } a) &= 1 \\
+\textit{countLeaves}(\text{Node } \ell\, r) &= \textit{countLeaves}(\ell) + \textit{countLeaves}(r)
+\end{align*}
+That's a complete, well-defined function. Every tree is built from these two constructors, so we've covered all cases.
+\end{example}
+
+Notice the pattern: for a leaf, we give a direct answer. For a node, we assume we already have answers for the subtrees (the recursive calls) and combine them. This is \emph{structural recursion}---the recursion follows the structure of the datatype.
+
+\begin{example}[Tree height]
+\begin{align*}
+\textit{height}(\text{Leaf } a) &= 0 \\
+\textit{height}(\text{Node } \ell\, r) &= 1 + \max(\textit{height}(\ell), \textit{height}(r))
+\end{align*}
+\end{example}
+
+\begin{example}[Summing a tree of numbers]
+\begin{align*}
+\textit{sum}(\text{Leaf } n) &= n \\
+\textit{sum}(\text{Node } \ell\, r) &= \textit{sum}(\ell) + \textit{sum}(r)
+\end{align*}
+\end{example}
+
+The tree traversals we defined earlier? Those are exactly this pattern:
+\begin{align*}
+\textit{preorder}(\text{Leaf } a) &= [a] \\
+\textit{preorder}(\text{Node } \ell\, r) &= \textit{preorder}(\ell) \mathbin{+\!\!+} \textit{preorder}(r)
+\end{align*}
+(For a tree where nodes also carry data, you'd insert the node's value at the appropriate position.)
+
+\subsubsection*{Structural Induction: Proofs that Follow Construction}
+
+Here's the remarkable thing: the same pattern that lets us \emph{define} functions also lets us \emph{prove} things. This is \textbf{structural induction}.
+
+\begin{keyresult}[Structural induction on trees]
+To prove a property $P$ holds for all binary trees:
+\begin{enumerate}
+  \item \textbf{Base case}: Prove $P(\text{Leaf } a)$ for any leaf.
+  \item \textbf{Inductive case}: Assume $P(\ell)$ and $P(r)$ for subtrees (the \emph{inductive hypothesis}). Prove $P(\text{Node } \ell\, r)$.
+\end{enumerate}
+If both hold, then $P(t)$ is true for every tree $t$.
+\end{keyresult}
+
+Why does this work? Because every tree is built from leaves and nodes. A leaf satisfies $P$ by the base case. A tree built from subtrees that satisfy $P$ also satisfies $P$ by the inductive case. Since trees are the \emph{smallest} things you can build this way, every tree satisfies $P$.
+
+\begin{theorem}
+For any binary tree $t$: $\textit{countLeaves}(t) \leq 2^{\textit{height}(t)}$.
+\end{theorem}
+
+\begin{proof}
+By structural induction.
+
+\textbf{Base case}: For $\text{Leaf } a$: $\textit{countLeaves}(\text{Leaf } a) = 1$ and $2^{\textit{height}(\text{Leaf } a)} = 2^0 = 1$. So $1 \leq 1$. \checkmark
+
+\textbf{Inductive case}: Assume the property holds for subtrees $\ell$ and $r$. That is:
+\begin{align*}
+\textit{countLeaves}(\ell) &\leq 2^{\textit{height}(\ell)} \\
+\textit{countLeaves}(r) &\leq 2^{\textit{height}(r)}
+\end{align*}
+
+For $\text{Node } \ell\, r$:
+\begin{align*}
+\textit{countLeaves}(\text{Node } \ell\, r) &= \textit{countLeaves}(\ell) + \textit{countLeaves}(r) \\
+&\leq 2^{\textit{height}(\ell)} + 2^{\textit{height}(r)} \quad \text{(by IH)} \\
+&\leq 2^{\max(\textit{height}(\ell), \textit{height}(r))} + 2^{\max(\textit{height}(\ell), \textit{height}(r))} \\
+&= 2 \cdot 2^{\max(\textit{height}(\ell), \textit{height}(r))} \\
+&= 2^{1 + \max(\textit{height}(\ell), \textit{height}(r))} \\
+&= 2^{\textit{height}(\text{Node } \ell\, r)}
+\end{align*}
+
+Therefore, by structural induction, the property holds for all trees.
+\end{proof}
+
+\subsubsection*{The Deep Connection}
+
+Structural recursion (for definitions) and structural induction (for proofs) are two sides of the same coin. When you define a function by structural recursion, the proof that it terminates is essentially a structural induction. When you prove something by structural induction, you're defining a ``function'' from trees to proofs.
+
+This isn't just a metaphor. In constructive mathematics and type theory, proofs \emph{are} programs and propositions \emph{are} types. The correspondence goes by various names: Curry-Howard correspondence, propositions-as-types, proofs-as-programs. The ``Going Deeper'' section at the end of this week explores this further through the lens of initial algebras.
+
+\subsubsection*{The Pattern Generalizes}
+
+Trees aren't special. Any algebraic datatype gets the same treatment:
+
+\begin{example}[Natural numbers]
+$\N$ is defined by:
+\begin{itemize}
+  \item $\text{Zero}$ is a natural number
+  \item If $n$ is a natural number, then $\text{Succ}(n)$ is a natural number
+\end{itemize}
+
+Functions by recursion:
+\begin{align*}
+\textit{double}(\text{Zero}) &= \text{Zero} \\
+\textit{double}(\text{Succ } n) &= \text{Succ}(\text{Succ}(\textit{double}(n)))
+\end{align*}
+
+Proofs by induction: This is ordinary mathematical induction! The base case is $n = 0$; the inductive case assumes $P(n)$ and proves $P(n+1)$.
+\end{example}
+
+\begin{example}[Lists]
+$\text{List}(A)$ is defined by:
+\begin{itemize}
+  \item $\text{Nil}$ (empty list)
+  \item $\text{Cons}(a, \mathit{xs})$ where $a \in A$ and $\mathit{xs}$ is a list
+\end{itemize}
+
+The recursion pattern:
+\begin{align*}
+\textit{length}(\text{Nil}) &= 0 \\
+\textit{length}(\text{Cons}(a, \mathit{xs})) &= 1 + \textit{length}(\mathit{xs})
+\end{align*}
+
+Structural induction: base case for empty list, inductive case assumes property holds for the tail.
+\end{example}
+
+So when we prove things about trees ``by induction,'' we're using exactly the same principle as when we prove things about natural numbers---just applied to a richer datatype.
+
 \subsection*{Shortest path algorithms}
 
 \begin{definition}[Weighted graph]
-A \textbf{weighted graph} assigns a weight $w(e)$ to each edge $e$. The weight of a path is the sum of its edge weights.
+A \textbf{weighted graph} assigns a weight $w(e)$ to each edge. The weight of a path is the sum of its edge weights.
 \end{definition}
 
 \begin{definition}[Shortest path problem]
@@ -105,27 +279,31 @@ Given a weighted graph and vertices $s$ and $t$, find a path from $s$ to $t$ wit
 \end{definition}
 
 \begin{theorem}[Dijkstra's algorithm]
-For a graph with non-negative edge weights, Dijkstra's algorithm finds shortest paths from a source vertex to all other vertices.
+For graphs with non-negative edge weights, Dijkstra's algorithm finds shortest paths from a source to all other vertices.
 
-\textbf{Idea:} Maintain a set $S$ of vertices with known shortest distances. Repeatedly add the unvisited vertex with smallest tentative distance, updating neighbors.
+\textbf{Idea}: Maintain a set of vertices with known shortest distances. Repeatedly add the closest unvisited vertex, updating its neighbors' tentative distances.
 
-\textbf{Time complexity:} $O((|V| + |E|) \log |V|)$ with a priority queue.
+\textbf{Complexity}: $O((|V| + |E|) \log |V|)$ with a priority queue.
 \end{theorem}
+
+Dijkstra is greedy: it commits to the closest vertex, confident that no later discovery will provide a shorter path. This confidence is justified only when all weights are non-negative.
 
 \begin{theorem}[Bellman-Ford algorithm]
-For graphs that may have negative edge weights (but no negative cycles), Bellman-Ford finds shortest paths from a source.
+For graphs with possibly negative edges (but no negative cycles), Bellman-Ford finds shortest paths from a source.
 
-\textbf{Idea:} Relax all edges $|V| - 1$ times.
+\textbf{Idea}: Relax all edges $|V| - 1$ times. ``Relaxing'' an edge means checking if we found a shorter path through it.
 
-\textbf{Time complexity:} $O(|V| \cdot |E|)$.
+\textbf{Complexity}: $O(|V| \cdot |E|)$.
 \end{theorem}
 
+Slower than Dijkstra, but handles negative weights. It can also detect negative cycles (if relaxation still improves after $|V| - 1$ rounds, there's a negative cycle).
+
 \begin{theorem}[Floyd-Warshall algorithm]
-Finds shortest paths between all pairs of vertices.
+Finds shortest paths between \emph{all} pairs of vertices.
 
-\textbf{Idea:} Dynamic programming on intermediate vertices.
+\textbf{Idea}: Dynamic programming. For each vertex $k$, update all pairs $(i, j)$ to consider paths through $k$.
 
-\textbf{Time complexity:} $O(|V|^3)$.
+\textbf{Complexity}: $O(|V|^3)$.
 \end{theorem}
 
 \subsection*{Minimum spanning trees}
@@ -134,155 +312,177 @@ Finds shortest paths between all pairs of vertices.
 For a connected weighted graph, a \textbf{minimum spanning tree} is a spanning tree with minimum total edge weight.
 \end{definition}
 
+MSTs are useful when you want to connect everything at minimum cost: network design, circuit layout, clustering.
+
 \begin{theorem}[Cut property]
-For any cut (partition of vertices into two sets), the minimum-weight edge crossing the cut is in some MST.
+For any cut (partition of vertices into two sets), the minimum-weight edge crossing the cut belongs to some MST.
 \end{theorem}
+
+This is the key insight behind MST algorithms: it's always safe to include a minimum-weight edge that connects two components.
 
 \begin{theorem}[Prim's algorithm]
-Starting from any vertex, repeatedly add the minimum-weight edge connecting the tree to a new vertex.
+Start from any vertex. Repeatedly add the minimum-weight edge connecting the growing tree to a new vertex.
 
-\textbf{Time complexity:} $O((|V| + |E|) \log |V|)$ with a priority queue.
+\textbf{Complexity}: $O((|V| + |E|) \log |V|)$ with a priority queue.
 \end{theorem}
+
+Prim grows a single tree outward, like a drop of water spreading.
 
 \begin{theorem}[Kruskal's algorithm]
-Sort edges by weight. Add edges in order, skipping those that would create a cycle.
+Sort edges by weight. Add edges in order, skipping any that would create a cycle.
 
-\textbf{Time complexity:} $O(|E| \log |E|)$ (dominated by sorting).
+\textbf{Complexity}: $O(|E| \log |E|)$, dominated by sorting.
 \end{theorem}
+
+Kruskal grows a forest that gradually merges into a single tree.
 
 \subsection*{Matchings in bipartite graphs}
 
 \begin{definition}[Matching]
-A \textbf{matching} is a set of edges with no shared endpoints. A \textbf{maximum matching} has the largest possible size. A \textbf{perfect matching} covers every vertex.
+A \textbf{matching} is a set of edges with no shared endpoints---each vertex is in at most one edge. A \textbf{maximum matching} has the largest possible size. A \textbf{perfect matching} covers every vertex.
 \end{definition}
 
+Think of matchings as pairings: jobs to applicants, dancers to partners, tasks to machines.
+
 \begin{theorem}[Hall's marriage theorem]
-Let $G = (X \cup Y, E)$ be a bipartite graph. There is a matching that covers all vertices of $X$ iff for every subset $S \subseteq X$:
+Let $G = (X \cup Y, E)$ be a bipartite graph. There's a matching covering all of $X$ if and only if for every subset $S \subseteq X$:
 \[
 |N(S)| \geq |S|
 \]
 where $N(S)$ is the set of neighbors of $S$ in $Y$.
 \end{theorem}
 
+In words: every subset of $X$ must have at least as many neighbors as members. If 5 people can only apply to 4 jobs, you can't match everyone.
+
 \begin{example}
-Let $X = \{1,2,3\}$, $Y = \{a,b,c\}$, and edges $\{1a, 1b, 2b, 3b, 3c\}$. For any $S \subseteq X$:
-\[
-|N(\{1\})| = 2,\; |N(\{2\})| = 1,\; |N(\{3\})| = 2,\; |N(\{2,3\})| = 2,\; |N(\{1,2,3\})| = 3
-\]
-Hall's condition holds, so a matching covering $X$ exists (e.g., $\{1a, 2b, 3c\}$).
+$X = \{1,2,3\}$, $Y = \{a,b,c\}$, edges $\{1a, 1b, 2b, 3b, 3c\}$.
+
+Check Hall's condition:
+\begin{itemize}
+  \item $|N(\{1\})| = 2 \geq 1$ \checkmark
+  \item $|N(\{2\})| = 1 \geq 1$ \checkmark
+  \item $|N(\{3\})| = 2 \geq 1$ \checkmark
+  \item $|N(\{1,2\})| = 2 \geq 2$ \checkmark
+  \item $|N(\{2,3\})| = 2 \geq 2$ \checkmark
+  \item $|N(\{1,3\})| = 3 \geq 2$ \checkmark
+  \item $|N(\{1,2,3\})| = 3 \geq 3$ \checkmark
+\end{itemize}
+Hall's condition holds, so a matching covering $X$ exists: $\{1a, 2b, 3c\}$.
 \end{example}
 
 \begin{remark}
-Maximum matchings can be found by \textbf{augmenting paths}: repeatedly flip edges along a path that alternates between unmatched and matched edges to increase the matching size.
+Maximum matchings can be found via \textbf{augmenting paths}: paths that alternate between unmatched and matched edges. Flipping along such a path increases the matching size by one.
 \end{remark}
 
 \subsection*{Network flows}
 
 \begin{definition}[Flow network]
-A \textbf{flow network} is a directed graph with a source $s$, sink $t$, and nonnegative capacities $c(u,v)$ on edges.
-A flow assigns values $f(u,v)$ satisfying:
+A \textbf{flow network} is a directed graph with a source $s$, sink $t$, and capacities $c(u,v) \geq 0$ on edges.
+
+A \textbf{flow} assigns values $f(u,v)$ satisfying:
 \begin{itemize}
-  \item \textbf{Capacity constraint:} $0 \leq f(u,v) \leq c(u,v)$
-  \item \textbf{Flow conservation:} For all $v \neq s,t$, $\sum_u f(u,v) = \sum_w f(v,w)$
+  \item \textbf{Capacity constraint}: $0 \leq f(u,v) \leq c(u,v)$
+  \item \textbf{Conservation}: For all $v \neq s,t$: flow in = flow out
 \end{itemize}
-The \textbf{value} of the flow is the total outflow from $s$.
+The \textbf{value} of the flow is the total leaving $s$.
 \end{definition}
 
 \begin{definition}[Cut]
-An $s$-$t$ \textbf{cut} is a partition $(S, T)$ with $s \in S$ and $t \in T$.
-Its \textbf{capacity} is $\sum_{u \in S, v \in T} c(u,v)$.
+An $s$-$t$ \textbf{cut} partitions vertices into $(S, T)$ with $s \in S$ and $t \in T$. Its \textbf{capacity} is the sum of capacities from $S$ to $T$.
 \end{definition}
 
 \begin{theorem}[Max-flow min-cut]
-The maximum value of an $s$-$t$ flow equals the minimum capacity of any $s$-$t$ cut.
+The maximum flow value equals the minimum cut capacity.
 \end{theorem}
 
+This is a beautiful duality result. Flow can never exceed cut capacity (the cut is a bottleneck). The theorem says the bottleneck is always achievable.
+
 \begin{remark}
-The Ford--Fulkerson method repeatedly finds an augmenting path in the residual graph until no such path remains.
+The Ford-Fulkerson method finds max flow by repeatedly finding augmenting paths in the residual graph until none remain.
 \end{remark}
 
 \subsection*{Worked examples}
 
-\begin{example}
+\begin{example}[Tree edge count by induction]
 Prove that a tree on $n$ vertices has exactly $n - 1$ edges.
 
-\emph{Proof (by induction).}
-\begin{itemize}
-  \item \textbf{Base case:} $n = 1$. A single vertex has 0 edges. $0 = 1 - 1$. \checkmark
-  \item \textbf{Inductive step:} Assume true for trees with $k$ vertices. Consider a tree $T$ with $k + 1$ vertices.
+\emph{Proof by induction.}
 
-  A tree has at least one leaf (vertex of degree 1). Remove a leaf $v$ and its incident edge. The result is a tree $T'$ with $k$ vertices.
+\textbf{Base case}: $n = 1$. A single vertex has 0 edges. $0 = 1 - 1$. \checkmark
 
-  By the inductive hypothesis, $T'$ has $k - 1$ edges. Adding back the one edge to $v$, we get $k$ edges for $T$.
+\textbf{Inductive step}: Assume true for trees with $k$ vertices. Let $T$ be a tree with $k + 1$ vertices.
 
-  $k = (k + 1) - 1$. \checkmark
-\end{itemize}
+Every tree has at least one leaf (vertex of degree 1)---if every vertex had degree $\geq 2$, following edges would eventually create a cycle.
+
+Remove a leaf $v$ and its edge. The result $T'$ has $k$ vertices and is still a tree (removing a leaf doesn't disconnect or create cycles).
+
+By induction, $T'$ has $k - 1$ edges. Adding back $v$'s edge gives $k$ edges for $T$.
+
+$k = (k + 1) - 1$. \checkmark
 \end{example}
 
-\begin{example}
+\begin{example}[Leaves in a full binary tree]
 A full binary tree has 15 vertices. How many are leaves?
 
-\emph{Solution.} For a full binary tree ($m = 2$): $\ell = \frac{(m-1)n + 1}{m} = \frac{(2-1) \cdot 15 + 1}{2} = \frac{16}{2} = 8$ leaves.
+\emph{Solution.} For full binary trees: $\ell = i + 1$ where $i$ is the number of internal vertices.
 
-Alternatively: If there are $i$ internal vertices and $\ell$ leaves, then $n = i + \ell$ and for full binary trees, $\ell = i + 1$. So $15 = i + (i+1) = 2i + 1$, giving $i = 7$ and $\ell = 8$.
+Also $n = i + \ell = 15$, so $i + (i+1) = 15$, giving $i = 7$ and $\ell = 8$.
+
+Alternatively: $\ell = \frac{(m-1)n + 1}{m} = \frac{15 + 1}{2} = 8$.
 \end{example}
 
-\begin{example}
-How many leaves can a full $m$-ary tree of height $h$ have at most?
+\begin{example}[Maximum leaves at height $h$]
+How many leaves can a full $m$-ary tree of height $h$ have?
 
-\emph{Solution.} A complete $m$-ary tree of height $h$ has leaves only at depth $h$. At depth $d$, there are at most $m^d$ vertices. So the maximum number of leaves is $m^h$.
+\emph{Solution.} A complete $m$-ary tree of height $h$ has all leaves at depth $h$. At depth $d$, there are at most $m^d$ vertices. Maximum leaves: $m^h$.
 \end{example}
 
-\begin{example}
+\begin{example}[Spanning tree of $K_4$]
 Find a spanning tree of $K_4$.
 
-\emph{Solution.} $K_4$ has 4 vertices and 6 edges. A spanning tree needs 3 edges. Remove any 3 edges that don't disconnect the graph.
+\emph{Solution.} $K_4$ has 4 vertices and 6 edges. A spanning tree needs 3 edges.
 
-For example, with vertices $\{1, 2, 3, 4\}$, keep edges $\{1,2\}, \{2,3\}, \{3,4\}$. This is the path $1-2-3-4$, which is a spanning tree.
+Keep edges $\{1,2\}, \{2,3\}, \{3,4\}$. This is the path $1-2-3-4$, a spanning tree.
+
+(Many other choices work---there are 16 spanning trees of $K_4$.)
 \end{example}
 
-\begin{example}
+\begin{example}[Why removing an edge disconnects a tree]
 Explain why removing any edge from a tree disconnects it.
 
-\emph{Solution.} In a tree, there is exactly one path between any two vertices. An edge $\{u, v\}$ is on the unique path from $u$ to $v$. Removing it eliminates this path, and since there was only one path, $u$ and $v$ become disconnected.
+\emph{Solution.} In a tree, there's exactly one path between any two vertices. Edge $\{u, v\}$ is on the unique path from $u$ to $v$. Remove it and no path remains---$u$ and $v$ become disconnected.
 \end{example}
 
-\begin{example}
-Run Dijkstra's algorithm on a simple weighted graph.
-
-Consider vertices $\{A, B, C, D\}$ with weighted edges: $A-B$ (1), $A-C$ (4), $B-C$ (2), $B-D$ (5), $C-D$ (1). Find shortest paths from $A$.
+\begin{example}[Dijkstra's algorithm]
+Run Dijkstra on vertices $\{A, B, C, D\}$ with weighted edges: $A$-$B$ (1), $A$-$C$ (4), $B$-$C$ (2), $B$-$D$ (5), $C$-$D$ (1). Find shortest paths from $A$.
 
 \emph{Solution.}
 \begin{enumerate}
-  \item Initialize: $d[A] = 0$, $d[B] = d[C] = d[D] = \infty$.
+  \item Initialize: $d[A] = 0$, others $= \infty$.
   \item Process $A$: Update $d[B] = 1$, $d[C] = 4$.
-  \item Process $B$ (smallest tentative): Update $d[C] = \min(4, 1+2) = 3$, $d[D] = \min(\infty, 1+5) = 6$.
+  \item Process $B$ (closest unvisited): Update $d[C] = \min(4, 1+2) = 3$, $d[D] = 6$.
   \item Process $C$: Update $d[D] = \min(6, 3+1) = 4$.
   \item Process $D$: No updates.
 \end{enumerate}
-Shortest distances: $d[A] = 0$, $d[B] = 1$, $d[C] = 3$, $d[D] = 4$.
+Shortest distances: $A \to A$: 0, $A \to B$: 1, $A \to C$: 3, $A \to D$: 4.
 \end{example}
 
-\begin{example}
-Use Kruskal's algorithm to find an MST.
-
-Consider vertices $\{A, B, C, D\}$ with edges: $A-B$ (3), $A-C$ (1), $A-D$ (4), $B-C$ (2), $B-D$ (5), $C-D$ (6).
+\begin{example}[Kruskal's algorithm]
+Find an MST of vertices $\{A, B, C, D\}$ with edges: $A$-$B$ (3), $A$-$C$ (1), $A$-$D$ (4), $B$-$C$ (2), $B$-$D$ (5), $C$-$D$ (6).
 
 \emph{Solution.}
 \begin{enumerate}
-  \item Sort edges: $A-C$ (1), $B-C$ (2), $A-B$ (3), $A-D$ (4), $B-D$ (5), $C-D$ (6).
-  \item Add $A-C$ (1): No cycle. Tree: $\{A-C\}$.
-  \item Add $B-C$ (2): No cycle. Tree: $\{A-C, B-C\}$.
-  \item Add $A-B$ (3): Would create cycle $A-B-C-A$. Skip.
-  \item Add $A-D$ (4): No cycle. Tree: $\{A-C, B-C, A-D\}$.
+  \item Sort edges: $A$-$C$ (1), $B$-$C$ (2), $A$-$B$ (3), $A$-$D$ (4), $B$-$D$ (5), $C$-$D$ (6).
+  \item Add $A$-$C$ (1): No cycle. MST so far: $\{A$-$C\}$.
+  \item Add $B$-$C$ (2): No cycle. MST: $\{A$-$C$, $B$-$C\}$.
+  \item Add $A$-$B$ (3): Would create cycle $A$-$B$-$C$-$A$. Skip.
+  \item Add $A$-$D$ (4): No cycle. MST: $\{A$-$C$, $B$-$C$, $A$-$D\}$.
 \end{enumerate}
-MST edges: $\{A-C, B-C, A-D\}$ with total weight $1 + 2 + 4 = 7$.
+Total weight: $1 + 2 + 4 = 7$.
 \end{example}
 
-\begin{example}
-Give the preorder, inorder, and postorder traversals of a binary tree.
-
-Consider a binary tree:
+\begin{example}[Tree traversals]
+Give preorder, inorder, and postorder traversals of:
 \begin{verbatim}
        A
       / \
@@ -299,129 +499,122 @@ Consider a binary tree:
 \end{itemize}
 \end{example}
 
-\begin{example}
-Prove that a forest with $n$ vertices and $k$ connected components has $n - k$ edges.
+\begin{example}[Forest edge count]
+Prove: A forest with $n$ vertices and $k$ components has $n - k$ edges.
 
-\emph{Solution.} Each connected component is a tree. If component $i$ has $n_i$ vertices, it has $n_i - 1$ edges.
+\emph{Solution.} Each component is a tree. If component $i$ has $n_i$ vertices, it has $n_i - 1$ edges.
 
-Total edges: $\sum_{i=1}^k (n_i - 1) = \sum_{i=1}^k n_i - k = n - k$.
+Total edges: $\sum_{i=1}^k (n_i - 1) = \sum n_i - k = n - k$.
 \end{example}
 
+\begin{commonmistake}
+\textbf{Using Dijkstra with negative weights.} Dijkstra assumes non-negative weights. With negative edges, it can give wrong answers. Use Bellman-Ford instead.
+\end{commonmistake}
+
+\begin{commonmistake}
+\textbf{Thinking $n-1$ edges implies tree.} Having exactly $n-1$ edges is necessary but not sufficient. You also need the graph to be connected (or acyclic). A disconnected graph with $n-1$ edges is a forest, not a tree.
+\end{commonmistake}
+
 \begin{goingdeeper}[Going Deeper: Trees as Initial Algebras and the Universality of Fold]
-There's a deep reason why recursive functions on trees always terminate, and why the ``fold'' pattern is so universal. Trees are \emph{initial algebras}, and fold is the unique map from an initial object.
+There's a deep reason why recursive functions on trees always terminate, and why the ``fold'' pattern is universal. Trees are \emph{initial algebras}, and fold is the unique morphism from an initial object.
 For more detail, see the Category Theory Companion, Week 8.
 
-\textbf{The recursive structure of trees.} Notice that a binary tree is either:
+\textbf{The recursive structure of trees.} A binary tree is either:
 \begin{itemize}
   \item A leaf (containing data), or
   \item A node with a left subtree and a right subtree
 \end{itemize}
-Writing this as an equation: $\text{Tree}(A) = A + \text{Tree}(A) \times \text{Tree}(A)$.
+As an equation: $\text{Tree}(A) = A + \text{Tree}(A) \times \text{Tree}(A)$.
 
-Here $+$ means ``or'' (disjoint union) and $\times$ means ``and'' (Cartesian product). This recursive equation \emph{defines} the type of trees.
+Here $+$ means ``or'' (disjoint union) and $\times$ means ``and'' (product). This equation \emph{defines} the type.
 
-\textbf{Algebras for tree-building.} An ``algebra'' for this structure over a set $B$ consists of:
+\textbf{Algebras for tree-building.} An ``algebra'' for this structure over set $B$ consists of:
 \begin{itemize}
   \item A function $\textit{leaf}: A \to B$ (what to do with leaves)
   \item A function $\textit{node}: B \times B \to B$ (how to combine subtree results)
 \end{itemize}
 
-\textbf{The fold (catamorphism).} Given any algebra $(\textit{leaf}, \textit{node})$ over $B$, there is a \emph{unique} function $\textit{fold}: \text{Tree}(A) \to B$ satisfying:
+\textbf{The fold (catamorphism).} Given any algebra $(\textit{leaf}, \textit{node})$ over $B$, there's a \emph{unique} function $\textit{fold}: \text{Tree}(A) \to B$ satisfying:
 \[
 \textit{fold}(\text{Leaf } a) = \textit{leaf}(a) \qquad \textit{fold}(\text{Node } \ell\, r) = \textit{node}(\textit{fold}(\ell), \textit{fold}(r))
 \]
 
 \textbf{Examples of fold.}
 \begin{itemize}
-  \item \textbf{Sum leaves:} $\textit{leaf}(a) = a$, $\textit{node}(x, y) = x + y$
-  \item \textbf{Count leaves:} $\textit{leaf}(a) = 1$, $\textit{node}(x, y) = x + y$
-  \item \textbf{Tree height:} $\textit{leaf}(a) = 0$, $\textit{node}(x, y) = 1 + \max(x, y)$
-  \item \textbf{Preorder list:} $\textit{leaf}(a) = [a]$, $\textit{node}(x, y) = x \mathbin{+\!\!+} y$
+  \item \textbf{Sum leaves}: $\textit{leaf}(a) = a$, $\textit{node}(x, y) = x + y$
+  \item \textbf{Count leaves}: $\textit{leaf}(a) = 1$, $\textit{node}(x, y) = x + y$
+  \item \textbf{Tree height}: $\textit{leaf}(a) = 0$, $\textit{node}(x, y) = 1 + \max(x, y)$
+  \item \textbf{Preorder list}: $\textit{leaf}(a) = [a]$, $\textit{node}(x, y) = x \mathbin{+\!\!+} y$
 \end{itemize}
 
-All tree traversals from this section (preorder, inorder, postorder) are folds with appropriate algebra choices!
+All tree traversals are folds with appropriate algebra choices.
 
-\textbf{Why recursion terminates.} The tree type is the \emph{initial} algebra---the ``smallest'' solution to the recursive equation. The uniqueness of fold means there's exactly one way to recursively compute any result. If recursion didn't terminate, no function would exist (violating existence). If there were multiple ways to compute, uniqueness would fail.
+\textbf{Why recursion terminates.} The tree type is the \emph{initial} algebra---the ``smallest'' solution to the recursive equation. Uniqueness of fold means exactly one way to recursively compute any result. If recursion didn't terminate, no function would exist. If there were multiple computation paths, uniqueness would fail.
 
-\textbf{The pattern generalizes.} Lists are also an initial algebra: $\text{List}(A) = 1 + A \times \text{List}(A)$. The fold for lists is:
-\[
-\textit{foldr}(f, z, []) = z \qquad \textit{foldr}(f, z, x:xs) = f(x, \textit{foldr}(f, z, xs))
-\]
-Natural numbers are too: $\N = 1 + \N$ with ``algebra'' $(z, s)$ giving primitive recursion.
+\textbf{The pattern generalizes.}
+\begin{itemize}
+  \item Lists: $\text{List}(A) = 1 + A \times \text{List}(A)$. Fold is $\textit{foldr}$.
+  \item Natural numbers: $\N = 1 + \N$. Fold is primitive recursion.
+\end{itemize}
 
-\textbf{Why this matters:} Understanding data structures as initial algebras explains why structural recursion is well-founded, enables powerful optimizations (``fold fusion''), and connects programming to deep mathematics.
+Understanding data as initial algebras explains why structural recursion is well-founded, enables optimizations like fold fusion, and connects programming to category theory.
 
 \subsubsection*{Exercises: Folds and Algebras}
 
 \begin{enumerate}
-  \item The ``sum'' function on lists adds up all elements. What is the base case (what does the empty list $[]$ map to)? What is the combining function?
+  \item The ``sum'' function on lists adds elements. What's the base case (empty list maps to what)? What's the combining function?
 
-  \item The ``length'' function counts elements. What is the base case? What is the combining function?
+  \item The ``length'' function counts elements. Define it as a fold.
 
-  \item The ``product'' function multiplies all elements. Define it as a fold.
+  \item Define \texttt{map f} as a fold. What are the base case and combining function?
 
-  \item Define \texttt{map f} as a fold. What is the base case? What is the combining function? (Hint: the result type is also a list.)
-
-  \item For natural numbers with $\text{Zero}$ and $\text{Succ}$: define addition $n + m$ by fixing $m$ and folding over $n$. What algebra $(z, s)$ do you use?
-
-  \item Define multiplication $n \times m$ as a fold over $n$, with $m$ fixed.
-
-  \item For binary trees with data at leaves, define ``count leaves'' as a fold. Specify $\textit{leaf}$ and $\textit{node}$.
+  \item For natural numbers with $\text{Zero}$ and $\text{Succ}$: define addition $n + m$ by folding over $n$ with $m$ fixed.
 
   \item Define ``tree height'' as a fold on binary trees.
 
-  \item \textbf{Uniqueness:} Suppose $\textit{sum}_1$ and $\textit{sum}_2$ both satisfy:
-  \begin{align*}
-  \textit{sum}_1([]) &= 0 & \textit{sum}_1(x:xs) &= x + \textit{sum}_1(xs) \\
-  \textit{sum}_2([]) &= 0 & \textit{sum}_2(x:xs) &= x + \textit{sum}_2(xs)
-  \end{align*}
-  Prove that $\textit{sum}_1 = \textit{sum}_2$ by showing they agree on all lists.
+  \item Express inorder traversal as a fold. (Hint: where does the root's data go relative to left and right results?)
 
-  \item Express preorder traversal of a binary tree as a fold. What about inorder? (Hint: for inorder, think about where to put the current node's data relative to left and right results.)
-
-  \item Why can't we fold over an \emph{infinite} list to get a finite answer (in general)? What would go wrong with the uniqueness argument?
-
-  \item \textbf{Challenge:} The ``fold fusion'' law says: if $h \circ g = g' \circ F(h)$ in a suitable sense, then $h \circ \textit{fold}_g = \textit{fold}_{g'}$. For lists, this gives: if $h(z) = z'$ and $h(f(x, y)) = f'(x, h(y))$ for all $x, y$, then $h \circ \textit{foldr}(f, z) = \textit{foldr}(f', z')$. Verify this for $h(n) = 2n$, $f(x, y) = x + y$, $z = 0$.
+  \item \textbf{Challenge}: The ``fold fusion'' law says if certain conditions hold, $h \circ \textit{fold}_g = \textit{fold}_{g'}$. For lists, verify this for $h(n) = 2n$, $f(x, y) = x + y$, $z = 0$.
 \end{enumerate}
 \end{goingdeeper}
-
-\begin{commonmistake}
-\textbf{Applying Dijkstra's algorithm with negative weights.} Dijkstra assumes non-negative weights. With negative edges, use Bellman-Ford instead.
-\end{commonmistake}
-
-\begin{commonmistake}
-\textbf{Confusing ``connected and acyclic'' with ``exactly $n-1$ edges.''} Both characterize trees, but having $n-1$ edges alone does NOT guarantee a tree---the graph must also be connected (for trees) or acyclic (for forests).
-\end{commonmistake}
 
 \subsection*{Practice}
 \begin{enumerate}
   \item How many leaves can a full $m$-ary tree of height $h$ have?
 
-  \item Find a spanning tree of the complete graph $K_5$.
+  \item Find a spanning tree of $K_5$.
 
   \item Explain why removing any edge from a tree disconnects it.
 
-  \item Run Dijkstra's algorithm on a weighted graph with 5 vertices of your choice.
+  \item Run Dijkstra's algorithm on a 5-vertex weighted graph of your choice.
 
-  \item A full binary tree has 31 vertices. How many are leaves? How many are internal?
+  \item A full binary tree has 31 vertices. How many are leaves? Internal vertices?
 
-  \item Prove: Every tree with at least 2 vertices has at least 2 leaves.
+  \item Prove: Every tree with $\geq 2$ vertices has at least 2 leaves.
 
-  \item Use Prim's algorithm to find an MST of a weighted graph (create your own example).
+  \item Use Prim's algorithm to find an MST (create your own example).
 
-  \item Prove that a tree is bipartite.
+  \item Prove that every tree is bipartite.
 
-  \item Give the BFS and DFS spanning trees of a 4-cycle $C_4$ starting from vertex 1.
+  \item Give BFS and DFS spanning trees of $C_4$ starting from vertex 1.
 
-  \item Prove: If a graph has $n$ vertices and fewer than $n - 1$ edges, it is not connected.
+  \item Prove: If a graph has $n$ vertices and fewer than $n - 1$ edges, it's not connected.
 
-  \item How many spanning trees does the cycle $C_n$ have?
+  \item How many spanning trees does $C_n$ have?
 
-  \item Prove: In any tree, the sum of all vertex degrees equals $2(n-1)$.
+  \item Prove: In any tree, the sum of degrees equals $2(n-1)$.
 
-  \item Let $X = \{1,2,3\}$ and $Y = \{a,b,c\}$ with edges $\{1a, 1b, 2b, 2c, 3c\}$. Use Hall's theorem to decide whether there is a matching that covers $X$, and find one if it exists.
+  \item Let $X = \{1,2,3\}$, $Y = \{a,b,c\}$ with edges $\{1a, 1b, 2b, 2c, 3c\}$. Does a matching covering $X$ exist? Find one or explain why not.
 
-  \item Find a maximum matching in the bipartite graph with $X=\{u,v,w\}$, $Y=\{x,y,z\}$, and edges $\{ux, uy, vx, vy, wz\}$.
+  \item Find a maximum matching in the bipartite graph with $X=\{u,v,w\}$, $Y=\{x,y,z\}$, edges $\{ux, uy, vx, vy, wz\}$.
 
-  \item Compute the maximum flow value in a network with edges $s \to a$ (3), $s \to b$ (2), $a \to b$ (1), $a \to t$ (2), $b \to t$ (3). Give one maximum flow and a minimum cut.
+  \item Compute the maximum flow in a network with edges $s \to a$ (3), $s \to b$ (2), $a \to b$ (1), $a \to t$ (2), $b \to t$ (3). Find a minimum cut.
+
+  \item \textbf{(Structural induction)} Define a function $\textit{mirror}: \text{Tree}(A) \to \text{Tree}(A)$ that swaps left and right subtrees at every node. Then prove by structural induction that $\textit{mirror}(\textit{mirror}(t)) = t$ for all trees $t$.
+
+  \item \textbf{(Structural induction)} Prove: For any binary tree $t$, the number of nodes is $2 \cdot \textit{countLeaves}(t) - 1$. (Hint: nodes = internal vertices + leaves.)
+
+  \item \textbf{(Recursive definition)} Define a function $\textit{flatten}: \text{Tree}(A) \to \text{List}(A)$ that collects all values in a tree into a list. How does your definition relate to tree traversals?
+
+  \item \textbf{(Structural induction)} Prove: $\textit{length}(\textit{flatten}(t)) = \textit{countLeaves}(t)$ for all trees $t$.
 \end{enumerate}
