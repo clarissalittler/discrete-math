@@ -131,7 +131,7 @@ The logic: if the whole pipeline doesn't have collisions, the first step can't h
 Here's where things get interesting. How do you decide if two infinite sets are ``the same size''? You can't count to infinity and compare. Instead, we use functions.
 
 \begin{definition}[Countable and uncountable]
-A set $A$ is \textbf{countably infinite} if there is a bijection $A \leftrightarrow \N$. In other words, you can list its elements: $a_1, a_2, a_3, \ldots$ with nothing missing and no repeats.
+A set $A$ is \textbf{countably infinite} if there is a bijection $A \leftrightarrow \N$. In other words, you can list its elements: $a_0, a_1, a_2, \ldots$ with nothing missing and no repeats.
 
 A set is \textbf{countable} if it is finite or countably infinite.
 
@@ -208,6 +208,7 @@ The intuition: if the pipeline $f$ then $g$ doesn't have collisions, then $f$ al
 Give a bijection between $\Z$ and $\N$.
 
 \emph{Solution.} We need to list all integers in a sequence: each integer appears exactly once. The obvious idea---$0, 1, 2, 3, \ldots$---misses all the negatives. We need to interleave:
+\par\noindent\textbf{Convention:} Throughout these notes, $\N = \{0, 1, 2, \ldots\}$.
 \[
 0, 1, -1, 2, -2, 3, -3, \ldots
 \]
@@ -215,12 +216,12 @@ Give a bijection between $\Z$ and $\N$.
 The formula that does this:
 \[
 f(n) = \begin{cases}
-2n & \text{if } n > 0 \\
--2n + 1 & \text{if } n \leq 0
+2n & \text{if } n \geq 0 \\
+-2n - 1 & \text{if } n < 0
 \end{cases}
 \]
 
-Let's check: $f(0) = 1$, $f(-1) = 3$, $f(1) = 2$, $f(-2) = 5$, $f(2) = 4$, and so on. Positive integers go to even naturals; non-positive integers go to odd naturals. Since every natural is either even or odd (but not both), this is a bijection.
+Let's check: $f(0) = 0$, $f(-1) = 1$, $f(1) = 2$, $f(-2) = 3$, $f(2) = 4$, and so on. Nonnegative integers go to even naturals (including 0); negative integers go to odd naturals. Since every natural is either even or odd (but not both), this is a bijection.
 \end{example}
 
 \begin{example}[Checking bijectivity]

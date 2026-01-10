@@ -172,7 +172,7 @@ Regular languages are closed under:
   \item Union, concatenation, Kleene star (by definition of regex)
   \item Complement: swap accept/non-accept states in DFA
   \item Intersection: $L_1 \cap L_2 = \overline{\overline{L_1} \cup \overline{L_2}}$ (De Morgan)
-  \item Reversal: reverse all transitions and swap start/accept
+  \item Reversal: reverse all transitions and swap start/accept to get an NFA (possibly with multiple start states or $\varepsilon$-transitions), then determinize
 \end{itemize}
 \end{theorem}
 
