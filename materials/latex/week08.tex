@@ -12,13 +12,15 @@ Trees are the ``Goldilocks'' graphs: they have just enough edges to be connected
 
 File systems are trees. Organizational hierarchies are trees. Parse trees show how programs are structured. Decision trees guide classification. Family trees (well, directed acyclic graphs, really) trace ancestry. Binary search trees enable fast lookup. Spanning trees let us navigate networks efficiently.
 
-The recursive structure of trees---a tree is either a single node or a node with subtrees---makes them perfect for recursive algorithms. This week we'll see how this structure leads to elegant solutions for shortest paths, minimum spanning trees, and more.
+The recursive structure of trees---a tree is either a single node or a node with subtrees---makes them perfect for recursive algorithms. But there's something deeper here: this recursive structure isn't just convenient, it's \emph{definitional}. We can define trees by their construction rules (they're ``algebraic datatypes''), and this gives us principled ways to define functions (structural recursion) and prove properties (structural induction). This week we'll see both the practical algorithms and the deeper pattern they exemplify.
 
 \subsection*{Learning objectives}
 \begin{itemize}
   \item Identify trees, forests, and rooted trees.
   \item Use characterizations of trees (connected + acyclic, $|E| = |V| - 1$, etc.).
   \item Understand $m$-ary trees and binary trees.
+  \item \textbf{View trees as algebraic datatypes and define functions by structural recursion.}
+  \item \textbf{Prove properties of trees using structural induction.}
   \item Find spanning trees using BFS and DFS.
   \item Apply shortest-path algorithms (Dijkstra's, Bellman-Ford).
   \item Find minimum spanning trees (Prim's, Kruskal's).
@@ -121,6 +123,150 @@ Both produce spanning trees of connected graphs.
 \end{definition}
 
 BFS finds shortest paths (in unweighted graphs). DFS finds paths, but not necessarily shortest ones---it just finds \emph{a} path.
+
+\subsection*{Trees as Algebraic Datatypes}
+
+Here's a shift in perspective that will pay dividends throughout your mathematical career. Instead of thinking of binary trees as a particular kind of graph (connected, acyclic, each node has at most two children), think of them as defined by their \emph{construction rules}:
+
+\begin{definition}[Binary tree as algebraic datatype]
+A \textbf{binary tree with data of type $A$} is either:
+\begin{itemize}
+  \item A \textbf{leaf} containing a value $a \in A$, or
+  \item A \textbf{node} with a left subtree and a right subtree (both binary trees with data of type $A$)
+\end{itemize}
+That's it. Those are the only ways to build a binary tree.
+\end{definition}
+
+This is called an \emph{algebraic} or \emph{inductive} definition. We specify the type by saying exactly how to construct its elements. You might write this in symbols as:
+\[
+\text{Tree}(A) = A + \text{Tree}(A) \times \text{Tree}(A)
+\]
+where $+$ means ``or'' (disjoint union) and $\times$ means ``and'' (product). The tree type is a solution to this equation---in fact, the \emph{smallest} solution, which turns out to be important.
+
+Why does this perspective matter? Because it gives us two powerful tools for free.
+
+\subsubsection*{Defining Functions by Recursion on Structure}
+
+When you define a datatype by its constructors, you get a recipe for defining functions on it: just say what to do for each constructor.
+
+\begin{example}[Counting leaves]
+To define a function $\textit{countLeaves}: \text{Tree}(A) \to \N$, we just need two cases:
+\begin{align*}
+\textit{countLeaves}(\text{Leaf } a) &= 1 \\
+\textit{countLeaves}(\text{Node } \ell\, r) &= \textit{countLeaves}(\ell) + \textit{countLeaves}(r)
+\end{align*}
+That's a complete, well-defined function. Every tree is built from these two constructors, so we've covered all cases.
+\end{example}
+
+Notice the pattern: for a leaf, we give a direct answer. For a node, we assume we already have answers for the subtrees (the recursive calls) and combine them. This is \emph{structural recursion}---the recursion follows the structure of the datatype.
+
+\begin{example}[Tree height]
+\begin{align*}
+\textit{height}(\text{Leaf } a) &= 0 \\
+\textit{height}(\text{Node } \ell\, r) &= 1 + \max(\textit{height}(\ell), \textit{height}(r))
+\end{align*}
+\end{example}
+
+\begin{example}[Summing a tree of numbers]
+\begin{align*}
+\textit{sum}(\text{Leaf } n) &= n \\
+\textit{sum}(\text{Node } \ell\, r) &= \textit{sum}(\ell) + \textit{sum}(r)
+\end{align*}
+\end{example}
+
+The tree traversals we defined earlier? Those are exactly this pattern:
+\begin{align*}
+\textit{preorder}(\text{Leaf } a) &= [a] \\
+\textit{preorder}(\text{Node } \ell\, r) &= \textit{preorder}(\ell) \mathbin{+\!\!+} \textit{preorder}(r)
+\end{align*}
+(For a tree where nodes also carry data, you'd insert the node's value at the appropriate position.)
+
+\subsubsection*{Structural Induction: Proofs that Follow Construction}
+
+Here's the remarkable thing: the same pattern that lets us \emph{define} functions also lets us \emph{prove} things. This is \textbf{structural induction}.
+
+\begin{keyresult}[Structural induction on trees]
+To prove a property $P$ holds for all binary trees:
+\begin{enumerate}
+  \item \textbf{Base case}: Prove $P(\text{Leaf } a)$ for any leaf.
+  \item \textbf{Inductive case}: Assume $P(\ell)$ and $P(r)$ for subtrees (the \emph{inductive hypothesis}). Prove $P(\text{Node } \ell\, r)$.
+\end{enumerate}
+If both hold, then $P(t)$ is true for every tree $t$.
+\end{keyresult}
+
+Why does this work? Because every tree is built from leaves and nodes. A leaf satisfies $P$ by the base case. A tree built from subtrees that satisfy $P$ also satisfies $P$ by the inductive case. Since trees are the \emph{smallest} things you can build this way, every tree satisfies $P$.
+
+\begin{theorem}
+For any binary tree $t$: $\textit{countLeaves}(t) \leq 2^{\textit{height}(t)}$.
+\end{theorem}
+
+\begin{proof}
+By structural induction.
+
+\textbf{Base case}: For $\text{Leaf } a$: $\textit{countLeaves}(\text{Leaf } a) = 1$ and $2^{\textit{height}(\text{Leaf } a)} = 2^0 = 1$. So $1 \leq 1$. \checkmark
+
+\textbf{Inductive case}: Assume the property holds for subtrees $\ell$ and $r$. That is:
+\begin{align*}
+\textit{countLeaves}(\ell) &\leq 2^{\textit{height}(\ell)} \\
+\textit{countLeaves}(r) &\leq 2^{\textit{height}(r)}
+\end{align*}
+
+For $\text{Node } \ell\, r$:
+\begin{align*}
+\textit{countLeaves}(\text{Node } \ell\, r) &= \textit{countLeaves}(\ell) + \textit{countLeaves}(r) \\
+&\leq 2^{\textit{height}(\ell)} + 2^{\textit{height}(r)} \quad \text{(by IH)} \\
+&\leq 2^{\max(\textit{height}(\ell), \textit{height}(r))} + 2^{\max(\textit{height}(\ell), \textit{height}(r))} \\
+&= 2 \cdot 2^{\max(\textit{height}(\ell), \textit{height}(r))} \\
+&= 2^{1 + \max(\textit{height}(\ell), \textit{height}(r))} \\
+&= 2^{\textit{height}(\text{Node } \ell\, r)}
+\end{align*}
+
+Therefore, by structural induction, the property holds for all trees.
+\end{proof}
+
+\subsubsection*{The Deep Connection}
+
+Structural recursion (for definitions) and structural induction (for proofs) are two sides of the same coin. When you define a function by structural recursion, the proof that it terminates is essentially a structural induction. When you prove something by structural induction, you're defining a ``function'' from trees to proofs.
+
+This isn't just a metaphor. In constructive mathematics and type theory, proofs \emph{are} programs and propositions \emph{are} types. The correspondence goes by various names: Curry-Howard correspondence, propositions-as-types, proofs-as-programs. The ``Going Deeper'' section at the end of this week explores this further through the lens of initial algebras.
+
+\subsubsection*{The Pattern Generalizes}
+
+Trees aren't special. Any algebraic datatype gets the same treatment:
+
+\begin{example}[Natural numbers]
+$\N$ is defined by:
+\begin{itemize}
+  \item $\text{Zero}$ is a natural number
+  \item If $n$ is a natural number, then $\text{Succ}(n)$ is a natural number
+\end{itemize}
+
+Functions by recursion:
+\begin{align*}
+\textit{double}(\text{Zero}) &= \text{Zero} \\
+\textit{double}(\text{Succ } n) &= \text{Succ}(\text{Succ}(\textit{double}(n)))
+\end{align*}
+
+Proofs by induction: This is ordinary mathematical induction! The base case is $n = 0$; the inductive case assumes $P(n)$ and proves $P(n+1)$.
+\end{example}
+
+\begin{example}[Lists]
+$\text{List}(A)$ is defined by:
+\begin{itemize}
+  \item $\text{Nil}$ (empty list)
+  \item $\text{Cons}(a, \mathit{xs})$ where $a \in A$ and $\mathit{xs}$ is a list
+\end{itemize}
+
+The recursion pattern:
+\begin{align*}
+\textit{length}(\text{Nil}) &= 0 \\
+\textit{length}(\text{Cons}(a, \mathit{xs})) &= 1 + \textit{length}(\mathit{xs})
+\end{align*}
+
+Structural induction: base case for empty list, inductive case assumes property holds for the tail.
+\end{example}
+
+So when we prove things about trees ``by induction,'' we're using exactly the same principle as when we prove things about natural numbers---just applied to a richer datatype.
 
 \subsection*{Shortest path algorithms}
 
@@ -463,4 +609,12 @@ Understanding data as initial algebras explains why structural recursion is well
   \item Find a maximum matching in the bipartite graph with $X=\{u,v,w\}$, $Y=\{x,y,z\}$, edges $\{ux, uy, vx, vy, wz\}$.
 
   \item Compute the maximum flow in a network with edges $s \to a$ (3), $s \to b$ (2), $a \to b$ (1), $a \to t$ (2), $b \to t$ (3). Find a minimum cut.
+
+  \item \textbf{(Structural induction)} Define a function $\textit{mirror}: \text{Tree}(A) \to \text{Tree}(A)$ that swaps left and right subtrees at every node. Then prove by structural induction that $\textit{mirror}(\textit{mirror}(t)) = t$ for all trees $t$.
+
+  \item \textbf{(Structural induction)} Prove: For any binary tree $t$, the number of nodes is $2 \cdot \textit{countLeaves}(t) - 1$. (Hint: nodes = internal vertices + leaves.)
+
+  \item \textbf{(Recursive definition)} Define a function $\textit{flatten}: \text{Tree}(A) \to \text{List}(A)$ that collects all values in a tree into a list. How does your definition relate to tree traversals?
+
+  \item \textbf{(Structural induction)} Prove: $\textit{length}(\textit{flatten}(t)) = \textit{countLeaves}(t)$ for all trees $t$.
 \end{enumerate}
