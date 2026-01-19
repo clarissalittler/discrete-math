@@ -1,0 +1,1238 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs,longtable}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{textcomp}
+\usepackage{microtype}
+\usepackage{newunicodechar}
+
+% Disable automatic section numbering (sections are already labeled "Week 1", etc.)
+\setcounter{secnumdepth}{0}
+\setcounter{tocdepth}{2}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+
+% Fallback if \textsubscript is not available
+\providecommand{\textsubscript}[1]{\raisebox{-0.25ex}{\scriptsize #1}}
+
+% --- Unicode character mappings ---
+% The PDF-to-text extraction keeps many Unicode math symbols. These
+% mappings make the .tex source compile cleanly under pdfLaTeX.
+
+\newunicodechar{§}{\S}
+\newunicodechar{±}{\ensuremath{\pm}}
+\newunicodechar{·}{\ensuremath{\cdot}}
+\newunicodechar{×}{\ensuremath{\times}}
+\newunicodechar{Θ}{\ensuremath{\Theta}}
+\newunicodechar{Σ}{\ensuremath{\Sigma}}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{δ}{\ensuremath{\delta}}
+\newunicodechar{ε}{\ensuremath{\varepsilon}}
+\newunicodechar{φ}{\ensuremath{\varphi}}
+
+\newunicodechar{ᶜ}{\textsuperscript{c}}
+\newunicodechar{–}{--}
+\newunicodechar{—}{---}
+\newunicodechar{’}{'}
+\newunicodechar{“}{``}
+\newunicodechar{”}{''}
+\newunicodechar{•}{\textbullet}
+\newunicodechar{…}{\ldots{}}
+\newunicodechar{′}{\ensuremath{\prime}}
+
+\newunicodechar{⁰}{\textsuperscript{0}}
+\newunicodechar{¹}{\textsuperscript{1}}
+\newunicodechar{²}{\textsuperscript{2}}
+\newunicodechar{³}{\textsuperscript{3}}
+\newunicodechar{⁴}{\textsuperscript{4}}
+\newunicodechar{⁵}{\textsuperscript{5}}
+\newunicodechar{⁶}{\textsuperscript{6}}
+\newunicodechar{⁷}{\textsuperscript{7}}
+\newunicodechar{⁹}{\textsuperscript{9}}
+\newunicodechar{⁻}{\textsuperscript{-}}
+\newunicodechar{ⁿ}{\textsuperscript{n}}
+
+\newunicodechar{₀}{\textsubscript{0}}
+\newunicodechar{₁}{\textsubscript{1}}
+\newunicodechar{₂}{\textsubscript{2}}
+\newunicodechar{₃}{\textsubscript{3}}
+\newunicodechar{₄}{\textsubscript{4}}
+\newunicodechar{₅}{\textsubscript{5}}
+\newunicodechar{₆}{\textsubscript{6}}
+\newunicodechar{₈}{\textsubscript{8}}
+\newunicodechar{ₙ}{\textsubscript{n}}
+\newunicodechar{ᵢ}{\textsubscript{i}}
+\newunicodechar{ⱼ}{\textsubscript{j}}
+
+\newunicodechar{ℕ}{\ensuremath{\mathbb{N}}}
+\newunicodechar{ℤ}{\ensuremath{\mathbb{Z}}}
+\newunicodechar{ℚ}{\ensuremath{\mathbb{Q}}}
+\newunicodechar{ℝ}{\ensuremath{\mathbb{R}}}
+
+\newunicodechar{→}{\ensuremath{\to}}
+\newunicodechar{⇒}{\ensuremath{\Rightarrow}}
+\newunicodechar{⇔}{\ensuremath{\Leftrightarrow}}
+\newunicodechar{∀}{\ensuremath{\forall}}
+\newunicodechar{∃}{\ensuremath{\exists}}
+\newunicodechar{∅}{\ensuremath{\varnothing}}
+\newunicodechar{∈}{\ensuremath{\in}}
+\newunicodechar{∉}{\ensuremath{\notin}}
+\newunicodechar{−}{-}
+\newunicodechar{∘}{\ensuremath{\circ}}
+\newunicodechar{∞}{\ensuremath{\infty}}
+\newunicodechar{∩}{\ensuremath{\cap}}
+\newunicodechar{∪}{\ensuremath{\cup}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≠}{\ensuremath{\ne}}
+\newunicodechar{≡}{\ensuremath{\equiv}}
+\newunicodechar{≤}{\ensuremath{\le}}
+\newunicodechar{≥}{\ensuremath{\ge}}
+\newunicodechar{⊂}{\ensuremath{\subset}}
+\newunicodechar{⊆}{\ensuremath{\subseteq}}
+\newunicodechar{⌈}{\ensuremath{\lceil}}
+\newunicodechar{⌉}{\ensuremath{\rceil}}
+\newunicodechar{⌊}{\ensuremath{\lfloor}}
+\newunicodechar{⌋}{\ensuremath{\rfloor}}
+\newunicodechar{■}{\ensuremath{\blacksquare}}
+
+% --- End Unicode mappings ---
+
+\title{Discrete Mathematics\\[0.25em]\large 10-week lecture notes, worked examples, and exercises (with solutions appendix)}
+\author{}
+\date{Version: December 2025}
+
+\begin{document}
+\maketitle
+Aligned to sections in Susanna S. Epp, Discrete Mathematics with Applications (5th ed.).
+These notes and exercises are original and are intended as a companion to the textbook, not a replacement.
+
+\section{How to use these notes}
+Each week (module) in this document corresponds to the section ranges shown in your course schedule. For each week you’ll find: (i) a brief reading guide, (ii) narrative lecture notes, (iii) fully worked examples, and (iv) a problem set.
+
+An appendix at the end contains complete solutions to all of the problem sets. A good workflow is: read the notes → work the examples → attempt the exercises without peeking → then check the appendix.
+
+Notation. This document uses standard symbols: ∈ (is an element of), ⊆ (subset), ∅ (empty set), ℕ (nonnegative integers), ℤ, ℚ, ℝ.
+
+\section{Course map (10 weeks)}
+\begin{longtable}{@{}r l p{0.23\linewidth} p{0.57\linewidth}@{}}
+\toprule
+Week & Textbook sections & Primary theme & Keywords \\
+\midrule
+\endhead
+1 & 6.1–6.4 & Set theory & element method, set identities, power set, Boolean algebra, paradoxes \\
+2 & 7.1–7.4 & Functions + cardinality & domain/codomain, injective/surjective, inverses, composition, countability \\
+3 & 8.1–8.4 & Relations + modular arithmetic & properties, closures, equivalence classes, congruences, inverses mod n \\
+4 & 9.1–9.4 & Counting \& probability I & sample spaces, multiplication/addition rules, inclusion–exclusion, pigeonhole \\
+5 & 9.5–9.7 & Counting \& probability II & combinations, repetition, binomial coefficients, binomial theorem \\
+6 & 9.8; 1.4; 4.9 & Expected value + intro graphs & probability axioms, expectation, graphs, degree, handshake theorem \\
+7 & 10.1–10.3 & Graph theory I & trails/paths/circuits, Euler, adjacency matrices, isomorphism \\
+8 & 10.4–10.6 & Trees \& graph algorithms & trees, rooted trees, spanning trees, shortest paths \\
+9 & 12.1–12.3 & Regular expressions \& automata & regex, DFA, minimization, equivalence of states \\
+10 & 11.1–11.5 & Algorithm efficiency & growth rates, O/Ω/Θ, analyzing loops/recurrences \\
+\bottomrule
+\end{longtable}
+
+\tableofcontents
+\clearpage
+\clearpage
+\section{Week 1: Set theory}
+\textbf{Reading:} Epp §6.1–6.4
+\subsection*{Learning objectives}
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Use set-builder and roster notation fluently; translate between English statements and sets.
+\item Prove set identities using the element method (show x ∈ LHS ⇔ x ∈ RHS).
+\item Apply common set laws (commutative, associative, distributive, De Morgan) correctly.
+\item Work with power sets and partitions; recognize when an example disproves a claim.
+\item Interpret basic Boolean algebra as “algebra of sets” and connect it to logic.
+\end{itemize}
+\subsection{6.1 Sets, subsets, and the element method}
+A set is a collection of distinct objects called elements. We write x ∈ A to mean “x is an
+element of A,” and x ∉ A to mean “x is not an element of A.”
+A set can be specified by listing its elements (roster notation) or by a defining property
+(set-builder notation). For example, \{1, 2, 3\} = \{ x ∈ ℤ : 1 ≤ x ≤ 3 \}.
+Key definitions
+Subset: A ⊆ B means every element of A is also an element of B.
+Proper subset: A ⊂ B means A ⊆ B and A ≠ B.
+Set equality: A = B means A ⊆ B and B ⊆ A (equivalently, ∀x, x ∈ A ⇔ x ∈ B).
+Common operations: union A ∪ B, intersection A ∩ B, difference A \(\setminus\) B, complement Aᶜ
+(relative to a universe U).
+The most reliable way to prove a set identity is the element method. To prove A = B, pick
+an arbitrary element x and show x ∈ A iff x ∈ B. To prove A ⊆ B, pick arbitrary x ∈ A and
+show x ∈ B.
+
+\subsubsection*{Example 1.1 (Element method: distributive law)}
+Prove that A ∩ (B ∪ C) = (A ∩ B) ∪ (A ∩ C).
+Solution. Let x be arbitrary. Then:
+x ∈ A ∩ (B ∪ C) ⇔ (x ∈ A) and (x ∈ B ∪ C).
+The condition x ∈ B ∪ C means (x ∈ B) or (x ∈ C). So:
+x ∈ A ∩ (B ∪ C) ⇔ (x ∈ A) and ((x ∈ B) or (x ∈ C)).
+Distribute “and” over “or”: this is equivalent to ((x ∈ A and x ∈ B) or (x ∈ A and x
+∈ C)).
+That is, x ∈ (A ∩ B) ∪ (A ∩ C). Since x was arbitrary, the sets are equal. ■
+Two more concepts appear constantly in discrete math:
+Power set and partitions
+Power set: P(A) is the set of all subsets of A. If A has n elements, then P(A) has 2ⁿ
+elements.
+Partition: A partition of A is a collection of nonempty subsets whose union is A and
+which are pairwise disjoint.
+\subsubsection*{Example 1.2 (Power set)}
+Let A = \{a, b, c\}. List P(A) and verify that it has 2³ = 8 elements.
+Solution. The subsets are: ∅, \{a\}, \{b\}, \{c\}, \{a,b\}, \{a,c\}, \{b,c\}, \{a,b,c\}. There are
+8, matching 2³. ■
+\subsection{6.2 Set laws and De Morgan’s laws}
+Set operations satisfy algebraic laws that look like the laws of arithmetic. These laws let
+you simplify expressions and prove identities. In practice, you’ll use two proof styles: (1)
+the element method, and (2) an algebraic proof that rewrites one side into the other using
+known laws.
+De Morgan’s laws (for sets)
+(A ∪ B)ᶜ = Aᶜ ∩ Bᶜ
+(A ∩ B)ᶜ = Aᶜ ∪ Bᶜ
+
+\subsubsection*{Example 1.3 (De Morgan via the element method)}
+Prove (A ∪ B)ᶜ = Aᶜ ∩ Bᶜ.
+Solution. Let x be arbitrary.
+x ∈ (A ∪ B)ᶜ ⇔ x ∉ (A ∪ B).
+x ∉ (A ∪ B) means “x is not in A and not in B,” i.e., (x ∉ A) and (x ∉ B).
+That is equivalent to (x ∈ Aᶜ) and (x ∈ Bᶜ), which means x ∈ Aᶜ ∩ Bᶜ.
+So x ∈ (A ∪ B)ᶜ ⇔ x ∈ Aᶜ ∩ Bᶜ for arbitrary x, hence the sets are equal. ■
+\subsection{6.3 Disproofs and algebraic proofs}
+To disprove a universal claim like “for all sets A, B, …, statement S holds,” you only need
+one counterexample—one choice of sets that makes S false. Good counterexamples are
+usually small, concrete sets (often subsets of \{1,2,3\}).
+\subsubsection*{Example 1.4 (Disprove a false set identity)}
+Claim: A \(\setminus\) (B ∩ C) = (A \(\setminus\) B) ∩ (A \(\setminus\) C). Is it true?
+Solution. Take A = \{1,2\}, B = \{1\}, C = \{2\}.
+Compute B ∩ C = ∅, so A \(\setminus\) (B ∩ C) = A \(\setminus\) ∅ = \{1,2\}.
+But A \(\setminus\) B = \{2\} and A \(\setminus\) C = \{1\}, so (A \(\setminus\) B) ∩ (A \(\setminus\) C) = \{2\} ∩ \{1\} = ∅.
+Left side is \{1,2\} and right side is ∅, so the claim is false. ■
+\subsection{6.4 Boolean algebra, paradoxes, and why definitions matter}
+The collection of sets (within a fixed universe U) behaves like a Boolean algebra: ∪ acts
+like OR, ∩ acts like AND, and complement acts like NOT. This is more than a cute analogy:
+it lets you translate problems between set identities and logical identities.
+\subsubsection*{Example 1.5 (A Boolean-style simplification)}
+Simplify the set expression (A ∩ B) ∪ (A ∩ Bᶜ).
+Solution. Use distributivity:
+(A ∩ B) ∪ (A ∩ Bᶜ) = A ∩ (B ∪ Bᶜ).
+But B ∪ Bᶜ = U (the universe), so the expression becomes A ∩ U = A. ■
+
+Finally, some famous paradoxes show why “set of all sets with property P” must be
+handled carefully. Russell’s paradox is the classic example: if you allow the set R = \{ x : x
+∉ x \}, then asking whether R ∈ R creates a contradiction. Modern set theory avoids this
+by restricting how sets can be formed (axioms rather than unrestricted comprehension).
+\subsection*{Week 1 problem set}
+\textbf{M1-1.} Let U = \{1,2,3,4,5\}. Let A = \{1,2,4\}, B = \{2,3,5\}, C = \{1,3,4\}. Compute: (a) A ∪
+B, (b) A ∩ C, (c) A \(\setminus\) B, (d) (B ∪ C)ᶜ.
+\textbf{M1-2.} Prove using the element method that A ∩ B ⊆ A for all sets A and B.
+\textbf{M1-3.} Prove (A \(\setminus\) B) \(\setminus\) C = A \(\setminus\) (B ∪ C).
+\textbf{M1-4.} True or false? If A ⊆ B then P(A) ⊆ P(B). Prove your answer.
+\textbf{M1-5.} How many subsets does a set with 9 elements have? Explain briefly.
+\textbf{M1-6.} Let A = \{1,2,3,4\}. Consider the collection \{\{1,2\},\{3\},\{4\}\}. Is it a partition of A?
+Justify.
+\textbf{M1-7.} Simplify (A ∪ B) ∩ (A ∪ Bᶜ) as much as possible.
+\textbf{M1-8.} Let U be a universe and let X, Y ⊆ U. Translate the logical statement “x ∈ X
+implies x ∈ Y” into an equivalent set containment statement.
+
+\clearpage
+\section{Week 2: Functions and cardinality}
+\textbf{Reading:} Epp §7.1–7.4
+\subsection*{Learning objectives}
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Use the definition of function precisely (domain, codomain, range) and work with images and preimages.
+\item Decide whether a function is injective (one-to-one), surjective (onto), or bijective.
+\item Compute and reason about compositions; know what can and cannot be cancelled in compositions.
+\item Construct inverse functions when they exist, and prove inverse properties.
+\item Understand countability: build bijections and use diagonal arguments for uncountability.
+\end{itemize}
+\subsection{7.1 Functions on general sets}
+A function f from a set A to a set B is a rule that assigns to each a ∈ A exactly one element
+f(a) ∈ B. We write f: A → B, call A the domain, B the codomain, and the set \{ f(a) : a ∈ A \}
+the range (or image).
+Images and preimages
+For S ⊆ A, the image of S is f(S) = \{ f(x) : x ∈ S \} ⊆ B.
+For T ⊆ B, the preimage of T is f⁻¹(T) = \{ x ∈ A : f(x) ∈ T \} ⊆ A.
+Note: f⁻¹(T) always makes sense as a set, even when f has no inverse function.
+\subsubsection*{Example 2.1 (Image and preimage)}
+Let f: ℤ → ℤ be defined by f(n) = n² − 1. Find f(\{−2,0,3\}) and f⁻¹(\{0,3,8\}).
+Solution. Compute the image:
+f(−2) = 4−1 = 3, f(0)=−1, f(3)=9−1=8, so f(\{−2,0,3\}) = \{3, −1, 8\}.
+For the preimage, solve n² − 1 ∈ \{0,3,8\}. That means n² ∈ \{1,4,9\}.
+So n ∈ \{±1, ±2, ±3\}. Hence f⁻¹(\{0,3,8\}) = \{−3,−2,−1,1,2,3\}. ■
+
+\subsection{7.2 Injective, surjective, bijective; inverse functions}
+Injective / surjective / bijective
+Injective (one-to-one): f(a₁)=f(a₂) ⇒ a₁=a₂.
+Surjective (onto): for every b ∈ B there exists a ∈ A with f(a)=b.
+Bijective: both injective and surjective (equivalently: has an inverse function).
+For finite sets, injective and surjective are strongly linked: if |A|=|B| and f: A→B is injective,
+then it is automatically surjective (and vice versa). For infinite sets this is not true, so
+definitions matter.
+\subsubsection*{Example 2.2 (Injective but not surjective)}
+Define f: ℤ → ℤ by f(n)=2n. Show f is injective but not surjective.
+Solution. If f(n₁)=f(n₂) then 2n₁=2n₂, so n₁=n₂; hence injective.
+But f(n) is always even, so there is no n with f(n)=1. Therefore f is not onto ℤ. ■
+\subsubsection*{Example 2.3 (Inverse function on ℝ)}
+Let g: ℝ → ℝ be g(x)=x³. Find g⁻¹ and verify g(g⁻¹(y))=y.
+Solution. Solve y=x³ for x: x=\(\sqrt[3]{y}\). So g⁻¹(y)=\(\sqrt[3]{y}\).
+Then g(g⁻¹(y)) = g(\(\sqrt[3]{y}\)) = (\(\sqrt[3]{y}\))³ = y, as required. ■
+\subsection{7.3 Composition of functions}
+If f: A→B and g: B→C, the composition g∘f: A→C is defined by (g∘f)(a)=g(f(a)). Composition
+is associative: h∘(g∘f) = (h∘g)∘f whenever types match. But composition is generally not
+commutative: g∘f usually differs from f∘g.
+\subsubsection*{Example 2.4 (Non-commutativity of composition)}
+Let f(x)=2x+3 and g(x)=x² (both from ℝ to ℝ). Compute g∘f and f∘g.
+Solution. (g∘f)(x)=g(2x+3)=(2x+3)²=4x²+12x+9.
+Meanwhile (f∘g)(x)=f(x²)=2x²+3.
+They are different functions, so composition is not commutative here. ■
+A useful fact: if f and g are both bijections, then (g∘f) is a bijection and (g∘f)⁻¹ = f⁻¹∘g⁻¹.
+The order reverses, just like for inverses of matrices.
+
+\subsection{7.4 Cardinality and countability}
+To compare the “sizes” of sets (including infinite sets), we use bijections. Two sets A and B
+have the same cardinality if there exists a bijection f: A→B.
+Countable vs. uncountable
+A set is countably infinite if it has the same cardinality as ℕ (its elements can be
+listed as a₀, a₁, a₂, …).
+A set is countable if it is finite or countably infinite.
+A set is uncountable if it is not countable (no listing captures all elements).
+\subsubsection*{Example 2.5 (ℤ is countable)}
+Show that ℤ is countably infinite.
+Solution. One explicit listing is 0, 1, −1, 2, −2, 3, −3, …
+Formally, define f: ℕ → ℤ by f(0)=0 and for n≥1:
+if n is even, f(n)=n/2; if n is odd, f(n)=−(n+1)/2.
+This hits every integer exactly once, so it is a bijection and ℤ is countable. ■
+\subsubsection*{Example 2.6 (Diagonal argument idea)}
+Why is the set of all infinite binary strings uncountable?
+Sketch. Suppose, for contradiction, that you could list them as s₀, s₁, s₂, … where
+each sᵢ is an infinite 0–1 sequence.
+Build a new sequence t by flipping the diagonal bit: set t(i) = 1 if sᵢ(i)=0 and t(i)=0
+if sᵢ(i)=1.
+Then t differs from sᵢ at position i for every i, so t is not equal to any listed
+sequence—contradiction.
+Hence no complete listing exists, so the set is uncountable. ■
+\subsection*{Week 2 problem set}
+\textbf{M2-1.} Let A = \{1,2,3,4\} and B = \{a,b,c\}. Define f: A→B by f(1)=a, f(2)=b, f(3)=b,
+f(4)=c. Find the range of f. Is f injective? Is it surjective?
+\textbf{M2-2.} Let f: ℝ→ℝ be f(x)=x². Find f(\{−2,−1,0,3\}). Find f⁻¹(\{1,4\}).
+\textbf{M2-3.} Prove: If f: A→B and g: B→C are injective, then g∘f is injective.
+
+\textbf{M2-4.} Prove: If f: A→B and g: B→C are surjective, then g∘f is surjective.
+\textbf{M2-5.} Let f(x)=3x−5. Find f⁻¹(x). Then compute (f⁻¹∘f)(x) and (f∘f⁻¹)(x).
+\textbf{M2-6.} Give an example of two functions f and g such that f∘g is the identity on the
+domain of g, but g∘f is not the identity on the domain of f.
+\textbf{M2-7.} Show that the set E = \{2n : n ∈ ℕ\} of even natural numbers is countably infinite
+by giving a bijection ℕ→E.
+\textbf{M2-8.} Show that the interval (0,1) ⊆ ℝ is uncountable using a diagonal-style argument
+with decimal expansions (be careful about 0.4999… = 0.5 type issues).
+
+\clearpage
+\section{Week 3: Relations and modular arithmetic}
+\textbf{Reading:} Epp §8.1–8.4
+\subsection*{Learning objectives}
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Represent relations as sets of ordered pairs, directed graphs, and 0–1 matrices.
+\item Test relations for reflexivity, symmetry, antisymmetry, and transitivity.
+\item Work with equivalence relations and equivalence classes; move between partitions and equivalence relations.
+\item Compute and use congruences (mod n), including modular inverses via the Euclidean algorithm.
+\item Solve basic linear congruences and interpret “mod n” arithmetic in applications (coding/cryptography).
+\end{itemize}
+\subsection{8.1 Relations on sets}
+A relation R from A to B is any subset of A×B. If (a,b) ∈ R we write aRb. When A=B we say
+R is a relation on A.
+Useful relation operations
+Inverse relation: R⁻¹ = \{ (b,a) : (a,b) ∈ R \}.
+Domain: dom(R) = \{ a ∈ A : ∃b, (a,b) ∈ R \}.
+Range: ran(R) = \{ b ∈ B : ∃a, (a,b) ∈ R \}.
+Relations can be represented in three common ways: (1) as a list of ordered pairs, (2) as a
+directed graph (digraph) on the elements of A, and (3) as a 0–1 matrix M where M[i,j]=1 iff
+(aᵢ,aⱼ)∈R.
+
+\subsubsection*{Example 3.1 (Divisibility as a relation)}
+Let A = \{1,2,3,4\}. Define R on A by xRy iff x divides y. List R.
+Solution. 1 divides everything, so (1,1),(1,2),(1,3),(1,4) are in R.
+2 divides 2 and 4: add (2,2),(2,4).
+3 divides 3: add (3,3).
+4 divides 4: add (4,4).
+So R = \{(1,1),(1,2),(1,3),(1,4),(2,2),(2,4),(3,3),(4,4)\}. ■
+\subsection{8.2 Reflexivity, symmetry, transitivity}
+Core properties (for relations on A)
+Reflexive: ∀a∈A, (a,a)∈R.
+Symmetric: (a,b)∈R ⇒ (b,a)∈R.
+Antisymmetric: if (a,b)∈R and (b,a)∈R then a=b.
+Transitive: (a,b)∈R and (b,c)∈R ⇒ (a,c)∈R.
+When a relation fails a property, it helps to exhibit a witness. For example, to show “not
+symmetric,” find (a,b)∈R but (b,a)∉R.
+\subsubsection*{Example 3.2 (Property check)}
+For R = “divides” on A = \{1,2,3,4\}, is R reflexive? symmetric? antisymmetric?
+transitive?
+Solution. Reflexive: yes, because every number divides itself, so (a,a)∈R for all a.
+Symmetric: no, since (1,2)∈R but (2,1)∉R.
+Antisymmetric: yes. If a|b and b|a (with a,b positive integers), then a=b.
+Transitive: yes. If a|b and b|c then a|c. ■
+Sometimes you want the “closest” relation that does have a property. For example, the
+reflexive closure of R is obtained by adding all missing (a,a) pairs; the symmetric closure
+adds (b,a) whenever (a,b) is present; and the transitive closure adds all pairs forced by
+repeated transitivity.
+
+\subsection{8.3 Equivalence relations and equivalence classes}
+An equivalence relation is a relation that is reflexive, symmetric, and transitive. Its
+purpose is to formalize “sameness” under some rule (same remainder mod n, same
+birthday month, same connected component, …).
+Equivalence class
+If R is an equivalence relation on A and a∈A, the equivalence class of a is [a] = \{
+x∈A : xRa \}.
+Equivalence classes form a partition of A: every element lies in exactly one class.
+\subsubsection*{Example 3.3 (Equivalence classes mod 4)}
+Define x ≡ y (mod 4) on ℤ by “4 divides x−y.” List the distinct equivalence classes.
+Solution. Two integers are equivalent iff they have the same remainder when
+divided by 4.
+So there are 4 classes: [0]=\{…,−8,−4,0,4,8,…\}, [1]=\{…,−7,−3,1,5,9,…\},
+[2]=\{…,−6,−2,2,6,10,…\}, [3]=\{…,−5,−1,3,7,11,…\}. ■
+\subsection{8.4 Modular arithmetic and modular inverses}
+For integers n≥2, we write a ≡ b (mod n) when n | (a−b). This is an equivalence relation
+on ℤ, and arithmetic can be performed “mod n” by working with remainders.
+Modular inverse
+An integer a has a multiplicative inverse mod n if there exists x such that ax ≡ 1
+(mod n).
+Such an inverse exists iff gcd(a,n)=1. The extended Euclidean algorithm can find it.
+
+\subsubsection*{Example 3.4 (Find an inverse mod 26)}
+Find the inverse of 7 modulo 26.
+Solution. We need x such that 7x ≡ 1 (mod 26). Try the Euclidean algorithm:
+26 = 3·7 + 5, 7 = 1·5 + 2, 5 = 2·2 + 1.
+Back-substitute: 1 = 5 − 2·2 = 5 − 2·(7 − 1·5) = 3·5 − 2·7.
+And 5 = 26 − 3·7, so 1 = 3·(26 − 3·7) − 2·7 = 3·26 − 11·7.
+Thus −11·7 ≡ 1 (mod 26), so x ≡ −11 ≡ 15 (mod 26).
+Check: 7·15=105 ≡ 1 (mod 26). ■
+\subsubsection*{Example 3.5 (Toy RSA workflow)}
+This example is for arithmetic practice, not security. Let p=5 and q=11, so
+n=pq=55 and φ(n)=(p−1)(q−1)=40.
+Choose e=3 (coprime to 40). Find d such that ed ≡ 1 (mod 40).
+Solution. We need 3d ≡ 1 (mod 40). One solution is d=27 because 3·27=81 ≡ 1
+(mod 40).
+To encrypt a message m (with 0 ≤ m < n), compute c ≡ me (mod n). To decrypt,
+compute m ≡ cd (mod n).
+In practice you would compute powers with fast modular exponentiation rather
+than expanding huge numbers. ■
+\subsection*{Week 3 problem set}
+\textbf{M3-1.} Let A=\{1,2,3,4\}. Define R on A by (a,b)∈R iff a+b is even. List all ordered pairs in
+R.
+\textbf{M3-2.} For the relation R in M3-1, determine whether R is reflexive, symmetric,
+antisymmetric, and transitive.
+\textbf{M3-3.} Let A=\{a,b,c\}. Let R=\{(a,a),(b,b),(c,c),(a,b),(b,a)\}. Is R an equivalence relation? If
+yes, list its equivalence classes.
+\textbf{M3-4.} Given the partition of A=\{1,2,3,4,5,6\} into blocks \{1,4\}, \{2,5\}, \{3,6\}, write the
+corresponding equivalence relation R (as a set of ordered pairs).
+\textbf{M3-5.} Solve the congruence 9x ≡ 6 (mod 15). List all solutions modulo 15.
+\textbf{M3-6.} Find the inverse of 17 modulo 43.
+
+\textbf{M3-7.} Compute (12345 mod 7) and (12345 mod 11) without a calculator by reducing
+step by step.
+\textbf{M3-8.} A message is encrypted with the toy RSA setup p=5, q=11, e=3. If the plaintext is
+m=12, compute the ciphertext c = m\textasciicircum{}e mod 55.
+
+\clearpage
+\section{Week 4: Counting and probability I}
+\textbf{Reading:} Epp §9.1–9.4
+\subsection*{Learning objectives}
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Define sample spaces and events and compute probabilities in equally likely finite models.
+\item Use the multiplication rule (fundamental counting principle) and possibility trees.
+\item Use the addition rule and inclusion–exclusion for two sets/events.
+\item Apply complementary counting to simplify problems.
+\item Use the pigeonhole principle to prove existence statements.
+\end{itemize}
+\subsection{9.1 Sample spaces, events, and basic probability}
+A probability model starts with a sample space S: the set of all possible outcomes. An
+event is a subset E ⊆ S. In the simplest “equally likely” setting, each outcome has
+probability 1/|S|, so P(E)=|E|/|S|.
+\subsubsection*{Example 4.1 (Two heads in three coin flips)}
+Flip a fair coin 3 times. What is the probability of getting exactly 2 heads?
+Solution. The sample space has 2³=8 equally likely outcomes.
+Exactly two heads occur in HHT, HTH, THH: 3 outcomes.
+So P(exactly 2 heads)=3/8. ■
+\subsection{9.2 Possibility trees and the multiplication rule}
+The multiplication rule says: if a process has k stages, and stage i has nᵢ choices
+regardless of earlier choices, then the total number of outcomes is n₁·n₂·…·n\_k. Possibility
+trees are a diagrammatic way to track stages when the number of choices depends on
+earlier choices.
+\subsubsection*{Example 4.2 (Counting passwords)}
+How many 6-character strings can be formed from the alphabet \{A,…,Z,0,…,9\} if
+repetition is allowed?
+Solution. There are 26+10=36 choices for each position. By the multiplication rule:
+36⁶ strings. ■
+
+\subsection{9.3 The addition rule and inclusion–exclusion (two sets)}
+If A and B are disjoint sets (A ∩ B = ∅), then |A ∪ B| = |A| + |B|. If they overlap, you must
+subtract the overlap once: |A ∪ B| = |A| + |B| − |A ∩ B|. The same formula holds for
+probabilities: P(A ∪ B)=P(A)+P(B)−P(A∩B).
+\subsubsection*{Example 4.3 (Counting divisible numbers 1–100)}
+How many integers from 1 to 100 are divisible by 2 or 5?
+Solution. Let A be multiples of 2, B be multiples of 5.
+|A|=⌊100/2⌋=50, |B|=⌊100/5⌋=20, |A∩B|=multiples of 10: ⌊100/10⌋=10.
+So |A∪B|=50+20−10=60. ■
+\subsection{9.4 The pigeonhole principle}
+The pigeonhole principle is a small idea with disproportionate power: if you put more
+objects than boxes, then some box contains at least two objects. The generalized version
+says: if N objects are placed into k boxes, then some box contains at least ⌈N/k⌉ objects.
+\subsubsection*{Example 4.4 (Birth months)}
+Show that in any group of 13 people, at least two were born in the same month.
+Solution. There are 12 months (boxes) and 13 people (objects). By the pigeonhole
+principle, some month contains at least two birthdays. ■
+\subsection*{Week 4 problem set}
+\textbf{M4-1.} A fair die is rolled once. What is the probability that the result is (a) even, (b)
+greater than 4, (c) even or greater than 4?
+\textbf{M4-2.} A student must choose a username consisting of 2 letters followed by 3 digits.
+Letters may repeat; digits may repeat. How many usernames are possible?
+\textbf{M4-3.} How many 5-letter strings over \{A,B,C\} contain at least one A? (Hint:
+complement.)
+\textbf{M4-4.} In a class, 18 students take math, 12 take CS, and 7 take both. How many take at
+least one of the two courses?
+\textbf{M4-5.} Use the pigeonhole principle to show that among any 6 integers, there are two
+with the same remainder when divided by 5.
+\textbf{M4-6.} Show that in any set of 10 distinct integers, there exist two whose difference is
+divisible by 9.
+\textbf{M4-7.} A bag contains 5 red, 4 blue, and 3 green balls. If you draw 2 balls without
+replacement, what is the probability they are the same color?
+
+\textbf{M4-8.} How many permutations of the letters in the word LEVEL are there? (Treat
+identical letters as indistinguishable.)
+
+\clearpage
+\section{Week 5: Counting and probability II}
+\textbf{Reading:} Epp §9.5–9.7
+\subsection*{Learning objectives}
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Use combinations (binomial coefficients) to count subsets and selections without order.
+\item Solve “stars and bars” problems (combinations with repetition) correctly.
+\item Apply Pascal’s identity and the binomial theorem.
+\item Give combinatorial proofs of simple identities.
+\item Use combinations to compute probabilities (hypergeometric-style counts).
+\end{itemize}
+\subsection{9.5 Combinations and binomial coefficients}
+When order does not matter, we count combinations. The number of r-element subsets of
+an n-element set is written “n choose r” and denoted C(n,r) or (n r).
+Binomial coefficient
+C(n,r) = n! / (r!(n−r)!) for integers 0 ≤ r ≤ n.
+Interpretation: number of ways to choose r items from n distinct items.
+\subsubsection*{Example 5.1 (Committee count)}
+How many 4-person committees can be formed from 10 students?
+Solution. Order does not matter, so the answer is C(10,4)=10!/(4!6!)=210. ■
+A common mistake is to use permutations when combinations are needed. A quick check:
+if the problem says “committee,” “subset,” “choose,” or “select” (without roles), it’s
+usually combinations.
+\subsection{9.6 Combinations with repetition (stars and bars)}
+Sometimes you choose r items allowing repeats from n types. Equivalently, you distribute
+r identical balls into n distinct boxes (allowing empty boxes).
+Stars and bars
+Number of solutions in nonnegative integers to x₁ + x₂ + … + x\_n = r is C(r+n−1,
+n−1).
+Interpretation: number of multisets of size r drawn from n types.
+
+\subsubsection*{Example 5.2 (Distributing identical items)}
+How many nonnegative integer solutions are there to x₁+x₂+x₃ = 10?
+Solution. Here n=3 and r=10, so the count is C(10+3−1, 3−1)=C(12,2)=66. ■
+\subsection{9.7 Pascal’s identity and the binomial theorem}
+The binomial coefficients satisfy a recursion that matches Pascal’s triangle: C(n,r) =
+C(n−1,r) + C(n−1,r−1). One way to understand it is combinatorial: when choosing r
+elements from \{1,…,n\}, either you choose n or you don’t.
+Binomial theorem
+(x + y)ⁿ = Σ\_\{r=0\}\textasciicircum{}\{n\} C(n,r) x\textasciicircum{}\{n−r\} y\textasciicircum{}\{r\}.
+It expands a power of a sum into a sum of terms weighted by binomial coefficients.
+\subsubsection*{Example 5.3 (Coefficient extraction)}
+Find the coefficient of x⁷ in (2x − 3)¹⁰.
+Solution. Write (2x − 3)¹⁰ = Σ C(10,r) (2x)\textasciicircum{}\{10−r\} (−3)\textasciicircum{}\{r\}.
+We want exponent 7 on x, so 10−r = 7 ⇒ r=3.
+Coefficient = C(10,3)·2⁷·(−3)³ = 120·128·(−27) = −414,720. ■
+\subsection*{Week 5 problem set}
+\textbf{M5-1.} How many ways are there to choose 5 books from a shelf of 12 distinct books?
+\textbf{M5-2.} A pizza shop offers 8 toppings. How many distinct 3-topping pizzas are possible
+(assume no topping is repeated)?
+\textbf{M5-3.} How many 6-card hands from a standard 52-card deck contain exactly 2 aces?
+\textbf{M5-4.} How many nonnegative integer solutions are there to x₁+x₂+x₃+x₄ = 15?
+\textbf{M5-5.} How many integer solutions are there to x₁+x₂+x₃ = 10 with xᵢ ≥ 2 for all i?
+\textbf{M5-6.} Use Pascal’s identity to compute C(11,5) from smaller binomial coefficients.
+\textbf{M5-7.} Prove the identity C(n,r) = C(n,n−r) combinatorially (in words).
+\textbf{M5-8.} Use the binomial theorem to expand (x+1)⁵ and then evaluate the expansion at
+x=1 to compute 2⁵.
+
+\clearpage
+\section{Week 6: Probability axioms, expected value,}
+and intro graphs
+\textbf{Reading:} Epp §9.8, §1.4, §4.9
+\subsection*{Learning objectives}
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Use the probability axioms to derive standard identities (complements, unions, bounds).
+\item Compute expected values of discrete random variables and use linearity of expectation.
+\item Model situations with graphs; compute degrees; recognize simple, complete, and bipartite graphs.
+\item Apply the handshake theorem to relate degrees and edges and to prove impossibility results.
+\end{itemize}
+\subsection{9.8 Probability axioms and expected value}
+In real applications, “equally likely outcomes” is too restrictive. Instead we define a
+probability function P on a sample space S that assigns a real number P(E) to each event E
+⊆ S and satisfies three axioms:
+Probability axioms
+1. 0 ≤ P(E) ≤ 1 for every event E.
+2. P(S) = 1.
+3. If E₁, E₂, … are pairwise disjoint, then P(E₁ ∪ E₂ ∪ …) = P(E₁)+P(E₂)+… (countable
+additivity).
+From these axioms you can derive the usual rules such as P(Eᶜ)=1−P(E) and
+P(A∪B)=P(A)+P(B)−P(A∩B).
+Expected value
+A (discrete) random variable X assigns a number to each outcome.
+If X takes values x₁,…,x\_k with probabilities p₁,…,p\_k, then E[X]=Σ xᵢ pᵢ.
+Linearity: E[X+Y]=E[X]+E[Y] even when X and Y are dependent.
+
+\subsubsection*{Example 6.1 (Expected value of a die)}
+Let X be the result of rolling a fair six-sided die. Compute E[X].
+Solution. X takes values 1,2,3,4,5,6 each with probability 1/6.
+E[X] = (1+2+3+4+5+6)/6 = 21/6 = 3.5. ■
+\subsubsection*{Example 6.2 (Linearity without independence)}
+Two cards are drawn without replacement from a standard deck. Let X be the
+number of aces in the two-card hand. Find E[X].
+Solution. Let I₁ be the indicator that the first card is an ace, and I₂ the indicator
+that the second card is an ace.
+Then X = I₁ + I₂, so E[X]=E[I₁]+E[I₂].
+Now E[I₁]=P(first is ace)=4/52=1/13. Also E[I₂]=P(second is ace)=4/52=1/13
+(symmetry).
+So E[X]=2/13. Note we did not need independence. ■
+\subsection{1.4 Graph basics: the language of graphs}
+A graph is a mathematical model for “objects connected by links.” A graph G consists of a
+set V of vertices (nodes) and a set E of edges (connections). Edges may connect two
+distinct vertices or (in some definitions) a vertex to itself (a loop).
+Graph vocabulary (undirected graphs)
+Vertices v and w are adjacent if \{v,w\} is an edge.
+The degree deg(v) is the number of incident edges (count a loop twice).
+A simple graph has no loops and no multiple edges between the same pair of
+vertices.
+A complete graph K\_n connects every pair of distinct vertices.
+A bipartite graph has vertices split into two parts with edges only across the split.
+\subsection{4.9 The handshake theorem}
+The handshake theorem is one of the fastest ways to turn local degree information into
+global conclusions about a graph.
+
+Handshake theorem
+Let G be any finite undirected graph with edge set E. Then Σ\_\{v∈V\} deg(v) = 2|E|.
+Corollary: The sum of degrees is even.
+Corollary: The number of vertices with odd degree is even.
+\subsubsection*{Example 6.3 (Degree sequence sanity check)}
+Can a simple graph have degree sequence (3,3,3,1)?
+Solution. The sum of degrees is 3+3+3+1=10, which is even, so the handshake
+theorem does not immediately rule it out.
+But in a simple graph on 4 vertices, the maximum possible degree is 3. That part is
+fine.
+Try to realize it: if one vertex has degree 1, it is adjacent to exactly one other
+vertex. The remaining three vertices must have degrees 3,3,3, which would force
+each of them to connect to all other vertices—including the degree-1
+vertex—giving it degree 3. Contradiction.
+So no such simple graph exists. ■
+\subsection*{Week 6 problem set}
+\textbf{M6-1.} Use the probability axioms to prove: if A ⊆ B then P(A) ≤ P(B).
+\textbf{M6-2.} Let A and B be events with P(A)=0.6, P(B)=0.5, and P(A∩B)=0.2. Compute P(A∪B)
+and P(Aᶜ ∩ B).
+\textbf{M6-3.} A game pays \$10 with probability 0.3 and pays \$0 otherwise. What is the
+expected payout?
+\textbf{M6-4.} A fair coin is flipped until the first head appears. Let X be the number of flips.
+Compute E[X] (hint: use a geometric series or a known formula).
+\textbf{M6-5.} Draw a simple graph with 6 vertices whose degrees are (3,3,2,2,2,0), or explain
+why none exists.
+\textbf{M6-6.} A graph has 13 edges and 9 vertices. The degrees of 8 vertices are:
+2,2,3,3,3,4,4,4. What is the degree of the 9th vertex?
+\textbf{M6-7.} Prove that in any undirected graph, the number of odd-degree vertices is even.
+\textbf{M6-8.} How many edges does the complete graph K₈ have? Justify using degrees or
+combinations.
+
+\clearpage
+\section{Week 7: Graph theory I: trails, matrices,}
+isomorphism
+\textbf{Reading:} Epp §10.1–10.3
+\subsection*{Learning objectives}
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Distinguish walks, trails, paths, circuits; recognize Euler trails/circuits and their degree conditions.
+\item Build adjacency and incidence matrices and use matrix powers to count walks.
+\item Use graph invariants (degree sequence, components, cycles) to test for non-isomorphism.
+\item Construct an isomorphism when two graphs are isomorphic (give an explicit vertex mapping).
+\end{itemize}
+\subsection{10.1 Walks, trails, paths, circuits; Euler trails/circuits}
+A walk is a sequence of vertices where consecutive vertices are joined by edges. A trail is
+a walk with no repeated edges. A path is a walk with no repeated vertices. A circuit is a
+walk that starts and ends at the same vertex.
+Euler trails and Euler circuits (undirected graphs)
+An Euler trail uses every edge exactly once (start and end may differ).
+An Euler circuit is an Euler trail that starts and ends at the same vertex.
+Criterion (connected graphs, ignoring isolated vertices):
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Euler circuit exists iff every vertex has even degree.
+\item Euler trail (but not circuit) exists iff exactly two vertices have odd degree.
+\end{itemize}
+\subsubsection*{Example 7.1 (Euler criterion)}
+A connected graph has degrees (4,2,2,2,2). Does it have an Euler circuit?
+Solution. All degrees are even, so an Euler circuit exists. ■
+\subsection{10.2 Matrix representations of graphs}
+Label the vertices v₁,…,v\_n. The adjacency matrix A is the n×n matrix where A[i,j] is the
+number of edges between vᵢ and vⱼ (for a simple graph, 0 or 1). For undirected simple
+graphs, A is symmetric and has zeros on the diagonal.
+
+\subsubsection*{Example 7.2 (Adjacency matrix and counting walks)}
+Let G be the path graph v₁—v₂—v₃. Its adjacency matrix is
+A = [[0,1,0],[1,0,1],[0,1,0]].
+Compute A² and interpret (A²)[1,3].
+Solution. Multiply:
+A² = [[1,0,1],[0,2,0],[1,0,1]].
+The entry (A²)[1,3]=1 counts the number of length-2 walks from v₁ to v₃. Indeed
+there is exactly one: v₁→v₂→v₃. ■
+\subsection{10.3 Graph isomorphism}
+Two graphs G and H are isomorphic if they are the same up to relabeling of vertices.
+Formally, an isomorphism is a bijection φ: V(G)→V(H) such that \{u,v\} is an edge in G iff
+\{φ(u),φ(v)\} is an edge in H.
+Strategy checklist:
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Compare easy invariants first: number of vertices, number of edges, degree multiset, number of components.
+\item Compare structural features: triangles, cycles of given lengths, cut vertices, bipartiteness.
+\item If invariants match, try to build an explicit vertex mapping that preserves adjacency.
+\end{itemize}
+\subsubsection*{Example 7.3 (Non-isomorphism via degrees)}
+Graph G has degree multiset \{3,3,2,2,2\}. Graph H has degree multiset
+\{4,2,2,2,1\}. Can they be isomorphic?
+Solution. No. Isomorphic graphs have the same degree multiset. These differ, so G
+and H are not isomorphic. ■
+\subsection*{Week 7 problem set}
+\textbf{M7-1.} A connected graph has exactly four vertices of odd degree. Explain why it cannot
+have an Euler trail.
+\textbf{M7-2.} Determine whether the complete bipartite graph K₃,₃ has an Euler circuit, an Euler
+trail, or neither. Justify using degrees.
+\textbf{M7-3.} For the cycle graph C₄ (a square), write the adjacency matrix (label vertices in
+order around the cycle).
+
+\textbf{M7-4.} Using your adjacency matrix from M7-3, compute A² and interpret the diagonal
+entries.
+\textbf{M7-5.} Give two non-isomorphic graphs on 6 vertices that have the same degree multiset
+(a degree multiset alone is not a complete invariant).
+\textbf{M7-6.} Let G be a simple graph with adjacency matrix A. Explain why the entry (A³)[i,i]
+counts length-3 closed walks starting at vᵢ, and how triangles show up in A³.
+\textbf{M7-7.} Decide whether the following degree sequence is graphical (i.e., can occur for a
+simple graph): (3,3,3,1,1,1). If yes, draw such a graph; if not, justify.
+\textbf{M7-8.} Two graphs each have 8 vertices and 10 edges. One has a vertex of degree 6; the
+other has maximum degree 4. Are they isomorphic? Explain.
+
+\clearpage
+\section{Week 8: Trees and graph algorithms}
+\textbf{Reading:} Epp §10.4–10.6
+\subsection*{Learning objectives}
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Recognize trees and use equivalent characterizations (connected + acyclic, unique simple path, edges=vertices−1).
+\item Work with rooted trees (parent/child, levels, height) and m-ary trees.
+\item Construct spanning trees and minimum spanning trees (MST) for weighted graphs.
+\item Run a shortest-path algorithm (Dijkstra) on small weighted graphs and interpret results.
+\end{itemize}
+\subsection{10.4 Trees: examples and basic properties}
+Informally, a tree is a connected graph with no cycles. Trees are the backbone of many
+data structures and network designs because they are “just enough edges to stay
+connected.”
+Equivalent characterizations of a tree (finite, undirected)
+For a graph with n vertices, the following are equivalent:
+1) Connected and acyclic.
+2) Connected and has exactly n−1 edges.
+3) Acyclic and has exactly n−1 edges.
+4) There is a unique simple path between any two vertices.
+\subsubsection*{Example 8.1 (Edges in a tree)}
+A tree has 18 vertices. How many edges does it have?
+Solution. Any tree with n vertices has n−1 edges. Here n=18, so edges=17. ■
+A common proof pattern: show that adding one edge to a tree creates exactly one cycle,
+and removing any edge disconnects it. This is the reason spanning trees are “minimally
+connected.”
+
+\subsection{10.5 Rooted trees and m-ary trees}
+A rooted tree is a tree with a distinguished vertex called the root. This induces parent/child
+relationships: every vertex except the root has a unique parent (the next vertex on the
+path to the root).
+m-ary tree facts
+A rooted tree is m-ary if each vertex has at most m children.
+A rooted tree is full m-ary if every internal vertex has exactly m children.
+In a full m-ary tree with i internal vertices, the number of leaves is L = (m−1)i + 1.
+\subsubsection*{Example 8.2 (Leaves in a full binary tree)}
+A full binary tree (m=2) has 10 internal vertices. How many leaves does it have?
+Solution. Use L=(m−1)i+1 = (2−1)·10+1 = 11. ■
+\subsection{10.6 Spanning trees and shortest paths}
+Given a connected graph G, a spanning tree is a subgraph that is a tree and includes all
+vertices of G. If edges have weights (costs), a minimum spanning tree (MST) is a spanning
+tree with minimum total weight.
+A standard MST method is Kruskal’s algorithm: sort edges by weight and keep adding the
+next lightest edge that does not create a cycle.
+For shortest paths from a source vertex in a graph with nonnegative weights, a standard
+method is Dijkstra’s algorithm. It repeatedly “locks in” the next vertex with smallest
+tentative distance.
+Pseudocode: Dijkstra’s algorithm
+Dijkstra(G, source s):
+    for each vertex v:
+        dist[v] = ∞
+        prev[v] = None
+    dist[s] = 0
+    Q = set of all vertices
+    while Q not empty:
+        u = vertex in Q with smallest dist[u]
+        remove u from Q
+        for each neighbor v of u still in Q:
+            alt = dist[u] + weight(u,v)
+            if alt < dist[v]:
+                dist[v] = alt
+                prev[v] = u
+    return dist, prev
+
+\subsubsection*{Example 8.3 (Dijkstra on a tiny graph)}
+Suppose edges have weights: s–a (2), s–b (5), a–b (1), a–t (6), b–t (2). Find the
+shortest distance from s to t.
+Solution (sketch). Start with dist[s]=0, others ∞.
+Relax from s: dist[a]=2, dist[b]=5. Next pick a (2). Relax from a:
+via a→b: dist[b] becomes min(5, 2+1)=3. via a→t: dist[t]=8.
+Next pick b (3). Relax from b: dist[t] becomes min(8, 3+2)=5.
+So the shortest distance s→t is 5, achieved by s→a→b→t. ■
+\subsection*{Week 8 problem set}
+\textbf{M8-1.} A connected graph has 15 vertices and 14 edges. It has no cycles. Prove it is a
+tree.
+\textbf{M8-2.} A tree has 9 vertices. If you add one new edge between two previously
+non-adjacent vertices, how many cycles are created? Explain.
+\textbf{M8-3.} In a full 3-ary tree, there are 8 internal vertices. How many leaves are there?
+\textbf{M8-4.} Draw a rooted tree of height 2 where the root has 3 children, one of those
+children has 2 children, and all other vertices are leaves. State the number of leaves.
+\textbf{M8-5.} Given a connected graph with vertices \{1,2,3,4\} and edges \{12,13,14,23,34\},
+find a spanning tree (list its edges).
+\textbf{M8-6.} Run Kruskal’s algorithm on a graph with vertices \{a,b,c,d\} and weighted edges:
+ab(1), ac(5), ad(4), bc(2), bd(6), cd(3). List the MST edges and total weight.
+\textbf{M8-7.} Run Dijkstra’s algorithm from source s on the weighted graph: s–a(1), s–b(4),
+a–b(2), a–t(6), b–t(3). Give the final dist values.
+\textbf{M8-8.} Explain why Dijkstra’s algorithm requires nonnegative edge weights by giving a
+small counterexample with a negative weight.
+
+\clearpage
+\section{Week 9: Regular expressions and finite-state}
+automata
+\textbf{Reading:} Epp §12.1–12.3
+\subsection*{Learning objectives}
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Define alphabets, strings, and languages; use Σ* and ε correctly.
+\item Write and interpret regular expressions using union, concatenation, and Kleene star.
+\item Design deterministic finite automata (DFA) for simple pattern constraints.
+\item Simulate a DFA on an input string and decide acceptance.
+\item Minimize a DFA by identifying equivalent (indistinguishable) states.
+\end{itemize}
+\subsection{12.1 Formal languages and regular expressions}
+An alphabet Σ is a finite set of symbols. A string over Σ is a finite sequence of symbols
+from Σ. The empty string is ε. The set of all strings over Σ is Σ*. A language is any subset
+of Σ*.
+Regular expression operators (core ones)
+If R and S are regular expressions, then:
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item (R | S) denotes union (either a string from R or from S).
+\item RS denotes concatenation (a string from R followed by a string from S).
+\item R* denotes Kleene star (zero or more repetitions of strings from R).
+\end{itemize}
+\subsubsection*{Example 9.1 (A simple regex)}
+Over Σ=\{a,b\}, give a regular expression for all strings that start with a and end
+with b.
+Solution. The middle can be any string over \{a,b\}, i.e., (a|b)*. So one answer is:
+a(a|b)*b. ■
+Regular expressions are good for describing patterns, but to reason algorithmically we
+often convert them into automata.
+\subsection{12.2 Deterministic finite-state automata (DFA)}
+A deterministic finite automaton (DFA) consists of:
+
+DFA definition (informal)
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item A finite set of states Q.
+\item An input alphabet Σ.
+\item A transition function δ: Q×Σ → Q (deterministic: exactly one next state).
+\item A start state q₀ ∈ Q.
+\item A set of accepting states F ⊆ Q. A string is accepted if, starting at q₀ and following transitions symbol by symbol, the final state is in F.
+\end{itemize}
+\subsubsection*{Example 9.2 (DFA for “even number of 1s” in binary strings)}
+Design a DFA over Σ=\{0,1\} that accepts exactly those strings with an even
+number of 1s.
+Solution. Use two states: E (even so far) and O (odd so far). Start at E. On input 0,
+stay in the same state; on input 1, toggle between E and O. Accepting state is E. ■
+Transition table for Example 9.2
+State | on 0 | on 1
+------+------|------
+  E   |  E   |  O
+  O   |  O   |  E
+\subsection{12.3 Simplifying (minimizing) finite-state automata}
+Different DFAs can recognize the same language. Minimization produces an equivalent
+DFA with as few states as possible. The key idea is state equivalence: two states p and q
+are equivalent if no future input can distinguish them (they lead to acceptance or rejection
+together for every continuation).
+A practical minimization method is partition refinement: start by splitting states into
+accepting vs non-accepting, then repeatedly split blocks when transitions on some symbol
+go to different blocks.
+
+\subsubsection*{Example 9.3 (Mini minimization example)}
+Suppose a DFA has states \{A,B,C,D\}, accepting states \{C,D\}. If A and B both go to
+C on input 0 and to D on input 1, and C and D both loop to themselves on both
+symbols, then A and B are equivalent and can be merged.
+Reason. Starting from A or B, after one symbol you land in C or D in the same way.
+From then on, C and D behave deterministically. No string can separate A from B,
+so they are indistinguishable. ■
+\subsection*{Week 9 problem set}
+\textbf{M9-1.} Over Σ=\{a,b\}, write a regular expression for all strings that contain the substring
+“ab” at least once.
+\textbf{M9-2.} Describe in words the language of the regular expression (a|b)*aa(a|b)* over
+Σ=\{a,b\}.
+\textbf{M9-3.} Construct a DFA over Σ=\{0,1\} that accepts strings that end with 01.
+\textbf{M9-4.} For your DFA in M9-3, trace the computation on the input strings 01, 101, 1110,
+and 1001. Indicate accept/reject.
+\textbf{M9-5.} Design a DFA over Σ=\{0,1\} that accepts binary strings representing numbers
+divisible by 3 (allow leading zeros).
+\textbf{M9-6.} Give a regular expression over Σ=\{0,1\} for all strings of length at least 2 whose
+first and last symbols are the same.
+\textbf{M9-7.} Minimize the DFA with states \{S,A,B\}, alphabet \{0,1\}, start state S, accepting
+states \{A\}, and transitions: δ(S,0)=A, δ(S,1)=B, δ(A,0)=A, δ(A,1)=B, δ(B,0)=A,
+δ(B,1)=B. (Which states can be merged?)
+\textbf{M9-8.} Explain why the language L = \{ a\textasciicircum{}n b\textasciicircum{}n : n ≥ 0 \} is not regular (give a
+pigeonhole/pumping-lemma style argument, at a high level).
+
+\clearpage
+\section{Week 10: Analysis of algorithm efficiency}
+\textbf{Reading:} Epp §11.1–11.5
+\subsection*{Learning objectives}
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item Compare growth rates of common functions (logarithmic, polynomial, exponential).
+\item Use big-O, big-Ω, and big-Θ definitions and prove simple bounds.
+\item Analyze the worst-case step counts of basic algorithms (loops, nested loops).
+\item Analyze divide-and-conquer algorithms (binary search, merge sort) at the level of growth rates.
+\item Solve simple recurrences or recognize common forms (e.g., T(n)=2T(n/2)+n).
+\end{itemize}
+\subsection{11.1 Growth of functions: intuition and graphs}
+When we analyze algorithms, we usually care about how running time grows with input
+size n. At large n, exact constants matter less than growth rate. Common families (in
+increasing growth order) include log n, n, n log n, n², n³, 2ⁿ, n!.
+\subsubsection*{Example 10.1 (Which grows faster?)}
+Which function grows faster as n→∞: n log₂ n or n\textasciicircum{}\{1.5\}?
+Answer (reason). n\textasciicircum{}\{1.5\} grows faster. One way to see it: divide by n log n to
+compare:
+n\textasciicircum{}\{1.5\} / (n log n) = n\textasciicircum{}\{0.5\} / log n → ∞ because \(\sqrt{n}\) eventually dominates log n.
+■
+\subsection{11.2 Big-O, big-Ω, and big-Θ}
+Asymptotic notation (core definitions)
+f(n) is O(g(n)) if ∃C,n₀ such that for all n ≥ n₀, 0 ≤ f(n) ≤ C·g(n).
+f(n) is Ω(g(n)) if ∃c,n₀ such that for all n ≥ n₀, 0 ≤ c·g(n) ≤ f(n).
+f(n) is Θ(g(n)) if f(n) is both O(g(n)) and Ω(g(n)).
+Think: O is an upper bound (“grows no faster than”), Ω is a lower bound (“grows at least
+as fast as”), and Θ is a tight bound (“same order of growth”).
+
+\subsubsection*{Example 10.2 (Prove a Θ bound)}
+Show that f(n)=3n²+5n+1 is Θ(n²).
+Solution. For n ≥ 1, we have 3n² ≤ 3n²+5n+1 ≤ 3n²+5n²+n² = 9n².
+So with c=3, C=9, and n₀=1, we get 3n² ≤ f(n) ≤ 9n² for all n ≥ 1.
+Hence f(n) is Θ(n²). ■
+\subsection{11.3 Application: analyzing simple loops}
+A practical approach: decide what a “basic operation” is (comparison, addition, array
+access), then count how many times it executes as a function of n. You can then convert
+that exact count into an asymptotic class.
+Counting example: nested loop
+\# Example: nested loop
+count = 0
+for i = 1 to n:
+    for j = 1 to n:
+        count = count + 1
+The inner statement runs n times for each of n values of i, so total iterations = n·n = n².
+This is Θ(n²).
+\subsection{11.4 Exponential and logarithmic functions}
+Logarithms turn multiplication into addition: log(ab)=log a + log b. This is why algorithms
+that repeatedly halve a problem size often run in logarithmic time. Exponential functions
+like 2ⁿ grow extremely fast and usually indicate brute-force behavior.
+\subsubsection*{Example 10.3 (Binary search running time)}
+Binary search halves the search interval each step. After k steps, the remaining
+size is about n/2\textasciicircum{}k.
+We stop when n/2\textasciicircum{}k ≈ 1, meaning 2\textasciicircum{}k ≈ n, so k ≈ log₂ n.
+Thus binary search runs in Θ(log n) comparisons. ■
+\subsection{11.5 Application: divide-and-conquer and recurrences}
+Divide-and-conquer algorithms often lead to recurrences. A classic example is merge sort:
+
+Merge sort recurrence (informal)
+To sort n items, merge sort sorts two halves of size n/2 and then merges them in
+linear time.
+This gives T(n) = 2T(n/2) + cn, which solves to T(n) = Θ(n log n).
+\subsubsection*{Example 10.4 (Solving T(n)=2T(n/2)+n by expansion)}
+Assume n is a power of 2 and T(1)=1. Expand:
+T(n)=2T(n/2)+n
+=2[2T(n/4)+n/2]+n = 4T(n/4)+2n
+=8T(n/8)+3n
+After k steps: T(n)=2\textasciicircum{}k T(n/2\textasciicircum{}k)+k·n.
+Stop when n/2\textasciicircum{}k=1 ⇒ k=log₂ n. Then:
+T(n)=n·T(1)+(log₂ n)·n = n + n log₂ n = Θ(n log n). ■
+\subsection*{Week 10 problem set}
+\textbf{M10-1.} Order the following functions from slowest-growing to fastest-growing (as n→∞):
+log n, n, n log n, n², 2ⁿ.
+\textbf{M10-2.} Show that 7n+20 is Θ(n).
+\textbf{M10-3.} Show that n² is O(n³) and that n³ is not O(n²).
+\textbf{M10-4.} A loop runs i from 1 to n, and inside it runs j from 1 to i. How many times does
+the inner statement execute? Give a Θ bound.
+\textbf{M10-5.} In the worst case, sequential search of an array of length n checks every
+element. Give the exact number of comparisons and its Θ class.
+\textbf{M10-6.} Binary search on a sorted array of length n makes at most ⌈log₂(n+1)⌉
+comparisons (up to constants). Explain why this is O(log n).
+\textbf{M10-7.} Solve the recurrence T(n)=T(n/2)+n with T(1)=1 for n a power of 2. Give Θ
+classification.
+\textbf{M10-8.} Which grows faster: n log n or 10n? At approximately what n does n log₂ n
+exceed 10n? (A rough estimate is fine.)
+
+\appendix
+\clearpage
+\section{Appendix: Solutions to problem sets}
+The solutions below correspond to the labeled exercises in Weeks 1–10. If you find
+yourself reading a solution and thinking “I see it,” stop and re-derive the key step on your
+own—that’s where most of the learning happens.
+\subsection{Week 1 solutions}
+\textbf{M1-1.} Compute each set step by step (universe U=\{1,2,3,4,5\}).
+(a) A ∪ B = \{1,2,4\} ∪ \{2,3,5\} = \{1,2,3,4,5\}.
+(b) A ∩ C = \{1,2,4\} ∩ \{1,3,4\} = \{1,4\}.
+(c) A \(\setminus\) B = \{ elements of A not in B \} = \{1,4\}.
+(d) First B ∪ C = \{2,3,5\} ∪ \{1,3,4\} = \{1,2,3,4,5\}=U, so (B ∪ C)ᶜ = ∅.
+\textbf{M1-2.} Let x be arbitrary and assume x ∈ A ∩ B. By definition of intersection, x ∈ A and x ∈
+B. In particular, x ∈ A. Therefore every element of A ∩ B is an element of A, so A ∩ B ⊆ A.
+\textbf{M1-3.} We prove set equality by the element method. Let x be arbitrary.
+x ∈ (A \(\setminus\) B) \(\setminus\) C ⇔ x ∈ (A \(\setminus\) B) and x ∉ C ⇔ (x ∈ A and x ∉ B) and x ∉ C.
+This is equivalent to x ∈ A and (x ∉ B and x ∉ C), i.e., x ∈ A and x ∉ (B ∪ C).
+Thus x ∈ (A \(\setminus\) B) \(\setminus\) C ⇔ x ∈ A \(\setminus\) (B ∪ C). Since x was arbitrary, the sets are equal.
+\textbf{M1-4.} True. Suppose A ⊆ B. Let S ∈ P(A). By definition of power set, S ⊆ A. Since A ⊆ B,
+transitivity of ⊆ gives S ⊆ B. Hence S ∈ P(B).
+So every element of P(A) is an element of P(B), i.e., P(A) ⊆ P(B).
+\textbf{M1-5.} A set with n elements has 2ⁿ subsets (each element is either “in” or “out”). With
+n=9, that is 2⁹ = 512 subsets.
+\textbf{M1-6.} Yes. Each block is nonempty; the blocks are pairwise disjoint; and their union is
+\{1,2\}∪\{3\}∪\{4\} = \{1,2,3,4\}. Therefore it is a partition of A.
+\textbf{M1-7.} Use the distributive identity (X ∪ Y) ∩ (X ∪ Z) = X ∪ (Y ∩ Z). With X=A, Y=B, Z=Bᶜ:
+(A ∪ B) ∩ (A ∪ Bᶜ) = A ∪ (B ∩ Bᶜ) = A ∪ ∅ = A.
+\textbf{M1-8.} The statement “for all x, if x ∈ X then x ∈ Y” means every element of X is also an
+element of Y. That is exactly the subset relation X ⊆ Y.
+\subsection{Week 2 solutions}
+\textbf{M2-1.} The range is the set of outputs: \{f(1),f(2),f(3),f(4)\} = \{a,b,b,c\} = \{a,b,c\}.
+Not injective because f(2)=b=f(3) but 2≠3.
+Surjective because every element of B=\{a,b,c\} appears as an output.
+\textbf{M2-2.} Compute the image: f(\{−2,−1,0,3\}) = \{ (−2)², (−1)², 0², 3² \} = \{4,1,0,9\}.
+
+For the preimage, solve x² ∈ \{1,4\}. That happens when x=±1 or x=±2. So f⁻¹(\{1,4\}) =
+\{−2,−1,1,2\}.
+\textbf{M2-3.} Let f: A→B and g: B→C be injective. To show g∘f is injective, assume
+(g∘f)(a₁)=(g∘f)(a₂).
+Then g(f(a₁)) = g(f(a₂)). Since g is injective, f(a₁)=f(a₂). Since f is injective, a₁=a₂. Hence
+g∘f is injective.
+\textbf{M2-4.} Let f: A→B and g: B→C be surjective. We must show g∘f is surjective onto C.
+Take any c ∈ C. Because g is onto, there exists b ∈ B with g(b)=c. Because f is onto, there
+exists a ∈ A with f(a)=b.
+Then (g∘f)(a) = g(f(a)) = g(b) = c. Hence g∘f is surjective.
+\textbf{M2-5.} Solve y = 3x − 5 for x: x = (y+5)/3. So f⁻¹(x) = (x+5)/3.
+Now (f⁻¹∘f)(x) = f⁻¹(3x−5) = ((3x−5)+5)/3 = x.
+And (f∘f⁻¹)(x) = f((x+5)/3) = 3·(x+5)/3 − 5 = x.
+\textbf{M2-6.} Here is one concrete example. Let A=\{1\} and B=\{1,2\}. Define g: A→B by g(1)=1.
+Define f: B→A by f(1)=1 and f(2)=1.
+Then (f∘g)(1)=f(g(1))=f(1)=1, so f∘g is the identity on A.
+But g∘f is not the identity on B, because (g∘f)(2)=g(f(2))=g(1)=1 ≠ 2.
+\textbf{M2-7.} A bijection ℕ→E is f(n)=2n (assuming ℕ=\{0,1,2,…\}).
+It is one-to-one because 2n₁=2n₂ ⇒ n₁=n₂, and onto because every even number has the
+form 2n.
+\textbf{M2-8.} Assume, for contradiction, that (0,1) is countable. Then we can list its elements: x₁,
+x₂, x₃, … with decimal expansions.
+Construct a new number y in (0,1) by choosing its digits so that the n-th digit of y differs
+from the n-th digit of xₙ (e.g., change 1→2 and 2→1, and avoid using 9).
+Then y differs from xₙ in the n-th decimal place for every n, so y is not equal to any xₙ. This
+contradicts that the list contained all numbers in (0,1).
+Therefore (0,1) is uncountable.
+\subsection{Week 3 solutions}
+\textbf{M3-1.} The sum a+b is even exactly when a and b have the same parity (both odd or both
+even).
+Odd elements are 1 and 3, giving pairs (1,1),(1,3),(3,1),(3,3).
+Even elements are 2 and 4, giving pairs (2,2),(2,4),(4,2),(4,4).
+So R has 8 ordered pairs total.
+\textbf{M3-2.} Reflexive: yes, because a+a is always even, so (a,a)∈R for every a.
+
+Symmetric: yes, because if a+b is even then b+a is even.
+Antisymmetric: no, since (1,3) and (3,1) are both in R but 1≠3.
+Transitive: yes. If a+b and b+c are even, then a and b have the same parity and b and c
+have the same parity, so a and c have the same parity, hence a+c is even and (a,c)∈R.
+\textbf{M3-3.} R is reflexive because (a,a),(b,b),(c,c) are included. It is symmetric because (a,b)
+and (b,a) are both included, and all (x,x) are symmetric.
+For transitivity, the only nontrivial checks involve a and b: since aRb and bRa, we also
+have aRa and bRb, which are in R. Anything involving c only relates c to itself.
+So R is an equivalence relation. The equivalence classes are \{a,b\} and \{c\}.
+\textbf{M3-4.} The equivalence relation consists of all pairs within each block:
+\{(1,1),(1,4),(4,1),(4,4)\} ∪ \{(2,2),(2,5),(5,2),(5,5)\} ∪ \{(3,3),(3,6),(6,3),(6,6)\}.
+\textbf{M3-5.} Solve 9x ≡ 6 (mod 15). Compute gcd(9,15)=3 and 3 divides 6, so solutions exist.
+Divide the congruence by 3: 3x ≡ 2 (mod 5).
+The inverse of 3 mod 5 is 2 (since 3·2=6≡1 mod5). Multiply both sides by 2:
+x ≡ 4 (mod 5).
+Thus modulo 15, the solutions are x ∈ \{4, 9, 14\}.
+\textbf{M3-6.} Use the Euclidean algorithm: 43=2·17+9, 17=1·9+8, 9=1·8+1, so gcd(17,43)=1.
+Back-substitute: 1=9−1·8 = 9−(17−1·9)=2·9−17 = 2·(43−2·17)−17 = 2·43−5·17.
+So −5·17 ≡ 1 (mod 43), meaning 17⁻¹ ≡ −5 ≡ 38 (mod 43).
+\textbf{M3-7.} Reduce by division:
+12345 = 7·1763 + 4, so 12345 mod 7 = 4.
+12345 = 11·1122 + 3, so 12345 mod 11 = 3.
+\textbf{M3-8.} Compute c = m\textasciicircum{}e mod 55 with m=12 and e=3:
+12³ = 1728. Divide by 55: 55·31=1705, remainder 23.
+So the ciphertext is c = 23.
+\subsection{Week 4 solutions}
+\textbf{M4-1.} Sample space size is 6 (outcomes 1–6).
+(a) Even outcomes: \{2,4,6\} so P=3/6=1/2.
+(b) Greater than 4: \{5,6\} so P=2/6=1/3.
+(c) Even or greater than 4: \{2,4,5,6\} so P=4/6=2/3.
+\textbf{M4-2.} Two letters: 26·26 choices. Three digits: 10·10·10 choices. Multiply:
+Total usernames = 26²·10³ = 676·1000 = 676,000.
+
+\textbf{M4-3.} Total 5-letter strings over \{A,B,C\}: 3⁵=243.
+Complement: strings with no A use only \{B,C\}, so 2⁵=32.
+Therefore strings with at least one A: 243−32=211.
+\textbf{M4-4.} Use inclusion–exclusion: |Math ∪ CS| = |Math|+|CS|−|Both| = 18+12−7 = 23.
+\textbf{M4-5.} There are 5 possible remainders modulo 5 (0,1,2,3,4) but 6 integers. By the
+pigeonhole principle, two integers share a remainder mod 5.
+\textbf{M4-6.} There are 9 possible remainders modulo 9, but you have 10 distinct integers. Two
+must share the same remainder mod 9, and their difference is divisible by 9.
+\textbf{M4-7.} Total ways to choose 2 balls: C(12,2)=66.
+Favorable ways (same color): C(5,2)+C(4,2)+C(3,2)=10+6+3=19.
+So the probability is 19/66.
+\textbf{M4-8.} LEVEL has 5 letters with L repeated twice and E repeated twice.
+Distinct permutations = 5!/(2!·2!) = 120/4 = 30.
+\subsection{Week 5 solutions}
+\textbf{M5-1.} Choosing 5 distinct books from 12 without order gives C(12,5) = 792.
+\textbf{M5-2.} A 3-topping pizza corresponds to choosing 3 toppings out of 8, order irrelevant:
+C(8,3)=56.
+\textbf{M5-3.} Choose 2 of the 4 aces and 4 of the 48 non-aces:
+Number of hands = C(4,2)·C(48,4) = 6·194,580 = 1,167,480.
+\textbf{M5-4.} Count nonnegative solutions to x₁+x₂+x₃+x₄=15 using stars and bars:
+C(15+4−1,4−1)=C(18,3)=816.
+\textbf{M5-5.} Let yᵢ = xᵢ−2, so yᵢ ≥ 0 and y₁+y₂+y₃ = 10−6 = 4.
+Number of solutions = C(4+3−1,3−1)=C(6,2)=15.
+\textbf{M5-6.} Pascal’s identity: C(11,5)=C(10,5)+C(10,4)=252+210=462.
+\textbf{M5-7.} Combinatorial proof: C(n,r) counts r-element subsets of an n-element set.
+Choosing r elements to include is equivalent to choosing which n−r elements to exclude,
+giving C(n,n−r).
+Therefore C(n,r)=C(n,n−r).
+\textbf{M5-8.} (x+1)⁵ = Σ\_\{r=0\}\textasciicircum{}5 C(5,r) x\textasciicircum{}\{5−r\} = x⁵+5x⁴+10x³+10x²+5x+1.
+Plug in x=1: 1+5+10+10+5+1 = 32 = 2⁵.
+
+\subsection{Week 6 solutions}
+\textbf{M6-1.} Assume A ⊆ B. Then B can be written as a disjoint union B = A ∪ (B\(\setminus\)A).
+By additivity on disjoint events, P(B)=P(A)+P(B\(\setminus\)A) ≥ P(A). Hence P(A) ≤ P(B).
+\textbf{M6-2.} Use inclusion–exclusion: P(A∪B)=P(A)+P(B)−P(A∩B)=0.6+0.5−0.2=0.9.
+Also Aᶜ∩B is the part of B outside A, so P(Aᶜ∩B)=P(B)−P(A∩B)=0.5−0.2=0.3.
+\textbf{M6-3.} Let X be the payout. Then E[X]=10·0.3 + 0·0.7 = 3. So the expected payout is \$3.
+\textbf{M6-4.} Let X be the number of flips until the first head. Condition on the first flip:
+With probability 1/2 you get a head immediately (X=1). With probability 1/2 you get a tail
+and then you “start over,” so X=1+X′ where X′ has the same distribution as X.
+So E[X] = (1/2)·1 + (1/2)·(1 + E[X]).
+Solve: E[X] = 1/2 + 1/2 + (1/2)E[X] ⇒ (1/2)E[X]=1 ⇒ E[X]=2.
+\textbf{M6-5.} One construction with vertices v₁,…,v₆ (v₆ isolated):
+Edges among v₁,…,v₅: v₁v₂, v₁v₃, v₁v₄, v₂v₃, v₂v₅, v₄v₅.
+Degrees are: deg(v₁)=3, deg(v₂)=3, deg(v₃)=2, deg(v₄)=2, deg(v₅)=2, deg(v₆)=0, as
+required.
+\textbf{M6-6.} By the handshake theorem, the sum of all degrees is 2|E| = 2·13 = 26.
+The given 8 degrees sum to 2+2+3+3+3+4+4+4 = 25.
+So the 9th degree must be 26−25 = 1.
+\textbf{M6-7.} Let the degrees be d₁,…,d\_n. The handshake theorem gives d₁+…+d\_n = 2|E|,
+which is even.
+A sum of integers is even iff there are an even number of odd addends. Therefore the
+number of odd-degree vertices is even.
+\textbf{M6-8.} In K₈ every vertex has degree 7, so the sum of degrees is 8·7=56.
+By the handshake theorem, 56 = 2|E|, so |E|=28.
+(Equivalently: choose 2 endpoints out of 8: C(8,2)=28 edges.)
+\subsection{Week 7 solutions}
+\textbf{M7-1.} An Euler trail exists in a connected graph iff exactly 0 or 2 vertices have odd degree.
+If the graph has 4 odd-degree vertices, it fails this criterion, so it cannot have an Euler trail.
+\textbf{M7-2.} In K₃,₃ each vertex connects to all 3 vertices in the opposite part, so every vertex
+has degree 3 (odd).
+There are 6 odd-degree vertices. An Euler circuit requires all degrees even, and an Euler
+trail requires exactly two odd degrees.
+Therefore K₃,₃ has neither an Euler circuit nor an Euler trail.
+
+\textbf{M7-3.} Label the cycle vertices 1–2–3–4–1. The adjacency matrix is:
+A = [[0,1,0,1],[1,0,1,0],[0,1,0,1],[1,0,1,0]].
+\textbf{M7-4.} For the matrix A in M7-3, multiply A² = A·A to get:
+A² = [[2,0,2,0],[0,2,0,2],[2,0,2,0],[0,2,0,2]].
+The diagonal entry (A²)[i,i]=2 counts length-2 walks that start and end at vertex i: go to
+either neighbor and return.
+\textbf{M7-5.} Example pair on 6 vertices with the same degree multiset but not isomorphic:
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item G = cycle C₆ (one 6-cycle). It is connected and every vertex has degree 2.
+\item H = disjoint union of two triangles K₃ ∪ K₃. It has two components and every vertex has degree 2. Both have degree multiset \{2,2,2,2,2,2\} but they are not isomorphic because one is connected and the other is not. M7-6. The entry (A\textasciicircum{}k)[i,j] counts the number of length-k walks from vᵢ to vⱼ (this follows from how matrix multiplication sums over intermediate steps). So (A³)[i,i] counts length-3 closed walks starting at vᵢ. A triangle contributes closed walks of length 3: from each of its 3 vertices you can traverse the triangle in 2 directions, giving 6 closed walks total per triangle. Therefore the total number of triangles can be extracted from trace(A³)/6 in a simple graph. M7-7. Yes, it is graphical. One explicit construction: take vertices A,B,C as a triangle (edges AB,BC,CA) so each has degree 2, then connect A to D, B to E, and C to F. Degrees become: deg(A)=3, deg(B)=3, deg(C)=3, deg(D)=deg(E)=deg(F)=1, which matches (3,3,3,1,1,1). M7-8. No. The maximum degree is an isomorphism invariant. One graph has a vertex of degree 6 while the other has maximum degree 4, so they cannot be isomorphic.
+\end{itemize}
+\subsection{Week 8 solutions}
+\textbf{M8-1.} A tree is defined as a connected graph with no cycles. The graph is given to be
+connected and acyclic, so it is a tree.
+(The extra fact “15 vertices and 14 edges” is consistent with the tree property |E|=|V|−1.)
+\textbf{M8-2.} Exactly one cycle is created. In a tree there is a unique simple path between any two
+vertices u and v.
+Adding a new edge \{u,v\} closes that unique path into a single cycle, and no other cycle
+can appear because all other edges are unchanged.
+\textbf{M8-3.} For a full m-ary tree with i internal vertices, the number of leaves is L=(m−1)i+1.
+Here m=3 and i=8, so L=(3−1)·8+1=16+1=17 leaves.
+
+\textbf{M8-4.} One valid shape: root r has children A,B,C. Vertex A has children A₁ and A₂. Vertices
+B,C,A₁,A₂ are leaves.
+Number of leaves = 4.
+\textbf{M8-5.} One spanning tree is the star at 1: edges \{12,13,14\}.
+It contains all 4 vertices, has 3 edges, and has no cycle, so it is a spanning tree.
+\textbf{M8-6.} Sort edges by weight: ab(1), bc(2), cd(3), ad(4), ac(5), bd(6).
+Kruskal picks ab, then bc (no cycle), then cd (no cycle). Now all 4 vertices are connected
+with 3 edges, so we stop.
+MST edges: \{ab, bc, cd\}. Total weight = 1+2+3 = 6.
+\textbf{M8-7.} Run Dijkstra from s. Initialize dist[s]=0, dist[a]=1, dist[b]=4, dist[t]=∞.
+Pick a next (dist 1). Relax: b can be improved via a: 1+2=3 so dist[b]=3. t via a: dist[t]=7.
+Pick b next (dist 3). Relax t via b: 3+3=6 so dist[t]=6.
+Final distances: dist[s]=0, dist[a]=1, dist[b]=3, dist[t]=6.
+\textbf{M8-8.} Counterexample: vertices s,a,b with edges s→a (1), s→b (2), b→a (−2).
+The true shortest distance from s to a is 0 via s→b→a. But Dijkstra would finalize a at
+distance 1 before considering the negative edge, so it can fail.
+This is why Dijkstra requires all edge weights to be nonnegative.
+\subsection{Week 9 solutions}
+\textbf{M9-1.} A standard answer is (a|b)*ab(a|b)*. It says: any prefix, then “ab”, then any suffix.
+\textbf{M9-2.} (a|b)*aa(a|b)* describes all strings over \{a,b\} that contain “aa” as a contiguous
+substring at least once.
+\textbf{M9-3.} Use states that remember whether the most recent symbol was 0 and whether the
+last two symbols were 01.
+States: q0 (start / last symbol not 0), q1 (last symbol is 0), q2 (last two symbols are 01).
+Accepting state: q2.
+Transitions: δ(q0,0)=q1, δ(q0,1)=q0; δ(q1,0)=q1, δ(q1,1)=q2; δ(q2,0)=q1, δ(q2,1)=q0.
+\textbf{M9-4.} Trace using the DFA from M9-3:
+01: q0→q1→q2 (accept).
+101: q0→q0→q1→q2 (accept).
+1110: q0→q0→q0→q0→q1 (reject).
+1001: q0→q0→q1→q1→q2 (accept).
+\textbf{M9-5.} Use 3 states for remainders mod 3: r0 (accept), r1, r2. Reading a bit b updates the
+remainder by new = (2·old + b) mod 3.
+
+Transitions:
+r0: on 0→r0, on 1→r1;
+r1: on 0→r2, on 1→r0;
+r2: on 0→r1, on 1→r2.
+\textbf{M9-6.} Strings of length at least 2 whose first and last symbols match are either:
+\begin{itemize}[leftmargin=*,itemsep=0.25em]
+\item start and end with 0: 0(0|1)*0, or
+\item start and end with 1: 1(0|1)*1. So one regex is: 0(0|1)*0 | 1(0|1)*1. M9-7. Start with partition \{A\} (accepting) and \{S,B\} (non-accepting). Check S and B: on 0 both go to A; on 1 both go to B, which is in the same non-accepting block. So S and B are equivalent and can be merged. The minimized DFA has 2 states: one accepting state A and one non-accepting state [S,B]. M9-8. High-level pumping argument: suppose a DFA with k states recognized L=\{a\textasciicircum{}n b\textasciicircum{}n\}. Consider the k+1 strings a, a², …, a\textasciicircum{}\{k+1\}. As you read these prefixes, by pigeonhole two different lengths a\textasciicircum{}i and a\textasciicircum{}j (i < j) lead to the same state. From that state, the DFA cannot “remember” how many a’s were read, so it would accept both a\textasciicircum{}i b\textasciicircum{}i and a\textasciicircum{}j b\textasciicircum{}i (or reject both), contradicting that only equal counts should be accepted. Therefore L is not regular.
+\end{itemize}
+\subsection{Week 10 solutions}
+\textbf{M10-1.} From slowest to fastest growth as n→∞: log n, n, n log n, n², 2ⁿ.
+\textbf{M10-2.} For n ≥ 1, 7n ≤ 7n+20 ≤ 7n+20n = 27n.
+So with c=7, C=27, and n₀=1, we have c·n ≤ 7n+20 ≤ C·n for all n ≥ n₀, hence 7n+20 is
+Θ(n).
+\textbf{M10-3.} For n ≥ 1, n² ≤ n³, so n² is O(n³) (take C=1, n₀=1).
+To see n³ is not O(n²), suppose n³ ≤ Cn² for all n ≥ n₀. Dividing by n² gives n ≤ C for all
+large n, impossible. So n³ is not O(n²).
+\textbf{M10-4.} The inner statement runs 1+2+…+n times = n(n+1)/2. Therefore it is Θ(n²).
+\textbf{M10-5.} Worst-case sequential search checks every element once, so it makes exactly n
+comparisons.
+Thus the running time is Θ(n).
+\textbf{M10-6.} Ceilings do not change asymptotic class, so it suffices to bound log₂(n+1).
+
+For n ≥ 1, n+1 ≤ 2n, so log₂(n+1) ≤ log₂(2n) = 1 + log₂ n.
+Hence ⌈log₂(n+1)⌉ is O(log n).
+\textbf{M10-7.} Assume n=2\textasciicircum{}k. Expand:
+T(n)=T(n/2)+n = T(n/4)+n/2+n = … = T(1) + (n + n/2 + n/4 + … + 2).
+The geometric sum is 2n−2, so T(n)=1+(2n−2)=2n−1. Therefore T(n)=Θ(n).
+\textbf{M10-8.} n log n grows faster than 10n because log n → ∞.
+Using base-2 logs: n log₂ n > 10n when log₂ n > 10, i.e., n > 2¹⁰ = 1024.
+So around n≈1024, n log₂ n starts exceeding 10n (roughly).
+
+\end{document}
