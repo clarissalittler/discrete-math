@@ -1,0 +1,208 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Module 5: Informal Proofs and Groups}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+This module is, in a sense, a bit of a breather. We're not going to be dealing with new concepts but rather getting practice with informal proofs after doing a lot of deep diving into formal logical rules.
+
+The relevant sections of Epp give us a lot of time to practice proofs with numbers. They're very well written and even call out some topics I think are important: a games-based approach to quantifiers, constructive vs.\ non-constructive proofs of $\exists$, and the relationship between writing proofs and writing computer programs (although somewhat coyly framing it as analogy rather than mathematical relationship).
+
+So what I think might be useful as an addition to the text, rather than attempting to recapitulate its content, is to give lots of examples of proofs in a different context than numbers.
+
+But first, let's make sure we have the number-theory toolkit down solid, since that's what Epp 4.1--4.4 is all about.
+
+\section{Direct proof}
+
+Alright so the most basic proof technique is the \emph{direct proof}. The shape of a direct proof for a universal conditional statement --- something of the form ``for all $x$, if $P(x)$ then $Q(x)$'' --- is: you assume $P(x)$ for an \emph{arbitrary} $x$, and then you show that $Q(x)$ follows. If you think back to Module 4, this is just $\forall$-intro combined with $\to$-intro! You introduce a fresh variable, assume the hypothesis, and derive the conclusion. That's it. The whole game is figuring out how to get from $P(x)$ to $Q(x)$, and the trick is almost always: \emph{unpack the definitions}.
+
+\subsection*{Even and odd}
+
+So let's nail down what ``even'' and ``odd'' actually mean, precisely enough to use in proofs.
+
+An integer $n$ is \emph{even} if $n = 2k$ for some integer $k$. An integer $n$ is \emph{odd} if $n = 2k + 1$ for some integer $k$.
+
+That's it. These definitions are what we actually \emph{use} in proofs --- when we know something is even, we unpack the definition to get the $k$, and then we do algebra with $2k$. When we need to \emph{show} something is even, we exhibit a $k$ and show the equation holds. This is the ``there exists'' hidden inside these definitions: ``$n$ is even'' really means ``$\exists k \in \mathbb{Z}.\; n = 2k$.''
+
+Okay so let's do a worked example.
+
+\textbf{Claim:} If $a$ and $b$ are both odd integers, then $a + b$ is even.
+
+\textbf{Proof:} Let $a$ and $b$ be arbitrary odd integers. By the definition of odd, we have $a = 2j + 1$ for some integer $j$, and $b = 2k + 1$ for some integer $k$. Then
+\[
+  a + b = (2j + 1) + (2k + 1) = 2j + 2k + 2 = 2(j + k + 1).
+\]
+Since $j + k + 1$ is an integer, $a + b = 2m$ where $m = j + k + 1$, so $a + b$ is even by definition. \hfill $\square$
+
+See the pattern? We assumed the hypothesis (both odd), unpacked the definitions (got $j$ and $k$), did some algebra, and then repacked the result into the definition of even. This is the bread and butter of direct proof.
+
+Let's do another one.
+
+\textbf{Claim:} The sum of any even integer and any odd integer is odd.
+
+\textbf{Proof:} Let $a$ be an arbitrary even integer and $b$ be an arbitrary odd integer. Then $a = 2j$ for some integer $j$ and $b = 2k + 1$ for some integer $k$. So
+\[
+  a + b = 2j + 2k + 1 = 2(j + k) + 1.
+\]
+Since $j + k$ is an integer, $a + b$ has the form $2m + 1$ where $m = j + k$, so $a + b$ is odd. \hfill $\square$
+
+Same pattern, different details. That's the point.
+
+\subsection*{Divisibility}
+
+Okay so here's another definition that works exactly the same way. For integers $a$ and $d$ with $d \neq 0$, we say $d$ \emph{divides} $a$ (written $d \mid a$) if $a = dk$ for some integer $k$. So ``$3 \mid 12$'' because $12 = 3 \cdot 4$, and ``$5 \nmid 7$'' because there's no integer $k$ with $7 = 5k$.
+
+Notice this has the same structure as evenness: it's an existential claim buried inside a definition. So proofs about divisibility work the same way --- unpack, do algebra, repack.
+
+\textbf{Claim:} For all integers $a, b, c$: if $a \mid b$ and $b \mid c$, then $a \mid c$. (Transitivity of divisibility.)
+
+\textbf{Proof:} Let $a, b, c$ be arbitrary integers with $a \mid b$ and $b \mid c$. By definition, $b = aj$ for some integer $j$, and $c = bk$ for some integer $k$. Then
+\[
+  c = bk = (aj)k = a(jk).
+\]
+Since $jk$ is an integer, we have $c = am$ where $m = jk$, so $a \mid c$. \hfill $\square$
+
+\subsection*{Rational numbers}
+
+One more definition in this style. A real number $r$ is \emph{rational} if $r = a/b$ where $a, b$ are integers and $b \neq 0$. So showing that a number is rational is really just an existence proof --- you need to exhibit the integers $a$ and $b$. For example, $0.75$ is rational because $0.75 = 3/4$, and we've exhibited $a = 3$, $b = 4$\footnote{Technically you could also use $a = 6$, $b = 8$, or any other representation. There's no uniqueness requirement in the definition, though you can get uniqueness if you insist on lowest terms.}.
+
+\section{Counterexample}
+
+So direct proofs let you \emph{prove} universal statements. But what if a universal statement is \emph{false}? How do you disprove it?
+
+A universal statement ``for all $x$, $P(x)$'' is false if there exists \emph{even one} $x$ where $P(x)$ is false. That one example is called a \emph{counterexample}. This is just the negation of a universal: $\lnot(\forall x.\; P(x)) \equiv \exists x.\; \lnot P(x)$. We saw this equivalence back in Module 4!
+
+So to disprove a universal, you just need to find one concrete value that breaks it. Let's see this in action.
+
+\textbf{Claim to disprove:} For every integer $n$, if $n$ is odd then $(n^2 - 1)/2$ is odd.
+
+\textbf{Disproof:} Counterexample: let $n = 1$. Then $n$ is odd, and $(1^2 - 1)/2 = 0/2 = 0$, which is even, not odd. So the claim is false. \hfill $\square$
+
+That's the whole proof. One example. Done.
+
+Here's the important asymmetry: to \textbf{prove} a universal statement you need to work with an \emph{arbitrary} element --- you can't pick a specific one, because you need the argument to work for all of them. But to \textbf{disprove} a universal you just need \emph{one specific} counterexample. This asymmetry shows up everywhere and is worth internalizing.
+
+If you're a programmer, think of it this way: proving a function is correct means showing it works \emph{for all inputs}. Finding a bug means finding \emph{one bad input}. Testing is the art of finding counterexamples; formal verification is the art of proving universals. That's why testing can show the presence of bugs but never their absence\footnote{This is usually attributed to Dijkstra, and it's one of those quotes that sounds deep until you realize it's just the logical asymmetry between $\forall$ and $\exists$ wearing a trench coat.}.
+
+\section{Existence proofs}
+
+Okay so counterexamples are about \emph{disproving} universals, but what about \emph{proving} existentials? If you want to show $\exists x : A.\; P(x)$, how do you actually do it?
+
+The most straightforward way is a \emph{constructive existence proof}: you produce a concrete witness and verify that it satisfies the predicate. This is exactly $\exists$-introduction from Module 4! You hand over a specific element $c : A$ along with a proof that $P(c)$ holds, and you're done.
+
+\textbf{Claim:} There exists a real number $x > 1$ such that $2^x > x^{10}$.
+
+\textbf{Proof:} Let $x = 100$. Then $x > 1$ and we need to check that $2^{100} > 100^{10}$. Well, $100^{10} = (10^2)^{10} = 10^{20}$. And $2^{10} = 1024 > 10^3$, so $2^{100} = (2^{10})^{10} > (10^3)^{10} = 10^{30}$. Since $10^{30} > 10^{20}$, we have $2^{100} > 100^{10}$. \hfill $\square$
+
+That's it! We picked a value, plugged it in, and checked. The hard part isn't the proof itself --- it's figuring out \emph{which} value to try. But once you've found one that works, the proof is just computation.
+
+A couple of things to note about existence proofs:
+\begin{itemize}
+  \item You don't need to find the \emph{best} or \emph{smallest} witness. Any witness that works is fine. We used $x = 100$ above, but $x = 59$ also works.\footnote{In fact the crossover point is somewhere around $x \approx 58.77$, but nobody asked us for the exact boundary. One working example is all we need.} The goal is existence, not optimization.
+  \item The witness doesn't have to come from anywhere in particular. You can use trial and error, intuition, a calculator, whatever. As long as you \emph{verify} it rigorously in the proof, nobody cares how you found it.
+  \item This is a \emph{constructive} proof because we actually built the thing we claimed exists. There are also \emph{non-constructive} existence proofs that show something must exist without ever telling you what it is---proof by contradiction can sometimes do this---but constructive proofs are generally preferred when you can get them, especially in computer science where you usually want to actually \emph{compute} the thing.\footnote{This is the constructive mathematician in your instructor peeking through again. Hi.}
+\end{itemize}
+
+\bigskip
+
+Okay, so now that we have the basic direct proof toolkit for number theory, let's practice these same techniques in a completely different mathematical setting. The point is to show that the proof patterns we just learned --- unpack definitions, do algebra, repack --- are \emph{general}. They don't just work for even/odd and divisibility; they work for any mathematical structure with precise definitions.
+
+So I'm going to talk about \emph{groups}.
+
+\section{What is a group?}
+A group is kind of Fisher-Price's My First Abstract Algebra---an incredibly useful but very simple concept in mathematics that shows up over and over again. It's also simple enough to start with if you've never seen any abstract algebra before.
+
+Here's the definition:
+
+\begin{quote}
+A \emph{group} is a set $G$, an element $e : G$, and a binary operation $* : G \to G \to G$ that satisfies the following axioms\footnote{There's actually a secret fifth axiom which is that the binary operation has to be associative, that is $(a * b) * c = a * (b * c)$, but I kinda left it out in this presentation because it's way harder than you think to come up with an operation that \emph{isn't} associative}:
+
+(left-identity) $\forall g : G.\; e * g = g$
+
+(right-identity) $\forall g : G.\; g * e = g$
+
+and $\forall g : G.\; \exists g^{-1} : G.$
+
+\quad (left-inverse) $g^{-1} * g = e$
+
+\quad (right-inverse) $g * g^{-1} = e$
+\end{quote}
+
+So what is this saying? A group is a triple of data: a base set $G$, a binary operation $*$ on the set, and an element $e$ that acts as the identity for the operation. Of the four axioms, the first two guarantee that the identity really acts as an identity, and the second two guarantee that every element has an inverse that can be used to cancel it out!
+
+Okay so let's start by proving that some things \textbf{are} or are \textbf{not} groups.
+
+\section{The integers with addition is a group}
+Proposal: the set of integers, $\mathbb{Z}$, is a group with addition and an identity element of 0.
+
+Proof:
+To prove this we need to show all four axioms hold for the integers. We're allowed to assume the standard definitions of addition, negation, and 0 since we're proving that these form a group not defining them formally. If you were doing this \emph{inside} a logic you'd have to first use the tools of the logic to give definitions for $\mathbb{Z}$ and for all the operations on it. This is kinda what you have to do in the Natural Number Game.
+
+Proof of left-identity:
+Let $n : \mathbb{Z}$, an arbitrary element, we need to show that $0 + n = n$. But this follows by the definition of addition on $\mathbb{Z}$!
+
+Proof of right-identity:
+Let $n : \mathbb{Z}$, an arbitrary element, we need to show that $n + 0 = n$. But this follows by the definition of addition on $\mathbb{Z}$!
+
+Now to show the inverses we need to show that for every element of $\mathbb{Z}$ we have a proposed inverse-under-addition for this element, and \emph{then} we prove that the element really is both the left and right inverse.
+
+Well the obvious candidate for every $n : \mathbb{Z}$ would be $-n$!
+
+So now the theorems we need to prove become
+
+$\forall n.\; (-n) + n = 0$
+
+$\forall n.\; n + (-n) = 0$
+
+but this is just a funnily written subtraction! And we already have defined subtraction to work this way, so our sub-theorems work automatically.
+
+Thus we've shown that $(\mathbb{Z},+,0)$ is a group.
+
+\section{The integers with multiplication is \emph{not} a group}
+We can \emph{disprove} that the integers with multiplication as the binary operation and 1 as the identity are a group easily. We just need to show one of the theorems cannot hold.
+
+So let's show that inverses don't exist!
+
+Consider the integer $2$. For $(\mathbb{Z}, \cdot, 1)$ to be a group, there would need to be some integer $n$ such that $2 \cdot n = 1$. But for any integer $n$, the product $2 \cdot n$ is always even\footnote{If you want a bonus challenge, prove this property of multiplication with natural induction! It's not too hard but is a good exercise}, and $1$ is odd. So there is no integer that can act as the multiplicative inverse of $2$.
+
+Since we've found even one element without an inverse, the inverse axiom fails and it's not a group!
+
+\section{Proof of uniqueness of identity}
+We can also prove properties about \emph{all} groups, not just a specific group. Like let's prove the uniqueness of identity elements. In other words, that if there are two elements in a group that satisfy the identity axioms then they must be \textbf{equal}.
+
+Theorem: Let $(G,*,e)$ be a group and let $e' : G$ satisfy the left and right identity properties. Then $e = e'$.
+
+Proof:
+We'll prove this by calculation with the properties of identity.
+
+\begin{lstlisting}
+ e = e*e'
+ e*e' = e'
+\end{lstlisting}
+and thus $e = e'$.
+
+\end{document}

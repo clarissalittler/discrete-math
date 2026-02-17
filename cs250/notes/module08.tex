@@ -1,0 +1,213 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Module 8: Sequences and Recursion}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Definition by recursion}
+Okay so we've been building up our toolkit for a while now---logic, sets, functions, induction---and now we're going to put a lot of it together by talking about \emph{sequences}.
+
+So what is a sequence? Informally it's just an ordered list of values. You've seen these before! Arrays in C, lists in Python, those are sequences. The values come in a definite order: there's a first element, a second element, a third, and so on.
+
+More precisely, a \emph{sequence} is a function from the natural numbers (or some subset of them) to some set. So if I write $a_1, a_2, a_3, \ldots$ what I really mean is that there's a function $a : \mathbb{N} \to S$ for some set $S$, and $a_n$ is just the value of that function at input $n$. The subscript is the index, the ``position'' in the list.\footnote{If you're a programmer, think of $a_n$ as \texttt{a[n]}. It's literally the same idea: indexing into a collection.}
+
+Alright, so how do we actually \emph{define} a sequence? There are two main approaches.
+
+\subsection{Explicit formulas}
+The first way is to just give a formula that lets you compute the $n$th term directly from $n$. This is called an \emph{explicit formula} or a \emph{closed-form definition}.
+
+For example, $a_n = 2n + 1$ for $n \geq 0$. That gives us the sequence $1, 3, 5, 7, 9, \ldots$ --- the odd numbers. If you want the 100th term you just plug in $n = 99$ and get $a_{99} = 199$. No fuss, no muss, you don't need to know any other terms.
+
+Let's work through a couple more examples from the textbook.
+
+Consider $b_j = \frac{5-j}{5+j}$ for every integer $j \geq 1$. Let's compute the first four terms:
+\begin{align*}
+b_1 &= \frac{5-1}{5+1} = \frac{4}{6} = \frac{2}{3} \\[4pt]
+b_2 &= \frac{5-2}{5+2} = \frac{3}{7} \\[4pt]
+b_3 &= \frac{5-3}{5+3} = \frac{2}{8} = \frac{1}{4} \\[4pt]
+b_4 &= \frac{5-4}{5+4} = \frac{1}{9}
+\end{align*}
+
+And here's another one: $d_m = 1 + \left(\frac{1}{2}\right)^m$ for every integer $m \geq 0$:
+\begin{align*}
+d_0 &= 1 + \left(\tfrac{1}{2}\right)^0 = 1 + 1 = 2 \\[4pt]
+d_1 &= 1 + \left(\tfrac{1}{2}\right)^1 = 1 + \tfrac{1}{2} = \tfrac{3}{2} \\[4pt]
+d_2 &= 1 + \left(\tfrac{1}{2}\right)^2 = 1 + \tfrac{1}{4} = \tfrac{5}{4} \\[4pt]
+d_3 &= 1 + \left(\tfrac{1}{2}\right)^3 = 1 + \tfrac{1}{8} = \tfrac{9}{8}
+\end{align*}
+
+See how the terms are getting closer and closer to 1? That's a \emph{convergent} sequence, but we'll leave that idea for a different class.
+
+\subsection{Recursive definitions}
+The other way to define a sequence is \emph{recursively}: you give the first term (or first few terms) and then a rule that builds each subsequent term from the ones that came before.
+
+So instead of the explicit formula $a_n = 2n+1$ we could equivalently say: $a_0 = 1$ and $a_n = a_{n-1} + 2$ for $n \geq 1$. Same sequence! But a very different way of thinking about it.
+
+The classic example of a recursively defined sequence is the Fibonacci sequence:
+\begin{lstlisting}
+fib(0) = 0
+fib(1) = 1
+fib(n) = fib(n-1) + fib(n-2)   for n >= 2
+\end{lstlisting}
+
+This should look very familiar! It's \emph{exactly} the same structure as writing a recursive function in Python or C. That's not a coincidence. As we discussed back in Module 4 when we introduced BNF syntax and inductive definitions, recursive definitions are really just another case of defining data inductively. The base case gives you the starting point and the recursive case tells you how to build new data from old data.
+
+In fact, remember how in Module 4 we defined the natural numbers as $\text{Nat} := 0 \mid \text{succ Nat}$? A recursively defined sequence is doing the same thing: defining $a_n$ by cases on whether $n$ is the base case or a successor.
+
+\subsection{Summation and product notation}
+There's a really important piece of notation we need before we go further: \emph{summation notation}. You've probably seen the big sigma before:
+\[
+\sum_{i=1}^{n} a_i = a_1 + a_2 + a_3 + \cdots + a_n
+\]
+
+This is just a compact way of writing ``add up all the terms $a_i$ where $i$ goes from 1 to $n$.'' The variable $i$ is the \emph{index} of summation, the bottom tells you where to start, the top tells you where to stop.
+
+If you're a programmer, this is literally a for-loop:
+\begin{lstlisting}[language=Python]
+total = 0
+for i in range(1, n+1):
+    total += a[i]
+\end{lstlisting}
+
+That's it. That's what $\sum$ means. It's a for-loop.\footnote{Okay, it's a for-loop where the body is pure---no side effects, no mutation beyond the accumulator. If you want to be fancy about it, it's a \emph{fold}.}
+
+So for example:
+\[
+\sum_{i=1}^{4} i^2 = 1^2 + 2^2 + 3^2 + 4^2 = 1 + 4 + 9 + 16 = 30
+\]
+
+And you can also nest these things or get creative with the bounds. The expression
+\[
+\sum_{k=0}^{n} (-1)^k (k^3 - 1)
+\]
+is just alternating addition and subtraction of the terms $(k^3 - 1)$ because $(-1)^k$ flips sign.
+
+Similarly, there's \emph{product notation} with the big pi:
+\[
+\prod_{i=1}^{n} a_i = a_1 \cdot a_2 \cdot a_3 \cdots a_n
+\]
+
+The most famous example of this is the factorial: $n! = \prod_{i=1}^{n} i$. Again, same deal as summation but you're multiplying instead of adding.
+
+\section{Induction on sequences}
+Alright, so now we get to the real fun part. We've seen induction before---in Module 4 we introduced the induction principle on natural numbers and in the Intermezzo we worked through a bunch of proofs about addition using it. Now we're going to apply that same tool to prove things about sequences and sums.
+
+Let's recall the rule:
+\begin{lstlisting}
+natural induction
+ assumes P(0)
+         subproof:
+           assumes P(n)
+           ------------
+           shows P(succ n)
+--------------------------
+shows forall n : Nat. P(n)
+\end{lstlisting}
+
+Same rule as before. Nothing new here! The only thing that's changing is what $P(n)$ is going to \emph{be}. In the Intermezzo, $P(n)$ was stuff like ``$0 + n = n$'' or ``addition is associative.'' Now $P(n)$ is going to be equations about sums and sequences.
+
+\subsection{The standard template}
+So here's how an induction proof on a sum identity typically goes. You want to prove that some formula holds for all $n \geq \text{base}$. The template is:
+\begin{enumerate}
+\item \textbf{State $P(n)$}: write down exactly what you're trying to prove. This is usually an equation like ``the sum of the first $n$ whatevers equals some closed-form expression.''
+\item \textbf{Base case}: verify that $P(\text{base})$ is true by direct computation.
+\item \textbf{Inductive hypothesis}: assume $P(k)$ is true for some arbitrary $k \geq \text{base}$.
+\item \textbf{Inductive step}: prove $P(k+1)$ using the assumption that $P(k)$ holds. This is where the actual work happens.
+\end{enumerate}
+
+Let's see this in action.
+
+\subsection{Worked example: sum of the first $n$ integers}
+We want to prove: for all $n \geq 1$,
+\[
+1 + 2 + 3 + \cdots + n = \frac{n(n+1)}{2}
+\]
+
+or in summation notation, $\displaystyle\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$.
+
+\textbf{Let $P(n)$ be the statement}: $\displaystyle\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$.
+
+\textbf{Base case} ($n = 1$): The left side is just $1$. The right side is $\frac{1 \cdot 2}{2} = 1$. They're equal, so $P(1)$ is true.
+
+\textbf{Inductive hypothesis}: Assume $P(k)$ is true for some $k \geq 1$. That is, assume
+\[
+\sum_{i=1}^{k} i = \frac{k(k+1)}{2}
+\]
+
+\textbf{Inductive step}: We need to show $P(k+1)$, which says $\displaystyle\sum_{i=1}^{k+1} i = \frac{(k+1)(k+2)}{2}$.
+
+Okay, so here's the key trick and it's the same trick every single time: we split the sum into the stuff we already know about and the new term.
+\begin{align*}
+\sum_{i=1}^{k+1} i &= \left(\sum_{i=1}^{k} i\right) + (k+1) \\
+&= \frac{k(k+1)}{2} + (k+1) && \text{by the inductive hypothesis!} \\
+&= \frac{k(k+1)}{2} + \frac{2(k+1)}{2} \\
+&= \frac{k(k+1) + 2(k+1)}{2} \\
+&= \frac{(k+1)(k+2)}{2}
+\end{align*}
+
+And that last expression is exactly what $P(k+1)$ claims. We're done!
+
+See the pattern? You peel off the last term of the sum, apply the inductive hypothesis to the rest, and then do algebra to show you get the right answer. That ``peel off the last term'' move is the heart of every induction proof on sums.
+
+\subsection{Setting up: sum of squares}
+Here's another one that you'll see on the assignment. For all $n \geq 1$:
+\[
+1^2 + 2^2 + \cdots + n^2 = \frac{n(n+1)(2n+1)}{6}
+\]
+
+So $P(n)$ is the statement $\displaystyle\sum_{i=1}^{n} i^2 = \frac{n(n+1)(2n+1)}{6}$.
+
+The base case is easy: $P(1)$ says $1 = \frac{1 \cdot 2 \cdot 3}{6} = 1$. Check.
+
+For the inductive step, you'd assume $P(k)$ and then look at
+\[
+\sum_{i=1}^{k+1} i^2 = \left(\sum_{i=1}^{k} i^2\right) + (k+1)^2 = \frac{k(k+1)(2k+1)}{6} + (k+1)^2
+\]
+
+and then the game is to do the algebra to show this equals $\frac{(k+1)(k+2)(2k+3)}{6}$. It's the same strategy---peel, substitute, simplify---just with hairier algebra. I'll leave the details to you for the assignment but the key insight is: factor out $(k+1)$ from both terms and then simplify what's left.
+
+\subsection{Induction is recursion}
+I want to close with something that I think is really important and ties together a lot of what we've been doing in this course.
+
+Induction and recursion are \emph{the same thing}. Seriously. They're two sides of the same coin.
+
+When you write a recursive function you compute a value by reducing to a smaller case:
+\begin{lstlisting}[language=Python]
+def sum_to(n):
+    if n == 0:
+        return 0          # base case
+    else:
+        return sum_to(n-1) + n  # recursive case
+\end{lstlisting}
+
+When you do an induction proof you prove a statement by reducing to a smaller case: you prove $P(k+1)$ by using $P(k)$. The inductive hypothesis is playing \emph{exactly} the role of the recursive call. The base case of the proof is the base case of the recursion. The inductive step is the recursive step.
+
+Another way to say this is: a recursive function computes a \emph{value} for each natural number by building up from the base case. An inductive proof computes a \emph{proof} for each natural number by building up from the base case. The structure is identical. Induction \emph{is} recursion on proofs.
+
+This is why, back in Module 4, we introduced induction right alongside BNF definitions and recursive structure. They're not separate topics that happen to be in the same chapter---they're the same idea wearing different hats. And once you see that connection, both recursive programming and inductive proofs become a lot less mysterious. You just ask yourself: what's the base case, and how do I build the next one from the previous one?
+
+\end{document}

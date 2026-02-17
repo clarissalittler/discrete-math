@@ -1,0 +1,248 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Module 9: Strong Induction and Recurrences}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Strong induction}
+Alright, so remember the natural induction rule from Module 4? The one where you prove a base case $P(0)$ and then show that $P(n)$ implies $P(\text{succ}\; n)$? That rule is great and all, but sometimes it's not quite enough. Or rather, it's not quite \emph{convenient} enough.
+
+Here's the thing: ordinary induction lets you assume \emph{only} the immediately previous case. You're proving $P(k+1)$ and all you get to work with is $P(k)$. But what if your problem doesn't just depend on the previous case? What if you need to reach back further---to $P(k-1)$, or $P(k-3)$, or heck, $P(0)$?
+
+This is where \emph{strong induction} comes in. The idea is that instead of just assuming $P(k)$, you get to assume $P(j)$ for \textbf{all} $j$ from the base case up to $k$. You get the whole history, not just the last step.
+
+Here's the formal rule:
+
+\begin{lstlisting}
+assumes P(0)
+        subproof:
+          assumes P(j) for all j <= k
+          -----------------
+          shows P(k+1)
+--------------------------
+shows forall n : Nat. P(n)
+\end{lstlisting}
+
+Now you might be wondering: is this \emph{really} a valid thing to do? Doesn't assuming more stuff make the proof weaker somehow? Nope! It turns out that strong induction is actually \emph{equivalent} to ordinary induction. You can derive one from the other.\footnote{The trick is that if you have a proof by strong induction you can convert it to an ordinary induction proof by changing your predicate from $P(n)$ to $Q(n) = \text{``}P(j) \text{ for all } j \leq n\text{''}$. Then the ordinary induction step for $Q$ is exactly the strong induction step for $P$. Cute, right?} The two principles have the same logical strength, but strong induction is often way more convenient when the recursive structure of your problem doesn't just depend on the immediately previous case.
+
+Let's connect this to programming because I think it makes the idea really clear. Ordinary induction is like a recursive function that can \emph{only} call itself on $n-1$:
+
+\begin{lstlisting}[language=Python]
+def f(n):
+    if n == 0:
+        return base_case
+    else:
+        return something(f(n-1))
+\end{lstlisting}
+
+Strong induction, on the other hand, is like a recursive function that can call itself on \emph{any} smaller input:
+
+\begin{lstlisting}[language=Python]
+def f(n):
+    if n == 0:
+        return base_case
+    else:
+        # can use f(n-1), f(n-2), ..., f(0), whatever you need!
+        return something(f(n-3), f(n//2))
+\end{lstlisting}
+
+Think of merge sort or binary search! In merge sort you split the list roughly in half and recurse on both halves---you're not just peeling off one element at a time. That's the spirit of strong induction.
+
+Okay, let's do a worked example. Consider the sequence defined by
+\[
+c_0 = 2, \quad c_1 = 2, \quad c_2 = 6, \quad c_k = 3c_{k-3} \text{ for } k \geq 3
+\]
+
+We want to prove that \emph{all} terms of this sequence are even, i.e.\ that $2 \mid c_n$ for all $n \geq 0$.
+
+Why do we need strong induction here? Well, the recurrence reaches back \emph{three} steps: $c_k$ depends on $c_{k-3}$, not $c_{k-1}$. Ordinary induction would only hand us $c_{k-1}$ which isn't directly useful.
+
+\textbf{Base cases:} We need to check $P(0)$, $P(1)$, and $P(2)$. We have $c_0 = 2$, $c_1 = 2$, $c_2 = 6$, and all of these are even. Good.\footnote{When you use strong induction, you often need multiple base cases. The number of base cases typically matches how far back the recurrence reaches.}
+
+\textbf{Inductive step:} Assume $P(j)$ for all $j \leq k$ where $k \geq 2$. We need to show $P(k+1)$, i.e.\ that $c_{k+1}$ is even.
+
+Since $k+1 \geq 3$, we can use the recurrence: $c_{k+1} = 3 \cdot c_{(k+1)-3} = 3 \cdot c_{k-2}$.
+
+Now $k - 2 \leq k$, so by our strong induction hypothesis $c_{k-2}$ is even. That means $c_{k-2} = 2m$ for some integer $m$. Therefore $c_{k+1} = 3 \cdot 2m = 6m = 2(3m)$, which is even. Done!
+
+See how we needed to reach back to $c_{k-2}$ and the strong induction hypothesis let us do that? With ordinary induction we'd have been stuck.
+
+\section{Defining sequences recursively}
+So we've been throwing around recursive sequence definitions and it's worth being a little more careful about what that means. A \emph{recursively defined sequence} (sometimes called a \emph{recurrence relation}) has two parts:
+\begin{itemize}
+  \item \textbf{Initial conditions:} explicit values for one or more of the first terms
+  \item \textbf{A recurrence relation:} a rule that defines each subsequent term in terms of earlier terms
+\end{itemize}
+
+This is exactly like defining a recursive function in code: you need base cases and a recursive case. If you leave out the base cases your recursion never bottoms out and you get a stack overflow (or, in the math world, an ill-defined sequence).
+
+Let's compute a few terms of a sequence to make sure we're comfortable with the mechanics. Consider
+\[
+d_0 = 3, \qquad d_k = k \cdot (d_{k-1})^2 \text{ for } k \geq 1
+\]
+
+Let's just crank out some values:
+\begin{align*}
+d_0 &= 3 \\
+d_1 &= 1 \cdot (d_0)^2 = 1 \cdot 9 = 9 \\
+d_2 &= 2 \cdot (d_1)^2 = 2 \cdot 81 = 162 \\
+d_3 &= 3 \cdot (d_2)^2 = 3 \cdot 26244 = 78732
+\end{align*}
+
+These numbers get big fast! That's the power of squaring in the recurrence. The point is that even though we don't have a nice closed-form formula, we can always compute any term we want as long as we know the previous ones.
+
+Now here's a useful skill: given a proposed \emph{explicit} (closed-form) formula, how do we \emph{verify} that it actually satisfies a recurrence?
+
+For instance, suppose someone hands you the formula
+\[
+s_n = \frac{(-1)^n}{n!}
+\]
+and claims it satisfies the recurrence $s_k = -s_{k-1}/k$ for $k \geq 1$ with $s_0 = 1$.
+
+Let's check. First, $s_0 = (-1)^0 / 0! = 1/1 = 1$. Good, initial condition checks out. Now we compute $-s_{k-1}/k$:
+\begin{align*}
+-\frac{s_{k-1}}{k} &= -\frac{1}{k} \cdot \frac{(-1)^{k-1}}{(k-1)!} \\
+&= \frac{(-1) \cdot (-1)^{k-1}}{k \cdot (k-1)!} \\
+&= \frac{(-1)^k}{k!} \\
+&= s_k
+\end{align*}
+
+And that's it! The formula checks out. The key idea is that verifying a closed form is usually way easier than \emph{finding} it in the first place. You just plug the formula into both sides of the recurrence and show they're equal.
+
+\section{Solving recurrences by iteration}
+So how \emph{do} you find a closed form in the first place? One really useful technique is called \emph{iteration} (or ``unrolling''). The idea is dead simple: you just keep substituting the recurrence into itself until you see a pattern, and then you guess the closed form.
+
+Before we do an example of this, let's recall a formula that shows up everywhere: the \emph{geometric series}. If $r \neq 1$ then
+\[
+1 + r + r^2 + \cdots + r^n = \frac{r^{n+1} - 1}{r - 1}
+\]
+
+This is going to come in handy when we unroll recurrences because geometric sums pop up all the time.
+
+Okay, let's try iterating a concrete recurrence. Consider the ``number of regions'' problem: you have a plane, and you're drawing lines through it. Let $P_k$ be the number of regions created by $k$ lines (where no two lines are parallel and no three meet at a point). The $k$-th line crosses all $k-1$ existing lines, creating $k$ new regions, so:
+\[
+P_1 = 2, \qquad P_k = P_{k-1} + k \text{ for } k \geq 2
+\]
+
+Let's unroll this:
+\begin{align*}
+P_n &= P_{n-1} + n \\
+    &= (P_{n-2} + (n-1)) + n \\
+    &= ((P_{n-3} + (n-2)) + (n-1)) + n \\
+    &= \;\cdots \\
+    &= P_1 + 2 + 3 + \cdots + n \\
+    &= 2 + 2 + 3 + \cdots + n \\
+    &= 1 + (1 + 2 + 3 + \cdots + n) \\
+    &= 1 + \frac{n(n+1)}{2}
+\end{align*}
+
+where we used the familiar formula $1 + 2 + \cdots + n = n(n+1)/2$ at the end. So the closed form is $P_n = 1 + n(n+1)/2$.
+
+Let's sanity check: $P_1 = 1 + 1 \cdot 2/2 = 2$. $P_2 = 1 + 2 \cdot 3/2 = 4$. And indeed if you draw two crossing lines you get 4 regions. Looks right!
+
+Now, to be rigorous, once you've \emph{guessed} the formula by iteration you should really \emph{prove} it by induction. The iteration gives you the conjecture; induction gives you the proof. But in practice, the iteration is often the hard part and the induction proof is pretty mechanical after that.
+
+\section{Second-order linear homogeneous recurrences}
+Okay so now we're going to talk about a really important special class of recurrences. These are recurrences of the form
+\[
+a_k = A \cdot a_{k-1} + B \cdot a_{k-2}
+\]
+where $A$ and $B$ are constants (they don't depend on $k$). Let's break down the terminology because every word in ``second-order linear homogeneous recurrence with constant coefficients'' actually means something:
+
+\begin{itemize}
+  \item \textbf{Second-order:} the recurrence depends on the \emph{two} previous terms ($a_{k-1}$ and $a_{k-2}$)
+  \item \textbf{Linear:} the previous terms show up to the first power only---no $a_{k-1}^2$ or $a_{k-1} \cdot a_{k-2}$ business
+  \item \textbf{Homogeneous:} there's no extra added constant term. Compare $a_k = 2a_{k-1} + 3$ (not homogeneous) vs.\ $a_k = 2a_{k-1} + a_{k-2}$ (homogeneous)
+  \item \textbf{Constant coefficients:} $A$ and $B$ are just numbers, they don't change with $k$
+\end{itemize}
+
+Why do we care about this specific class? Because there's a \emph{systematic method} for solving them! We don't have to guess and check. Here's the trick.
+
+We're going to \emph{guess} that the solution has the form $a_n = r^n$ for some constant $r$. Why is this a reasonable guess? Well, if you think about it, the recurrence says that each term is a linear combination of the previous two. Exponential functions have exactly this property: $r^k$ is a constant times $r^{k-1}$ which is a constant times $r^{k-2}$, and so on.
+
+So let's substitute $a_n = r^n$ into $a_k = A \cdot a_{k-1} + B \cdot a_{k-2}$:
+\[
+r^k = A \cdot r^{k-1} + B \cdot r^{k-2}
+\]
+Divide both sides by $r^{k-2}$ (assuming $r \neq 0$):
+\[
+r^2 = Ar + B
+\]
+
+This is the \emph{characteristic equation} of the recurrence. It's just a quadratic! We know how to solve quadratics.
+
+Now here's where it gets interesting. If the characteristic equation has two \emph{distinct} roots $r_1$ and $r_2$, then the general solution is
+\[
+a_n = \alpha \cdot r_1^n + \beta \cdot r_2^n
+\]
+where $\alpha$ and $\beta$ are constants determined by the initial conditions $a_0$ and $a_1$. In other words, any linear combination of the two solutions is also a solution,\footnote{This is one of those things where ``linear'' in the name really matters. It's exactly the same principle as in linear algebra where solutions to homogeneous systems form a vector space.} and we use the initial conditions to pin down which particular linear combination we want.
+
+If the characteristic equation has a \emph{repeated} root $r$ (i.e.\ $r_1 = r_2 = r$), then the general solution is slightly different:
+\[
+a_n = \alpha \cdot r^n + \beta \cdot n \cdot r^n
+\]
+
+The extra factor of $n$ shows up because we need two linearly independent solutions and $r^n$ alone only gives us one. But the repeated root case is rarer in practice so let's focus on the distinct roots case.
+
+Let's do the most famous example: the \emph{Fibonacci sequence}.
+\[
+F_0 = 0, \quad F_1 = 1, \quad F_k = F_{k-1} + F_{k-2} \text{ for } k \geq 2
+\]
+
+This is a second-order linear homogeneous recurrence with $A = 1$ and $B = 1$. The characteristic equation is
+\[
+r^2 = r + 1 \quad \Longrightarrow \quad r^2 - r - 1 = 0
+\]
+
+By the quadratic formula:
+\[
+r = \frac{1 \pm \sqrt{5}}{2}
+\]
+
+So $r_1 = \frac{1 + \sqrt{5}}{2}$ (this is the \emph{golden ratio}, often written $\varphi$) and $r_2 = \frac{1 - \sqrt{5}}{2}$.
+
+The general solution is $F_n = \alpha \cdot \varphi^n + \beta \cdot \left(\frac{1-\sqrt{5}}{2}\right)^n$. Now we use the initial conditions to find $\alpha$ and $\beta$:
+\begin{align*}
+F_0 = 0 &: \quad \alpha + \beta = 0 \quad \Longrightarrow \quad \beta = -\alpha \\
+F_1 = 1 &: \quad \alpha \cdot \varphi + \beta \cdot \tfrac{1-\sqrt{5}}{2} = 1
+\end{align*}
+
+Substituting $\beta = -\alpha$:
+\[
+\alpha \left(\varphi - \tfrac{1-\sqrt{5}}{2}\right) = \alpha \cdot \sqrt{5} = 1 \quad \Longrightarrow \quad \alpha = \frac{1}{\sqrt{5}}
+\]
+
+So the closed form for the Fibonacci numbers is
+\[
+F_n = \frac{1}{\sqrt{5}}\left[\left(\frac{1+\sqrt{5}}{2}\right)^n - \left(\frac{1-\sqrt{5}}{2}\right)^n\right]
+\]
+
+And that's kind of wild, right? The Fibonacci numbers are integers, but the formula involves $\sqrt{5}$ all over the place. The irrational parts cancel out perfectly every time. Also, since $\left|\frac{1-\sqrt{5}}{2}\right| < 1$, that second term shrinks to zero as $n$ grows, which means $F_n$ is approximately $\varphi^n / \sqrt{5}$ for large $n$. So the Fibonacci numbers grow exponentially at the rate of the golden ratio!
+
+This is the kind of thing that makes math feel like magic sometimes. You start with a simple recurrence---each term is the sum of the previous two---and you end up with the golden ratio and $\sqrt{5}$. But it all comes from that characteristic equation trick, which is really just substituting a guess and solving a quadratic.
+
+\end{document}

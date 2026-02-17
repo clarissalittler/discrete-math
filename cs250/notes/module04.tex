@@ -1,0 +1,263 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Module 4: First-Order Predicate Logic}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{A logic with real types}
+Now we need to start dealing with a logic that has actual types beyond just booleans: first-order predicate logic! This is going to look \emph{a lot} like propositional logic! It still has our old friends: \texttt{->}, \texttt{\^{}}, \texttt{v}, \texttt{\~{}}, T, and F but now it's also going to have $\forall$ and $\exists$ as well as a notion of predicates.
+
+We need these things in order to add \emph{sets} (or in other words \emph{types}) to our logic. Unlike booleans, when it comes to sets we need to be able to quantify our propositions about elements.
+\begin{itemize}
+  \item are we making a logical claim about a particular element? (i.e.\ that zero is the identity of addition)
+  \item are we making a logical claim about all elements in A? ($\forall x : A. \ldots$)
+  \item are we making a logical claim that we know that there is an element with a certain property, although we're not naming a particular element? ($\exists x : A. \ldots$)
+\end{itemize}
+
+We also need to be able to make statements about these types, which is where our predicates come in. Now, with the tools we've seen we don't have the ability to define predicates \emph{inside} the logic, instead we need to add the predicates \emph{to} the logic and define them externally as functions: so a predicate on the type/set A is really a function \texttt{A -> Bool} where Bool is the two-point set $\{\text{True},\text{False}\}$.
+
+A really special predicate is the equality predicate on each set, which is given by the diagonal relation where \texttt{a=a} is true and \texttt{a=b} is false for any b that isn't a.
+
+\section{Forall and exists}
+So we've seen, in informal mathematics, the meaning of $\forall$ and $\exists$ a few times. As we discussed above these things are used to \emph{quantify} what elements of a set/type\footnote{I'm going to probably keep doing this thing of saying set/type and the reason why I'm doing it is that there will be, in some logics a notion of ``types'' that are more general than sets. For the purposes of this class, think of them as Basically The Same Thing(tm)} a proposition is covering, which is probably why they're referred to as ``quantifiers''.
+
+We need to describe, of course, what the semantics of these quantifiers are. There's kind of two answers in this logic. The first is that the meaning of a quantifier can be described in terms of the underlying sets and functions on sets.
+
+So when we write ``$\forall x : A.\; P(x)$'' this is going to be true exactly when the function \texttt{P : A -> Bool} sends every element of A to True or, equivalently if you know the language of inverse images of functions, we can say that ``$\forall x : A.\; P(x)$'' is true when $P^{-1}(\text{True}) = A$.
+
+Similarly, when we write ``$\exists x : A.\; P(x)$'' this is going to be true exactly when the function \texttt{P : A -> Bool} sends at least one element of A to True or, again in the language of inverse images of functions when the set $P^{-1}(\text{True})$ is not empty.
+
+The \emph{other} way we can define the meaning, at least for ``small'' sets (things smaller than the real numbers), is that we can define $\forall$ as a kind of Big And and $\exists$ as a kind of Big Or, where
+
+``$\forall x : A.\; P(x)$'' becomes
+
+$P(x_1) \wedge P(x_2) \wedge \ldots$
+
+for every $x$ in the set $A$. Similarly, ``$\exists x : A.\; P(x)$'' becomes
+
+$P(x_1) \vee P(x_2) \vee \ldots$
+
+for every $x$ in $A$.
+
+You can play with these transformations for some small finite sets to prove to yourself that these definitions match up exactly.\footnote{There's a secret third way to define $\forall$ and $\exists$ in dependent type theory, my fav logical framework, and for these $\forall$ becomes a kind of function definition and $\exists$ becomes a kind of pair, like a pair in Python.}
+
+\section{Truth sets}
+Okay so this is a pretty quick concept but it's worth giving it a name because it comes up a lot. Given a predicate $P$ on a set $A$, the \emph{truth set} of $P$ is the set
+\[
+\{x \in A \mid P(x) \text{ is true}\}
+\]
+i.e.\ the set of all elements that make the predicate true. If you were paying attention in the last section you'll notice that this is literally just the inverse image $P^{-1}(\text{True})$ that we already talked about, but now it has a name. Think of it like a type alias in Python or Haskell---same thing, different label.\footnote{In Haskell: \texttt{type TruthSet a = Set a}. Riveting stuff.}
+
+Let's do a couple of worked examples.
+
+\textbf{Example 1.} Let $P(d) = $ ``$6/d$ is an integer'' and let our set be $\mathbb{Z}^+$ (the positive integers). So we're asking: which positive integers divide 6 evenly? The truth set is $\{1, 2, 3, 6\}$ because those are exactly the positive divisors of 6.
+
+\textbf{Example 2.} Let $P(x) = $ ``$1 \leq x^2 \leq 4$'' and let our set be $\mathbb{Z}$ (all integers). We need $x^2 \geq 1$, so $x \neq 0$, and $x^2 \leq 4$, so $x \in \{-2, -1, 0, 1, 2\}$. Combining these: the truth set is $\{-2, -1, 1, 2\}$.
+
+Here's the thing that ties this back to quantifiers in a nice way:
+\begin{itemize}
+  \item $\forall x : A.\; P(x)$ is true \textbf{if and only if} the truth set of $P$ equals $A$. Every element makes the predicate true, so the truth set is the whole set.
+  \item $\exists x : A.\; P(x)$ is true \textbf{if and only if} the truth set of $P$ is nonempty. At least one element makes it true, so there's something in there.
+\end{itemize}
+
+So you can think of $\forall$ as asking ``is the truth set everything?'' and $\exists$ as asking ``is the truth set nonempty?'' which is a pretty clean way to think about it.
+
+\section{Negating quantified statements}
+Alright, so this is \emph{crucial} and it comes up constantly---in proofs, in writing specifications, in checking whether your code is correct, &c. You need to be able to negate statements that have quantifiers in them.
+
+The good news is that the rules are really clean and they're basically just De Morgan's laws but for quantifiers instead of $\wedge$ and $\vee$:
+\begin{lstlisting}
+$\neg$($\forall$ x : A. P(x))  $\equiv$  $\exists$ x : A. $\neg$P(x)
+$\neg$($\exists$ x : A. P(x))  $\equiv$  $\forall$ x : A. $\neg$P(x)
+\end{lstlisting}
+
+Why do these make sense? Let's think about it. ``It's \emph{not} the case that everything satisfies $P$'' means ``there's something that \emph{doesn't} satisfy $P$.'' And ``it's \emph{not} the case that something satisfies $P$'' means ``\emph{nothing} satisfies $P$,'' which is the same as saying everything fails to satisfy $P$.
+
+And hey, remember the Big And / Big Or interpretation from the last section? This is literally just De Morgan's laws from Module 2 in disguise! Negating a big conjunction (which is what $\forall$ is) gives you a big disjunction (which is what $\exists$ is), and vice versa. Same song, different verse.\footnote{If you squint at it in exactly the right way, the entirety of first-order logic is just propositional logic with extra steps. Which is kind of the point.}
+
+\textbf{Example 1.} Negate ``every computer has a CPU.''
+
+This is $\forall c : \text{Computers}.\; \text{HasCPU}(c)$. The negation is $\exists c : \text{Computers}.\; \neg\text{HasCPU}(c)$, which in English is: ``there exists a computer that does not have a CPU.''
+
+\textbf{Example 2.} Negate ``there exists a band that has won at least 10 Grammys.''
+
+This is $\exists b : \text{Bands}.\; \text{Grammys}(b) \geq 10$. The negation is $\forall b : \text{Bands}.\; \text{Grammys}(b) < 10$, which says: ``for every band, that band has not won at least 10 Grammys''---or equivalently, ``no band has won at least 10 Grammys.''
+
+One more pattern that shows up all the time: negating an implication \emph{inside} a quantifier. Recall from Module 2 that $\neg(P \to Q) \equiv P \wedge \neg Q$---the negation of ``if P then Q'' is ``P and not Q.'' So when you negate a universally quantified implication you get:
+\[
+\neg(\forall x.\; P(x) \to Q(x)) \;\equiv\; \exists x.\; P(x) \wedge \neg Q(x)
+\]
+which reads as ``there's some $x$ where $P(x)$ holds but $Q(x)$ doesn't.'' This is a really common pattern in counterexample-based reasoning: to disprove ``all P's are Q's'' you find a P that isn't a Q.
+
+\section{Nested quantifiers}
+Sometimes one quantifier just isn't enough and you need to stack them. This is where things get interesting.
+
+\textbf{Example.} Consider the statement ``there exists a real number $u$ such that for all real numbers $v$, $uv = v$.'' In our notation this is:
+\[
+\exists u : \mathbb{R}.\; \forall v : \mathbb{R}.\; uv = v
+\]
+This is claiming that there's a multiplicative identity. Is it true? Yes! Take $u = 1$ and you get $1 \cdot v = v$ for all $v$. So we've \emph{witnessed} the existential by providing a concrete value.\footnote{This is exactly what the $\exists$-introduction rule does: you hand it a concrete element and a proof that the predicate holds on that element.}
+
+Here's the thing you \textbf{really} need to internalize: \textbf{order matters}. The statements $\forall x.\;\exists y.\; P(x,y)$ and $\exists y.\;\forall x.\; P(x,y)$ are \emph{very different}.
+
+Let's look at a concrete case. Consider $P(x,y) = $ ``$y > x$'' over $\mathbb{R}$:
+\begin{itemize}
+  \item $\forall x : \mathbb{R}.\;\exists y : \mathbb{R}.\; y > x$ says ``for every number there's a bigger one.'' This is \textbf{true}---just pick $y = x + 1$.
+  \item $\exists y : \mathbb{R}.\;\forall x : \mathbb{R}.\; y > x$ says ``there's a number bigger than all numbers.'' This is \textbf{false}---there's no largest real number.\footnote{If you think $\infty$ is a real number, we need to have a talk.}
+\end{itemize}
+
+If you're a programmer, here's a useful way to think about it. The statement $\forall x.\;\exists y.\; P(x,y)$ is like saying ``for every input \texttt{x}, we can find an output \texttt{y} such that \texttt{P(x, y)} holds.'' In other words, a function exists that maps inputs to valid outputs---like writing \texttt{def f(x): return x + 1} in Python. The $y$ you pick can \emph{depend} on $x$.
+
+But $\exists y.\;\forall x.\; P(x,y)$ is like saying ``there's a single \texttt{y} that works for ALL inputs.'' You have to pick one constant value up front that satisfies every possible $x$. That's way harder---like trying to write \texttt{y = ???} at the top of your program and having it work for every input. In C terms, it's the difference between a function and a global constant.
+
+Negating nested quantifiers is actually straightforward: you just flip each quantifier as you push the negation through, and then negate the predicate at the end. So:
+\[
+\neg(\exists u : \mathbb{R}.\;\forall v : \mathbb{R}.\; uv = v) \;\equiv\; \forall u : \mathbb{R}.\;\exists v : \mathbb{R}.\; uv \neq v
+\]
+Each $\exists$ becomes a $\forall$, each $\forall$ becomes an $\exists$, and the predicate gets negated. That's it. You just walk through the quantifiers one at a time applying the rules from the previous section.
+
+\section{Necessary and sufficient conditions}
+Alright, so this section is about translating some very common mathematical and CS jargon back into the logic we already know. The phrases ``necessary condition'' and ``sufficient condition'' show up \emph{everywhere} in textbooks, specifications, API docs, &c.\ and you need to know what they mean.
+
+Here's the breakdown:
+\begin{itemize}
+  \item ``$P$ is \emph{sufficient} for $Q$'' means $P \to Q$. If $P$ happens, that's \emph{enough} to guarantee $Q$. $P$ is sufficient---it suffices.
+  \item ``$P$ is \emph{necessary} for $Q$'' means $Q \to P$, or equivalently $\neg P \to \neg Q$. You \emph{can't} have $Q$ without $P$. $P$ is a prerequisite.
+  \item ``$P$ is \emph{necessary and sufficient} for $Q$'' means $P \leftrightarrow Q$. They're logically equivalent---each one implies the other.
+\end{itemize}
+
+\textbf{Example.} ``Being a square is sufficient for being a rectangle.'' This means: if something is a square, then it's a rectangle. Every square is a rectangle. That's $\text{Square}(x) \to \text{Rectangle}(x)$.
+
+Flipping it around: ``Being a rectangle is necessary for being a square.'' This means: if something isn't a rectangle, it can't be a square. You need rectangle-ness in order to have square-ness. That's $\text{Square}(x) \to \text{Rectangle}(x)$---the same implication, just described from the other direction.\footnote{This is the thing that trips people up the most. ``$P$ is necessary for $Q$'' is $Q \to P$, not $P \to Q$. The necessary thing goes on the \emph{right} of the arrow when the thing that needs it is on the left. Think of it as: $Q$ requires $P$, so if you have $Q$ you must have $P$.}
+
+The connection to everything else we've been doing is pretty direct: these are just different ways of talking about implication. The reason we bring this up now is that math texts and CS specs use this language \emph{all the time} and if you don't know how to translate ``necessary'' and ``sufficient'' into arrows, you're going to have a bad time reading formal documentation.\footnote{Real example from a spec I once read: ``Authentication is necessary but not sufficient for authorization.'' Translation: $\text{Authorized} \to \text{Authenticated}$ but $\text{Authenticated} \not\to \text{Authorized}$. You need to be logged in, but being logged in doesn't mean you have permission.}
+
+\section{Proofs with this logic}
+Proofs in this logic are going to be really similar to proofs in propositional logic but there are going to be five additional rules: the intro and elimination rules of our new quantifiers plus a special rule for our $=$ operator.
+
+We'll start with the easiest which is the rule for equality
+
+reflexivity:
+\begin{lstlisting}
+assumes x : A
+-------------
+shows x = x
+\end{lstlisting}
+
+which is just that you're always allowed to conclude that a thing is equal to itself, unsurprisingly! If you're also playing the natural number game or if you ever try other interactive theorem provers you probably will see this rule called ``reflexivity'', or ``rfl''/``refl'' for short.
+
+Next we have the rule for eliminating $\forall$ because it's easier
+
+\begin{lstlisting}
+assumes $\forall$ x: A. P(x)
+        a : A
+--------------------------
+shows P(a)
+\end{lstlisting}
+which just says that if P is true on all elements of A and a is an element of A, then $P(a)$. It's kinda like applying a function, isn't it?
+
+The introduction rule is going to look a little like the introduction rule for implication
+
+\begin{lstlisting}
+assumes
+  proof of:
+    assumes a : A
+    -------------
+    shows P(a)
+-----------------
+shows $\forall$ x : A. P(x)
+\end{lstlisting}
+what we're doing is taking evidence that given an \emph{arbitrary} element of A we can always show that $P(a)$ is true and internalizing that into the $\forall$, the same way that we internalize the ability to prove Q assuming P into \texttt{P -> Q}.
+
+The rules for $\exists$ are kinda dual to $\forall$.
+
+Here's the elimination rule of $\exists$
+\begin{lstlisting}
+assumes
+  $\exists$ x. P(x)
+  subproof:
+     assumes c : A
+             P(c)
+     -------------
+     shows Q
+------------------
+shows Q
+\end{lstlisting}
+
+and the introduction rule is
+\begin{lstlisting}
+assumes
+  c : A
+  P(c)
+------------------------
+shows $\exists$ x: A. P(x)
+\end{lstlisting}
+
+\section{Induction, round 1}
+Here we're going to introduce the concept of the natural numbers and also the idea of natural induction. Why? We've shown how to prove things about predicates in general, but if I were to just \emph{hand} you a predicate on a set it's not like you'd know how to actually do anything with it. You don't have any handles, so to speak, for how to start your proof other than brute forcing the set-based semantics. But as we've discussed a couple of times now this won't work for infinite sets where you'd need to check the formula against potentially infinite values.
+
+Induction is a way of getting a ``handle'' on the data inside a particular set/type by defining types in a way that has structure to it.
+
+Okay, so remember earlier how we talked about BNF syntax? The syntax where we recursively defined a set of things?
+
+Like how we defined all propositional logic formulas as
+
+$L := L \wedge L \mid L \vee L \mid L \to L \mid {\sim} L \mid T \mid F$
+
+Well we can also define the natural numbers the same way like this
+
+$\text{Nat} := 0 \mid \text{succ Nat}$
+
+This means that every natural number is going to be expressed as either 0 or one plus another natural number, and by doing this we'll have reduced the difficulty of assessing an infinite number of numbers to just \emph{two cases}.
+
+That's what induction buys us.
+
+Now if you're playing the natural number game you'll have already seen what the induction rule based on this definition is but let's spell it out:
+
+natural induction
+\begin{lstlisting}
+ assumes P(0)
+         subproof:
+           assumes P(n)
+           ------------
+           shows P(succ n)
+--------------------------
+shows $\forall$ n : Nat. P(n)
+\end{lstlisting}
+
+What this is saying is that if you can show that P is true on 0 and if you can show that with evidence that $P(n)$ is true you can prove $P(\text{succ}\; n)$, then you can prove that P is true on all natural numbers.
+
+Note how the base case is the same as the base case of the recursion and that the second part follows the recursive structure of the BNF syntax.
+
+\section{Addendum on notation}
+Sometimes you might see the ``: A'' part left out of quantifiers, like
+
+``$\forall x.\; P(x)$''
+
+instead. This is valid syntax \emph{if} we've defined in advance what our ``domain of discourse'' is. Then and only then can we leave out naming what set we're talking about because there's only \emph{one} set.
+
+\end{document}

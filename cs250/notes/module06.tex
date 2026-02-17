@@ -1,0 +1,141 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Module 6: Modular Arithmetic and Proofs by Cases}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{An aside on the modulus operation}
+An operation that's important in both mathematics and computer science is the modulus operator, sometimes called \texttt{mod} or \texttt{\%}. This is the operation that gives you the remainder after integer division.
+
+Examples:
+\begin{lstlisting}
+5 % 2 = 1
+9 % 3 = 0
+59 % 4 = 3
+\end{lstlisting}
+
+But let's talk about some of the important properties of this operation and why it matters to computer scientists and mathematicians.
+
+The modulus operation takes the natural numbers---which are NOT a group under addition, because there are no additive inverses---and gives them really nice properties!
+
+\section{The quotient-remainder theorem}
+
+Okay so now that we know what the mod operation does, let's make it precise. The \emph{quotient-remainder theorem} says: for any integer $n$ and any positive integer $d$, there exist \textbf{unique} integers $q$ and $r$ such that
+\[
+  n = d \cdot q + r \quad \text{and} \quad 0 \le r < d.
+\]
+We call $q$ the \emph{quotient} (this is integer division) and $r$ the \emph{remainder} (this is the mod operation). So really, this theorem is just formalizing exactly what we already talked about in the previous section---it tells us that the decomposition into quotient and remainder always exists and is always unique.
+
+If you're a programmer you already know this in your bones. In Python, \texttt{//} gives you $q$ and \texttt{\%} gives you $r$. In C, \texttt{/} on ints gives you $q$ and \texttt{\%} gives you $r$. So the quotient-remainder theorem is literally just this:
+\begin{lstlisting}
+n == d * (n // d) + (n % d)    # always True!
+\end{lstlisting}
+That's it. That's the theorem in code.
+
+Let's do a worked example. Take $n = 67$ and $d = 4$. Then $67 = 4 \cdot 16 + 3$, so $q = 16$ and $r = 3$. You can check: $4 \times 16 = 64$, and $64 + 3 = 67$. And $0 \le 3 < 4$, so we're good.
+
+Alright so why does this matter? The theorem guarantees that every integer falls into exactly one \emph{residue class} mod $d$: the remainder is always one of $0, 1, 2, \ldots, d-1$. This is why proof by cases using mod works! For example, every integer is either even ($r = 0$ mod 2) or odd ($r = 1$ mod 2)---there's no third option. The quotient-remainder theorem is what makes that airtight.
+
+\section{Floor and ceiling}
+
+So two functions that show up constantly in both math and programming are \emph{floor} and \emph{ceiling}.
+
+The \emph{floor} of a real number $x$, written $\lfloor x \rfloor$, is the largest integer that is less than or equal to $x$. You can think of it as ``rounding down.'' In Python this is \texttt{math.floor(x)}, or for positive numbers just \texttt{int(x)}.
+
+The \emph{ceiling} of $x$, written $\lceil x \rceil$, is the smallest integer that is greater than or equal to $x$---``rounding up.'' In Python: \texttt{math.ceil(x)}.
+
+Some examples:
+\[
+  \lfloor 3.7 \rfloor = 3, \quad \lceil 3.7 \rceil = 4, \quad \lfloor 5 \rfloor = 5, \quad \lceil 5 \rceil = 5, \quad \lfloor -2.3 \rfloor = -3, \quad \lceil -2.3 \rceil = -2.
+\]
+
+One key property: $\lfloor x \rfloor = x$ if and only if $x$ is an integer.\footnote{This sounds obvious but you'll need to prove it carefully on the assignment!} If $x$ has any fractional part at all, the floor will be strictly less than $x$.
+
+There's a nice connection to the quotient-remainder theorem too. For positive integers $n$ and $d$, the quotient $q$ is exactly $\lfloor n / d \rfloor$. So floor and integer division are really the same thing.
+
+Fun fact: the floor function shows up all over computer science. Array indexing, hash functions, binary search---anywhere you need to convert a real-valued quantity into an integer index, you're probably using floor. It's one of those operations that's so natural you don't even notice you're doing it, but it's worth knowing the formal definition so you can reason about it precisely.
+
+\section{Nat \% n is a group}
+For any n : Nat, we can define the set \texttt{\{x \% n | x : Nat\}}. This set \textbf{is} actually a group under addition, with the overloaded operation + used to mean something a little different
+\begin{lstlisting}
+q, r : Nat % n
+q + r = (q + r)%n
+\end{lstlisting}
+
+In other words, we perform addition as with normal natural numbers and then take the modulus.
+
+This has some fun effects! First, it means we do have inverses for our operation:
+
+For every q : Nat \% n, the inverse is the number r = (n - q) \% n
+
+Why is this the inverse? Because
+\begin{lstlisting}
+q + (n - q) = (q + n - q)%n
+            = n%n
+            = 0
+\end{lstlisting}
+
+The identity is still 0.
+
+\section{Nat \% p, where p is prime}
+When the number you're taking the modulus by is prime, something \textbf{really} special happens. It isn't just a group under addition---if you exclude 0, it's also a group under multiplication
+\begin{lstlisting}
+q, r : Nat % p
+q * r = (q * r)%p
+\end{lstlisting}
+It's maybe not obvious that there are inverses to the multiplication but there are.\footnote{Proof: trust me, bro}\footnote{Okay in reality it's just kind of a tedious thing to prove and maybe I'll add it in for the heck of it at some point, for all our edification}
+
+The importance of this is that it makes Nat \% p a \emph{finite field}, which is actually really important in cryptography!
+
+\url{https://en.wikipedia.org/wiki/Finite_field_arithmetic}
+
+\url{https://en.wikipedia.org/wiki/Finite_field#Discrete_logarithm}
+
+\section{Proofs by cases and the connection to or-elimination}
+One of the key concepts from this week's reading is the idea that whenever you want to prove something where there are multiple cases, you need to isolate those cases and prove each of them in turn. This is really just another version of $\lor$-elimination! If you have an exhaustive set of cases for the data of your problem---like a number is either 0 or non-zero, or a number is positive, zero, or negative, or a number is either odd or even, \&c.---then you can assume one of these and perform $\lor$-elimination on it!
+
+In other words, when something like \texttt{even(n) v odd(n)} is a tautology, you can just assume it!
+
+This is basically the same idea as having an exhaustive set of cases in an if-statement when you're programming!
+
+Alright let's do a concrete example. We'll prove that for every integer $n$, the quantity $n^2 - n + 3$ is odd. The quotient-remainder theorem tells us every integer is either even or odd (the two residue classes mod 2), so those are our two cases.
+
+\textbf{Case 1:} $n$ is even, so $n = 2k$ for some integer $k$. Then
+\[
+  n^2 - n + 3 = (2k)^2 - 2k + 3 = 4k^2 - 2k + 3 = 2(2k^2 - k + 1) + 1,
+\]
+which is odd.
+
+\textbf{Case 2:} $n$ is odd, so $n = 2k + 1$ for some integer $k$. Then
+\[
+  n^2 - n + 3 = (2k+1)^2 - (2k+1) + 3 = 4k^2 + 4k + 1 - 2k - 1 + 3 = 4k^2 + 2k + 3 = 2(2k^2 + k + 1) + 1,
+\]
+which is odd.
+
+So in both cases we get something of the form $2m + 1$, which is odd. Since every integer is either even or odd, we're done. Notice how the quotient-remainder theorem is doing the heavy lifting here---it's the reason we know these two cases are \emph{exhaustive}. We don't have to worry about some integer that's neither even nor odd, because the theorem guarantees there isn't one.
+
+\end{document}

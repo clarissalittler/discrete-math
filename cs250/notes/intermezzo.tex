@@ -1,0 +1,162 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Intermezzo: More on Natural Induction}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+In order to help explain more about how natural induction works, let's tackle some proofs like those in The Natural Number Game except we'll do it \emph{informally}.
+
+For the purposes of these proofs we'll assume that the definition of addition by recursion on the second argument is
+\begin{align*}
+n + 0 &= n \\
+n + (\text{succ}\; m) &= \text{succ}\;(n + m)
+\end{align*}
+
+\section{Proof that $0 + m = m$}
+We have automatically from the definition of addition by recursion that $n + 0 = n$, but what about the other way?
+
+\textbf{Theorem:} $\forall m.\; 0 + m = m$
+
+\textbf{Proof} by induction on $m$.
+
+\textbf{Case $m = 0$:} Need to prove that $0 + 0 = 0$, but this follows immediately by the definition of addition.
+
+\textbf{Case $m = \text{succ}\; m'$:}
+
+Assuming $0 + m' = m'$.
+
+Shows $0 + \text{succ}\; m' = \text{succ}\; m'$.
+
+By the definition of addition,
+\begin{align*}
+0 + \text{succ}\; m' &= \text{succ}\;(0 + m')
+\end{align*}
+but
+\begin{align*}
+\text{succ}\;(0 + m') &= \text{succ}\; m' && \text{by the induction hypothesis that } 0 + m' = m'
+\end{align*}
+
+QED
+
+\section{Proof that $(\text{succ}\; n) + m = \text{succ}\;(n + m)$}
+
+\textbf{Proof} by induction on $m$.
+
+\textbf{Case $m = 0$:} $\text{succ}\; n + 0 = \text{succ}\;(n + 0)$.
+
+Immediate from the definition of addition.
+
+\textbf{Case $m = \text{succ}\; m'$:}
+
+Assuming: $(\text{succ}\; n) + m' = \text{succ}\;(n + m')$.
+
+Shows: $(\text{succ}\; n) + (\text{succ}\; m') = \text{succ}\;(n + (\text{succ}\; m'))$.
+
+\begin{align*}
+(\text{succ}\; n) + (\text{succ}\; m')
+  &= \text{succ}\;(\text{succ}\; n + m') && \text{by the definition of addition} \\
+  &= \text{succ}\;(\text{succ}\;(n + m')) && \text{by the induction hypothesis}
+\end{align*}
+
+but the right hand side tells us
+\begin{align*}
+\text{succ}\;(n + (\text{succ}\; m')) &= \text{succ}\;(\text{succ}\;(n + m')) && \text{by the definition of addition}
+\end{align*}
+
+so we end up with
+\[
+\text{succ}\;(\text{succ}\;(n + m')) = \text{succ}\;(\text{succ}\;(n + m'))
+\]
+which is true by reflexivity.
+
+\section{Proof that addition is associative}
+
+\textbf{Theorem:} $\forall n\, m\, r.\; n + (m + r) = (n + m) + r$
+
+\textbf{Proof} by induction on $n$.
+
+\textbf{Case $n = 0$:} Need to prove that $\forall m\, r.\; 0 + (m + r) = (0 + m) + r$.
+
+Immediate from the fact that 0 is a unit:
+\[
+m + r = m + r
+\]
+which is true by reflexivity.
+
+\textbf{Case $n = \text{succ}\; n'$:} Need to prove that \textbf{assuming} $\forall m\, r.\; (n' + m) + r = n' + (m + r)$ we can derive $(\text{succ}\; n' + m) + r = \text{succ}\; n' + (m + r)$.
+
+\begin{align*}
+(\text{succ}\; n' + m) + r
+  &= \text{succ}\;(n' + m) + r && \text{by our theorem above} \\
+  &= \text{succ}\;((n' + m) + r) && \text{by the same theorem} \\
+  &= \text{succ}\;(n' + (m + r)) && \text{by the induction hypothesis}
+\end{align*}
+
+and the right hand side similarly transforms
+\begin{align*}
+\text{succ}\; n' + (m + r) &= \text{succ}\;(n' + (m + r))
+\end{align*}
+
+so we have
+\[
+\text{succ}\;(n' + (m + r)) = \text{succ}\;(n' + (m + r))
+\]
+which is true by reflexivity.
+
+\section{Proof that addition is commutative}
+
+\textbf{Theorem:} $\forall n\, m.\; n + m = m + n$
+
+\textbf{Proof} by induction on $n$.
+
+\textbf{Case $n = 0$:} Need to prove that $\forall m.\; 0 + m = m + 0$.
+
+This is immediately solved by the fact that 0 is the left and right identity for addition, so this simplifies to $m = m$ which is true by the definition of $=$ (i.e.\ by reflexivity).
+
+\textbf{Case $n = \text{succ}\; n'$:} Need to prove that \textbf{assuming} $\forall m.\; n' + m = m + n'$ we can show $\forall m.\; (\text{succ}\; n') + m = m + (\text{succ}\; n')$.
+
+So by the definition of addition we have
+\[
+m + (\text{succ}\; n') = \text{succ}\;(m + n')
+\]
+
+and by one of the above theorems we have that
+\[
+(\text{succ}\; n') + m = \text{succ}\;(n' + m)
+\]
+but
+\[
+\text{succ}\;(n' + m) = \text{succ}\;(m + n') \quad \text{by the induction hypothesis}
+\]
+
+and thus
+\[
+\text{succ}\;(m + n') = \text{succ}\;(m + n')
+\]
+which is true by reflexivity.
+
+\end{document}

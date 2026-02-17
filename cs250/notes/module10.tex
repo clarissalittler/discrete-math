@@ -1,0 +1,338 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Module 10: Structural Induction}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{The pattern so far}
+Alright, so we've arrived at the last module and I want to tie together something that's been hiding in plain sight all quarter. Let's take a quick tour of what we've done.
+
+Back in Module 2 we introduced BNF as a way to define the syntax of propositional logic:
+
+$L := T \mid F \mid L \wedge L \mid L \vee L \mid {\sim} L \mid L \to L \mid x$
+
+Then in Module 4 we used the exact same idea to define the natural numbers:
+
+$\text{Nat} := 0 \mid \text{succ Nat}$
+
+and we got \emph{natural induction} out of it---for free! Two cases in the BNF, two obligations in the proof: handle zero, handle successor. And in Module 8 we saw that induction is really just recursion on proofs. A recursive function computes a value by reducing to a smaller case; an inductive proof proves a statement by reducing to a smaller case. Same thing, different hat.
+
+Okay so here's what I want to make explicit now. The connection between BNF definitions and induction principles isn't some special coincidence about natural numbers. It's a \textbf{general pattern}: \emph{any} BNF definition gives you an induction principle. Every single time. The base cases of the BNF become base cases of your proof, and the recursive cases of the BNF become inductive steps where you get to assume the property holds for the sub-parts.
+
+We've actually been using this pattern all along without naming it. Now let's name it---\emph{structural induction}---and demonstrate it on two new datatypes that show up constantly in computer science: lists and binary trees.
+
+\section{Lists}
+
+\subsection{Defining lists inductively}
+Okay so what is a list? You've used lists in every programming class you've ever taken. Python's \texttt{[1, 2, 3]}, Java's \texttt{ArrayList}, Haskell's \texttt{[a]}---they're everywhere. But what \emph{is} a list, really, when you strip away all the implementation details?
+
+Here's the answer, in the same BNF style we've been using all quarter:
+
+\begin{lstlisting}
+List A := Nil | Cons(A, List A)
+\end{lstlisting}
+
+A list of $A$'s is either \emph{empty} (which we call \texttt{Nil}) or it's an element of type $A$ stuck onto the front of another list (which we call \texttt{Cons}).\footnote{The name ``Cons'' comes from Lisp, one of the oldest programming languages, where it was short for ``construct.'' It's been the standard name in functional programming ever since.} That's it. Two cases. Sound familiar?
+
+Let's make sure this connects to what you already know. In Python, the empty list \texttt{[]} is our \texttt{Nil}. And the list \texttt{[1, 2, 3]} is really:
+\begin{lstlisting}[language=Python]
+# [1, 2, 3] is secretly:
+Cons(1, Cons(2, Cons(3, Nil)))
+\end{lstlisting}
+
+In Haskell this is even more explicit. The empty list is \texttt{[]} and the cons operator is \texttt{:}, so you can write \texttt{1 : 2 : 3 : []} which is exactly \texttt{Cons(1, Cons(2, Cons(3, Nil)))}. If you've ever wondered why Haskell programmers are so obsessed with that colon operator---this is why. It's the recursive case of the datatype.
+
+Now here's the payoff. Just like the BNF for natural numbers gave us natural induction, the BNF for lists gives us \emph{structural induction on lists}:
+
+\begin{lstlisting}
+assumes P(Nil)
+        subproof:
+          assumes P(xs)
+          ----------------
+          shows P(Cons(x, xs))
+------------------------------
+shows $\forall$ xs : List A. P(xs)
+\end{lstlisting}
+
+Look at how perfectly this mirrors the natural induction rule from Module 4! The structure is identical:
+\begin{itemize}
+  \item The \textbf{base case} corresponds to the base case of the BNF (\texttt{Nil}, just like $0$ for Nat).
+  \item The \textbf{inductive step} corresponds to the recursive case of the BNF (\texttt{Cons}, just like succ for Nat), and you get to assume the property holds for the tail \texttt{xs} (just like you assumed $P(n)$ when proving $P(\text{succ}\; n)$).
+\end{itemize}
+
+And this makes sense! A list is basically a natural number with data attached to each successor. \texttt{Nil} is like zero, and \texttt{Cons} is like successor but it also carries a value along for the ride. So of course the induction principle looks the same.
+
+\subsection{Recursive functions on lists}
+
+Before we can prove anything interesting we need some functions to talk about. Let's define two standard ones: \texttt{length} and \texttt{append}.
+
+\textbf{Length.} The length of a list is defined recursively, following the two cases of the BNF:
+
+\begin{lstlisting}
+length(Nil)         = 0
+length(Cons(x, xs)) = 1 + length(xs)
+\end{lstlisting}
+
+Or in Python, if you were implementing it from scratch:\footnote{Yes, Python has a built-in \texttt{len()} function. We're defining it ourselves because we need to reason about it.}
+
+\begin{lstlisting}[language=Python]
+def length(lst):
+    if lst == []:         # Nil case
+        return 0
+    else:                 # Cons case
+        return 1 + length(lst[1:])
+\end{lstlisting}
+
+\textbf{Append.} The append function (which we'll write as \texttt{++} because that's what Haskell uses and it's nice and short) concatenates two lists:
+
+\begin{lstlisting}
+Nil ++ ys         = ys
+Cons(x, xs) ++ ys = Cons(x, xs ++ ys)
+\end{lstlisting}
+
+So appending \texttt{ys} onto an empty list just gives you \texttt{ys}, and appending \texttt{ys} onto \texttt{Cons(x, xs)} sticks \texttt{x} on front and then appends \texttt{ys} onto the tail. For example:
+
+\begin{align*}
+&\texttt{Cons(1, Cons(2, Nil)) ++ Cons(3, Nil)} \\
+= \;&\texttt{Cons(1, Cons(2, Nil) ++ Cons(3, Nil))} \\
+= \;&\texttt{Cons(1, Cons(2, Nil ++ Cons(3, Nil)))} \\
+= \;&\texttt{Cons(1, Cons(2, Cons(3, Nil)))}
+\end{align*}
+
+which is $[1,2] \mathbin{++} [3] = [1,2,3]$, exactly what you'd expect.
+
+Notice how both of these functions follow the structure of the BNF. Two cases in the datatype, two cases in the function. This is the ``recursion is induction'' idea from Module 8 showing up again: the shape of your data determines the shape of your code.
+
+\subsection{Worked proof: length distributes over append}
+
+Okay, now let's \emph{prove} something using structural induction on lists. We'll show that:
+
+For all lists \texttt{xs} and \texttt{ys}:
+\[
+\texttt{length(xs ++ ys)} = \texttt{length(xs)} + \texttt{length(ys)}
+\]
+
+In other words, the length of two lists concatenated together is the sum of their individual lengths. This is one of those things that feels ``obviously true'' but let's see the machinery work.
+
+We'll do structural induction on \texttt{xs}. Our property $P(\texttt{xs})$ is the statement ``for all \texttt{ys}, $\texttt{length(xs ++ ys)} = \texttt{length(xs)} + \texttt{length(ys)}$.''
+
+\textbf{Base case} (\texttt{xs} = \texttt{Nil}): We need to show that $\texttt{length(Nil ++ ys)} = \texttt{length(Nil)} + \texttt{length(ys)}$ for all \texttt{ys}.
+
+The left side:
+\begin{align*}
+\texttt{length(Nil ++ ys)} &= \texttt{length(ys)} && \text{(by definition of \texttt{++})}
+\end{align*}
+
+The right side:
+\begin{align*}
+\texttt{length(Nil)} + \texttt{length(ys)} &= 0 + \texttt{length(ys)} && \text{(by definition of length)} \\
+&= \texttt{length(ys)}
+\end{align*}
+
+They're equal. Base case done.
+
+\textbf{Inductive step} (\texttt{xs} = \texttt{Cons(x, xs')}): Assume $P(\texttt{xs'})$ holds, i.e.\ assume that for all \texttt{ys},
+\[
+\texttt{length(xs' ++ ys)} = \texttt{length(xs')} + \texttt{length(ys)} \qquad \text{(IH)}
+\]
+
+We need to show $\texttt{length(Cons(x, xs') ++ ys)} = \texttt{length(Cons(x, xs'))} + \texttt{length(ys)}$.
+
+Let's work on the left side:
+\begin{align*}
+&\texttt{length(Cons(x, xs') ++ ys)} \\
+= \;&\texttt{length(Cons(x, xs' ++ ys))} && \text{(by definition of \texttt{++})} \\
+= \;&1 + \texttt{length(xs' ++ ys)} && \text{(by definition of length)} \\
+= \;&1 + \texttt{length(xs')} + \texttt{length(ys)} && \text{(by IH!)}
+\end{align*}
+
+And the right side:
+\begin{align*}
+&\texttt{length(Cons(x, xs'))} + \texttt{length(ys)} \\
+= \;&(1 + \texttt{length(xs')}) + \texttt{length(ys)} && \text{(by definition of length)} \\
+= \;&1 + \texttt{length(xs')} + \texttt{length(ys)}
+\end{align*}
+
+They're the same! So $P(\texttt{Cons(x, xs')})$ holds, and by structural induction we conclude $P(\texttt{xs})$ for all lists \texttt{xs}. $\square$
+
+See the pattern? It's the exact same game as the induction proofs we did on natural numbers in Modules 4 and 8. Unfold the definitions, apply the inductive hypothesis, watch things simplify. The only difference is that instead of peeling off a \texttt{succ} we're peeling off a \texttt{Cons}. The method is the same.
+
+\section{Binary trees}
+
+\subsection{Defining binary trees inductively}
+
+Now let's look at a slightly more interesting datatype. If you've taken a data structures class---or if you haven't yet, you will soon---you've seen \emph{binary trees}. Binary search trees, heaps, parse trees, \&c. They're one of the most important data structures in all of computer science.
+
+Here's the BNF definition:
+
+\begin{lstlisting}
+BinTree := Leaf | Node(BinTree, BinTree)
+\end{lstlisting}
+
+A binary tree is either a \emph{leaf} (an empty tree, a dead end) or it's a \emph{node} with a left subtree and a right subtree.\footnote{Some definitions of binary trees store data at the nodes, like \texttt{Node(A, BinTree, BinTree)}. We're keeping it simple here and just tracking the shape of the tree. Everything we prove about the shape applies equally well when you add data.} Again, two cases. But notice something new: the recursive case \texttt{Node} has \textbf{two} recursive sub-parts, not one. A cons cell had one tail; a node has two children. This is going to affect the induction principle.
+
+In Haskell you'd write this as:
+\begin{lstlisting}[language=Haskell]
+data BinTree = Leaf | Node BinTree BinTree
+\end{lstlisting}
+
+And in Python, maybe something like:
+\begin{lstlisting}[language=Python]
+class Leaf:
+    pass
+
+class Node:
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+\end{lstlisting}
+
+Okay, so what's the induction principle? Here's where the two subtrees make things interesting:
+
+\begin{lstlisting}
+assumes P(Leaf)
+        subproof:
+          assumes P(left)
+                  P(right)
+          ----------------------
+          shows P(Node(left, right))
+--------------------------------------
+shows $\forall$ t : BinTree. P(t)
+\end{lstlisting}
+
+See the difference from list induction? In the inductive step you get \textbf{two} inductive hypotheses---one for the left subtree and one for the right subtree---because the BNF has two recursive occurrences. Compare this to lists, where \texttt{Cons} had one recursive sub-part so you got one inductive hypothesis, which was the same as natural induction where \texttt{succ} had one recursive sub-part. The number of inductive hypotheses always matches the number of recursive sub-parts in the BNF. Always.
+
+\subsection{Recursive functions on binary trees}
+
+Let's define a function that counts the number of internal \emph{nodes} in a binary tree (i.e.\ the non-leaf nodes):
+
+\begin{lstlisting}
+size(Leaf)            = 0
+size(Node(left, right)) = 1 + size(left) + size(right)
+\end{lstlisting}
+
+A leaf contributes nothing, and a node contributes itself plus whatever's in its subtrees. Simple enough. In Python:
+
+\begin{lstlisting}[language=Python]
+def size(t):
+    if isinstance(t, Leaf):
+        return 0
+    else:  # Node
+        return 1 + size(t.left) + size(t.right)
+\end{lstlisting}
+
+We'll also want to count the number of \emph{internal edges}---edges connecting one node to another node or a node to a leaf. Each node is connected to its two children, so let's define:
+
+\begin{lstlisting}
+edges(Leaf)              = 0
+edges(Node(left, right)) = 2 + edges(left) + edges(right)
+\end{lstlisting}
+
+Why 2? Because each \texttt{Node} creates exactly two edges: one going down to its left child and one going down to its right child.\footnote{If you draw a binary tree on paper, every line you draw corresponds to one of these edges. A node with two children means two lines going down from that node.}
+
+\subsection{Worked proof: counting edges in a binary tree}
+
+Now let's prove something about binary trees using structural induction. We'll show that:
+
+For all binary trees $t$:
+\[
+\texttt{edges}(t) = 2 \cdot \texttt{size}(t)
+\]
+
+In other words, a binary tree with $n$ nodes has exactly $2n$ edges. This makes intuitive sense: every node contributes exactly 2 edges (to its children), and leaves contribute 0.
+
+We'll do structural induction on $t$. Our property $P(t)$ is the statement ``$\texttt{edges}(t) = 2 \cdot \texttt{size}(t)$.''
+
+\textbf{Base case} ($t = \texttt{Leaf}$): We need $\texttt{edges(Leaf)} = 2 \cdot \texttt{size(Leaf)}$. The left side is $0$ and the right side is $2 \cdot 0 = 0$. Done.
+
+\textbf{Inductive step} ($t = \texttt{Node(left, right)}$): Assume $P(\texttt{left})$ and $P(\texttt{right})$, i.e.\ assume:
+\begin{align*}
+\texttt{edges(left)} &= 2 \cdot \texttt{size(left)} && \text{(IH for left)} \\
+\texttt{edges(right)} &= 2 \cdot \texttt{size(right)} && \text{(IH for right)}
+\end{align*}
+
+We need to show $\texttt{edges(Node(left, right))} = 2 \cdot \texttt{size(Node(left, right))}$.
+
+Left side:
+\begin{align*}
+\texttt{edges(Node(left, right))} &= 2 + \texttt{edges(left)} + \texttt{edges(right)} && \text{(by definition of edges)} \\
+&= 2 + 2 \cdot \texttt{size(left)} + 2 \cdot \texttt{size(right)} && \text{(by both IHs!)}
+\end{align*}
+
+Right side:
+\begin{align*}
+2 \cdot \texttt{size(Node(left, right))} &= 2 \cdot (1 + \texttt{size(left)} + \texttt{size(right)}) && \text{(by definition of size)} \\
+&= 2 + 2 \cdot \texttt{size(left)} + 2 \cdot \texttt{size(right)}
+\end{align*}
+
+They're equal! Both sides give us $2 + 2 \cdot \texttt{size(left)} + 2 \cdot \texttt{size(right)}$, so $P(\texttt{Node(left, right)})$ holds. By structural induction, $P(t)$ for all binary trees $t$. $\square$
+
+Notice how we used \textbf{both} inductive hypotheses in the inductive step---one for each subtree. That's the characteristic feature of tree induction: you get two IHs and you typically need both.
+
+\section{The general recipe}
+
+Okay, so let's spell out the pattern once and for all, because at this point you've seen it enough times that it should click.
+
+Here's the recipe. Given \textbf{any} BNF definition of a datatype, you automatically get an induction principle. The correspondence is:
+
+\begin{itemize}
+  \item Each \textbf{base case} of the BNF gives you a \textbf{base case} of the proof. You need to show your property holds for each non-recursive constructor.
+  \item Each \textbf{recursive case} of the BNF gives you an \textbf{inductive step}. For each recursive constructor, you get to \emph{assume} the property holds for all recursive sub-parts, and you need to \emph{show} it holds for the whole thing.
+\end{itemize}
+
+That's it. That's the whole recipe. Let's verify it against everything we've seen this quarter:
+
+\textbf{Natural numbers:} $\text{Nat} := 0 \mid \text{succ Nat}$. One base case ($0$), one recursive case (\text{succ}) with one sub-part. So you get one base case and one inductive step with one IH. That's natural induction from Module 4.
+
+\textbf{Lists:} $\text{List}\;A := \text{Nil} \mid \text{Cons}(A, \text{List}\;A)$. One base case (\text{Nil}), one recursive case (\text{Cons}) with one recursive sub-part (the tail). So you get one base case and one inductive step with one IH. Structurally identical to natural induction! And that makes sense: a list is basically a natural number that carries data.
+
+\textbf{Binary trees:} $\text{BinTree} := \text{Leaf} \mid \text{Node}(\text{BinTree}, \text{BinTree})$. One base case (\text{Leaf}), one recursive case (\text{Node}) with \textbf{two} recursive sub-parts. So you get one base case and one inductive step with \textbf{two} IHs. That's the new thing we saw in this module.
+
+And you could keep going! Imagine a datatype with two base cases and three recursive cases. You'd get two base cases and three inductive steps in your proof. Or consider propositional logic formulas from Module 2: $T$ and $F$ are base cases, ${\sim} L$ is a recursive case with one sub-part, and $L \wedge L$, $L \vee L$, $L \to L$ are recursive cases with two sub-parts each. So to prove something about all propositional formulas you'd handle the base cases ($T$, $F$, variables) and then do inductive steps for each connective, getting the appropriate number of inductive hypotheses each time.\footnote{If you go on to study programming languages or compilers, this is \emph{exactly} how you prove theorems about programs: by structural induction on the syntax of the language. The BNF of the programming language gives you the induction principle, and then you grind through the cases. It's this same recipe, just with bigger grammars.}
+
+This extends to any datatype you can dream up---rose trees, abstract syntax trees, regular expressions, whatever. If you can write down a BNF for it, you get a structural induction principle for it. You'll see more of this in CS 251 when we work with graphs, automata, and other structures.
+
+\section{Wrapping up: the big picture}
+
+So let's take a step back and look at what we've actually built over this whole course. There's been a single thread running through every module, and now we can finally state it cleanly.
+
+The thread is a three-step pattern:
+\begin{enumerate}
+  \item \textbf{Define your data inductively} using BNF. Specify the base cases and the recursive cases.
+  \item \textbf{Get an induction principle for free} that mirrors the structure of your definition. Base cases in the BNF become base cases in the proof. Recursive cases become inductive steps.
+  \item \textbf{Use that principle to prove things} about all instances of your data by handling each case.
+\end{enumerate}
+
+We did this for propositional logic formulas in Module 2. We did this for natural numbers in Module 4. We did this for sequences in Module 8. And now in this module we've done it for lists and binary trees.
+
+The specific data changes but the \emph{method} is always the same. Define inductively, get an induction principle, prove by cases. And as we saw in Module 8, this is the exact same thing as writing recursive programs: the structure of your data determines the structure of your code, which determines the structure of your proofs. Recursion, induction, case analysis---they're all the same idea, wearing different hats depending on whether you're computing a value or proving a theorem.
+
+If there's one thing I want you to take away from this course, it's this: when you encounter some new kind of structured data, the first question you should ask is ``what's the BNF?'' Once you have that, you know how to define functions on it (by recursion following the cases), and you know how to prove things about it (by induction following the cases). Everything else is details.
+
+This is the foundation for CS 251 and beyond---type theory, programming language theory, algorithm analysis, formal verification. The datatypes get bigger and the proofs get harder, but the recipe stays the same. Not bad for one quarter.\footnote{Okay, I lied a little. In CS 251 you'll see datatypes where the recursion is more complicated---mutual recursion, nested datatypes, indexed families---and the induction principles get correspondingly fancier. But the core idea really is the same. Promise.}
+
+\end{document}

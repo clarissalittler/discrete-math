@@ -1,0 +1,266 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Module 1: Welcome, Sets, and Functions}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{A Note on The Textbook}
+If you're having trouble finding a copy of Epp 5th edition try clicking this link!
+\url{https://library.lol/main/C9C77A6273584214855A3813301DFE61}
+
+\section{Welcome to CS 250}
+Welcome to CS 250! This class is an introduction to logic and mathematical reasoning geared towards computer scientists.
+
+By the end of this class you will
+\begin{itemize}
+  \item Be able to explain what a mathematical proof is
+  \item Know the distinction between formal and informal proofs
+  \item Be able to prove mathematical and logical statements with direct and indirect proof methods
+  \item Be able to calculate truth tables for Boolean expressions
+  \item Be able to define data in BNF notation
+  \item Be able to explain the induction principle on the natural numbers
+  \item Know how to relate induction on other types to natural induction
+  \item Be able to perform simple formal proofs of program correctness
+\end{itemize}
+
+That covers the \emph{what} of this class but we haven't yet explained why you should care about it.
+
+\section{Why study logic?}
+So why study logic? I have a few different points to cover here:
+\begin{itemize}
+  \item understanding how to write proofs will let you reason about the \emph{limits} of computation
+  \item learning logic will help you determine whether the programs you write are correct
+  \item on a practical level ``formal methods'' --- the application of logic to computer science --- are a lucrative and in-demand field in all sorts of high-stakes computing and engineering: everything from embedded systems programming to chip design to the development of operating system components
+\end{itemize}
+
+Let's break these down a little bit more.
+
+First, when I'm talking about reasoning on the limits of computation what I mean is that if we want to understand not just what computers can do \emph{today} but what computers can do \emph{ever} we need to start with an \textbf{abstract} model of computation, one that doesn't depend on a particular chip architecture or instruction set.
+
+Consider: if I \emph{somehow}---and let's not worry about how at the moment---managed to demonstrate that \textbf{no} AMD chip today could run a program that reads in the code of another program and prints \texttt{1} if the program would run in finite time and \texttt{0} if the program would go into an infinite loop.
+
+Okay. So I've demonstrated this result. Awesome. How do I know there \emph{won't} be a chip that \emph{could} run such a program? How do we know we won't invent some new kind of computer that could do this? Maybe a quantum computer. That sounds cool and fancy, right? Maybe a quantum computer could do a bunch of things that seem impossible today?
+
+Or how about this: consider two programming languages, Python and C.
+
+If I can solve a problem in Python, do I \textbf{know} that I can always write a C program that computes the same thing? What about the other way around?
+
+I think we can all kind of intuitively \emph{feel} like, on some level, there isn't really a difference between what things you can compute in two languages---only in how efficiently you can compute them.
+
+But Pure Vibes isn't really good enough for a computer scientist. We need the ability to \emph{know} whether two languages are essentially equivalent or two chips capable of running the same kinds of programs.
+
+To do that we need mathematical \emph{models} of computation that don't depend on any of these details, like the specifics of language or hardware. In other words, we need a model that \emph{abstracts} over these details.
+
+But what would you do with such a thing were you to have it?
+
+We've already determined it's not a concrete programming language with a compiler.
+
+No, instead we have to reason with mathematical tools: sets, symbols, syntax and semantics, proofs.
+
+And the question ``what is a proof and how do I write one'' is going to be the bulk of this class: with the actual mathematical modeling of computation and computer science being a thing that we'll leave for the sequel course CS 251.
+
+For now, I'll say a proof is a way to convince the reader, by clearly outlining a sequence of reasoning steps, that something is true
+
+% [insert spiels for points two and three]
+
+And in the next section we'll cover a bit more about what that definition means.
+
+\section{What is logic, what is a proof?}
+So in the last section we established that the point of the course is to develop the logical and mathematical tools that will let us study programs, their behavior, and their properties in an \emph{abstract} way independent of programming language or hardware.
+
+Now we want to introduce some of the basic mathematical concepts and formalisms we need to start down this path.
+
+The very first thing I want to discuss is \emph{what logic is}.
+
+So logic is, and I'm borrowing from Dr.\ Logic's excellent lecture series (insert link) for this definition, a way to determine truth of statements from their premises by the employment of \emph{arguments} that are a series of valid reasoning steps.
+
+In the context of mathematics, we call a valid argument a proof.
+
+Proofs are the bread and butter of what mathematicians \emph{do}. They're how we convince ourselves and each other that those moments of insight and creativity we have are actually true and not just wishful thinking.
+
+Here's an example of a very simple insight and proof.
+
+Let's say you were thinking about the \emph{natural numbers}. That is the numbers that are either zero or a positive whole number. You realize ``hey, there are a lot of these. There's gotta be an infinite number of them.'' and now you want to convince yourself this is \emph{true}, in other words you want to \emph{prove} it.
+
+To start, you have a rather clever guess on how to show this. First, you note that if you have a natural number you can always add one and it stays a whole, positive, number. Second, you decide to see what happens if there's a \textbf{finite} amount of natural numbers. You're going to \emph{assume} that this is true and then see if you can show it leads to something weird.
+
+So the first consequence of there being a \emph{finite} number of natural numbers is that there must be a \emph{biggest} natural number.
+
+Why? Because for any two natural numbers one of them must be bigger than the other. So if you compare all of these finite numbers, one of them must be the biggest.
+
+Aside: can you implement this idea as a program?
+
+So, then, if we have a biggest natural number then we should be able to add one to it and get a new natural number. This new natural number must be bigger.
+
+But how can this be true if we already found the biggest?
+
+We've found a contradiction, the weirdness we hoped to find. Normally this would be a bad thing for our mathematics but in our case it shows that our assumption that there were only a finite number of naturals was a bad assumption. Our only alternative, then, is that it is \emph{not} finite and thus is \emph{infinite}.
+
+We've proved what we set out to prove, then, that there are an \emph{infinite amount of natural numbers}.
+
+Okay, let's step back now.
+
+This is a pretty valid proof by mathematician standards but let's talk about some of the assumptions that went into it:
+
+\begin{itemize}
+  \item First, we didn't actually show that you always get a new natural number by adding one to a natural number; we just appealed to the intuition that we've all done addition before and asserted it.
+  \item Second, we didn't actually explain how we can generalize from ``you can always compare two numbers'' to ``you can compare all the numbers in a collection of numbers.''
+  \item Third, we didn't even technically define what comparing the size of two numbers means. Did you catch that?
+  \item Finally, we didn't actually justify this proof by contradiction technique. How do we know that just because we've found a contradiction from the assumption that the natural numbers are finite that we absolutely \emph{know} that they must instead be infinite? Heck, we didn't even define finite and infinite did we?
+\end{itemize}
+
+My point here is that even when a mathematician writes a proof there is usually a body of assumptions, definitions, and facts that they're relying on!
+
+Now for the world's most niche personality test:
+\begin{itemize}
+  \item if you're completely unbothered by all these assumptions I left out, you're thinking like a mathematician: more worried about getting the right intuition and letting some things slide for the sake of clarity in the argument. You just want to get the proof done to your satisfaction so you can move onto the next cool thing that's buzzing in your brain.
+  \item if you \textbf{are} bothered by it, then you're thinking like a logician: concerned about getting all the exact details of proofs correct and being incredibly clear about all the assumptions and definitions involved. You worry about whether things like ``proof by contradiction'' even make sense as a way of knowledge. You might like the word ``epistemology''
+  \item if you read all of this and thought something like ``well I know there are an infinite number of natural numbers because I could write an loop that runs forever that keeps enumerating them until the heat death of the universe'' then you're thinking like a \emph{constructive} mathematician: a blend of mathematician, logician, and computer scientist. You do math in your code and code with your math. You know languages like Agda and Idris that most people swear are not real.
+\end{itemize}
+
+Now to be clear none of these approaches is better than the others, every one has its own strengths and weaknesses.
+
+These notes were, however, written by a constructive mathematician so there might be bias peeking through in how this material is presented.
+
+\section{Variables and formulae}
+So we've done a lot of setup to explain why we need to study logic and we've given a proof in a very \emph{informal}, natural language, way. By natural language I mean human language that evolved organically as opposed to the language of mathematics or a programming language.
+
+We need to start moving from this informal language into \emph{formal} language: symbols with rigid meaning.
+
+We're going to make this journey piecemeal over time, learning how to take statements in human language---which can be ambiguous---and turn them into rigorous, unmistakable, combinations of symbols.
+
+This will both help us be precise in how we do mathematics but also help us move our mathematics from pen and paper to computer programs.
+
+The first such formalization is the introduction of \emph{variables}. You've already seen variables in algebra and programming before, although their uses are slightly different from what we're doing here.
+
+We're not ``solving for x'' like in algebra nor are we using variables like labeled containers as in \emph{C}, \emph{Python}, or similar programming languages where the contents of the container can change over time.
+
+No, instead variables as we're using them are something like generalized pronouns such as how ``it'' or ``this'' function as pronouns.
+
+There are \emph{patterns} to how we introduce variables like this: we name the variable and its scope and then allow ourselves to use it, e.g.\ ``Consider a chicken \textbf{c}, such that \ldots'' or ``For all students, \textbf{s}, in CS250 \ldots''
+
+So for a more real example consider that in the previous section we assumed that there was a largest natural number and talked through the rest of the proof from there.
+
+Now we know how to say something like:
+``Assume there is a largest natural number, \textbf{n}. Then we know that n+1 is also a natural number and that n+1>n, contradicting the assumption that \textbf{n} is largest.''
+
+That's a lot clearer than trying to write it in just words, right, and all we've done is allow ourselves a little bit of abstraction.
+
+We \emph{need} variables to help us write more complicated kinds of logical statements as well. The first kinds we're going to talk about are what Epp calls universal, existential, and conditional.
+
+Universal statements are things like ``all dogs are mammals'' or ``every chicken has a common ancestor''. Universal statements are about something that is true for every possible example of a ``class of thing''. We're going to make ``class of thing'' more rigorous soon but we'll let it be a little sloppy at the moment. So think ``all dogs'', ``every person'', ``all programming languages''. Those are ``classes of thing''.
+
+Universal statements can also include negatives like ``no dogs are also cats'' or ``every person is not immortal''.
+
+Existential statements are like ``there is a smallest natural number'' or ``there is at least one rainy day each fall''. These are about showing examples of something or that a thing with certain properties \emph{exists}.
+
+These are the kinds of claims you make when you're showing a problem even has a solution. So for example if you want to say ``the equation \texttt{3x - 29 = 0} has a solution'', that's an existential statement.
+
+The last kind of statement Epp teases out is the ``conditional statement'', which are statements that involve something that's a kind of ``if-then'' or ``when'' condition inside of it.
+
+For example, ``if a pear can be used as a weapon, then it is not ripe'' or ``if a program does not compile, then it is not correct''.
+
+We can even combine all of these concepts together into an example such as ``for every equation of the form \texttt{m*x + b = y}, where \texttt{m} is not \texttt{0}, there exists a solution''. This is a universal wrapped around a conditional wrapped around an existential.
+
+So now we're ready to make the ``class of thing'' concept a little more formal and talk about \emph{sets}.
+
+\section{Sets and pairs}
+In the previous section we talked about classes of things such as ``all dogs'' or ``all C programs''. In mathematics, we call these collections \emph{sets}.
+
+We denote a \emph{set} as curly braces like this \texttt{\{ \}}, often with commas separating the things---the elements---of the set.
+
+\texttt{\{red, green, blue\}}
+
+\texttt{\{you, your friend, your friend's friend\}}
+
+\texttt{\{the best chicken, the worst chicken\}}
+
+These are very \emph{abstract} collections.
+
+If you have a \textbf{thing} \texttt{x} and a \textbf{collection of things} \texttt{A}, you can then ask the question ``is \texttt{x} in \texttt{A}?'' We generally write this as $x \in A$. Similarly, we write ``is \texttt{x} not in \texttt{A}'' as $x \notin A$.
+
+So how do we make sets? There are three basic ways:
+The first is that you can take a finite number of things and just put them between the curly-braces and call that a set. That's how our first few examples worked.
+
+The second is that you can take \emph{other} sets and then apply a condition---a \emph{predicate}---onto it to make a new set. The easiest example is that you can take $\mathbb{N}$, the set of all natural numbers, and then filter out all the even numbers to get the set of all odd natural numbers. If you've seen Python's ``list comprehensions'' before, then you have seen a similar concept.
+
+In symbols, we denote this with ``set-builder notation'' so we can write the above description as
+
+$\{n \mid n \in \mathbb{N} , n \mathbin{\%} 2 = 1\}$
+
+But how do you get things like ``the set of all natural numbers'' in the first place? That brings us to the third way to define sets, which is \emph{inductively} and we're going to sorta informally introduce how to do this by example until the second half of the course where we make it all more rigorous.
+
+Okay now that we have set-building notation we can start to introduce a bunch of operations \emph{on} sets like so:
+
+$A \cap B := \{ x \mid x \in A \text{ and } x \in B\}$, which is the intersection of two sets. This is the set of elements that $A$ and $B$ have in common.
+
+$A \cup B :=  \{ x \mid x \in A \text{ or } x \in B\}$, which is the union of two sets. This is the set of elements that are either in $A$ or in $B$.
+
+The next concept we need to introduce is the idea of a \emph{subset}. Assume sets $A$ and $B$, we say that $A$ is a subset of $B$ when every element of $A$ is also an element of $B$. We denote this in symbols as $A \subseteq B$.
+
+Okay, we're now heading to talking about a thing that seems obvious but is incredibly important and---in the history of mathematics---quite divisive: equality of sets. So we're going to go with the definition that two sets are equal exactly when $A \subseteq B$ and $B \subseteq A$, in other words when the two sets have \emph{exactly} the same elements.
+
+This has a couple of implications: first, that there's no sense of \emph{ordering} in sets: $\{a,b,c\} = \{c,b,a\} = \{c,a,b\}$. Second, that it doesn't matter how you build the sets. You could get the ``set of natural numbers divisible by four'' either as $\{x \mid x \in \mathbb{N}, x \mathbin{\%} 4 = 0\}$ or as a two step process of first getting the even numbers $E$ $\{x \mid x \in \mathbb{N}, x \mathbin{\%} 2 = 0\}$ and then performing this as $\{x \mid x \in E, x \mathbin{\%} 4 = 0\}$. Either way, you get the ``same'' set of numbers because they have the same elements.
+
+This is called \emph{extensional} equality, that is equality because the two things look the same from ``the outside''.
+
+I want to hint at why this is a useful yet \emph{controversial} definition by asking a simple question: when are two programs the same? Is producing the same output for the same input enough to call the programs the same? Why or why not?
+
+One more consequence of extensional equality that's worth making explicit: \emph{duplicates don't count}. The set $\{2, 2, 2, 2\}$ is the same as the set $\{2\}$ because they have the exact same elements---the number 2 and nothing else. Writing 2 four times doesn't somehow put four copies of it in the set. Sets don't work like arrays.
+
+This is a good time to introduce the notation for \emph{cardinality}. The cardinality of a finite set $A$, written $|A|$, is the number of \emph{distinct} elements in $A$. So:
+\begin{itemize}
+  \item $|\{a, b, c\}| = 3$
+  \item $|\{2, 2, 2, 2\}| = |\{2\}| = 1$
+  \item $|\{\}| = 0$ (the empty set has no elements)
+\end{itemize}
+
+One that trips people up: what about $\{0, \{0\}\}$? This set has two elements: the number $0$ and the set $\{0\}$. These are different things! One is a number and the other is a set that \emph{contains} a number. So $|\{0, \{0\}\}| = 2$. Don't confuse an element with a set containing that element---$0$ and $\{0\}$ are not the same thing, just like a box is not the same thing as what's inside it.\footnote{If you're a Python programmer: \texttt{0 == \{0\}} is \texttt{False}. If that seems obvious to you, good. But it's the kind of thing that causes errors on homework.}
+
+The final concept to discuss with sets is another operation: the \emph{product} of sets. So we need to talk about this because we're going to present an alternative to Epp's presentation. Her focus is a very classical one, on how to define essentially everything from just a couple of operations on sets. So she shows how to, from the basic definitions, come up with an idea of product of sets. It's a good trick, I recommend reading it once, but it's honestly not how a lot of foundational mathematics is done these days, at least not the kind you'll see as a computer scientist.
+
+\emph{Instead} we tend to introduce ``tuples'' as another basic datatype. You've seen tuples before: coordinates! $(3,4)$ is three units in the x-direction, four units in the y-direction. Tuples are kind of the opposite of sets. They have \emph{order} and a \emph{fixed size}. If you want an analogy think of it like arrays in C/C++. You can have arrays of arbitrary size but any \emph{given} array has a size that you decided on, allocated, in advance.
+
+So now we can define $A \times B = \{(a,b) \mid a \in A, b \in B\}$, which is the set of tuples made from $A$ and $B$.
+
+Okay, \emph{with all of that} we can now move onto the last topic of this first module: functions and relations.
+
+\section{Functions and relations}
+
+Like with the last section we're going to diverge a little bit from Epp. So a function $f$ from a set $A$ to a set $B$, denoted as $f : A \rightarrow B$, is an assignment of elements of $A$ to elements of $B$ such that if $f(a) = b$ and $f(a) = c$ then $b = c$. In other words, $f$ is a gadget that sends each element of $A$ to \emph{one} element of $B$.
+
+Epp defines a function as a subset of $A \times B$, which is \emph{sorta} true but in general ``a function as gadget that assigns elements of one set to another set'' and ``the subset of tuples in $A \times B$ that describes the action of the function'' are two different concepts that we need to keep distinct. This goes back to the question about when two programs are the same that we proposed in the previous section.
+
+It's important to note that functions in mathematics can both include things that we know how to calculate, like $f(x) = x +1$, as well as things we don't really know how to calculate like a function that maps each C program that implements a function from integers to integers to the smallest numerical input that doesn't cause it to go into an infinite loop. That's a weird function, but it's a well-defined one, and it's definitely not something you can calculate.
+
+The other concept to discuss are \emph{relations}. Relations are what you get when you relax the ``assigns elements of $A$ to just one element of $B$'' requirement. We've already seen one important relation! $A \subseteq B$ is a relation. Obviously you can have $A \subseteq B$ and $A \subseteq C$ without $B$ and $C$ being the same, because $\{1\} \subseteq \{1,2\}$ and $\{1\} \subseteq \{1,3\}$.
+
+That's a lot of material for this first week, \emph{but} this was the big heavy-lifting setup week. Lots of prefatory material that you may or may not have seen before and that just needs to wash over you before we jump into the rest of the course.
+
+Next week we start doing \emph{logic}.
+
+\end{document}

@@ -1,0 +1,332 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Module 7: Indirect Proof, the Euclidean Algorithm, and Hoare Logic}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{More on proofs by contradiction and proofs by contrapositive}
+Way back in Module 3 we derived proof by contradiction as a tautology, starting from modus tollens and doing a bunch of substitution and simplification. That was important for understanding \emph{why} the technique is valid, but now we need to actually get good at \emph{using} it. So this section is going to focus on the practical mechanics of indirect proof and when to reach for it.
+
+\subsection{Proof by contradiction, in practice}
+Let's recall the shape of proof by contradiction. You want to prove some statement $P$. Instead of proving it directly, you assume $\sim P$---that is, you assume the \emph{negation} of what you want to prove---and then you show that this assumption leads to a contradiction. A contradiction is when you can derive both some statement $Q$ and its negation $\sim Q$ at the same time, which obviously can't happen. Since the assumption $\sim P$ led to nonsense, you conclude that $P$ must be true after all.
+
+The template looks like this:
+\begin{lstlisting}
+Goal: prove P
+(1) Assume ~P
+(2) ... reasoning ...
+(3) Derive Q
+(4) Derive ~Q
+(5) Contradiction! Therefore P.
+\end{lstlisting}
+
+When should you reach for this technique? A good rule of thumb: if the statement you're trying to prove is a \emph{negative} statement (``there is no\ldots'', ``it is not the case that\ldots'', ``$x$ does not divide $y$'') then contradiction is often a natural fit. Why? Because assuming the negation of a negative statement gives you a \emph{positive} assumption, which tends to be easier to work with.
+
+Let's do a classic example.
+
+\textbf{Theorem:} $\sqrt{2}$ is irrational.
+
+\textbf{Proof} by contradiction.
+
+Assume, for the sake of contradiction, that $\sqrt{2}$ is \emph{rational}. Then by definition of rational, we can write $\sqrt{2} = \frac{a}{b}$ where $a$ and $b$ are integers with $b \neq 0$ and the fraction is in lowest terms (meaning $\gcd(a,b) = 1$---hey, look, the stuff from the next section is already showing up).
+
+Squaring both sides we get $2 = \frac{a^2}{b^2}$, so $a^2 = 2b^2$.
+
+This means $a^2$ is even. But if $a^2$ is even then $a$ must be even.\footnote{Why? Because if $a$ were odd, say $a = 2k+1$, then $a^2 = 4k^2 + 4k + 1$ which is odd. So $a$ can't be odd, meaning it must be even. This is actually a proof by contrapositive hiding inside our proof by contradiction!} So we can write $a = 2c$ for some integer $c$.
+
+Substituting back: $(2c)^2 = 2b^2$, so $4c^2 = 2b^2$, so $b^2 = 2c^2$. But this means $b^2$ is even, so $b$ is even by the same reasoning.
+
+Now here's the contradiction: we said the fraction $\frac{a}{b}$ was in lowest terms, meaning $a$ and $b$ share no common factors. But we just showed both $a$ and $b$ are even, so they share the common factor $2$. Contradiction!
+
+Therefore $\sqrt{2}$ is irrational.
+That's a really satisfying proof and one of the oldest in all of mathematics---it goes back to the ancient Greeks and apparently caused a minor existential crisis when they first discovered it.
+
+\subsection{Proof by contrapositive}
+The other indirect technique is proof by \emph{contrapositive}. This one is specifically for proving implications. So say you want to prove ``if $P$ then $Q$'', written $P \to Q$. The contrapositive of this statement is $\sim Q \to \sim P$, and it turns out these are logically equivalent!
+
+We actually already verified this back in Module 3 when we showed that modus tollens is a tautology. But let's just check the equivalence directly with a quick truth table:
+
+\begin{center}
+\begin{tabular}{cc|c|c}
+\toprule
+$P$ & $Q$ & $P \to Q$ & $\lnot Q \to \lnot P$ \\
+\midrule
+T & T & T & T \\
+T & F & F & F \\
+F & T & T & T \\
+F & F & T & T \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Same column, so they're equivalent. This means that whenever you want to prove $P \to Q$, you're free to instead prove $\sim Q \to \sim P$. Sometimes this is way easier because flipping the direction and negating everything gives you better things to work with.
+
+Here's the classic example.
+
+\textbf{Theorem:} For any integer $n$, if $n^2$ is even then $n$ is even.
+
+If we tried to prove this directly we'd start with ``assume $n^2$ is even'' and then\ldots what? We know $n^2 = 2k$ for some integer $k$ but it's not obvious how to extract information about $n$ from that.
+
+Instead, let's prove the contrapositive: if $n$ is \textbf{not} even (i.e.\ $n$ is odd) then $n^2$ is \textbf{not} even (i.e.\ $n^2$ is odd).
+
+\textbf{Proof} by contrapositive.
+
+Assume $n$ is odd. Then $n = 2k + 1$ for some integer $k$. So
+\[
+n^2 = (2k+1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1
+\]
+which is odd.
+See how much cleaner that was? The direct proof was stuck, but the contrapositive version just fell right out. The reason is that ``$n$ is odd'' gives us a concrete form to compute with ($n = 2k+1$), whereas ``$n^2$ is even'' is much harder to decompose.
+
+\subsection{Contradiction vs.\ contrapositive: when to use which}
+So you might be wondering: when should I use contradiction and when should I use contrapositive?
+
+Here's my advice:
+\begin{itemize}
+  \item If you're trying to prove an \emph{implication} ($P \to Q$) and you're stuck on the direct proof, try the \textbf{contrapositive} first. It's usually cleaner and more direct than a full contradiction argument.
+  \item If you're trying to prove a statement that \emph{isn't} naturally an implication---especially negative or existential statements like ``there is no $x$ such that\ldots'' or ``$x$ is not divisible by\ldots''---then \textbf{contradiction} is your go-to.
+  \item If you're not sure, contradiction always works as a fallback. You can always just assume the negation and see what breaks. The worst that happens is your proof is a little longer than it needs to be.
+\end{itemize}
+
+In your homework this week you'll get to practice both techniques. One tip for the contradiction proofs: when you assume the negation, make sure you actually \emph{use} the assumption somewhere to derive the contradiction. If your proof never references the assumption, something has gone wrong---you've probably actually found a direct proof in disguise!
+
+\section{GCD, Euclid's algorithm, \&c.}
+In this section, we're going to talk a little bit about Euclid's algorithm, the \emph{extended} version of Euclid's algorithm, and how it relates to finding multiplicative inverses for modular arithmetic $\mathbb{Z}\%m$.
+
+So first we can define the ``greatest common divisor'', which we'll denote as \texttt{gcd(a,b)}. The gcd is what it sounds like: the largest number that divides both of these numbers.
+
+For example
+\begin{lstlisting}
+gcd(12,24) = 12
+
+gcd(21,35) = 7
+
+gcd(1024,1536) = 512
+
+gcd(a,0) = a
+\end{lstlisting}
+
+The reason why that last one works is that technically any number divides 0 so the largest number that divides \texttt{a} is, well, \texttt{a} itself.
+
+Okay so how do you \emph{calculate} what the gcd is if it isn't obvious? The really easy solution is an algorithm called \emph{Euclid's} algorithm.
+
+Euclid's algorithm is based on the observation that if \texttt{a = n*b + r} then \texttt{gcd(a,b) = gcd(b,r)}, or in other words \texttt{gcd(a,b) = gcd(b,a\%b)}, and we can just keep doing that until we hit a termination condition, which is when we're down to 1 or 0 in the right-hand argument.
+
+Okay, let's do a quick implementation in Python to make this clearer:
+\begin{lstlisting}[language=Python]
+  def gcd(a,b):
+      if b == 1:
+          return 1
+      elif b == 0:
+          return a
+      else:
+          return gcd(b,a%b)
+\end{lstlisting}
+
+It really is just that simple!
+
+So what about that whole \emph{extended} Euclidean algorithm? Well the idea behind it is that we can---simultaneously---calculate the gcd \emph{and} coefficients x,y such that
+
+\begin{lstlisting}
+a*x + b*y = gcd(a,b)
+\end{lstlisting}
+
+Alright, so what's the use of this? It helps us calculate multiplicative inverses for the Nat \% n (or equivalently $\mathbb{Z}$ \% n) sets. (See Module 6: Nat \% n is a group.)
+
+How? Well let's first assume that n is prime (this is stronger than we technically need, but it implies that \textbf{all} multiplicative inverses exist, and the case of $\mathbb{Z}$ \% a prime number is really the one we care about anyway).
+
+Okay, so then we can use the extended euclidean algorithm to calculate
+
+\begin{lstlisting}
+a*x + n*y = gcd(a,n)
+\end{lstlisting}
+
+but what's the gcd(a,n)? Since n is prime this must just be 1 so we've got
+\begin{lstlisting}
+a*x + n*y = 1
+\end{lstlisting}
+and if we take \%n on both sides we get
+\begin{lstlisting}
+(a*x) % n + (n*y)%n = 1
+\end{lstlisting}
+
+or in other words
+\begin{lstlisting}
+(a*x) % n = 1
+\end{lstlisting}
+
+which means that x is a multiplicative inverse of a! Alright, so with all of that let's give the extended Euclidean algorithm: it's basically the same except we're going to calculate a tuple in python instead of just one number. I'm going to follow the treatment here (\url{https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm})
+
+\begin{lstlisting}[language=Python]
+  def egcdRec(a,b,x0,x1,y0,y1):
+      if b == 0:
+          return (a,x0,y0)
+      else:
+          q = a // b
+          return egcdRec(b,a%b,x1,x0 - q*x1,y1,y0 - q*y1)
+
+  def egcd(a,b):
+      return egcdRec(a,b,1,0,0,1)
+
+  def modInverse(a,m):
+      _,i,_ = egcd(a,m)
+      if i > 0:
+          return i
+      else:
+          return (i + m)
+\end{lstlisting}
+
+
+\section{Programming logic}
+In this section, we're going to talk about a specific kind of logic. This material is similar to Epp section 4.10 \textbf{but} more formalized.
+
+We're going to be dealing with a specific logic called Hoare logic. \href{https://en.wikipedia.org/wiki/Hoare_logic}{Hoare logic}---invented originally by Tony Hoare---is a formal logic for reasoning about code directly. It has axioms, it has rules of inference, it has a syntax and semantics. It's a fully-fledged albeit very \emph{different} looking logic.
+
+Each statement in Hoare logic looks like
+\begin{lstlisting}
+{P}C{Q}
+\end{lstlisting}
+
+Where P is a proposition about the state of the program \textbf{before} your code runs---the values of variables, output, things like that---C is the code---a series of statements in your program---and Q is another proposition about the state of the program \textbf{after} the code has run.
+
+In other words, think of \{P\}C\{Q\} as saying ``if P is true then after C runs Q is true''. This is a kind of implication! After all, implication \texttt{P -> Q} says ``if P is true then Q is true''. So instead this is an implication with some work that happens in the middle.
+
+Okay, now this programming language is going to look like a simplified version of C. It's only going to have a few kinds of statements
+
+\begin{lstlisting}
+Assignment:
+ x := e
+where e is a valid arithmetic expression (one that uses +, -, *, /, numbers, or variables)
+
+Sequencing:
+ c1 ; c2
+where c1 and c2 are both valid statements
+
+Conditionals:
+ if b then c1 else c2
+where b is a boolean valued statement that uses (>, >=, =, /=, &c. and variables)
+and c1, c2 are other valid statements in the language
+
+While:
+ while b do c
+where b is boolean valued statement, like above, and c is a valid statement
+
+Skip:
+ skip
+
+it's a statement that does nothing
+\end{lstlisting}
+Again, this is a \textbf{very} stripped down version of something like C. It's just for the purposes of explaining some very basic concepts in terms of how we can prove code is correct!
+
+Now here's our basic rules:
+
+\noindent\textbf{Skip:}
+\begin{lstlisting}
+{P}skip{P}
+\end{lstlisting}
+this rule tells us that skip changes nothing. If the proposition P was true before it's true after skip.
+
+\noindent\textbf{Sequencing:}
+\begin{lstlisting}
+assumes: {P}c1{Q}
+         {Q}c2{R}
+shows: {P}c1;c2{R}
+\end{lstlisting}
+this rule tells us that if we have a situation where c1 makes Q true if P is true, and c2 makes R true if Q is true, then we can glue these together with sequencing. This makes sense because, again, this is a kind of implication. So really this is just another version of transitivity where we can glue \texttt{P -> Q} and \texttt{Q -> R} together to show \texttt{P -> R}, but again connecting the little machines that work inside the implication.
+
+\noindent\textbf{Conditionals:}
+\begin{lstlisting}
+assumes: {P ^ B}c1{Q}
+         {P ^ ~B}c2{Q}
+shows: {P}if B then c1 else c2{Q}
+\end{lstlisting}
+
+This tells us that if Q is true after c1 runs when P and B are true \textbf{and} Q is true after c2 runs when P is true and B is false, then P implies Q when the conditional statement is run. The way to think of this is that if you take the ``true'' branch you're not just assuming P is true but you're also allowed to assume B is true \textbf{because you took the true branch}, and conversely for when you take the false branch.
+
+\noindent\textbf{While:}
+\begin{lstlisting}
+assumes: {P ^ B}S{P}
+shows: {P}while B do c{P ^ ~B}
+\end{lstlisting}
+This one feels a little weird relative to some of the past ones: so the idea here is that you want to define a kind of ``loop invariant'', a thing that is preserved each execution of the loop, and then you show that if the loop conditional is true (which it has to be if you're executing the body of the loop) then you'll preserve the loop invariant. Finally, though, you're allowed to conclude that the loop invariant doesn't just hold but also that the loop conditional must be false \textbf{because you terminated the loop}.
+
+The next one is definitely the weirdest, and one that we need to explain a bit.
+
+\noindent\textbf{Assignment:}
+\begin{lstlisting}
+{P[x/e]}x := e{P}
+\end{lstlisting}
+
+So what this is saying is that \textbf{if} the proposition P is true after substituting the expression e for the variable x, then after assignment you can just conclude that P is true.
+
+Let's look at an example because I think it'll make more sense:
+
+If we take this fragment of a proposition, where we just are leaving a hole for ourselves in the pre-condition, and we \textbf{want} to conclude that after subtracting 1 from the variable x then x > 0
+\begin{lstlisting}
+{??}x := x -1{x > 0}
+\end{lstlisting}
+looking at this, what does the precondition have to be? It needs to be that x > 1 or\ldots another way to say this would be that (x - 1) > 0, which is exactly what you get if you do the substitution of x for e---which in this case is x-1.
+
+So the assignment rule lets us write things like this
+\begin{lstlisting}
+{x -1 > 0} x := x -1{x > 0}
+\end{lstlisting}
+
+Now the assignment rule isn't necessarily super helpful as written. It's too specific! Like it can't let us conclude an obvious fact like
+\begin{lstlisting}
+{x > 0} x := x + 1{x > 0}
+\end{lstlisting}
+in other words, that if x is greater than zero incrementing it will keep it greater than zero. Y'know, the kind of thing we might need to build a loop invariant.
+
+Thankfully, there's one last rule that's super useful that helps us glue all of these bits and pieces together:
+
+\noindent\textbf{Strengthening / Weakening:}
+\begin{lstlisting}
+assumes: {P2}c{Q2}
+         P1 -> P2
+         Q2 -> Q1
+shows:
+{P1}c{Q1}
+\end{lstlisting}
+Okay this will make sense if we just read it carefully: what it's saying is that if we know that \{P2\}c\{Q2\}, in other words that P2 implies Q2 \textbf{after} running the code c, and we know that P1 implies P2, and we know that Q2 implies Q1, we're allowed to glue all these facts together to make the new fact that P1 implies Q1 after c is run. Why? Because we can take the P1 and turn it into a P2, since P1 -> P2, and then we can take the resulting Q2 and turn it into a Q1 since Q2 -> Q1.
+
+Another way of thinking of it is that you can always make the pre-condition \emph{stronger} and the post-condition \emph{weaker}.
+
+So in our above example we'd have that the assignment rule gives us
+
+\begin{lstlisting}
+{(x+1) > 0} x := x + 1{x > 0}
+\end{lstlisting}
+but since x > 0 implies x + 1 > 0 we can use our new rule to turn this into
+\begin{lstlisting}
+{x > 0} x := x + 1{x > 0}
+\end{lstlisting}
+which is what we wanted in the first place!
+
+Okay, so that was a lot and it's mostly an introduction for you to get a sense of how you might prove properties about programs rather than something I want you to completely absorb. In your homework for the week you're going to prove the exciting theorem that \{x = 0\}\;x := x+1;\; x := x+1\;\{x = 2\} or, in other words, that 1+1 = 2.
+
+\end{document}

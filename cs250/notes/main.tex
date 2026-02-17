@@ -1,0 +1,75 @@
+\documentclass[11pt]{report}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{standalone}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black
+}
+
+\title{CS 250: Introduction to Logic and\\Mathematical Reasoning\\[10pt]\large Course Notes}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+% Suppress \maketitle in included module files
+\def\maketitle{}
+
+\chapter{Welcome, Sets, and Functions}
+\input{module01}
+
+\chapter{Propositional Logic}
+\input{module02}
+
+\chapter{Proof Systems for Propositional Logic}
+\input{module03}
+
+\chapter{First-Order Predicate Logic}
+\input{module04}
+
+\chapter{Informal Proofs and Groups}
+\input{module05}
+
+\chapter{Intermezzo: More on Natural Induction}
+\input{intermezzo}
+
+\chapter{Modular Arithmetic and Proofs by Cases}
+\input{module06}
+
+\chapter{Indirect Proof, the Euclidean Algorithm, and Hoare Logic}
+\input{module07}
+
+\chapter{Sequences and Recursion}
+\input{module08}
+
+\chapter{Strong Induction and Recurrences}
+\input{module09}
+
+\chapter{Structural Induction}
+\input{module10}
+
+\end{document}
