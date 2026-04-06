@@ -1,0 +1,115 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  mathescape=true
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Notation Summary}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+{\small
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Introduced in} \\
+\midrule
+\multicolumn{3}{l}{\textit{Propositional Logic}} \\[2pt]
+$\wedge$ & Conjunction (and) & Module 2 \\
+$\vee$ & Disjunction (or) & Module 2 \\
+$\lnot$ or $\sim$ & Negation (not) & Module 2 \\
+$\to$ & Implication (if\ldots then) & Module 2 \\
+$\leftrightarrow$ & Biconditional (if and only if) & Module 2 \\
+$\equiv$ & Logical equivalence & Module 2 \\
+$\oplus$ & Exclusive or (XOR) & Module 2 \\
+T, F & Truth values & Module 2 \\
+$\bot$ & Absurdity / falsum & Gentzen Intermezzo \\
+\midrule
+\multicolumn{3}{l}{\textit{Quantifiers and Predicates}} \\[2pt]
+$\forall$ & For all (universal quantifier) & Module 4 \\
+$\exists$ & There exists (existential quantifier) & Module 4 \\
+$P(x)$ & Predicate applied to $x$ & Module 4 \\
+\midrule
+\multicolumn{3}{l}{\textit{Sets}} \\[2pt]
+$\{\ \}$ & Set braces & Module 1 \\
+$\in$, $\notin$ & Element of, not element of & Module 1 \\
+$\subseteq$ & Subset & Module 1 \\
+$\cap$ & Intersection & Module 1 \\
+$\cup$ & Union & Module 1 \\
+$\setminus$ & Set difference & Module 1 \\
+$\overline{A}$ & Complement & Module 1 \\
+$\emptyset$ & Empty set & Module 1 \\
+$|A|$ & Cardinality & Module 1 \\
+$\mathcal{P}(A)$ & Power set & Module 1 \\
+$A \times B$ & Cartesian product & Module 1 \\
+$B^A$ & Function space ($A \to B$) & Cardinality Intermezzo \\
+$\{x \mid P(x)\}$ & Set-builder notation & Module 1 \\
+\midrule
+\multicolumn{3}{l}{\textit{Functions and Relations}} \\[2pt]
+$f : A \to B$ & Function from $A$ to $B$ & Module 1 \\
+$a\, R\, b$ & $a$ is related to $b$ by $R$ & Module 1 \\
+$\cong$ & Isomorphism / bijection exists & Cardinality Intermezzo \\
+\bottomrule
+\end{tabular}
+\end{center}
+}
+
+\clearpage
+
+{\small
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Symbol} & \textbf{Name} & \textbf{Introduced in} \\
+\midrule
+\multicolumn{3}{l}{\textit{Number Theory}} \\[2pt]
+$\mathbb{N}$ & Natural numbers & Module 1 \\
+$\mathbb{Z}$ & Integers & Module 5 \\
+$\mathbb{Q}$ & Rationals & Module 5 \\
+$\mathbb{R}$ & Reals & Module 4 \\
+$a \mid b$ & $a$ divides $b$ & Module 5 \\
+$\gcd(a,b)$ & Greatest common divisor & Module 7 \\
+$\mathbb{Z}/n\mathbb{Z}$ & Integers mod $n$ & Module 6 \\
+$\lfloor x \rfloor$, $\lceil x \rceil$ & Floor, ceiling & Module 6 \\
+\midrule
+\multicolumn{3}{l}{\textit{Sequences and Sums}} \\[2pt]
+$a_n$ & $n$th term of a sequence & Module 8 \\
+$\sum$ & Summation & Module 8 \\
+$\prod$ & Product & Module 8 \\
+$n!$ & Factorial & Module 8 \\
+\midrule
+\multicolumn{3}{l}{\textit{Data Structures}} \\[2pt]
+Nil, Cons & List constructors & Module 10 \\
+Leaf, Node & Binary tree constructors & Module 10 \\
+\midrule
+\multicolumn{3}{l}{\textit{Proof Notation}} \\[2pt]
+$\therefore$ & Therefore & Module 3 \\
+$\square$ or QED & End of proof & Throughout \\
+$\{P\}\,C\,\{Q\}$ & Hoare triple & Module 7 \\
+\bottomrule
+\end{tabular}
+\end{center}
+}
+
+\end{document}

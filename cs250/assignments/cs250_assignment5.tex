@@ -1,0 +1,142 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Weekly Assignment: Direct Proof \&\\[2pt]
+   Counterexample (Epp~4.1--4.4)}
+\end{center}
+
+\bigskip
+
+\noindent
+Complete each of the following problems.  Show all work and justify your answers.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 1} (Epp 4.1 \#2). \;
+Assume that $c$ is a particular integer.  Justify your answers
+by using the definitions of even and odd.
+
+\begin{enumerate}[label=\textbf{\alph*.},itemsep=4pt]
+  \item Is $-6c$ an even integer?
+  \item Is $8c + 5$ an odd integer?
+  \item Is $(c^2 + 1) - (c^2 - 1) - 2$ an even integer?
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 2} (Epp 4.1 \#9). \;
+Prove the following statement:
+
+\begin{quote}
+  There is a real number $x$ such that $x > 1$ and $2^x > x^{10}$.
+\end{quote}
+
+\noindent
+\emph{Hint}: If you're stuck, think about taking the
+$\log$ of both sides.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 3} (Epp 4.1 \#13). \;
+Consider the following statement:
+
+\begin{quote}
+  For every integer $n$, if $n$ is odd then
+  $\displaystyle\frac{n^2 - 1}{2}$ is odd.
+\end{quote}
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=4pt]
+  \item Write a negation for this statement.
+  \item Use a counterexample to disprove the statement.
+        Explain how the counterexample actually shows
+        that the statement is false.
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 4} (Epp 4.2 \#5). \;
+Prove the following statement directly from the definitions of
+even and odd.  Follow the directions for writing proofs given in
+Section~4.2.
+
+\begin{quote}
+  If $a$ and $b$ are any odd integers, then $a^2 + b^2$ is even.
+\end{quote}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 5} (Epp 4.3 \#10). \;
+Assume that $m$ and $n$ are both integers and that $n \ne 0$.
+Explain why $\displaystyle\frac{5m^2 + 2n}{4n}$ must be a
+rational number.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 6} (Epp 4.4 \#17). \;
+Prove the following statement directly from the definition of
+divisibility:
+
+\begin{quote}
+  For all integers $a$, $b$, $c$, and $d$, if $a \mid c$ and
+  $b \mid d$ then $ab \mid cd$.
+\end{quote}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 7} (Proof: Rotations as a Group). \;
+Consider an object that can be rotated around its vertical axis,
+either clockwise or counterclockwise.  We can think of all
+possible rotations as a set~$G$, with the binary operation being
+\emph{composition}: perform the first rotation, then perform the
+second.  (One convenient representation is to identify each
+rotation with its angle in degrees, so that $G$ is the set of all
+real numbers modulo~$360$.)
+
+Prove that this set of rotations forms a \textbf{group} under
+composition.  Your proof should address each of the following
+parts:
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=6pt]
+  \item \textbf{Identity.}  Define the identity element of this
+        group and explain why composing any rotation with it
+        leaves the rotation unchanged.
+
+  \item \textbf{Inverses.}  Define the inverse of an arbitrary
+        rotation and explain why composing a rotation with its
+        inverse yields the identity.
+
+  \item \textbf{Group axioms.}  Argue that the remaining group
+        axioms hold:
+        \begin{itemize}[itemsep=2pt]
+          \item \emph{Closure}: composing any two rotations
+                produces another rotation in~$G$.
+          \item \emph{Associativity}: for any three rotations
+                $r_1$, $r_2$, $r_3$,
+                $(r_1 \circ r_2) \circ r_3
+                 = r_1 \circ (r_2 \circ r_3)$.
+        \end{itemize}
+\end{enumerate}
+
+\medskip\noindent
+You may represent rotations by their degree measure (or
+radians, or however you like).  We are looking for a solid
+attempt at making the argument rather than any single particular
+solution---this is practice at doing mathematics like a
+mathematician!
+
+\end{document}

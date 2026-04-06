@@ -13,7 +13,8 @@
   basicstyle=\ttfamily\small,
   frame=single,
   breaklines=true,
-  columns=fullflexible
+  columns=fullflexible,
+  mathescape=true
 }
 
 \theoremstyle{definition}
@@ -29,18 +30,22 @@
 \maketitle
 
 \section{Definition by recursion}
-Okay so we've been building up our toolkit for a while now---logic, sets, functions, induction---and now we're going to put a lot of it together by talking about \emph{sequences}.
+We've been building up our toolkit for a while now---logic, sets, functions, induction---and now we're going to put a lot of it together by talking about \emph{sequences}.
 
-So what is a sequence? Informally it's just an ordered list of values. You've seen these before! Arrays in C, lists in Python, those are sequences. The values come in a definite order: there's a first element, a second element, a third, and so on.
+What is a sequence? Informally it's just an ordered list of values. You've seen these before! Arrays in C, lists in Python, those are sequences. The values come in a definite order: there's a first element, a second element, a third, and so on.
 
-More precisely, a \emph{sequence} is a function from the natural numbers (or some subset of them) to some set. So if I write $a_1, a_2, a_3, \ldots$ what I really mean is that there's a function $a : \mathbb{N} \to S$ for some set $S$, and $a_n$ is just the value of that function at input $n$. The subscript is the index, the ``position'' in the list.\footnote{If you're a programmer, think of $a_n$ as \texttt{a[n]}. It's literally the same idea: indexing into a collection.}
+\begin{definition}[Sequence]
+A \emph{sequence}\index{sequence} is a function from the natural numbers (or some subset of them) to some set. If we write $a_1, a_2, a_3, \ldots$ what we really mean is that there's a function $a : \mathbb{N} \to S$ for some set $S$, and $a_n$ is just the value of that function at input $n$. The subscript is the index, the ``position'' in the list.
+\end{definition}
 
-Alright, so how do we actually \emph{define} a sequence? There are two main approaches.
+\noindent If you're a programmer, think of $a_n$ as \texttt{a[n]}. It's literally the same idea: indexing into a collection.
+
+How do we actually \emph{define} a sequence? There are two main approaches.
 
 \subsection{Explicit formulas}
-The first way is to just give a formula that lets you compute the $n$th term directly from $n$. This is called an \emph{explicit formula} or a \emph{closed-form definition}.
+The first way is to just give a formula that lets you compute the $n$th term directly from $n$. This is called an \emph{explicit formula}\index{explicit formula} or a \emph{closed-form definition}.
 
-For example, $a_n = 2n + 1$ for $n \geq 0$. That gives us the sequence $1, 3, 5, 7, 9, \ldots$ --- the odd numbers. If you want the 100th term you just plug in $n = 99$ and get $a_{99} = 199$. No fuss, no muss, you don't need to know any other terms.
+For example, $a_n = 2n + 1$ for $n \geq 0$. That gives us the sequence $1, 3, 5, 7, 9, \ldots$ --- the odd numbers. If you want the 100th term you just plug in $n = 99$ and get $a_{99} = 199$. You don't need to know any other terms.
 
 Let's work through a couple more examples from the textbook.
 
@@ -63,9 +68,9 @@ d_3 &= 1 + \left(\tfrac{1}{2}\right)^3 = 1 + \tfrac{1}{8} = \tfrac{9}{8}
 See how the terms are getting closer and closer to 1? That's a \emph{convergent} sequence, but we'll leave that idea for a different class.
 
 \subsection{Recursive definitions}
-The other way to define a sequence is \emph{recursively}: you give the first term (or first few terms) and then a rule that builds each subsequent term from the ones that came before.
+The other way to define a sequence is \emph{recursively}\index{recursive definition}: you give the first term (or first few terms) and then a rule that builds each subsequent term from the ones that came before.
 
-So instead of the explicit formula $a_n = 2n+1$ we could equivalently say: $a_0 = 1$ and $a_n = a_{n-1} + 2$ for $n \geq 1$. Same sequence! But a very different way of thinking about it.
+Instead of the explicit formula $a_n = 2n+1$ we could equivalently say: $a_0 = 1$ and $a_n = a_{n-1} + 2$ for $n \geq 1$. Same sequence! But a very different way of thinking about it.
 
 The classic example of a recursively defined sequence is the Fibonacci sequence:
 \begin{lstlisting}
@@ -78,8 +83,11 @@ This should look very familiar! It's \emph{exactly} the same structure as writin
 
 In fact, remember how in Module 4 we defined the natural numbers as $\text{Nat} := 0 \mid \text{succ Nat}$? A recursively defined sequence is doing the same thing: defining $a_n$ by cases on whether $n$ is the base case or a successor.
 
+\bigskip
+\textbf{Exercise 1.} \label{ex:m8:1} Write a recursive definition for the sequence $a_n = 3n$ (i.e., give $a_0$ and a rule for $a_n$ in terms of $a_{n-1}$). Verify your definition by computing the first four terms and checking that they match $0, 3, 6, 9$.
+
 \subsection{Summation and product notation}
-There's a really important piece of notation we need before we go further: \emph{summation notation}. You've probably seen the big sigma before:
+There's an important piece of notation we need before we go further: \emph{summation notation}\index{summation notation}. You've probably seen the big sigma before:
 \[
 \sum_{i=1}^{n} a_i = a_1 + a_2 + a_3 + \cdots + a_n
 \]
@@ -93,9 +101,9 @@ for i in range(1, n+1):
     total += a[i]
 \end{lstlisting}
 
-That's it. That's what $\sum$ means. It's a for-loop.\footnote{Okay, it's a for-loop where the body is pure---no side effects, no mutation beyond the accumulator. If you want to be fancy about it, it's a \emph{fold}.}
+That's what $\sum$ means. It's a for-loop.\footnote{More precisely, the body is pure---no side effects, no mutation beyond the accumulator. If you want to be fancy about it, it's a \emph{fold}.}
 
-So for example:
+For example:
 \[
 \sum_{i=1}^{4} i^2 = 1^2 + 2^2 + 3^2 + 4^2 = 1 + 4 + 9 + 16 = 30
 \]
@@ -113,8 +121,8 @@ Similarly, there's \emph{product notation} with the big pi:
 
 The most famous example of this is the factorial: $n! = \prod_{i=1}^{n} i$. Again, same deal as summation but you're multiplying instead of adding.
 
-\section{Induction on sequences}
-Alright, so now we get to the real fun part. We've seen induction before---in Module 4 we introduced the induction principle on natural numbers and in the Intermezzo we worked through a bunch of proofs about addition using it. Now we're going to apply that same tool to prove things about sequences and sums.
+\section{Induction on sequences}\index{induction on sequences}
+Here's where the fun starts. We introduced the induction principle on natural numbers in Module 4 and worked through proofs about addition in the Intermezzo on Natural Induction. Here we use the same tool to prove things about sequences and sums.
 
 Let's recall the rule:
 \begin{lstlisting}
@@ -128,10 +136,10 @@ natural induction
 shows forall n : Nat. P(n)
 \end{lstlisting}
 
-Same rule as before. Nothing new here! The only thing that's changing is what $P(n)$ is going to \emph{be}. In the Intermezzo, $P(n)$ was stuff like ``$0 + n = n$'' or ``addition is associative.'' Now $P(n)$ is going to be equations about sums and sequences.
+Same rule as before. Nothing new here! The only thing that's changing is what $P(n)$ is going to \emph{be}. In the Intermezzo on Natural Induction, $P(n)$ was something like ``$0 + n = n$'' or ``addition is associative.'' Now $P(n)$ is going to be equations about sums and sequences.
 
 \subsection{The standard template}
-So here's how an induction proof on a sum identity typically goes. You want to prove that some formula holds for all $n \geq \text{base}$. The template is:
+Here's how an induction proof on a sum identity typically goes. You want to prove that some formula holds for all $n \geq \text{base}$. The template is:
 \begin{enumerate}
 \item \textbf{State $P(n)$}: write down exactly what you're trying to prove. This is usually an equation like ``the sum of the first $n$ whatevers equals some closed-form expression.''
 \item \textbf{Base case}: verify that $P(\text{base})$ is true by direct computation.
@@ -141,7 +149,7 @@ So here's how an induction proof on a sum identity typically goes. You want to p
 
 Let's see this in action.
 
-\subsection{Worked example: sum of the first $n$ integers}
+\subsection{Worked example: sum of the first n integers}
 We want to prove: for all $n \geq 1$,
 \[
 1 + 2 + 3 + \cdots + n = \frac{n(n+1)}{2}
@@ -160,7 +168,7 @@ or in summation notation, $\displaystyle\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$.
 
 \textbf{Inductive step}: We need to show $P(k+1)$, which says $\displaystyle\sum_{i=1}^{k+1} i = \frac{(k+1)(k+2)}{2}$.
 
-Okay, so here's the key trick and it's the same trick every single time: we split the sum into the stuff we already know about and the new term.
+Here's the key trick, and it's the same every time: split the sum into the part we already know about and the new term.
 \begin{align*}
 \sum_{i=1}^{k+1} i &= \left(\sum_{i=1}^{k} i\right) + (k+1) \\
 &= \frac{k(k+1)}{2} + (k+1) && \text{by the inductive hypothesis!} \\
@@ -172,6 +180,9 @@ Okay, so here's the key trick and it's the same trick every single time: we spli
 And that last expression is exactly what $P(k+1)$ claims. We're done!
 
 See the pattern? You peel off the last term of the sum, apply the inductive hypothesis to the rest, and then do algebra to show you get the right answer. That ``peel off the last term'' move is the heart of every induction proof on sums.
+
+\bigskip
+\textbf{Exercise 2.} \label{ex:m8:2} Prove by induction: for all $n \geq 1$, $\displaystyle\sum_{i=1}^{n} (2i - 1) = n^2$. (This says the sum of the first $n$ odd numbers is $n^2$.) Follow the same template as the worked example above: state $P(n)$, check the base case, assume $P(k)$, and prove $P(k+1)$ by peeling off the last term.
 
 \subsection{Setting up: sum of squares}
 Here's another one that you'll see on the assignment. For all $n \geq 1$:
@@ -209,5 +220,8 @@ When you do an induction proof you prove a statement by reducing to a smaller ca
 Another way to say this is: a recursive function computes a \emph{value} for each natural number by building up from the base case. An inductive proof computes a \emph{proof} for each natural number by building up from the base case. The structure is identical. Induction \emph{is} recursion on proofs.
 
 This is why, back in Module 4, we introduced induction right alongside BNF definitions and recursive structure. They're not separate topics that happen to be in the same chapter---they're the same idea wearing different hats. And once you see that connection, both recursive programming and inductive proofs become a lot less mysterious. You just ask yourself: what's the base case, and how do I build the next one from the previous one?
+
+\bigskip
+\textbf{Exercise 3.} \label{ex:m8:3} Write a recursive Python function that computes $\displaystyle\sum_{i=1}^{n} i^2$. Then compare its structure to the induction proof of the sum-of-squares formula from this module. Which part of your code corresponds to the base case? Which part corresponds to the inductive step? Where does the ``inductive hypothesis'' show up?
 
 \end{document}

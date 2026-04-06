@@ -13,7 +13,8 @@
   basicstyle=\ttfamily\small,
   frame=single,
   breaklines=true,
-  columns=fullflexible
+  columns=fullflexible,
+  mathescape=true
 }
 
 \theoremstyle{definition}
@@ -29,14 +30,15 @@
 \maketitle
 
 \section{Strong induction}
-Alright, so remember the natural induction rule from Module 4? The one where you prove a base case $P(0)$ and then show that $P(n)$ implies $P(\text{succ}\; n)$? That rule is great and all, but sometimes it's not quite enough. Or rather, it's not quite \emph{convenient} enough.
+Remember the natural induction rule from Module 4? The one where you prove a base case $P(0)$ and then show that $P(n)$ implies $P(\text{succ}\; n)$? That rule is great, but sometimes it's not quite convenient enough.
 
-Here's the thing: ordinary induction lets you assume \emph{only} the immediately previous case. You're proving $P(k+1)$ and all you get to work with is $P(k)$. But what if your problem doesn't just depend on the previous case? What if you need to reach back further---to $P(k-1)$, or $P(k-3)$, or heck, $P(0)$?
+Here's the thing: ordinary induction lets you assume \emph{only} the immediately previous case. You're proving $P(k+1)$ and all you get to work with is $P(k)$. But what if your problem doesn't just depend on the previous case? What if you need to reach back further---to $P(k-1)$, or $P(k-3)$, or even $P(0)$?
 
-This is where \emph{strong induction} comes in. The idea is that instead of just assuming $P(k)$, you get to assume $P(j)$ for \textbf{all} $j$ from the base case up to $k$. You get the whole history, not just the last step.
+This is where \emph{strong induction}\index{strong induction} comes in. The idea is that instead of just assuming $P(k)$, you get to assume $P(j)$ for \textbf{all} $j$ from the base case up to $k$. You get the whole history, not just the last step.
 
 Here's the formal rule:
 
+\noindent\textbf{Strong Induction:}
 \begin{lstlisting}
 assumes P(0)
         subproof:
@@ -47,7 +49,7 @@ assumes P(0)
 shows forall n : Nat. P(n)
 \end{lstlisting}
 
-Now you might be wondering: is this \emph{really} a valid thing to do? Doesn't assuming more stuff make the proof weaker somehow? Nope! It turns out that strong induction is actually \emph{equivalent} to ordinary induction. You can derive one from the other.\footnote{The trick is that if you have a proof by strong induction you can convert it to an ordinary induction proof by changing your predicate from $P(n)$ to $Q(n) = \text{``}P(j) \text{ for all } j \leq n\text{''}$. Then the ordinary induction step for $Q$ is exactly the strong induction step for $P$. Cute, right?} The two principles have the same logical strength, but strong induction is often way more convenient when the recursive structure of your problem doesn't just depend on the immediately previous case.
+Now you might be wondering: is this \emph{really} a valid thing to do? Doesn't assuming more stuff make the proof weaker somehow? Nope! It turns out that strong induction is actually \emph{equivalent} to ordinary induction. You can derive one from the other.\footnote{The trick is that if you have a proof by strong induction you can convert it to an ordinary induction proof by changing your predicate from $P(n)$ to $Q(n) = \text{``}P(j) \text{ for all } j \leq n\text{''}$. Then the ordinary induction step for $Q$ is exactly the strong induction step for $P$.} The two principles have the same logical strength, but strong induction is often way more convenient when the recursive structure of your problem doesn't just depend on the immediately previous case.
 
 Let's connect this to programming because I think it makes the idea really clear. Ordinary induction is like a recursive function that can \emph{only} call itself on $n-1$:
 
@@ -72,7 +74,7 @@ def f(n):
 
 Think of merge sort or binary search! In merge sort you split the list roughly in half and recurse on both halves---you're not just peeling off one element at a time. That's the spirit of strong induction.
 
-Okay, let's do a worked example. Consider the sequence defined by
+Let's do a worked example. Consider the sequence defined by
 \[
 c_0 = 2, \quad c_1 = 2, \quad c_2 = 6, \quad c_k = 3c_{k-3} \text{ for } k \geq 3
 \]
@@ -91,8 +93,29 @@ Now $k - 2 \leq k$, so by our strong induction hypothesis $c_{k-2}$ is even. Tha
 
 See how we needed to reach back to $c_{k-2}$ and the strong induction hypothesis let us do that? With ordinary induction we'd have been stuck.
 
+Here's a second example that shows off a different flavor of strong induction---one where you don't reach back a fixed number of steps, but an \emph{unknown} number of steps. This is more like the merge sort analogy: you split the problem roughly in half, and the pieces could land anywhere below you.
+
+\begin{theorem}
+Every integer $n \geq 2$ is either prime or a product of primes.
+\end{theorem}
+
+\begin{proof}
+By strong induction on $n$.
+
+\textbf{Base case:} $n = 2$ is prime. Done.
+
+\textbf{Inductive step:} Assume that every integer $j$ with $2 \leq j \leq k$ is either prime or a product of primes. We need to show this for $k+1$ (where $k \geq 2$).
+
+There are two cases. If $k+1$ is prime, we're done immediately. If $k+1$ is composite, then by definition $k+1 = a \cdot b$ for some integers $a, b$ with $2 \leq a, b \leq k$. Since both $a$ and $b$ are at most $k$, our strong induction hypothesis applies to each of them: $a$ is either prime or a product of primes, and so is $b$. Therefore $k+1 = a \cdot b$ is a product of primes.
+\end{proof}
+
+Notice why ordinary induction would be hopeless here. If $k+1 = a \cdot b$ is composite, the factors $a$ and $b$ could be \emph{anywhere} between 2 and $k$---they're not necessarily equal to $k$ or $k-1$ or any particular value. We need the full strength of the strong induction hypothesis to handle all of them at once. This is a case where the ``binary search'' analogy is apt: the subproblems aren't one step back, they're roughly half the size, and strong induction is exactly the tool that lets us recurse on arbitrary smaller values.
+
+\bigskip
+\textbf{Exercise 1.} \label{ex:m9:1} Prove by strong induction: every integer amount of postage $\geq 12$ cents can be made using 4-cent and 5-cent stamps. (Hint: you will need several base cases---check $12, 13, 14, 15$ individually. For the inductive step, use the fact that the amount $k+1-4 = k-3$ is at least 12 when $k+1 \geq 16$.)
+
 \section{Defining sequences recursively}
-So we've been throwing around recursive sequence definitions and it's worth being a little more careful about what that means. A \emph{recursively defined sequence} (sometimes called a \emph{recurrence relation}) has two parts:
+We've been using recursive sequence definitions informally and it's worth being a little more careful about what that means. A \emph{recursively defined sequence} (sometimes called a \emph{recurrence relation}\index{recurrence relation}) has two parts:
 \begin{itemize}
   \item \textbf{Initial conditions:} explicit values for one or more of the first terms
   \item \textbf{A recurrence relation:} a rule that defines each subsequent term in terms of earlier terms
@@ -134,16 +157,16 @@ Let's check. First, $s_0 = (-1)^0 / 0! = 1/1 = 1$. Good, initial condition check
 And that's it! The formula checks out. The key idea is that verifying a closed form is usually way easier than \emph{finding} it in the first place. You just plug the formula into both sides of the recurrence and show they're equal.
 
 \section{Solving recurrences by iteration}
-So how \emph{do} you find a closed form in the first place? One really useful technique is called \emph{iteration} (or ``unrolling''). The idea is dead simple: you just keep substituting the recurrence into itself until you see a pattern, and then you guess the closed form.
+How \emph{do} you find a closed form in the first place? One really useful technique is called \emph{iteration} (or ``unrolling''). The idea is simple: you just keep substituting the recurrence into itself until you see a pattern, and then you guess the closed form.
 
-Before we do an example of this, let's recall a formula that shows up everywhere: the \emph{geometric series}. If $r \neq 1$ then
+Before we do an example of this, let's recall a formula that shows up everywhere: the \emph{geometric series}\index{geometric series}. If $r \neq 1$ then
 \[
 1 + r + r^2 + \cdots + r^n = \frac{r^{n+1} - 1}{r - 1}
 \]
 
 This is going to come in handy when we unroll recurrences because geometric sums pop up all the time.
 
-Okay, let's try iterating a concrete recurrence. Consider the ``number of regions'' problem: you have a plane, and you're drawing lines through it. Let $P_k$ be the number of regions created by $k$ lines (where no two lines are parallel and no three meet at a point). The $k$-th line crosses all $k-1$ existing lines, creating $k$ new regions, so:
+Let's try iterating a concrete recurrence. Consider the ``number of regions'' problem: you have a plane, and you're drawing lines through it. Let $P_k$ be the number of regions created by $k$ lines (where no two lines are parallel and no three meet at a point). The $k$-th line crosses all $k-1$ existing lines, creating $k$ new regions, so:
 \[
 P_1 = 2, \qquad P_k = P_{k-1} + k \text{ for } k \geq 2
 \]
@@ -166,12 +189,21 @@ Let's sanity check: $P_1 = 1 + 1 \cdot 2/2 = 2$. $P_2 = 1 + 2 \cdot 3/2 = 4$. An
 
 Now, to be rigorous, once you've \emph{guessed} the formula by iteration you should really \emph{prove} it by induction. The iteration gives you the conjecture; induction gives you the proof. But in practice, the iteration is often the hard part and the induction proof is pretty mechanical after that.
 
+\bigskip
+\textbf{Exercise 2.} \label{ex:m9:2} Use iteration to find a closed form for $T_1 = 1$, $T_k = T_{k-1} + 3$ for $k \geq 2$. That is, unroll the recurrence a few times until you see the pattern, then write down a formula for $T_n$. Once you have your conjecture, verify it by induction.
+
 \section{Second-order linear homogeneous recurrences}
-Okay so now we're going to talk about a really important special class of recurrences. These are recurrences of the form
+Now we're going to talk about a really important special class of recurrences.
+
+\begin{definition}[Second-order linear homogeneous recurrence]
+A \emph{second-order linear homogeneous recurrence with constant coefficients} is a recurrence of the form
 \[
 a_k = A \cdot a_{k-1} + B \cdot a_{k-2}
 \]
-where $A$ and $B$ are constants (they don't depend on $k$). Let's break down the terminology because every word in ``second-order linear homogeneous recurrence with constant coefficients'' actually means something:
+where $A$ and $B$ are constants (they don't depend on $k$).
+\end{definition}
+
+\noindent Let's break down the terminology because every word in that name actually means something:
 
 \begin{itemize}
   \item \textbf{Second-order:} the recurrence depends on the \emph{two} previous terms ($a_{k-1}$ and $a_{k-2}$)
@@ -193,7 +225,7 @@ Divide both sides by $r^{k-2}$ (assuming $r \neq 0$):
 r^2 = Ar + B
 \]
 
-This is the \emph{characteristic equation} of the recurrence. It's just a quadratic! We know how to solve quadratics.
+This is the \emph{characteristic equation}\index{characteristic equation} of the recurrence. It's just a quadratic! We know how to solve quadratics.
 
 Now here's where it gets interesting. If the characteristic equation has two \emph{distinct} roots $r_1$ and $r_2$, then the general solution is
 \[
@@ -208,7 +240,7 @@ a_n = \alpha \cdot r^n + \beta \cdot n \cdot r^n
 
 The extra factor of $n$ shows up because we need two linearly independent solutions and $r^n$ alone only gives us one. But the repeated root case is rarer in practice so let's focus on the distinct roots case.
 
-Let's do the most famous example: the \emph{Fibonacci sequence}.
+Let's do the most famous example: the \emph{Fibonacci sequence}\index{Fibonacci sequence}.
 \[
 F_0 = 0, \quad F_1 = 1, \quad F_k = F_{k-1} + F_{k-2} \text{ for } k \geq 2
 \]
@@ -223,7 +255,7 @@ By the quadratic formula:
 r = \frac{1 \pm \sqrt{5}}{2}
 \]
 
-So $r_1 = \frac{1 + \sqrt{5}}{2}$ (this is the \emph{golden ratio}, often written $\varphi$) and $r_2 = \frac{1 - \sqrt{5}}{2}$.
+So $r_1 = \frac{1 + \sqrt{5}}{2}$ (this is the \emph{golden ratio}\index{golden ratio}, often written $\varphi$) and $r_2 = \frac{1 - \sqrt{5}}{2}$.
 
 The general solution is $F_n = \alpha \cdot \varphi^n + \beta \cdot \left(\frac{1-\sqrt{5}}{2}\right)^n$. Now we use the initial conditions to find $\alpha$ and $\beta$:
 \begin{align*}
@@ -241,8 +273,35 @@ So the closed form for the Fibonacci numbers is
 F_n = \frac{1}{\sqrt{5}}\left[\left(\frac{1+\sqrt{5}}{2}\right)^n - \left(\frac{1-\sqrt{5}}{2}\right)^n\right]
 \]
 
-And that's kind of wild, right? The Fibonacci numbers are integers, but the formula involves $\sqrt{5}$ all over the place. The irrational parts cancel out perfectly every time. Also, since $\left|\frac{1-\sqrt{5}}{2}\right| < 1$, that second term shrinks to zero as $n$ grows, which means $F_n$ is approximately $\varphi^n / \sqrt{5}$ for large $n$. So the Fibonacci numbers grow exponentially at the rate of the golden ratio!
+That's pretty remarkable, isn't it? You start with a simple recurrence and end up with the golden ratio and $\sqrt{5}$. The Fibonacci numbers are integers, but the formula involves $\sqrt{5}$ all over the place. The irrational parts cancel out perfectly every time. Also, since $\left|\frac{1-\sqrt{5}}{2}\right| < 1$, that second term shrinks to zero as $n$ grows, which means $F_n$ is approximately $\varphi^n / \sqrt{5}$ for large $n$. So the Fibonacci numbers grow exponentially at the rate of the golden ratio!
 
-This is the kind of thing that makes math feel like magic sometimes. You start with a simple recurrence---each term is the sum of the previous two---and you end up with the golden ratio and $\sqrt{5}$. But it all comes from that characteristic equation trick, which is really just substituting a guess and solving a quadratic.
+It all comes from the characteristic equation method: substitute a guess and solve a quadratic.
+
+\subsection*{The repeated-root case}
+
+We said earlier that when the characteristic equation has a repeated root $r$, the general solution picks up an extra factor of $n$: $a_n = \alpha \cdot r^n + \beta \cdot n \cdot r^n$. Let's see this in action with a quick example.
+
+Consider the recurrence
+\[
+a_0 = 1, \quad a_1 = 4, \quad a_k = 4a_{k-1} - 4a_{k-2} \text{ for } k \geq 2
+\]
+
+The characteristic equation is $r^2 - 4r + 4 = 0$, which factors as $(r - 2)^2 = 0$. So we have a repeated root $r = 2$, and the general solution is
+\[
+a_n = \alpha \cdot 2^n + \beta \cdot n \cdot 2^n
+\]
+
+Using the initial conditions:
+\begin{align*}
+a_0 = 1 &: \quad \alpha \cdot 1 + \beta \cdot 0 = \alpha = 1 \\
+a_1 = 4 &: \quad \alpha \cdot 2 + \beta \cdot 1 \cdot 2 = 2 + 2\beta = 4 \quad \Longrightarrow \quad \beta = 1
+\end{align*}
+
+So the closed form is $a_n = 2^n + n \cdot 2^n = (1 + n) \cdot 2^n$.
+
+Sanity check: $a_2 = 4 \cdot 4 - 4 \cdot 1 = 12$, and $(1 + 2) \cdot 2^2 = 3 \cdot 4 = 12$. It works.
+
+\bigskip
+\textbf{Exercise 3.} \label{ex:m9:3} Find the closed form for $a_0 = 1$, $a_1 = 3$, $a_k = 4a_{k-1} - 3a_{k-2}$ using the characteristic equation method. That is: write down the characteristic equation, find its roots, write the general solution, and then use the initial conditions to solve for the constants.
 
 \end{document}

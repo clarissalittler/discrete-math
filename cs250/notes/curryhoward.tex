@@ -1,0 +1,176 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  mathescape=true
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Intermezzo: Proofs Are Programs}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+We've now seen several different ways to write proofs: derivations in the lstlisting style from Module 3, Gentzen-style inference trees from the trees intermezzo, informal arguments with ``assume\ldots therefore,'' and even machine-checked proofs in Lean via the Natural Number Game. We've gotten comfortable with the \emph{mechanics} of proving things.
+
+But here's a question we haven't really asked: what IS a proof? Not ``how do you write one'' but ``what kind of mathematical object is it?'' We've been treating proofs as sequences of steps, or as trees, or as English paragraphs. But is there something deeper going on---some underlying \emph{structure} that all these presentations share?
+
+The answer is yes, and it's one of the most beautiful ideas in all of mathematics and computer science. It turns out that proofs and programs are the \emph{same thing}.
+
+\section{What does a proof \emph{look like}?}
+
+To see this, we need to think about proofs differently. Instead of asking ``how do I convince someone this is true?'' we ask: ``what \emph{data} does a proof carry?''
+
+There's a tradition in constructive mathematics called the \textbf{Brouwer--Heyting--Kolmogorov interpretation}\index{BHK interpretation} (BHK for short) that gives a precise answer. It was developed by the Dutch mathematician L.E.J.\ Brouwer, the logician Arend Heyting, and the great Andrey Kolmogorov, and it says the following:
+
+\begin{itemize}
+  \item \textbf{A proof of $A \wedge B$} is a \emph{pair}: a proof of $A$ together with a proof of $B$. You need both pieces. It's a tuple!
+
+  \item \textbf{A proof of $A \vee B$} is a \emph{tagged value}: either a proof of $A$ (tagged ``left'') or a proof of $B$ (tagged ``right''). You have to say \emph{which} side you're proving, and then actually prove it. It's a sum type---an \texttt{Either}, a tagged union!
+
+  \item \textbf{A proof of $A \to B$} is a \emph{function}: given any proof of $A$, it produces a proof of $B$. Not a specific proof for a specific $A$---a \emph{method} that works for any proof of $A$ you hand it.
+
+  \item \textbf{A proof of $\forall x : S.\; P(x)$} is a \emph{function}: given any element $x$ of $S$, it produces a proof of $P(x)$. A machine that manufactures proofs on demand, one for each possible input.
+
+  \item \textbf{A proof of $\exists x : S.\; P(x)$} is a \emph{pair}: a specific witness $x \in S$ together with a proof that $P(x)$ holds for that witness. You can't just say ``something exists''---you have to \emph{produce} the thing and \emph{show} it works.
+
+  \item \textbf{A proof of $\bot$ (false)} is\ldots nothing. There is no proof of false. It's the empty type---the type with no values at all.
+\end{itemize}
+
+Read that list again slowly. Does it remind you of anything? Those are \emph{data structures}. Pairs, tagged unions, functions. The BHK interpretation is saying that proofs are made out of the same stuff as programs.
+
+This is not a metaphor. This is not a loose analogy. This is a precise, formal correspondence, and it has a name.
+
+\section{The Curry--Howard dictionary}
+
+The \textbf{Curry--Howard correspondence}\index{Curry--Howard correspondence} (sometimes called the Curry--Howard \emph{isomorphism}, because it really is a bijection) is a dictionary that translates between logic and programming. It was discovered independently by the logician Haskell Curry in the 1930s--50s and the logician William Alvin Howard in 1969, though its full implications took decades to unfold.
+
+Here's the dictionary:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Logic} & & \textbf{Programming} \\
+\midrule
+Proposition & $\longleftrightarrow$ & Type \\
+Proof of a proposition & $\longleftrightarrow$ & Program (term) of that type \\
+$A \to B$ & $\longleftrightarrow$ & Function type \texttt{A -> B} \\
+$A \wedge B$ & $\longleftrightarrow$ & Pair/product type \texttt{(A, B)} \\
+$A \vee B$ & $\longleftrightarrow$ & Sum type \texttt{Either A B} \\
+$\top$ (true) & $\longleftrightarrow$ & Unit type \texttt{()} (one trivial value) \\
+$\bot$ (false) & $\longleftrightarrow$ & Empty type (no values at all) \\
+$\forall x : S.\; P(x)$ & $\longleftrightarrow$ & Dependent function / polymorphism \\
+$\exists x : S.\; P(x)$ & $\longleftrightarrow$ & Dependent pair / existential type \\
+\midrule
+Modus ponens & $\longleftrightarrow$ & Function application \\
+Implication introduction & $\longleftrightarrow$ & Lambda abstraction (defining a function) \\
+Conjunction introduction & $\longleftrightarrow$ & Constructing a pair \\
+Conjunction elimination & $\longleftrightarrow$ & Projecting from a pair (\texttt{fst}, \texttt{snd}) \\
+Disjunction introduction & $\longleftrightarrow$ & Injecting into a sum (\texttt{Left}, \texttt{Right}) \\
+Disjunction elimination & $\longleftrightarrow$ & Pattern matching / case analysis \\
+Ex falso ($\bot$-elimination) & $\longleftrightarrow$ & Handling the empty type (vacuously) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The left column is everything we've been doing since Module 3. The right column is everything you've been doing since your first programming class. They were the same subject the whole time.
+
+Let that sink in for a moment. Every time you wrote a function that takes a pair and returns one component, you were doing conjunction elimination. Every time you pattern-matched on a tagged union, you were doing proof by cases. Every time you defined a function, you were introducing an implication.
+
+\section{A worked example: the same proof, four ways}
+
+Let's make this concrete. Consider the logical tautology
+\[
+A \wedge B \to B \wedge A
+\]
+which says that conjunction is commutative: if $A$ and $B$ are both true, then $B$ and $A$ are both true. Not exactly shocking, but it's a perfect example because the proof is simple enough to see the correspondence clearly.
+
+\subsection{As a derivation (Module 3 style)}
+
+\begin{lstlisting}
+Theorem: Show $A \wedge B \to B \wedge A$
+Proof:
+(a) proof that assuming $A \wedge B$, shows $B \wedge A$:
+    subproof: (i) $A \wedge B$, by assumption
+              (ii) $B$, by $\wedge$-elimination on (i)
+              (iii) $A$, by $\wedge$-elimination on (i)
+              show $B \wedge A$, by $\wedge$-introduction with (ii) and (iii)
+shows $A \wedge B \to B \wedge A$ by introduction of implication
+\end{lstlisting}
+
+\subsection{As a Gentzen tree}
+
+\[
+\dfrac{
+  \dfrac{
+    \dfrac{[A \wedge B]}{B}\;\wedge\text{E}_2
+    \quad
+    \dfrac{[A \wedge B]}{A}\;\wedge\text{E}_1
+  }{B \wedge A}\;\wedge\text{I}
+}{A \wedge B \to B \wedge A}\;\to\text{I}
+\]
+
+Read it bottom-up: we want $A \wedge B \to B \wedge A$, so we use $\to$I, which means we temporarily assume $A \wedge B$ (in brackets) and need to derive $B \wedge A$. To build $B \wedge A$ we use $\wedge$I, so we need $B$ and $A$ separately. We get $B$ by $\wedge$E$_2$ on our assumption and $A$ by $\wedge$E$_1$.
+
+\subsection{As a Python function}
+
+\begin{lstlisting}[language=Python]
+def swap(pair):
+    return (pair[1], pair[0])
+\end{lstlisting}
+
+That's it. We take in a pair, extract the second element and the first element, and build a new pair with them in the other order. The function \texttt{swap} \emph{is} the proof. Its type signature---``takes a pair \texttt{(A, B)}, returns a pair \texttt{(B, A)}''---\emph{is} the theorem.
+
+\subsection{As Lean 4}
+
+\begin{lstlisting}
+fun $\langle$a, b$\rangle$ => $\langle$b, a$\rangle$
+\end{lstlisting}
+
+If you've played the Natural Number Game, this syntax might not look too alien. The angle brackets $\langle\cdot, \cdot\rangle$ are Lean's notation for pairs (and for the \texttt{And.intro} constructor). The \texttt{fun} keyword introduces a function---implication introduction. Pattern matching on $\langle$a, b$\rangle$ does both conjunction eliminations at once.
+
+\bigskip
+
+Now here's the punchline: \textbf{these are all the same thing}. The derivation, the Gentzen tree, the Python function, and the Lean term are four presentations of \emph{one} underlying mathematical object. The proof IS the program. The program IS the proof. The type of the program IS the theorem statement. A well-typed program IS a valid proof.
+
+Go back and trace the correspondence step by step. In the Python version, \texttt{pair} is the assumption $A \wedge B$. Indexing with \texttt{pair[1]} is $\wedge$-elimination (extracting the second component). Building the tuple \texttt{(pair[1], pair[0])} is $\wedge$-introduction. The \texttt{def} itself is $\to$-introduction. Every single step in the proof corresponds to a programming operation, and vice versa.
+
+\section{Why this matters}
+
+This correspondence is not just a curiosity. It is the theoretical foundation of an entire field.
+
+\textbf{Constructive proofs are executable.} Under the BHK interpretation, every constructive proof of a proposition carries enough information to actually \emph{compute}. A proof that $\exists x.\; P(x)$ doesn't just tell you that such an $x$ exists somewhere out there in the platonic realm---it hands you a specific $x$ and shows you why it works. A proof that $A \vee B$ doesn't just say ``one of them is true, I'm not telling you which''---it tells you \emph{which one} and proves it. This is why constructive mathematics has always appealed to computer scientists: constructive proofs are programs you can run.
+
+\textbf{Proof assistants are type checkers.} This is the foundation of tools like Lean, Agda, and Coq. When you write a proof in Lean, you're really writing a program. When Lean checks your proof, it's really type-checking your program. The kernel of a proof assistant---the thing you ultimately have to trust---is a type checker. If the program has the right type, the proof is valid. Period. That's why these tools can be so reliable: type checking is a well-understood, mechanizable process.
+
+\textbf{Excluded middle is non-constructive---and now we can see \emph{why}.} Remember all those careful remarks in Modules 3 and 7 about how proof by contradiction and excluded middle are ``classical'' and not constructively valid? The Curry--Howard correspondence makes the reason visceral. Under BHK, a proof of $A \vee \lnot A$ would be a program that, for \emph{any} proposition $A$ whatsoever, either produces a proof of $A$ or produces a proof of $\lnot A$. Think about what that would mean: a program that can decide \emph{any} mathematical question. That's absurd! There's no algorithm that can look at an arbitrary proposition and tell you whether it's true or false---that's essentially the halting problem.
+
+So if you add excluded middle as an axiom, what you're doing, computationally, is adding a primitive that magically produces a value without computing it. In programming-language terms, it corresponds to something like \texttt{call/cc} (call-with-current-continuation) in Scheme---a control operator that captures the rest of the computation and can jump back to it later. It's computationally meaningful, but it's not a \emph{constructive} program in the ordinary sense. This is the precise sense in which classical logic has ``more'' theorems than constructive logic: it has a more powerful (and stranger) programming language.
+
+\textbf{This is the beginning, not the end.} You'll see much more of Curry--Howard in CS 251, where we'll work with dependent types and use proof assistants not just for number games but for verifying real mathematical theorems. For now, the takeaway is this: the logical infrastructure you've been building all quarter---conjunction, disjunction, implication, quantifiers, proof rules---is not separate from programming. It IS programming, seen from a different angle.
+
+\bigskip
+\textbf{Exercise 1.}\label{ex:ch:1} Under the Curry--Howard correspondence, what programming construct corresponds to proof by cases (disjunction elimination, $\vee$E)? Hint: think about what you do when you have an \texttt{Either} value in a language like Haskell or Python. You need to handle both the \texttt{Left} case and the \texttt{Right} case. What programming pattern is that?
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:ch:2} The formula $A \to (B \to A)$ is a tautology (you can check it with a truth table if you like). Under Curry--Howard, this corresponds to a type: a function that takes an \texttt{A} and returns a function from \texttt{B} to \texttt{A}. Write a Python function with this type signature. What does it do? Why does it make sense that this is a tautology?
+
+\end{document}

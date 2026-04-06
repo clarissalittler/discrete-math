@@ -1,0 +1,140 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Weekly Assignment: Logic\\[2pt]
+   (Epp~2.1 \& 2.2)}
+\end{center}
+
+\bigskip
+
+\noindent
+Complete each of the following problems.  Show all work and justify your answers.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 1} (Epp 2.1 \#4). \;
+Represent the common form of each argument using letters to
+stand for component sentences, and fill in the blanks so that the
+argument in part~(b) has the same logical form as the argument
+in part~(a).
+
+\begin{enumerate}[label=\textbf{\alph*.},itemsep=6pt]
+  \item If the program syntax is faulty, then the computer will
+        generate an error message.\\
+        If the computer generates an error message, then the
+        program will not run.\\
+        Therefore, if the program syntax is faulty, then the
+        program will not run.
+
+  \item If this simple graph \rule{2cm}{0.4pt}\,, then it is complete.\\
+        If this graph \rule{2cm}{0.4pt}\,, then any two of its
+        vertices can be joined by a path.\\
+        Therefore, if this simple graph has 4 vertices and 6 edges,
+        then \rule{2cm}{0.4pt}\,.
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 2} (Epp 2.1 \#8\,b,c,e). \;
+Write the following statements in symbolic form using the
+symbols $\lnot$, $\lor$, and~$\land$.  Let $h ={}$``John is
+healthy,'' $w ={}$``John is wealthy,'' and $s ={}$``John is
+wise.''
+
+\begin{enumerate}[label=\textbf{\alph*.},start=2,itemsep=4pt]
+  \item John is not wealthy but he is healthy and wise.
+  \setcounter{enumi}{2}
+  \item John is neither healthy, wealthy, nor wise.
+  \setcounter{enumi}{4}
+  \item John is wealthy, but he is not both healthy and wise.
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 3} (Epp 2.1 \#9\,b,c). \;
+Write the following statements in symbolic form using the
+symbols $\lnot$, $\lor$, and~$\land$.  Let $p ={}$``$x > 5$,''
+$q ={}$``$x = 5$,'' and $r ={}$``$10 > x$.''
+
+\begin{enumerate}[label=\textbf{\alph*.},start=2,itemsep=4pt]
+  \item $10 > x > 5$
+  \setcounter{enumi}{2}
+  \item $10 > x \ge 5$
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 4} (Epp 2.1 \#22). \;
+Determine whether the following statement forms are logically
+equivalent.  Construct a truth table and include a sentence
+justifying your answer.
+\[
+  p \land (q \lor r)
+  \qquad\text{and}\qquad
+  (p \land q) \lor (p \land r)
+\]
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 5} (Epp 2.1 \#24). \;
+Determine whether the following statement forms are logically
+equivalent.  Construct a truth table and include a sentence
+justifying your answer.
+\[
+  (p \lor q) \lor (p \land r)
+  \qquad\text{and}\qquad
+  (p \lor q) \land r
+\]
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 6} (Epp 2.1 \#42). \;
+Use a truth table to determine whether the following statement
+form is a tautology, a contradiction, or neither.
+\[
+  \bigl((\lnot p \land q) \land (q \land r)\bigr) \land \lnot q
+\]
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 7} (Epp 2.2 \#2). \;
+Rewrite the following statement in if-then form:
+
+\medskip
+\begin{quote}
+  \emph{I am on time for work if I catch the 8:05 bus.}
+\end{quote}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 8} (Epp 2.2 \#18). \;
+Write each of the following three statements in symbolic form
+and determine which pairs are logically equivalent.  Include
+truth tables and a few words of explanation.
+
+\begin{enumerate}[label=(\roman*),itemsep=4pt]
+  \item If it walks like a duck and it talks like a duck,
+        then it is a duck.
+  \item Either it does not walk like a duck or it does not talk
+        like a duck, or it is a duck.
+  \item If it does not walk like a duck and it does not talk like
+        a duck, then it is not a duck.
+\end{enumerate}
+
+\end{document}

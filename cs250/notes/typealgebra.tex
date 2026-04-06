@@ -1,0 +1,193 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  mathescape=true
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Intermezzo: The Algebra of Types}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+Something strange has been happening throughout this course, and it's time we talked about it.
+
+In Module 1 we learned that $|A \times B| = |A| \cdot |B|$---the cardinality of a Cartesian product is the product of the cardinalities. In the sets intermezzo we learned that $|B^A| = |B|^{|A|}$---function spaces have exponential cardinality. And in Module 10 we defined data types using BNF, building lists and trees out of simpler pieces.
+
+These facts live in different chapters, but they are secretly the same idea. Types obey the laws of algebra. Not metaphorically, not ``sort of''---they obey the \emph{actual} laws of high-school algebra, the ones with $+$ and $\times$ and exponents. Once you see this, a lot of things click into place.
+
+\section{Types are like numbers}
+
+Let's build the dictionary.
+
+\medskip
+\noindent\textbf{Product types are multiplication.} A pair $(a, b)$ where $a \in A$ and $b \in B$ has type $A \times B$. How many inhabitants does $A \times B$ have? For each choice of $a$ (there are $|A|$ many) and each choice of $b$ (there are $|B|$ many), we get a distinct pair. So $|A \times B| = |A| \cdot |B|$. A tuple is multiplication.
+
+\medskip
+\noindent\textbf{Sum types are addition.} Suppose we have a type $A + B$ that means ``either a value of type $A$, tagged with \texttt{Left}, or a value of type $B$, tagged with \texttt{Right}.'' In Haskell this is \texttt{Either A B}; in Python you might use a tagged union or a class hierarchy. How many inhabitants? Every element of $A$ gives one (tagged \texttt{Left}), and every element of $B$ gives another (tagged \texttt{Right}). So $|A + B| = |A| + |B|$. A tagged union is addition.
+
+\medskip
+\noindent\textbf{Function types are exponentiation.} A function $f : A \to B$ assigns to each element of $A$ an element of $B$. That's $|B|$ choices for each of the $|A|$ inputs, so $|A \to B| = |B|^{|A|}$. We saw this in the sets intermezzo---it's why the function space is written $B^A$. A function is exponentiation.
+
+\medskip
+\noindent\textbf{The unit type is 1.} Let $1$ denote a type with exactly one element (in Haskell, \texttt{()};  in Python, \texttt{None}). Then $A \times 1 \cong A$---a pair of an $A$ and a ``nothing'' is just an $A$, since the second component carries no information. And $1^A \cong 1$---there's only one function from $A$ to a one-element set (the function that sends everything to the single element).
+
+\medskip
+\noindent\textbf{The empty type is 0.} Let $0$ denote a type with \emph{no} elements (in Haskell, \texttt{Void}; in Python, a class you can never instantiate). Then $A \times 0 \cong 0$---you can't build a pair if the second component has no possible values. And $A + 0 \cong A$---``either an $A$ or an impossible thing'' is just an $A$. And for any nonempty $A$, $0^A \cong 0$---there are no functions from $A$ to an empty set (you'd have to send the elements of $A$ somewhere, but there's nowhere to send them).
+
+\medskip
+Look at these equations again. $A \times 1 = A$. $A + 0 = A$. $A \times 0 = 0$. Those are the rules of arithmetic you learned in grade school, but now they're facts about data types. Types form an algebra, and it's the same algebra you already know.
+
+\section{The laws of algebra hold}
+
+Let's verify that the familiar identities from arithmetic actually hold for types. In each case, ``$\cong$'' means ``there's a bijection between the two types''---they have the same number of inhabitants, and you can convert back and forth without losing information.
+
+\medskip
+\noindent\textbf{Multiplicative identity:} $A \times 1 \cong A$. A pair where one component is trivial is just the other component. In Haskell: \texttt{(a, ())} is isomorphic to \texttt{a}.
+
+\medskip
+\noindent\textbf{Additive identity:} $A + 0 \cong A$. \texttt{Either A Void} is isomorphic to \texttt{A}---the \texttt{Right} case is impossible (you can't construct a \texttt{Void}), so you're always in the \texttt{Left} case.
+
+\medskip
+\noindent\textbf{Distributivity:} $A \times (B + C) \cong (A \times B) + (A \times C)$. A pair of an $A$ with ``either a $B$ or a $C$'' is the same as ``either a pair of $A$ and $B$, or a pair of $A$ and $C$.'' This is the distributive law $a(b + c) = ab + ac$, in type form.
+
+\medskip
+\noindent\textbf{Exponent of a product:} $A \to (B \times C) \cong (A \to B) \times (A \to C)$. A function that returns a pair is the same as a pair of functions. If I ask you for a machine that takes an input and produces two outputs, you can either build one machine with two output slots or build two separate machines---same thing.
+
+\medskip
+\noindent\textbf{Exponent of a sum:} $(A + B) \to C \cong (A \to C) \times (B \to C)$. A function from ``either an $A$ or a $B$'' is the same as a pair of functions: one that handles $A$ inputs and one that handles $B$ inputs. In Python:
+
+\begin{lstlisting}[language=Python]
+# A function from Either is a pair of handlers:
+def handle_either(x):
+    if isinstance(x, Left):
+        return handle_a(x.value)   # the A -> C part
+    else:
+        return handle_b(x.value)   # the B -> C part
+\end{lstlisting}
+
+Wait a moment. A function from a sum is a pair of handlers---one for each case. Isn't that exactly \emph{proof by cases}? In Module 3 we learned the disjunction elimination rule: if you want to prove something from $A \vee B$, you handle the $A$ case and handle the $B$ case separately. That's the logical version of $(A + B) \to C \cong (A \to C) \times (B \to C)$---or-elimination \emph{is} the fact that a function from a sum is a pair of functions. The algebra is telling us something about logic.
+
+\section{Data types as polynomials}
+
+Here is where things get a little bit magical.
+
+In Module 10 we defined lists with a BNF:
+
+\begin{lstlisting}
+List A := Nil | Cons(A, List A)
+\end{lstlisting}
+
+In our algebraic notation, \texttt{Nil} is the unit type $1$ (one way to be empty) and \texttt{Cons(A, List A)} is a product $A \times L$ where $L$ is the type of lists. The \texttt{|} in the BNF is a sum. So the definition of lists is:
+\[
+L = 1 + A \cdot L
+\]
+
+That's a polynomial equation! Let's be reckless and solve it like one. Rearranging:
+\[
+L - A \cdot L = 1 \qquad \Longrightarrow \qquad L(1 - A) = 1 \qquad \Longrightarrow \qquad L = \frac{1}{1 - A}
+\]
+
+Now, you might be having a reasonable objection right now, which is: what does it even \emph{mean} to divide types or subtract types? Fair enough. But let's push ahead and see what happens. From Module 9, we know the formula for a geometric series:
+\[
+\frac{1}{1 - x} = 1 + x + x^2 + x^3 + \cdots
+\]
+
+So if we just blindly expand:
+\[
+L = 1 + A + A^2 + A^3 + A^4 + \cdots
+\]
+
+And what is this saying? A list of $A$'s is:
+\begin{itemize}
+  \item $1$: the empty list (one way), or
+  \item $A$: a single element (one $A$), or
+  \item $A^2 = A \times A$: two elements (a pair of $A$'s), or
+  \item $A^3 = A \times A \times A$: three elements, or
+  \item $\ldots$and so on forever.
+\end{itemize}
+
+That's \emph{exactly right}. A list is either empty, or has one element, or has two, or three, or any finite number of elements. The algebra of types---this insane-looking manipulation where we divided by $(1 - A)$ as if types were numbers---told us the truth. The geometric series from Module 9 is secretly a statement about data structures.
+
+\medskip
+Let's try another one. Binary trees from Module 10 were defined as:
+
+\begin{lstlisting}
+Tree := Leaf | Node(Tree, Tree)
+\end{lstlisting}
+
+In algebraic notation:
+\[
+T = 1 + T^2
+\]
+
+This is a quadratic equation! Rearranging: $T^2 - T + 1 = 0$, and the quadratic formula gives
+\[
+T = \frac{1 \pm \sqrt{1 - 4}}{2} = \frac{1 \pm \sqrt{-3}}{2}
+\]
+
+which involves complex numbers and seems completely unhinged. But remarkably, if you take the right root and expand it as a power series, you get the \emph{Catalan numbers}---which are exactly the number of distinct binary trees with $n$ internal nodes. The algebra of types knows about combinatorics.
+
+We won't push this further here, but the point is: these aren't parlor tricks. There is a rigorous mathematical theory---the theory of \emph{combinatorial species}---that makes all of this precise. The equation $L = 1 + A \cdot L$ is a legitimate algebraic equation in that theory, the ``division'' is a real operation, and the geometric series expansion is a theorem, not a coincidence.
+
+What we're seeing is a remarkable convergence: the sets intermezzo (cardinality of function spaces), Module 9 (geometric series), and Module 10 (BNF definitions of data types) are all aspects of a single algebraic framework. Types are numbers, data definitions are polynomial equations, and the power series you learned in Module 9 enumerate the shapes of data structures.
+
+\section{The Curry--Howard connection}
+
+There's one more layer. In the Curry--Howard intermezzo we learned that types correspond to propositions: a type is ``true'' if it's inhabited (has at least one value) and ``false'' if it's empty. Under this correspondence:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Algebra} & \textbf{Types} & \textbf{Logic} \\
+\midrule
+$A \cdot B$ & $A \times B$ (product) & $A \wedge B$ (conjunction) \\
+$A + B$ & $A + B$ (sum) & $A \vee B$ (disjunction) \\
+$B^A$ & $A \to B$ (function) & $A \to B$ (implication) \\
+$1$ & Unit & $\top$ (true) \\
+$0$ & Void & $\bot$ (false) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+So the algebraic identities we verified in Section 2 are also \emph{logical tautologies}:
+\begin{itemize}
+  \item $A \times 1 \cong A$ is $A \wedge \top \equiv A$ (``$A$ and true'' is just $A$)
+  \item $A + 0 \cong A$ is $A \vee \bot \equiv A$ (``$A$ or false'' is just $A$)
+  \item $A \times (B + C) \cong (A \times B) + (A \times C)$ is the distribution of $\wedge$ over $\vee$
+  \item $(A + B) \to C \cong (A \to C) \times (B \to C)$ is or-elimination
+  \item $A \times 0 \cong 0$ is $A \wedge \bot \equiv \bot$ (``$A$ and false'' is false)
+\end{itemize}
+
+Three parallel worlds---arithmetic, type theory, and logic---and they're all obeying the same laws. The algebra of numbers, the algebra of types, and the algebra of propositions are three views of one structure.
+
+That structure has a name, by the way. It's called a \emph{rig}\index{rig} (a ``ring without negation''---because you can't subtract types or negate propositions in general). But you don't need to know the name to appreciate the fact: the math you already know, from all across this course, fits together like a puzzle. Cardinality is counting. Types are numbers. BNF definitions are polynomial equations. Proofs are programs. And the geometric series from Module 9 secretly counts the shapes of lists.
+
+\section{Exercises}
+
+\bigskip
+\textbf{Exercise 1.}\label{ex:ta:1} Using the algebra of types, simplify the type $(A \to B) \times (A \to C)$. What single type is it isomorphic to? What does this isomorphism correspond to as a logical proposition (under the Curry--Howard correspondence)?
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:ta:2} The BNF for natural numbers is \texttt{Nat = Zero | Succ(Nat)}, which in our algebraic notation is $N = 1 + N$. Write this as a ``polynomial equation'' and ``solve'' for $N$ by expanding as a series. Does the series $1 + 1 + 1 + 1 + \cdots$ make sense as a description of the natural numbers? (Hint: what does $1^n = 1$ mean for the $n$th term?)
+
+\end{document}

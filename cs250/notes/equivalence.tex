@@ -1,0 +1,126 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  mathescape=true
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Intermezzo: What Does It Mean for Things to Be ``The Same''?}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+In Module 1 we defined equivalence relations---relations that are reflexive, symmetric, and transitive---and noted that equality is the canonical example. In Module 6 we met modular congruence: two integers are ``the same'' mod $n$ when they leave the same remainder. We built $\mathbb{Z}/n\mathbb{Z}$ out of this idea without pausing to ask a deeper question: \emph{what are we really doing when we declare two different things to be ``the same''?}
+
+The answer turns out to be one of the most important ideas in mathematics and computer science, and it's worth making explicit.
+
+\section{Equivalence as abstraction}
+
+Every equivalence relation is a \emph{choice} about which differences to ignore. When you write $17 \equiv 3 \pmod{7}$, you're saying: ``I don't care about multiples of 7.'' The numbers 17 and 3 are genuinely different integers, but for your purposes---working in $\mathbb{Z}/7\mathbb{Z}$---the difference between them is irrelevant. You've chosen to ignore it.
+
+This pattern is everywhere:
+\begin{itemize}
+  \item \textbf{Modular arithmetic mod $n$:} ignore multiples of $n$. Two integers are ``the same'' if their difference is divisible by $n$.
+  \item \textbf{Case-insensitive string comparison:} ignore capitalization. ``Hello'' and ``hello'' are different strings, but if you're searching a database and don't care about case, you declare them equivalent.
+  \item \textbf{Graph isomorphism:} ignore vertex labels, keep structure. The graph with vertices $\{1, 2, 3\}$ and edges $\{(1,2), (2,3)\}$ is ``the same'' as the graph with vertices $\{a, b, c\}$ and edges $\{(a,b), (b,c)\}$---they're both paths of length 2.
+  \item \textbf{Extensional equality of programs:} ignore implementation, keep input-output behavior. A bubble sort and a merge sort are ``the same function'' if you only care about what output they produce for each input.
+\end{itemize}
+
+Each of these is genuinely an equivalence relation---you can verify that each one is reflexive, symmetric, and transitive. (Try it for graph isomorphism if you want a small challenge.) And each one amounts to the same conceptual move: deciding that certain differences don't matter for the question you're asking.
+
+This is precisely the idea that the mathematician Hermann Weyl championed. Weyl argued that the essence of mathematical abstraction is \emph{identifying things that differ only in irrelevant ways}. In his view, a mathematical concept isn't a specific thing---it's what remains after you've stripped away everything you've chosen to ignore. The number 3 isn't any particular collection of three objects (three apples, three dots, three stars). It's what \emph{all} collections of three objects have in common. The concept ``three'' is an equivalence class.
+
+\section{Quotient sets}
+
+If every equivalence relation is a choice about what to ignore, then we should be able to form a new set that \emph{only remembers what we chose to keep}. That's exactly what a quotient set is.
+
+\begin{definition}[Equivalence Class]
+Given a set $A$ and an equivalence relation $\sim$ on $A$, the \emph{equivalence class} of an element $a \in A$ is the set of all elements equivalent to $a$:
+\[
+  [a] = \{b \in A \mid a \sim b\}.
+\]
+\end{definition}
+
+\begin{definition}[Quotient Set]
+The \emph{quotient set}\index{quotient set} $A / {\sim}$ is the set of all equivalence classes:
+\[
+  A / {\sim} \;=\; \{ [a] \mid a \in A \}.
+\]
+\end{definition}
+
+The equivalence classes partition $A$: every element belongs to exactly one class, and distinct classes don't overlap. (This is a theorem you can prove from the reflexivity, symmetry, and transitivity axioms---it's a good exercise.)
+
+Now, concrete examples:
+
+\medskip
+
+\textbf{Modular arithmetic.} Define $\sim$ on $\mathbb{Z}$ by $a \sim b$ iff $n \mid (a - b)$. The equivalence classes are exactly the residue classes $[0], [1], \ldots, [n-1]$. The quotient set $\mathbb{Z} / {\sim}$ is $\mathbb{Z}/n\mathbb{Z}$---exactly the set we worked with in Module 6. This is not a coincidence or an analogy. The notation $\mathbb{Z}/n\mathbb{Z}$ literally means ``the integers, quotiented by the equivalence relation of congruence mod $n$.'' We were building a quotient set all along.
+
+\medskip
+
+\textbf{Case-insensitive strings.} Let $A$ be the set of all strings over the English alphabet, and define $s_1 \sim s_2$ iff $s_1$ and $s_2$ differ only in capitalization. Then $[\text{``Hello''}] = \{\text{``Hello''}, \text{``hello''}, \text{``HELLO''}, \text{``hELLO''}, \ldots\}$---all $2^5 = 32$ capitalizations of a five-letter string. The quotient set $A / {\sim}$ is the set of case-insensitive strings. When Python's \texttt{str.lower()} method converts a string to lowercase before comparing, it's choosing a \emph{representative} from each equivalence class.
+
+\medskip
+
+\textbf{Constructing the integers.} Here's a deeper example. Suppose you only have the natural numbers $\mathbb{N} = \{0, 1, 2, \ldots\}$ and you want to \emph{build} the integers. You can't just ``add negatives''---you need to define them from what you already have. The trick: represent each integer as a \emph{pair} $(a, b)$ of natural numbers, where the pair is meant to stand for $a - b$. So $(5, 3)$ represents $2$, and $(3, 5)$ represents $-2$.
+
+But many different pairs represent the same integer: $(5, 3)$, $(6, 4)$, $(7, 5)$, and $(100, 98)$ all represent $2$. So we define an equivalence relation on $\mathbb{N} \times \mathbb{N}$:
+\[
+  (a, b) \sim (c, d) \quad \text{iff} \quad a + d = b + c.
+\]
+(Notice the trick: we avoid writing $a - b = c - d$, which would require subtraction---the very thing we haven't defined yet. Instead we rearrange to $a + d = b + c$, which only uses addition of natural numbers.)
+
+The integers \emph{are} the quotient set $(\mathbb{N} \times \mathbb{N}) / {\sim}$. The integer $2$ is the equivalence class $[(5,3)] = [(6,4)] = [(7,5)] = \cdots$. This construction is standard in mathematics, and it's a beautiful instance of the pattern: define what you want as what remains after you've identified everything that should be ``the same.''
+
+\section{The connection to types and programming}
+
+In programming, you make equivalence-class decisions constantly---often without realizing it.
+
+\textbf{Hash maps.} When you use a dictionary in Python or a \texttt{HashMap} in Java, you're relying on a notion of key equality. Two keys are ``the same'' if they produce the same hash \emph{and} compare equal under \texttt{\_\_eq\_\_} or \texttt{.equals()}. The hash map doesn't distinguish between two keys that are equal in this sense, even if they're different objects in memory. This is an equivalence relation on the set of all possible key objects, and the hash map is organized by equivalence classes.
+
+\textbf{Database normalization.} In a relational database, two rows in a table represent the same entity if their primary keys match. You might have a \texttt{users} table where the primary key is \texttt{user\_id}. Two rows with the same \texttt{user\_id} are ``the same user'' even if other columns differ (perhaps one was updated more recently). The primary key defines the equivalence relation; normalization is partly about making this choice explicit and consistent.
+
+\textbf{Interfaces and duck typing.} In Python, if two objects both support \texttt{\_\_len\_\_} and \texttt{\_\_getitem\_\_}, you can use either one wherever you need a sequence. The objects might be implemented completely differently---one a list, one a database cursor---but from the perspective of code that uses the sequence interface, they're interchangeable. ``If it walks like a duck and quacks like a duck\ldots'' is an equivalence relation: two objects are equivalent if they support the same operations.
+
+In type theory, this idea is formalized through \emph{quotient types}: you can define a type where certain values are considered equal even though they're constructed differently. This is the formal version of what every programmer does informally when they implement \texttt{\_\_eq\_\_} for a class.
+
+And this connects back to Module 1's discussion of extensional versus intensional equality. Extensional equality of functions---two functions are equal iff they produce the same output for every input---\emph{is} a quotient. You take the set of all programs and identify those with the same input-output behavior. What remains is the set of ``functions'' in the mathematical sense, with implementation details erased. Every time you write a specification for a function (``it should sort the list'') and don't care how it does it, you're working in this quotient.
+
+\section{Weyl's insight, and why it matters}
+
+Hermann Weyl (1885--1955) was one of the twentieth century's most versatile mathematicians, making deep contributions to analysis, geometry, number theory, and mathematical physics. But some of his most lasting influence was philosophical. Weyl thought carefully about what mathematical objects \emph{are}, and he arrived at a striking answer: we never study raw objects. We study objects \emph{up to equivalence}.
+
+When a geometer studies triangles, she doesn't care about their position or orientation in the plane---she studies them up to congruence. When a topologist studies shapes, she doesn't care about bending or stretching---she studies them up to continuous deformation. When a number theorist studies residues mod $n$, she doesn't care about the particular integer---she studies them up to congruence mod $n$. In each case, the mathematician has \emph{chosen an equivalence relation}, and that choice determines the level of abstraction at which the work happens.
+
+The choice of equivalence relation is not a minor technical detail. It's the most consequential decision you make, because it determines what your theory can see and what it's blind to. Geometry up to congruence can see lengths and angles; geometry up to similarity can see angles but not lengths; topology can see connectedness but not angles or lengths. Each level of abstraction is useful for different questions, and each one is defined by choosing what to ignore.
+
+This is the same insight that drives good software design. An interface defines what you care about; everything behind the interface is an implementation detail you're choosing to ignore. The more carefully you choose what to expose and what to hide, the more robust your abstractions become. A well-designed API is, in a precise sense, a well-chosen equivalence relation on the set of possible implementations.
+
+So the next time you declare two things ``the same''---whether in a proof, a program, or a conversation---pause and ask: what am I choosing to ignore? That choice is where the real thinking lives.
+
+\bigskip
+\textbf{Exercise 1.}\label{ex:equiv:1} Define an equivalence relation on the set of all Python programs such that two programs are equivalent if and only if they produce the same output for every input. Is this the same as checking whether the source code is identical? Why or why not? (Hint: think about what the equivalence classes look like. How many programs are in the equivalence class of a program that sorts a list?)
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:equiv:2} Consider the set of fractions $\{a/b \mid a, b \in \mathbb{Z},\; b \neq 0\}$. Define an equivalence relation $\sim$ that captures when two fractions represent the same rational number. (That is, give a precise condition for when $a/b \sim c/d$.) Verify that your relation is reflexive, symmetric, and transitive. What are the equivalence classes? How does this connect to the construction of the integers from pairs of naturals discussed above?
+
+\end{document}

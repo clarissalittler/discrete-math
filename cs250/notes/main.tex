@@ -9,12 +9,15 @@
 \usepackage{listings}
 \usepackage{xcolor}
 \usepackage{standalone}
+\usepackage{makeidx}
+\makeindex
 
 \lstset{
   basicstyle=\ttfamily\small,
   frame=single,
   breaklines=true,
-  columns=fullflexible
+  columns=fullflexible,
+  mathescape=true
 }
 
 \theoremstyle{definition}
@@ -33,8 +36,13 @@
 \date{}
 
 \begin{document}
+\pagenumbering{gobble}
 \maketitle
+\clearpage
+\pagenumbering{roman}
 \tableofcontents
+\clearpage
+\pagenumbering{arabic}
 
 % Suppress \maketitle in included module files
 \def\maketitle{}
@@ -42,26 +50,51 @@
 \chapter{Welcome, Sets, and Functions}
 \input{module01}
 
+\chapter*{Intermezzo: Cardinality and Function Spaces}
+\addcontentsline{toc}{chapter}{Intermezzo: Cardinality and Function Spaces}
+\input{sets}
+
 \chapter{Propositional Logic}
 \input{module02}
 
 \chapter{Proof Systems for Propositional Logic}
 \input{module03}
 
+\chapter*{Intermezzo: Inference Rules as Trees}
+\addcontentsline{toc}{chapter}{Intermezzo: Inference Rules as Trees}
+\input{gentzen}
+
 \chapter{First-Order Predicate Logic}
 \input{module04}
+
+\chapter*{Intermezzo: More on Natural Induction}
+\addcontentsline{toc}{chapter}{Intermezzo: More on Natural Induction}
+\input{intermezzo}
+
+\chapter*{Intermezzo: Quantifiers as Games}
+\addcontentsline{toc}{chapter}{Intermezzo: Quantifiers as Games}
+\input{games}
 
 \chapter{Informal Proofs and Groups}
 \input{module05}
 
-\chapter{Intermezzo: More on Natural Induction}
-\input{intermezzo}
-
 \chapter{Modular Arithmetic and Proofs by Cases}
 \input{module06}
 
+\chapter*{Intermezzo: What Does It Mean for Things to Be ``The Same''?}
+\addcontentsline{toc}{chapter}{Intermezzo: What Does It Mean for Things to Be ``The Same''?}
+\input{equivalence}
+
 \chapter{Indirect Proof, the Euclidean Algorithm, and Hoare Logic}
 \input{module07}
+
+\chapter*{Intermezzo: Proofs Are Programs}
+\addcontentsline{toc}{chapter}{Intermezzo: Proofs Are Programs}
+\input{curryhoward}
+
+\chapter*{Intermezzo: Other Logics, Other Worlds}
+\addcontentsline{toc}{chapter}{Intermezzo: Other Logics, Other Worlds}
+\input{temporal}
 
 \chapter{Sequences and Recursion}
 \input{module08}
@@ -71,5 +104,22 @@
 
 \chapter{Structural Induction}
 \input{module10}
+
+\chapter*{Intermezzo: The Algebra of Types}
+\addcontentsline{toc}{chapter}{Intermezzo: The Algebra of Types}
+\input{typealgebra}
+
+\chapter*{Intermezzo: The Lambda Calculus}
+\addcontentsline{toc}{chapter}{Intermezzo: The Lambda Calculus}
+\input{lambda}
+
+\appendix
+\chapter{Notation Summary}
+\input{notation}
+
+\chapter{Solutions to Exercises}
+\input{solutions}
+
+\printindex
 
 \end{document}

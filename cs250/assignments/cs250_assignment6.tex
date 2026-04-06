@@ -1,0 +1,91 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Weekly Assignment: Division into Cases,\\[2pt]
+   Quotient-Remainder, \& Floor/Ceiling\\[2pt]
+   (Epp~4.5 \& 4.6)}
+\end{center}
+
+\bigskip
+
+\noindent
+Complete each of the following problems.  Show all work and justify your answers.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 1} (Epp 4.5 \#17). \;
+Prove directly from the definitions that for every integer~$n$,
+$\;n^2 - n + 3\;$ is odd.  Use division into two cases: $n$~is
+even and $n$~is odd.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 2} (Epp 4.5 \#18\,a). \;
+Prove that the product of any two consecutive integers is even.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 3} (Epp 4.5 \#40). \;
+Prove that if $n$ is any odd integer, then
+$\;n^4 \bmod 16 = 1$.
+
+\medskip\noindent
+\emph{Hint}: Recall that an odd number can be written as
+$n = 2k + 1$ for some integer~$k$.  Expand $(2k+1)^4$ and
+simplify modulo~16.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 4} (Epp 4.6 \#11). \;
+State a necessary and sufficient condition for the floor of a real
+number to equal that number.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 5} (Proof: Divisibility by 3). \;
+Prove the following well-known divisibility rule from grade
+school:
+
+\begin{quote}
+  \emph{If the sum of the digits of a (positive) integer is
+  divisible by~$3$, then that integer is divisible by~$3$.}
+\end{quote}
+
+\noindent
+\textbf{Hints}:
+\begin{enumerate}[itemsep=4pt]
+  \item A number written in decimal is a sum of its digits
+        multiplied by powers of~10.  That is, a number with
+        digits $d_k\, d_{k-1}\, \cdots\, d_1\, d_0$ equals
+        \[
+          d_k \cdot 10^k + d_{k-1} \cdot 10^{k-1} + \cdots
+          + d_1 \cdot 10 + d_0.
+        \]
+  \item Recall that $n$ is divisible by~3 when
+        $n \bmod 3 = 0$.
+  \item The following properties of modular arithmetic may
+        be useful:
+        \begin{align*}
+          (n + m) \bmod q &= \bigl((n \bmod q) +
+                             (m \bmod q)\bigr) \bmod q, \\
+          (n \cdot m) \bmod q &= \bigl((n \bmod q) \cdot
+                             (m \bmod q)\bigr) \bmod q.
+        \end{align*}
+  \item Observe that $10 \bmod 3 = 1$, so
+        $10^j \bmod 3 = 1$ for every $j \ge 0$.
+\end{enumerate}
+
+\end{document}

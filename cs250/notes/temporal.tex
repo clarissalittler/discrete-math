@@ -1,0 +1,156 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  mathescape=true
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Intermezzo: Other Logics, Other Worlds}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+Propositional logic and first-order logic are powerful, but they are not the only games in town. Over the past century, logicians and computer scientists have invented dozens of specialized logics, each designed to capture a particular kind of reasoning. In this intermezzo we'll take a quick tour of the zoo and then spend some time with one especially useful species: \emph{temporal logic}, the logic of time.
+
+The punchline is this: you already know how to learn a new logic. The methodology is always the same---define a syntax (usually with BNF), define a semantics (what the formulas mean), and then prove things using inference rules. You've done this for propositional logic in Modules 2--3, for first-order logic in Module 4, and for Hoare logic in Module 7. Every logic in this chapter follows exactly the same pattern. The toolkit transfers; only the domain changes.
+
+\section{The zoo of logics}
+
+Here is a very incomplete field guide to some logics you might encounter in the wild.
+
+\begin{itemize}
+  \item \textbf{Modal logic}\index{modal logic} adds two operators to propositional logic: $\Box p$ (``necessarily $p$'') and $\Diamond p$ (``possibly $p$''). The idea is that there are many possible ``worlds,'' and $\Box p$ means $p$ is true in \emph{all} of them, while $\Diamond p$ means $p$ is true in \emph{at least one}. If that sounds like $\forall$ and $\exists$ wearing different hats, you're not wrong---modal logic can be seen as a fragment of first-order logic where the quantification is over possible worlds rather than over elements of a set.
+
+  \item \textbf{Temporal logic}\index{temporal logic} is modal logic where the ``possible worlds'' are moments in time. Instead of ``necessarily'' and ``possibly'' you get ``always'' and ``eventually.'' We'll spend most of this chapter here.
+
+  \item \textbf{Linear logic}\index{linear logic} is a logic of \emph{resources}. In classical logic, if you know $p$ you can use that fact as many times as you want---it's free to duplicate. In linear logic, each fact is a resource that gets \emph{consumed} when you use it. If you have one dollar and you spend it, you don't have a dollar anymore. This sounds exotic, but it turns out to be exactly the right logic for reasoning about things like memory management, concurrent access to shared data, and protocol compliance. It's also deeply connected to quantum computing, where the no-cloning theorem says you literally can't duplicate a quantum state.
+
+  \item \textbf{Hoare logic}\index{Hoare logic} (Module 7) is a logic of programs. Its ``propositions'' are Hoare triples $\{P\}C\{Q\}$, its ``connectives'' are the programming constructs (sequencing, conditionals, while loops), and its ``inference rules'' are the axioms we learned: assignment, sequencing, the while rule.
+\end{itemize}
+
+The point isn't to learn all of these right now. The point is that you've already internalized the \emph{methodology}. Propositional logic had a BNF for its syntax (Module 2), truth tables and valuations for its semantics (Module 2), and inference rules for its proof system (Module 3). Every logic on this list has the same three components. Once you see the pattern, picking up a new logic is like picking up a new programming language when you already know how to program---the surface syntax changes, but the deep structure is familiar.
+
+\section{Temporal logic---logic over time}
+
+Let's zoom in on temporal logic, because it has a beautiful connection to the material we've already covered.
+
+In Module 7 we used Hoare logic to reason about programs. One of the key concepts there was the \emph{loop invariant}: a property $P$ that holds before the loop body executes and still holds afterward. The while rule said that if $P$ is preserved by each iteration, then $P$ holds when the loop terminates.
+
+Temporal logic takes this idea and runs with it. Instead of reasoning about a single loop, temporal logic lets you make statements about \emph{entire execution traces}---infinite sequences of states that a system passes through over time. Think of a web server that starts up, handles requests, maybe crashes, restarts, handles more requests, and so on forever. Temporal logic is the language for expressing properties of such systems.
+
+The basic temporal operators are:
+
+\begin{definition}[Temporal operators]
+Let $p$ be a proposition about the current state of a system.
+\begin{itemize}
+  \item $\Box p$ (read ``always $p$''): $p$ holds at every point in time from now on. This is the temporal version of ``necessarily.'' Think of it as an invariant that never, ever breaks---not just through one loop iteration, but forever.
+  \item $\Diamond p$ (read ``eventually $p$''): $p$ holds at some point in the future (possibly right now). Something good is going to happen---you just might have to wait.
+  \item $\bigcirc p$ (read ``next $p$''): $p$ holds in the very next state. If we think of time as a sequence of discrete steps (like clock ticks, or loop iterations, or program states), this says ``one step from now, $p$ is true.''
+\end{itemize}
+\end{definition}
+
+These operators can be combined with all the usual propositional connectives ($\wedge$, $\vee$, $\to$, $\lnot$), and that's where things get expressive.
+
+Notice how $\Box$ and $\Diamond$ are related: $\Diamond p \equiv \lnot \Box \lnot p$. ``Eventually $p$'' means ``it's not the case that $p$ is always false.'' And $\Box p \equiv \lnot \Diamond \lnot p$---``always $p$'' means ``$p$ never fails.'' This is exactly the duality between $\forall$ and $\exists$ from Module 4, just wearing a temporal costume.
+
+\medskip
+\noindent\textbf{Connection to Hoare logic.} Remember the while rule from Module 7?
+\begin{lstlisting}
+assumes: {P $\wedge$ B}c{P}
+shows: {P}while B do c{P $\wedge$ $\lnot$B}
+\end{lstlisting}
+The invariant $P$ is preserved by every iteration of the loop body. In temporal logic terms, the while rule is establishing something like $\Box P$ \emph{during the loop}: at every step of execution, the invariant holds. When we prove a loop invariant, we're really doing temporal reasoning in disguise---we're showing that a property is stable across an entire sequence of state transitions.
+
+The difference is that Hoare logic reasons about programs that terminate (or at least, individual program fragments), while temporal logic reasons about systems that might run forever. A server, an operating system, a network protocol---these aren't programs that finish and return a value. They're ongoing processes, and temporal logic is built for them.
+
+\section{Expressing real properties}
+
+The real power of temporal logic shows up when you use it to express properties that practitioners actually care about. Here are some classic examples.
+
+\medskip
+\noindent\textbf{``The server eventually responds to every request.''}
+\[
+\Box\,(\mathit{request} \to \Diamond\, \mathit{response})
+\]
+Read it carefully: \emph{always} (at every point in time), if a request is made, then \emph{eventually} a response will follow. The outer $\Box$ says this must hold at every moment, not just right now. The inner $\Diamond$ says the response doesn't have to be immediate---it just has to happen at some point in the future. This is called a \emph{liveness}\index{liveness} property: something good eventually happens.
+
+\medskip
+\noindent\textbf{``A lock is never held by two threads simultaneously.''}
+\[
+\Box\, \lnot\, (\mathit{held}_1 \wedge \mathit{held}_2)
+\]
+At every point in time, it is not the case that both thread 1 and thread 2 hold the lock. This is a \emph{safety}\index{safety property} property: something bad never happens.
+
+\medskip
+\noindent\textbf{``After every login, the user is eventually logged out.''}
+\[
+\Box\,(\mathit{login} \to \Diamond\, \mathit{logout})
+\]
+Same shape as the server example. Every login is eventually followed by a logout. No session lasts forever.
+
+\medskip
+\noindent\textbf{``The system never deadlocks.''}
+\[
+\Box\, \Diamond\, \mathit{progress}
+\]
+Always, eventually, progress is made. The system might pause temporarily, but it can't get stuck forever.
+
+\medskip
+These are exactly the kinds of properties that \emph{model checkers}\index{model checking} verify automatically. Model checking is one of the most successful applications of formal methods in industry. Amazon Web Services uses TLA+ (a temporal logic) to verify the correctness of their distributed systems. Intel uses model checking to verify chip designs before fabrication---finding a bug after you've manufactured a million processors is somewhat more expensive than finding it in a formula. Microsoft has used temporal logic tools to verify device drivers in the Windows kernel. The 2007 Turing Award went to Clarke, Emerson, and Sifakis for their work on model checking.
+
+The reason model checking works so well is precisely the methodology you've learned in this course: write down a formal specification (in temporal logic), build a formal model of the system, and then let a computer check that the model satisfies the specification. Syntax, semantics, proof---the same three steps, applied at industrial scale.
+
+\section{The pattern}
+
+Let's make the pattern explicit by writing down the BNF for (a simple version of) temporal logic. If $p$ ranges over atomic propositions (basic facts about the current state), then the formulas of linear temporal logic (LTL)\index{LTL} are:
+
+\begin{lstlisting}
+$\varphi$ := $p$ | $\lnot \varphi$ | $\varphi \wedge \varphi$ | $\varphi \vee \varphi$ | $\varphi \to \varphi$ | $\Box \varphi$ | $\Diamond \varphi$ | $\bigcirc \varphi$
+\end{lstlisting}
+
+Look familiar? It's the BNF from Module 2, with three new operators bolted on. The propositional connectives are still there---we've just extended the language.
+
+The semantics is defined over infinite sequences of states, sometimes called \emph{Kripke structures}\index{Kripke structure} (after the philosopher and logician Saul Kripke). A Kripke structure is a sequence $s_0, s_1, s_2, \ldots$ where each $s_i$ is a state---an assignment of truth values to the atomic propositions. Given a sequence and a position $i$, we define when a formula holds:
+\begin{itemize}
+  \item $s_i \models p$ iff $p$ is true in state $s_i$
+  \item $s_i \models \lnot \varphi$ iff $s_i \not\models \varphi$
+  \item $s_i \models \varphi \wedge \psi$ iff $s_i \models \varphi$ and $s_i \models \psi$
+  \item $s_i \models \Box \varphi$ iff $s_j \models \varphi$ for all $j \geq i$
+  \item $s_i \models \Diamond \varphi$ iff $s_j \models \varphi$ for some $j \geq i$
+  \item $s_i \models \bigcirc \varphi$ iff $s_{i+1} \models \varphi$
+\end{itemize}
+
+And there are proof rules for temporal logic, just as there are for propositional and first-order logic. For instance, $\Box$ distributes over $\wedge$ (if something is always true and something else is always true, then their conjunction is always true), and from $\Box \varphi$ you can conclude $\varphi$ (if something is always true, it's true right now). These rules can be presented as Gentzen-style inference trees, exactly as in the trees intermezzo.
+
+Same methodology. Same pattern. New domain. The toolkit from Modules 2--3 transfers directly---you just need to learn the new operators and their semantics. If you can read a BNF, define a semantics, and apply inference rules, you can learn any logic.
+
+\section{Exercises}
+
+\bigskip
+\textbf{Exercise 1.}\label{ex:temp:1} Express the following properties in temporal logic (using $\Box$, $\Diamond$, $\bigcirc$, and the usual propositional connectives):
+\begin{enumerate}[label=(\alph*)]
+  \item ``The program eventually terminates.'' (Let $\mathit{halted}$ be an atomic proposition meaning ``the program has halted.'')
+  \item ``The counter is always non-negative.'' (Let $\mathit{counter} \geq 0$ be an atomic proposition.)
+  \item ``Every request is eventually followed by a response.'' (Let $\mathit{request}$ and $\mathit{response}$ be atomic propositions.)
+\end{enumerate}
+
+\end{document}

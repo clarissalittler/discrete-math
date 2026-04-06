@@ -13,7 +13,8 @@
   basicstyle=\ttfamily\small,
   frame=single,
   breaklines=true,
-  columns=fullflexible
+  columns=fullflexible,
+  mathescape=true
 }
 
 \theoremstyle{definition}
@@ -29,29 +30,34 @@
 \maketitle
 
 \section{Logical formulas, formalized}
-With all our mathematical preliminaries out of the way, we're ready to start dealing with logic more formally. Now, early attempts at talking about logic were focused on rhetoric and how to make arguments in human language. They were still about reasoning but didn't treat it in the \emph{symbolic} way we do in modern times, where we turn logic into formulas and equations and symbols.
+With all our mathematical preliminaries out of the way, we're ready to start dealing with logic more formally. Early attempts at talking about logic were focused on rhetoric and how to make arguments in human language. They were still about reasoning but didn't treat it in the \emph{symbolic} way we do in modern times, where we turn logic into formulas and equations and symbols.
 
-In this class, I'm not only going to take a symbolic approach to logic like Epp but I'm going to take a very ``computer sciencey'' approach, discussing logic kind of like it's a programming language.
+In this class, I'm not only going to take a symbolic approach to logic like Epp but I'm going to take a very ``computer sciencey'' approach, discussing logic as though it were a programming language.
 
-The general pattern of introducing logics---plural, yes, because there are many possible logics the same way there are many possible programming languages, each serving its own purpose---is that you define it as having a \emph{syntax} and a \emph{semantics}.
+There are many possible logics --- yes, plural, because there are many possible logics just as there are many possible programming languages, each serving its own purpose. The standard way to introduce any logic is to define its \emph{syntax} and its \emph{semantics}.
 
-The \emph{syntax} of the logic is a lot like when we talk about the syntax of any programming language: what combinations of symbols make a ``valid'' program/formula. The syntax tells us how we're allowed to build formulas in our logic.
+The \emph{syntax}\index{syntax} of the logic is a lot like when we talk about the syntax of any programming language: what combinations of symbols make a ``valid'' program/formula. The syntax tells us how we're allowed to build formulas in our logic.
 
-The \emph{semantics} of a logic tells us what the formulas of the logic \textbf{mean}. In ordinary programming languages the semantics are typically implemented as, well, the compiler or interpreter of the language. It defines what a \emph{syntactically valid} program actually does when you run it. For (most) logics, the semantics tells us how to take a formula and turn it into a mathematical function that takes in arguments and returns either ``true'' or ``false''.
+The \emph{semantics}\index{semantics} of a logic tells us what the formulas of the logic \textbf{mean}. In ordinary programming languages, the compiler or interpreter implements the semantics: it defines what a syntactically valid program does when executed. For (most) logics, the semantics tells us how to take a formula and turn it into a mathematical function that takes in arguments and returns either ``true'' or ``false''.
 
-Now what does true and false mean here? That's a complicated question, something that could be an entire PhD's worth of study to investigate, \emph{buuut} ultimately we can define ``true'' as ``reflects reality'' and ``false'' as ``contradicts reality''. For most of this class, you can think of ``true'' and ``false'' a lot like the boolean types you find in every programming language.
+What do true and false mean here? That question could fill a PhD thesis, but for our purposes: we can define ``true'' as ``reflects reality'' and ``false'' as ``contradicts reality''. For most of this class, you can think of ``true'' and ``false'' a lot like the boolean types you find in every programming language.
 
-Okay so the first logic we're going to deal with is really simple. It only has booleans as data, variables, and a few logical connectives: and ($\wedge$), or ($\vee$), not ($\sim$), and implication ($\to$). The idea of this logic is that it encompasses basic operations for how to connect statements about the world and their relationship to each other. It's all verbs, no nouns, but it still helps give some intuition of how reasoning works.
+The first logic we're going to deal with is really simple. It only has booleans as data, variables, and a few logical connectives: and ($\wedge$), or ($\vee$), not ($\sim$), and implication ($\to$). (We'll use $\lnot$ for negation in our mathematical notation; some textbooks, including Epp, write $\sim$ instead. They mean the same thing.) The idea of this logic is that it encompasses basic operations for how to connect statements about the world and their relationship to each other. It's all verbs, no nouns, but it still helps give some intuition of how reasoning works.
 
-We're going to express this using something called Backus-Naur form (\url{https://en.wikipedia.org/wiki/Backus-Naur_form}) which is a really convenient way to describe grammars of simple languages, like this one, and something you'll see more of as you study computer science.
+We're going to express this using something called Backus-Naur form\index{BNF (Backus-Naur form)} (\url{https://en.wikipedia.org/wiki/Backus-Naur_form}) which is a standard notation for describing grammars of formal languages, like this one, and something you'll see more of as you study computer science.
 
+\begin{definition}[Propositional Logic Syntax]
+The syntax of propositional logic\index{propositional logic} is given by the following BNF grammar:
 \begin{lstlisting}
 L := T | F | L ^ L | L v L | ~L | L -> L | x
 \end{lstlisting}
+\end{definition}
 
 BNF is a way to describe how to build things recursively. It tells us, in this case, that to build an ``L'' you have a bunch of possibilities separated by the | symbol. You can follow this recursively, continuing to substitute in things for any L symbols that appear until you only have base cases (here: variables, T, and F).
 
-Here's some examples to help clarify how this is used. This grammar tells us that
+When a formula is ambiguous---like \texttt{p \^{} q v r}, which could be read as $(p \wedge q) \vee r$ or $p \wedge (q \vee r)$---we follow the standard precedence: $\lnot$ binds tightest, then $\wedge$, then $\vee$, then $\to$. We use parentheses to override precedence when needed. This is similar to how \texttt{*} binds tighter than \texttt{+} in arithmetic.
+
+Here are some examples to help clarify how this is used. This grammar tells us that
 
 \begin{itemize}
   \item T is a valid formula
@@ -62,23 +68,23 @@ Here's some examples to help clarify how this is used. This grammar tells us tha
   \item heck is a valid formula, a single variable named heck
 \end{itemize}
 
-Okay, that's the syntax. Now we need to define the \emph{semantics} of this logic. We've already named the pieces, so let's give an informal semantics before presenting the formal one:
+That's the syntax. We need to define the \emph{semantics} of this logic. We've already named the pieces, so let's give an informal semantics before presenting the formal one:
 
 \begin{itemize}
   \item T is just T, the boolean value for true
   \item F is just F, the boolean value for false
-  \item $p \wedge q$ is \emph{and} and is true when p and q are both true
-  \item $p \vee q$ is \emph{or} and is true when \textbf{either} p or q are true, but \textbf{both} can be true
-  \item $\lnot p$ is \emph{not} and is true when p isn't
-  \item $p \to q$ is \emph{implication} and captures the idea that p being true forces q to be true. Specifically, it's false only when p is true and q is false
+  \item $p \wedge q$ is \emph{and}\index{conjunction@$\wedge$ (conjunction)} and is true when p and q are both true
+  \item $p \vee q$ is \emph{or}\index{disjunction@$\vee$ (disjunction)} and is true when \textbf{either} p or q are true, but \textbf{both} can be true
+  \item $\lnot p$ is \emph{not}\index{negation@$\lnot$ (negation)} and is true when p isn't
+  \item $p \to q$ is \emph{implication}\index{implication@$\to$ (implication)} and captures the idea that p being true forces q to be true. Specifically, it's false only when p is true and q is false
   \item variables are true when you plug in a true value into them
 \end{itemize}
 
-Okay so that's the informal semantics, now what's the \emph{formal} semantics? We're going to explain it in terms of \textbf{truth tables}.
+That's the informal semantics. What's the \emph{formal} semantics? We're going to explain it in terms of \textbf{truth tables}\index{truth table}.
 
 A truth table is a way of describing the \emph{graph} of the function that a formula represents. Since all the arguments to these functions are just booleans and can be enumerated easily, the graph can be represented as a table.
 
-Let's start with variables
+Let's start with variables.
 
 \begin{center}
 \begin{tabular}{cc}
@@ -91,7 +97,7 @@ F & F \\
 \end{tabular}
 \end{center}
 
-Okay, so a variable is just an identity function, a ``diagonal'' function as we've called it before.
+A variable is just an identity function---it returns its input unchanged.
 
 From here, we can build up the meaning of any formula piecemeal and describe the meaning of connectives in terms of ``p'' and ``q'' as subformulas, so when we write something like this:
 
@@ -110,7 +116,7 @@ F & F & F \\
 
 what we're saying is that if we've already evaluated the meaning of ``p'' and ``q'' we can plug in their values and get the meaning of when they're connected by an \emph{and}. So we can read this table off and it matches the informal meaning we described above: $p \wedge q$ is true exactly when p is true and q is true and false otherwise.
 
-Now we have $p \vee q$
+Next, $p \vee q$:
 
 \begin{center}
 \begin{tabular}{cc|c}
@@ -127,7 +133,7 @@ F & F & F \\
 
 Which tells us that $p \vee q$ is true when either p or q is true (including both of them).
 
-Now we can do \emph{not}
+Next, negation:
 
 \begin{center}
 \begin{tabular}{c|c}
@@ -140,7 +146,11 @@ F & T \\
 \end{tabular}
 \end{center}
 
-And now we're getting to the weird one which is implication. So the intuition is that we want $p \to q$ to be true if p being true makes q be true, in other words I can take the knowledge that p is true and then conclude that q is true. (Sidenote: there's a sense, that we might get into later in this course, that implication really is a function that takes in a proof that p is true and turns it \emph{into} a proof that q is true, so just keep that idea in mind). Now \emph{do I care} if q is true without p being true? In our first choice of logic, the answer is ``no'', and in fact we're going to make the decision that $F \to p$ is true no matter what p is, because it's basically irrelevant to what we want implication to mean. This has some odd implications! Namely, that from a false premise you can conclude anything! We'll dig into that more as we go.
+Now we get to the counterintuitive one: implication. The intuition is that we want $p \to q$ to be true if p being true makes q be true---in other words, I can take the knowledge that p is true and then conclude that q is true.
+
+(Sidenote: there's a sense, that we might get into later in this course, that implication really is a function that takes in a proof that p is true and turns it \emph{into} a proof that q is true. Keep that idea in mind.)
+
+\emph{Do I care} if q is true without p being true? In our first choice of logic, the answer is ``no''. We're going to make the decision that $F \to p$ is true no matter what p is, because the case where the premise is false is irrelevant to what we want implication to capture. This has some odd implications! From a false premise you can conclude anything. We'll dig into that more as we go.
 
 For now, the truth table:
 
@@ -157,7 +167,7 @@ F & F & T \\
 \end{tabular}
 \end{center}
 
-Okay and now that we have these truth tables let's show how to combine them together in an example:
+With these truth tables in hand, let's show how to combine them together in an example:
 
 \begin{center}
 \begin{tabular}{ccc|l}
@@ -178,12 +188,17 @@ F & F & F & $F \to F \Longrightarrow T$ \\
 
 Whew! That was a lot, but hopefully you can see that, in principle, you could use truth tables to calculate the meaning of any formula as a function.
 
-In the next section we're going to talk about some of the consequences of this semantics and what it means for us.
+\bigskip
+\textbf{Exercise 1.}\label{ex:m2:1} Build the truth table for $(p \to q) \wedge (q \to p)$. This combination will come up later when we define the biconditional ($\leftrightarrow$)---you'll see why.
 
 \section{Tautologies and equivalences}
-So having talked about our very first logic, which is usually called ``propositional logic'', we can start discussing some of the implications and structure in this logic.
+Having talked about our very first logic, which is usually called ``propositional logic'', we can start discussing some of its implications and structure.
 
-First, let's talk about \emph{tautologies}. These are the formulas whose meaning is \textbf{always} true, no matter what values you put into all the variables. For example, for any formula p we have that $p \vee \lnot p$ is a tautology! Let's check the truth table:
+\begin{definition}[Tautology]
+A \emph{tautology}\index{tautology} is a formula whose meaning is \textbf{always} true, no matter what values you put into all the variables.
+\end{definition}
+
+For example, for any formula p we have that $p \vee \lnot p$ is a tautology! Let's check the truth table:
 
 \begin{center}
 \begin{tabular}{c|l}
@@ -196,19 +211,50 @@ F & $F \vee T = T$ \\
 \end{tabular}
 \end{center}
 
-So no matter what value the sub-formula p takes, you get true.
+No matter what value the sub-formula p takes, you get true.
 
-Since propositional logic is a really simple logic, one that only has booleans as data, the tautologies aren't \emph{super} interesting but they tell us some interesting things about valid reasoning. The above tautology tells us that for any formula---for any statement about the world---either the claim is true or it is false.
+\begin{definition}[Contradiction]
+A \emph{contradiction}\index{contradiction} is a formula whose meaning is \textbf{always} false, no matter what values you put into the variables.
+\end{definition}
 
-Okay, so maybe that doesn't seem profound but this is called ``the law of the excluded middle'' and is actually pretty controversial in the history of logic! In \emph{this} propositional logic and \emph{this} notion of ``truth'', however, we can always conclude that if something isn't false it must be true.
+For example, $p \wedge \lnot p$ is a contradiction---there's no assignment that makes it true. Contradictions are the dual of tautologies and will play a key role when we discuss proof by contradiction in the next module.
 
-We'll come back to tautologies a bit later when we want to talk about reasoning and proof a little more explicitly, but for now just keep in mind the idea that they provide us with general strategies for what valid reasoning should kinda look like.
+Since propositional logic is a really simple logic, one that only has booleans as data, the tautologies of propositional logic aren't individually profound, but they tell us important things about valid reasoning. The above tautology tells us that for any formula---for any statement about the world---either the claim is true or it is false.
 
-Another thing we can do with truth tables is calculate \emph{equivalences}, that is we can figure out when formulas are equivalent to each other. Since we're defining the meaning of a formula \textbf{as its truth table}, we can show that formulas are \emph{logically} equivalent exactly when they have the same truth table.
+Maybe that doesn't seem profound, but this is called ``the law of the excluded middle'' and is actually pretty controversial in the history of logic! In \emph{this} propositional logic and \emph{this} notion of ``truth'', however, we can always conclude that if something isn't false it must be true.
 
-So, for example, we're going to prove two formulas that end up being useful in some optimizations: de Morgan's laws! (\url{https://en.wikipedia.org/wiki/De_Morgan%27s_laws})
+Why controversial? There's a tradition in logic---called \emph{constructive} or \emph{intuitionistic} logic---that refuses to accept $p \vee \lnot p$ as an axiom. The idea is that to prove ``$A$ or $B$'' you should have to actually show \emph{which one} is true, not just argue that one of them must be. If you think about it from a programming perspective, this makes a lot of sense: a constructive proof of ``$A$ or $B$'' is like a program that actually \emph{computes} which case holds and hands you the evidence. Classical logic, the kind we're using, lets you say ``well, one of them \emph{has} to be true'' without ever telling you which---you get an existence result but not an algorithm. That connection between proofs and programs turns out to be really deep and beautiful, and it's one of the reasons logic matters so much to computer science. In this course we'll stick with classical logic (with excluded middle) because that's what Epp uses and what most intro courses assume, but fair warning: your instructor has a constructive bias, and it will probably peek through from time to time.
 
-So let's start with the law that $\lnot(p \wedge q) = (\lnot p) \vee (\lnot q)$. We'll calculate both of their truth tables and compare!
+We'll come back to tautologies a bit later when we want to talk about reasoning and proof a little more explicitly, but for now just keep in mind the idea that they provide templates for what valid reasoning looks like.
+
+Another thing we can do with truth tables is calculate \emph{equivalences}---we can figure out when formulas are equivalent to each other.
+
+\begin{definition}[Logical Equivalence]
+Two formulas are \emph{logically equivalent}\index{logical equivalence} exactly when they have the same truth table.
+\end{definition}
+
+Since we're defining the meaning of a formula \textbf{as its truth table}, this is a natural notion of equivalence.
+
+We can also express equivalence \emph{inside} the logic by defining a shorthand: $p \leftrightarrow q$ means $(p \to q) \wedge (q \to p)$. This is called the \emph{biconditional}\index{biconditional@$\leftrightarrow$ (biconditional)} and reads ``if and only if.'' It is \textbf{not} a primitive connective in our grammar---it's just an abbreviation for a conjunction of two implications. You can compute its truth table by expanding the definition:
+
+\begin{center}
+\begin{tabular}{cc|c}
+\toprule
+$p$ & $q$ & $p \leftrightarrow q \;\;(\text{i.e.}\; (p \to q) \wedge (q \to p))$ \\
+\midrule
+T & T & T \\
+T & F & F \\
+F & T & F \\
+F & F & T \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+So the biconditional is true exactly when $p$ and $q$ have the same truth value---you can think of it like an equality test on booleans. Saying ``if and only if'' is the same as saying the implication goes both ways.
+
+As an example, we're going to prove two formulas that end up being useful in some optimizations: de Morgan's laws\index{De Morgan's laws}! (\url{https://en.wikipedia.org/wiki/De_Morgan%27s_laws})
+
+Let's start with the law that $\lnot(p \wedge q) \equiv (\lnot p) \vee (\lnot q)$. We'll calculate both of their truth tables and compare!
 
 \begin{center}
 \begin{tabular}{cc|c}
@@ -240,13 +286,14 @@ F & F & T \\
 
 These are clearly the same!
 
-Try proving the other law $\lnot(p \vee q) = (\lnot p) \wedge (\lnot q)$ yourself!
+\bigskip
+\textbf{Exercise 2.}\label{ex:m2:2} Prove the second De Morgan's law $\lnot(p \vee q) \equiv (\lnot p) \wedge (\lnot q)$ by computing both truth tables.
 
-De Morgan's laws, basically, tell us how the operation $\lnot$ distributes over the binary operations $\wedge$ and $\vee$.
+De Morgan's laws tell us how negation interacts with $\wedge$ and $\vee$: pushing $\lnot$ inside a conjunction or disjunction swaps one connective for the other.
 
-Now what else can we do with these kind of equivalences? This is where we introduce the concept of ``functional completeness'': how few of operations do you need to recreate all the logical operations on booleans?
+This raises a natural question: how few operations do you actually need? This is where we introduce the concept of ``functional completeness''\index{functional completeness}: how few operations do you need to recreate all the logical operations on booleans?
 
-So, for example, we have the operation $p \to q$. To recall, this operation has the following truth table:
+For example, we have the operation $p \to q$. To recall, this operation has the following truth table:
 
 \begin{center}
 \begin{tabular}{cc|c}
@@ -276,18 +323,17 @@ F & F & $T \vee F = T$ \\
 \end{tabular}
 \end{center}
 
-Wouldja look at that! So, technically, we don't even \textbf{need} implication in this logic (and I cannot stress enough \emph{this logic} because this relationship doesn't hold in a lot of other logics) if we have $\lnot$ and $\vee$.
+The truth tables match! Technically, we don't even need implication in this particular logic---though this equivalence is specific to classical propositional logic and does not hold in general if we have $\lnot$ and $\vee$.
 
 This means that just having $\vee$, $\wedge$, and $\lnot$ is ``functionally complete'' because it can describe all the operations of this logic.
 
-This observation leads right into the proofs for this week where you need to show just how small you can go in terms of functional completeness!
+\bigskip
+\textbf{Exercise 3.}\label{ex:m2:3} Show that XOR ($p \oplus q$) can be expressed using only $\wedge$, $\vee$, and $\lnot$. Hint: compare truth tables.
 
 \section{Addendum: nand, xor, and how many binary operations are there?}
 There are some additional operations that you \emph{can} define that we haven't defined yet.
 
-The first of these we'll call xor (sometimes shown with the $\oplus$ symbol), the \emph{exclusive} or and it has the following truth table:
-
-xor
+The first of these we'll call xor\index{XOR} (sometimes shown with the $\oplus$ symbol), the \emph{exclusive} or and it has the following truth table:
 
 \begin{center}
 \begin{tabular}{cc|c}
@@ -304,9 +350,7 @@ F & F & F \\
 
 This is true if \emph{either} p or q is true but not when \emph{both} are true.
 
-The second of these is \emph{nand}, which is just ``not-and'' and it's rather important to the design of circuits:
-
-nand
+The second of these is \emph{nand}\index{NAND}, which is just ``not-and'' and it's rather important to the design of circuits:
 
 \begin{center}
 \begin{tabular}{cc|c}
@@ -321,14 +365,14 @@ F & F & T \\
 \end{tabular}
 \end{center}
 
-Now an obvious question, and one that comes up in the homework of the accompanying class to these notes, is \emph{how many of these operations are there and what are they?}
+An obvious question, and one that comes up in the homework of the accompanying class to these notes, is \emph{how many of these operations are there and what are they?}
 
-So we can approach this \emph{exhaustively}. A binary operation takes two (2) arguments, each of which is a boolean and can take two values. That's where we get the form of the truth tables above!
+We can approach this \emph{exhaustively}. A binary operation takes two (2) arguments, each of which is a boolean and can take two values. That's where we get the form of the truth tables above!
 
 \begin{center}
 \begin{tabular}{cc|c}
 \toprule
-$p$ & $q$ & ??? \\
+$p$ & $q$ & $f(p,q)$ \\
 \midrule
 T & T & ? \\
 T & F & ? \\
@@ -338,9 +382,9 @@ F & F & ? \\
 \end{tabular}
 \end{center}
 
-So how many different binary operations are even definable? That's equivalent to asking how many different truth tables are possible. There's a distinct truth table for every choice of how we fill in those ?s in the table above. Well, okay, we know how to do this! Each of those four slots involves making a choice between one of two things: T and F. So the total number of choices must be $2 \times 2 \times 2 \times 2 = 2^4$ which is 16.
+How many different binary operations are even definable? That's equivalent to asking how many different truth tables are possible. There's a distinct truth table for every choice of how we fill in those four output entries in the table above. Well, okay, we know how to do this! Each of those four slots involves making a choice between one of two things: T and F. So the total number of choices must be $2 \times 2 \times 2 \times 2 = 2^4$ which is 16.
 
-So to prove \emph{functional completeness} of a set of boolean operators, you need to show that for any possible truth table you can find a way to replicate it using those operators. So let's do a concrete example:
+To prove \emph{functional completeness} of a set of boolean operators, you need to show that for any possible truth table you can find a way to replicate it using those operators. Let's do a concrete example:
 
 Here's our truth table for implication
 
@@ -357,7 +401,7 @@ F & F & T \\
 \end{tabular}
 \end{center}
 
-Now let's show that with just or, and, \& not we can replicate the implication operator:
+Now let's show that with just or, and, and not we can replicate the implication operator:
 
 \begin{center}
 \begin{tabular}{cc|c}
@@ -372,6 +416,9 @@ F & F & T \\
 \end{tabular}
 \end{center}
 
-So solving these little puzzles is the point of the homework this week.
+Solving these little puzzles is the point of the homework this week.
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m2:4} How many \emph{unary} boolean operations are there? List them all.
 
 \end{document}

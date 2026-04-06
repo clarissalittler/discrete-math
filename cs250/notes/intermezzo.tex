@@ -13,7 +13,8 @@
   basicstyle=\ttfamily\small,
   frame=single,
   breaklines=true,
-  columns=fullflexible
+  columns=fullflexible,
+  mathescape=true
 }
 
 \theoremstyle{definition}
@@ -28,7 +29,7 @@
 \begin{document}
 \maketitle
 
-In order to help explain more about how natural induction works, let's tackle some proofs like those in The Natural Number Game except we'll do it \emph{informally}.
+To illustrate natural induction, let's work through some proofs similar to those in The Natural Number Game, but informally.
 
 For the purposes of these proofs we'll assume that the definition of addition by recursion on the second argument is
 \begin{align*}
@@ -36,8 +37,8 @@ n + 0 &= n \\
 n + (\text{succ}\; m) &= \text{succ}\;(n + m)
 \end{align*}
 
-\section{Proof that $0 + m = m$}
-We have automatically from the definition of addition by recursion that $n + 0 = n$, but what about the other way?
+\section{Proof that 0 + m = m}
+We have automatically from the definition of addition by recursion that $n + 0 = n$, but what about the other way? You might wonder why this needs a proof at all---isn't it obvious? The subtlety is that our definition of addition recurses on the \emph{second} argument. The equation $n + 0 = n$ is the base case of that recursion, so it holds by definition. But $0 + m = m$ puts zero in the \emph{first} argument, which is not the recursive position. The definition doesn't directly tell us what happens there, so we need induction.
 
 \textbf{Theorem:} $\forall m.\; 0 + m = m$
 
@@ -62,7 +63,9 @@ but
 
 QED
 
-\section{Proof that $(\text{succ}\; n) + m = \text{succ}\;(n + m)$}
+\section{Proof that succ n + m = succ (n + m)}
+
+\textbf{Theorem:} $\forall n\, m.\; \text{succ}\; n + m = \text{succ}\;(n + m)$
 
 \textbf{Proof} by induction on $m$.
 
@@ -93,7 +96,9 @@ so we end up with
 \]
 which is true by reflexivity.
 
-\section{Proof that addition is associative}
+QED
+
+\section{Proof that addition is associative}\index{associativity}
 
 \textbf{Theorem:} $\forall n\, m\, r.\; n + (m + r) = (n + m) + r$
 
@@ -101,24 +106,24 @@ which is true by reflexivity.
 
 \textbf{Case $n = 0$:} Need to prove that $\forall m\, r.\; 0 + (m + r) = (0 + m) + r$.
 
-Immediate from the fact that 0 is a unit:
+Both sides reduce to $m + r$ by the left and right identity properties of 0 (proved in Section 1 and given by definition, respectively):
 \[
 m + r = m + r
 \]
 which is true by reflexivity.
 
-\textbf{Case $n = \text{succ}\; n'$:} Need to prove that \textbf{assuming} $\forall m\, r.\; (n' + m) + r = n' + (m + r)$ we can derive $(\text{succ}\; n' + m) + r = \text{succ}\; n' + (m + r)$.
+\textbf{Case $n = \text{succ}\; n'$:} Need to prove that \textbf{assuming} $\forall m\, r.\; n' + (m + r) = (n' + m) + r$ we can derive $\text{succ}\; n' + (m + r) = (\text{succ}\; n' + m) + r$.
 
+\begin{align*}
+\text{succ}\; n' + (m + r) &= \text{succ}\;(n' + (m + r)) && \text{by our theorem above}
+\end{align*}
+
+and the right hand side similarly transforms
 \begin{align*}
 (\text{succ}\; n' + m) + r
   &= \text{succ}\;(n' + m) + r && \text{by our theorem above} \\
   &= \text{succ}\;((n' + m) + r) && \text{by the same theorem} \\
   &= \text{succ}\;(n' + (m + r)) && \text{by the induction hypothesis}
-\end{align*}
-
-and the right hand side similarly transforms
-\begin{align*}
-\text{succ}\; n' + (m + r) &= \text{succ}\;(n' + (m + r))
 \end{align*}
 
 so we have
@@ -127,7 +132,9 @@ so we have
 \]
 which is true by reflexivity.
 
-\section{Proof that addition is commutative}
+QED
+
+\section{Proof that addition is commutative}\index{commutativity}
 
 \textbf{Theorem:} $\forall n\, m.\; n + m = m + n$
 
@@ -158,5 +165,7 @@ and thus
 \text{succ}\;(m + n') = \text{succ}\;(m + n')
 \]
 which is true by reflexivity.
+
+QED
 
 \end{document}

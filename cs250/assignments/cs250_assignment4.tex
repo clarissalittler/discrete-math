@@ -1,0 +1,133 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Weekly Assignment: Predicates \&\\[2pt]
+   Quantified Statements (Epp~3.1, 3.2, \& 3.3)}
+\end{center}
+
+\bigskip
+
+\noindent
+Complete each of the following problems.  Show all work and justify your answers.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 1} (Epp 3.1 \#5\,b,d). \;
+Find the truth set of each predicate.
+
+\begin{enumerate}[label=\textbf{\alph*.},start=2,itemsep=4pt]
+  \item Predicate: $6/d$ is an integer, \quad domain: $\mathbf{Z}^+$
+  \setcounter{enumi}{3}
+  \item Predicate: $1 \le x^2 \le 4$, \quad domain: $\mathbf{Z}$
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 2} (Epp 3.1 \#8). \;
+Let $T$ be the set of all strings of length~3 consisting of 0's
+and~1's.  List all the strings in~$T$ that satisfy the following
+two conditions simultaneously:
+
+\begin{enumerate}[label=\arabic*.,itemsep=4pt]
+  \item For every string $s$ in~$T$, the second character
+        of~$s$ is~1 or the first two characters of~$s$ are the
+        same.
+  \item No string in~$T$ has all three characters the same.
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 3} (Epp 3.1 \#23\,b). \;
+Rewrite the following statement in the two forms
+``$\forall$~\rule{1cm}{0.4pt}~$x$, if \rule{1cm}{0.4pt}
+then \rule{1cm}{0.4pt}'' \;and\;
+``$\forall\, x$, \rule{1cm}{0.4pt}''
+(without an if-then).
+
+\begin{quote}
+  \emph{Every computer science student needs to take data structures.}
+\end{quote}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 4} (Epp 3.2 \#3\,b,d). \;
+Write a formal negation for each of the following statements.
+
+\begin{enumerate}[label=\textbf{\alph*.},start=2,itemsep=4pt]
+  \item $\forall$ computer~$c$, $c$ has a CPU.
+  \setcounter{enumi}{3}
+  \item $\exists$ a band~$b$ such that $b$ has won at least 10
+        Grammy awards.
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 5} (Epp 3.2 \#48). \;
+Use the facts that the negation of a $\forall$ statement is a
+$\exists$ statement and that the negation of an if-then
+statement is an \emph{and} statement to rewrite the following
+without using the word \emph{necessary} or \emph{sufficient}:
+
+\begin{quote}
+  \emph{Being a polynomial is not a sufficient condition for a
+  function to have a real root.}
+\end{quote}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 6} (Epp 3.3 \#16). \;
+Consider the following statement:
+
+\begin{quote}
+  $\exists$ a real number~$u$ such that $\forall$ real number~$v$,
+  $\;uv = v$.
+\end{quote}
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=4pt]
+  \item Rewrite this statement in English without using the
+        symbol~$\forall$ or~$\exists$ or variables, expressing
+        your answer as simply as possible.
+  \item Write a negation for the statement.
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 7} (Proof). \;
+Consider the following statement:
+
+\begin{quote}
+  \emph{The difference of the squares of any two consecutive
+  integers is odd.}
+\end{quote}
+
+\begin{enumerate}[label=\textbf{(\alph*)},itemsep=4pt]
+  \item Translate this statement into mathematical
+        quantifiers.
+  \item Write the negation of your quantified statement from
+        part~(a).
+  \item Determine whether the original statement is true or
+        false.  If it is true, prove it; if it is false, prove its
+        negation.  Your proof may be a simple explanation in
+        plain English, but it should be convincing and complete.
+\end{enumerate}
+
+\medskip\noindent
+\emph{Hint}: If $n$ is any integer, then the two consecutive
+integers are $n$ and $n+1$.  What is $(n+1)^2 - n^2$?
+
+\end{document}

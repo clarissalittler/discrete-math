@@ -1,0 +1,135 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{url}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Weekly Assignment: Sequences \&\\[2pt]
+   Mathematical Induction (Epp~5.1 \& 5.2)}
+\end{center}
+
+\bigskip
+
+\noindent
+Complete each of the following problems.  Show all work and justify your answers.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 1} (Epp 5.1 \#2). \;
+Write the first four terms of the sequence defined by the
+formula:
+\[
+  b_j \;=\; \frac{5-j}{5+j},
+  \quad\text{for every integer } j \ge 1.
+\]
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 2} (Epp 5.1 \#4). \;
+Write the first four terms of the sequence defined by the
+formula:
+\[
+  d_m \;=\; 1 + \left(\frac{1}{2}\right)^{\!m},
+  \quad\text{for every integer } m \ge 0.
+\]
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 3} (Epp 5.1 \#44). \;
+Write the following expression using summation notation:
+\[
+  (1^3 - 1) - (2^3 - 1) + (3^3 - 1) - (4^3 - 1) + (5^3 - 1).
+\]
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 4} (Epp 5.2 \#3). \;
+For each positive integer~$n$, let $P(n)$ be the formula
+\[
+  1^2 + 2^2 + \cdots + n^2 \;=\;
+  \frac{n(n+1)(2n+1)}{6}.
+\]
+
+\begin{enumerate}[label=\textbf{\alph*.},itemsep=4pt]
+  \item Write $P(1)$.  Is $P(1)$ true?
+  \item Write $P(k)$.
+  \item Write $P(k+1)$.
+  \item In a proof by mathematical induction that the formula
+        holds for every integer $n \ge 1$, what must be shown
+        in the inductive step?
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 5} (Epp 5.2 \#4). \;
+For each integer~$n$ with $n \ge 2$, let $P(n)$ be the formula
+\[
+  \sum_{i=1}^{n-1} i(i+1) \;=\;
+  \frac{n(n-1)(n+1)}{3}.
+\]
+
+\begin{enumerate}[label=\textbf{\alph*.},itemsep=4pt]
+  \item Write $P(2)$.  Is $P(2)$ true?
+  \item Write $P(k)$.
+  \item Write $P(k+1)$.
+  \item In a proof by mathematical induction that the formula
+        holds for every integer $n \ge 2$, what must be shown
+        in the inductive step?
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 6} (Proof: Hoare Logic --- proving $1 + 1 = 2$). \;
+Read the notes on Hoare logic at:
+\begin{quote}
+\small
+\url{https://tildegit.org/left_adjoint/class-notes/src/branch/main/cs250/classnotes.org#user-content-headline-52}
+\end{quote}
+
+\noindent
+Recall the two key rules of Hoare logic:
+
+\begin{itemize}[itemsep=4pt]
+  \item \textbf{Assignment axiom.}\;
+        $\{Q[e/x]\} \;\; x := e \;\; \{Q\}$
+
+        To establish postcondition~$Q$ after assigning $e$
+        to~$x$, you need $Q$ with every occurrence
+        of~$x$ replaced by~$e$ to hold beforehand.
+
+  \item \textbf{Sequencing rule.}\;
+        If \;$\{P\}\; S_1 \;\{Q\}$\; and
+        \;$\{Q\}\; S_2 \;\{R\}$,\;
+        then \;$\{P\}\; S_1;\; S_2 \;\{R\}$.
+\end{itemize}
+
+\noindent
+Prove the following Hoare triple:
+\[
+  \{x = 0\} \quad
+  x := x + 1;\;\; x := x + 1
+  \quad \{x = 2\}
+\]
+In other words, prove that $1 + 1 = 2$.
+
+\medskip\noindent
+\emph{Hint}: Work backwards from the postcondition.  Apply
+the assignment axiom to the second assignment to find the
+intermediate assertion, then apply the assignment axiom to
+the first assignment and verify that it matches the
+precondition.  Finally, combine both steps with the
+sequencing rule.
+
+\end{document}

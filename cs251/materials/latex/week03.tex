@@ -1,0 +1,671 @@
+\section{Week 3: Relations and Modular Arithmetic}
+
+\textit{Or: ``When 7 and 2 are secretly the same number''}
+
+\subsection*{Reading}
+Epp \S 8.1--8.5.\\
+\textbf{Category theory companion:} Week 3 (\texttt{category\_theory\_companion.pdf}).
+
+\subsection*{Why Relations?}
+
+So far we've talked about sets and functions. Functions are special---every input goes to exactly one output. But lots of interesting relationships aren't like that. ``Is a sibling of'' isn't a function (you can have multiple siblings). ``Divides'' isn't a function (3 divides many numbers). ``Is the same color as'' isn't a function (many things share a color).
+
+Relations are the general framework for talking about how elements of sets can be connected. They turn out to be everywhere: equivalence relations give us a way to identify things that are ``the same in some sense,'' and partial orders give us hierarchies and dependencies.
+
+And modular arithmetic? That's what happens when you decide that some numbers should be treated as equivalent---and it's the mathematics that makes computer science work, from hash tables to cryptography.
+
+\subsection*{Learning objectives}
+\begin{itemize}
+  \item Describe a relation using sets, matrices, or digraphs.
+  \item Test whether a relation is reflexive, symmetric, or transitive.
+  \item Form equivalence classes and connect them to partitions.
+  \item Compute congruences and modular inverses.
+  \item Apply the extended Euclidean algorithm.
+\end{itemize}
+
+\subsection*{Key definitions and facts}
+
+\subsubsection*{What Is a Relation?}
+
+\begin{definition}[Relation]
+A \textbf{relation} from set $A$ to set $B$ is a subset $R \subseteq A \times B$. We write $aRb$ or $(a,b) \in R$ to indicate that $a$ is related to $b$.
+
+A relation \emph{on} $A$ is a relation from $A$ to itself (a subset of $A \times A$).
+\end{definition}
+
+That's it. A relation is just a set of pairs. No requirements about every element having something related to it, or having at most one thing related. Just: which pairs are ``in'' the relation?
+
+\subsubsection*{Properties of Relations}
+
+Relations can have various nice properties. Here are the important ones:
+
+\begin{definition}[Properties of relations]
+Let $R$ be a relation on set $A$.
+\begin{itemize}
+  \item $R$ is \textbf{reflexive} if $aRa$ for all $a \in A$. (Everything is related to itself.)
+  \item $R$ is \textbf{symmetric} if $aRb$ implies $bRa$ for all $a,b \in A$. (If $a$ relates to $b$, then $b$ relates to $a$.)
+  \item $R$ is \textbf{antisymmetric} if $aRb$ and $bRa$ together imply $a = b$. (The only way to have mutual relation is to be the same element.)
+  \item $R$ is \textbf{transitive} if $aRb$ and $bRc$ imply $aRc$. (Chains collapse.)
+  \item $R$ is \textbf{irreflexive} if $\neg(aRa)$ for all $a \in A$. (Nothing relates to itself.)
+  \item $R$ is \textbf{total} (or \textbf{connex}) if for all $a,b \in A$, either $aRb$ or $bRa$. (Everything is comparable.)
+\end{itemize}
+\end{definition}
+
+\begin{commonmistake}
+\textbf{Symmetric and antisymmetric are not opposites!} A relation can be both (like equality: $a = b$ and $b = a$ implies $a = b$, trivially). A relation can be neither. The identity relation $\{(a,a) : a \in A\}$ is both symmetric and antisymmetric.
+\end{commonmistake}
+
+\subsubsection*{Equivalence Relations}
+
+The combination reflexive + symmetric + transitive is special enough to get its own name.
+
+\begin{definition}[Equivalence relation]
+A relation $R$ on a set $A$ is an \textbf{equivalence relation} if it is reflexive, symmetric, and transitive.
+
+For an equivalence relation $\sim$, the \textbf{equivalence class} of $a$ is:
+\[
+[a] = \{x \in A : x \sim a\}
+\]
+This is the set of all elements equivalent to $a$.
+\end{definition}
+
+Equivalence relations are the mathematical way of saying ``these things should be considered the same.'' Fractions: $1/2$ and $2/4$ are equivalent. Angles: $0^\circ$ and $360^\circ$ are equivalent. Integers mod 5: 7 and 2 are equivalent.
+
+\begin{theorem}[Equivalence classes partition]
+If $\sim$ is an equivalence relation on $A$, then:
+\begin{enumerate}
+  \item Every element belongs to exactly one equivalence class.
+  \item Two equivalence classes are either identical or disjoint (no partial overlap).
+  \item The equivalence classes partition $A$: $A = \bigsqcup_{a \in A} [a]$.
+\end{enumerate}
+\end{theorem}
+
+This is a beautiful result: equivalence relations and partitions are two views of the same thing. Give me an equivalence relation, I'll show you a partition. Give me a partition, I'll define an equivalence relation (two things are equivalent iff they're in the same piece).
+
+\subsubsection*{Quotienting: The Art of Controlled Forgetting}
+
+Here's the deeper idea behind equivalence relations: they let us \emph{forget} certain distinctions while remembering others. The resulting structure---the \textbf{quotient set}---is often exactly what we need.
+
+\begin{definition}[Quotient set]
+If $\sim$ is an equivalence relation on $A$, the \textbf{quotient set} (or \textbf{quotient of $A$ by $\sim$}) is:
+\[
+A / {\sim} = \{[a] : a \in A\}
+\]
+This is the set of equivalence classes. Its elements are not elements of $A$, but \emph{sets} of elements of $A$ that we've decided to treat as identical.
+\end{definition}
+
+The notation $A/{\sim}$ is read ``$A$ mod $\sim$'' or ``$A$ quotiented by $\sim$.'' Think of it as ``$A$, but with equivalent elements collapsed together.''
+
+\begin{example}[Integers mod $n$]
+The prototypical example: $\Z/{\equiv_n}$ (usually written $\Z_n$ or $\Z/n\Z$) is the integers where we've identified numbers that differ by multiples of $n$. The elements are $[0], [1], \ldots, [n-1]$, and arithmetic on these classes is well-defined.
+\end{example}
+
+\begin{example}[Rational numbers]
+Here's one you've used since grade school without thinking about it. A fraction $a/b$ is really an equivalence class of pairs: $\frac{1}{2}$ and $\frac{2}{4}$ are the same rational number because $(1, 2) \sim (2, 4)$ under the relation $(a, b) \sim (c, d) \iff ad = bc$. The rationals $\Q$ are a quotient of $\Z \times (\Z \setminus \{0\})$.
+\end{example}
+
+\begin{definition}[Quotient map]
+The \textbf{quotient map} (or \textbf{canonical projection}) is the function $\pi: A \to A/{\sim}$ defined by $\pi(a) = [a]$. It sends each element to its equivalence class.
+
+This function is always surjective (every class has a representative). It's injective only when $\sim$ is equality (otherwise distinct elements can map to the same class).
+\end{definition}
+
+\begin{keyresult}[The universal property of quotients]
+The quotient map $\pi: A \to A/{\sim}$ has a crucial property: if $f: A \to B$ is any function that ``respects'' the equivalence relation (meaning $a \sim a'$ implies $f(a) = f(a')$), then $f$ factors uniquely through $\pi$:
+\[
+\begin{tikzcd}
+A \arrow[r, "f"] \arrow[d, "\pi"'] & B \\
+A/{\sim} \arrow[ur, dashed, "\bar{f}"'] &
+\end{tikzcd}
+\]
+There exists a unique $\bar{f}: A/{\sim} \to B$ with $f = \bar{f} \circ \pi$. We define $\bar{f}([a]) = f(a)$, and this is well-defined precisely because $f$ respects $\sim$.
+
+In plain English: if a function gives the same output for equivalent inputs, it's really a function on equivalence classes, not on elements.
+\end{keyresult}
+
+This universal property explains why quotients are so useful: they're the ``right'' way to define functions that don't distinguish between equivalent elements.
+
+\begin{example}[Modular arithmetic, revisited]
+Why is it okay to do arithmetic in $\Z_n$? Addition and multiplication on $\Z$ respect congruence: if $a \equiv a'$ and $b \equiv b'$, then $a + b \equiv a' + b'$ and $ab \equiv a'b'$. The operations ``descend'' to well-defined operations on $\Z/n\Z$ by the universal property.
+\end{example}
+
+\begin{commonmistake}
+\textbf{Confusing elements with equivalence classes.} The elements of $A/{\sim}$ are sets, not elements of $A$. When we write $[a] = [b]$, we mean $a \sim b$, which is a statement about $a$ and $b$ in $A$. But $[a]$ itself is a single element of the quotient. This takes some getting used to.
+\end{commonmistake}
+
+\subsubsection*{Partial Orders}
+
+Different combination: reflexive + antisymmetric + transitive. This gives hierarchies instead of equivalences.
+
+\begin{definition}[Partial order]
+A relation $R$ on $A$ is a \textbf{partial order} if it is reflexive, antisymmetric, and transitive. The pair $(A, R)$ is called a \textbf{partially ordered set} (poset).
+\end{definition}
+
+\begin{definition}[Total order]
+A partial order $\leq$ on $A$ is a \textbf{total order} (or \textbf{linear order}) if for all $a, b \in A$, either $a \leq b$ or $b \leq a$.
+\end{definition}
+
+The usual $\leq$ on numbers is a total order. Divisibility on positive integers is a partial order but not total ($2 \nmid 3$ and $3 \nmid 2$). Subset inclusion on $\Pow(X)$ is a partial order.
+
+\subsection*{Posets and Hasse diagrams}
+
+\begin{definition}[Minimal/maximal vs least/greatest]
+Let $(P, \leq)$ be a poset. These concepts sound similar but differ:
+\begin{itemize}
+  \item $m \in P$ is \textbf{minimal} if there is no $x \in P$ with $x < m$. (Nothing is strictly below it.)
+  \item $m \in P$ is \textbf{maximal} if there is no $x \in P$ with $m < x$. (Nothing is strictly above it.)
+  \item $\ell \in P$ is the \textbf{least element} if $\ell \leq x$ for all $x \in P$. (It's below everything.)
+  \item $g \in P$ is the \textbf{greatest element} if $x \leq g$ for all $x \in P$. (It's above everything.)
+\end{itemize}
+Least/greatest elements, if they exist, are unique. But there can be multiple minimal/maximal elements.
+\end{definition}
+
+The difference: minimal means ``nothing below,'' least means ``below everything.'' In a total order these coincide, but in a partial order, you can have multiple minimal elements that are incomparable to each other.
+
+\begin{definition}[Hasse diagram]
+For a finite poset, the \textbf{Hasse diagram} is a visual representation:
+\begin{itemize}
+  \item Draw one vertex per element.
+  \item Draw an edge upward from $a$ to $b$ if $b$ \emph{covers} $a$ (meaning $a < b$ and there's nothing between them).
+  \item Omit self-loops and edges implied by transitivity.
+\end{itemize}
+\end{definition}
+
+\begin{example}
+The divisibility poset on $\{1, 2, 3, 6\}$ has Hasse diagram:
+\[
+\begin{tikzcd}
+ & 6 & \\
+2 \arrow[ur] & & 3 \arrow[ul] \\
+ & 1 \arrow[ul] \arrow[ur] &
+\end{tikzcd}
+\]
+Here 1 is least (it divides everything); 6 is greatest (everything divides it); 2 and 3 are incomparable (neither divides the other).
+\end{example}
+
+\begin{definition}[Bounds, meet, join, lattice]
+Let $S \subseteq P$ be a subset of a poset.
+\begin{itemize}
+  \item $u$ is an \textbf{upper bound} of $S$ if $x \leq u$ for all $x \in S$.
+  \item $\ell$ is a \textbf{lower bound} of $S$ if $\ell \leq x$ for all $x \in S$.
+  \item The \textbf{least upper bound} (lub, join, supremum) of $\{a,b\}$ is denoted $a \vee b$.
+  \item The \textbf{greatest lower bound} (glb, meet, infimum) of $\{a,b\}$ is denoted $a \wedge b$.
+\end{itemize}
+A poset is a \textbf{lattice} if every pair has both a meet and a join.
+\end{definition}
+
+In divisibility, $a \wedge b = \gcd(a,b)$ and $a \vee b = \text{lcm}(a,b)$. In subset inclusion, $A \wedge B = A \cap B$ and $A \vee B = A \cup B$.
+
+\subsection*{Modular Arithmetic}
+
+Now for the payoff: treating numbers as equivalent when they differ by a multiple of $n$.
+
+\begin{definition}[Congruence modulo $n$]
+For integers $a, b$ and positive integer $n$, we say $a$ is \textbf{congruent} to $b$ modulo $n$, written $a \equiv b \pmod{n}$, if $n$ divides $a - b$. Equivalently:
+\[
+a \equiv b \pmod{n} \iff a \bmod n = b \bmod n \iff \exists k \in \Z: a = b + kn
+\]
+\end{definition}
+
+So $17 \equiv 3 \pmod{7}$ because $17 - 3 = 14 = 7 \times 2$. And $-2 \equiv 5 \pmod{7}$ because $-2 - 5 = -7 = 7 \times (-1)$.
+
+\begin{theorem}[Congruence is an equivalence relation]
+For any positive integer $n$, congruence modulo $n$ is an equivalence relation on $\Z$. The equivalence classes are the \textbf{residue classes}:
+\[
+[0], [1], [2], \ldots, [n-1]
+\]
+The set of residue classes is denoted $\Z_n$ or $\Z/n\Z$.
+\end{theorem}
+
+This is why clock arithmetic works: on a 12-hour clock, 14:00 is the same as 2:00 because $14 \equiv 2 \pmod{12}$.
+
+\begin{theorem}[Modular arithmetic preserves operations]
+For all $a, b, c, d \in \Z$ and positive integer $n$:
+\begin{enumerate}
+  \item If $a \equiv b \pmod{n}$ and $c \equiv d \pmod{n}$, then $a + c \equiv b + d \pmod{n}$.
+  \item If $a \equiv b \pmod{n}$ and $c \equiv d \pmod{n}$, then $ac \equiv bd \pmod{n}$.
+  \item If $a \equiv b \pmod{n}$, then $a^k \equiv b^k \pmod{n}$ for all $k \geq 0$.
+\end{enumerate}
+\end{theorem}
+
+This is crucial: we can do arithmetic within equivalence classes. We don't need to keep track of the actual numbers, just their remainders. This makes modular arithmetic computationally efficient---compute with small numbers, get correct answers about big numbers.
+
+\begin{definition}[Modular inverse]
+For $a \in \Z_n$, the \textbf{modular inverse} of $a$ modulo $n$ is an integer $b$ such that $ab \equiv 1 \pmod{n}$. We write $b = a^{-1} \pmod{n}$.
+\end{definition}
+
+\begin{theorem}[Existence of modular inverse]
+The integer $a$ has a modular inverse modulo $n$ if and only if $\gcd(a, n) = 1$.
+\end{theorem}
+
+So $3$ has an inverse mod $7$ (since $\gcd(3,7) = 1$), but $4$ has no inverse mod $6$ (since $\gcd(4,6) = 2 \neq 1$).
+
+\subsubsection*{Units and the group $\Z_n^\times$}
+
+\begin{definition}[Units modulo $n$]
+The set of \textbf{units} modulo $n$ is
+\[
+\Z_n^\times = \{[a] \in \Z_n : \gcd(a,n) = 1\}.
+\]
+\end{definition}
+
+\begin{theorem}
+$\Z_n^\times$ forms a group under multiplication modulo $n$. Its size is $|\Z_n^\times| = \phi(n)$.
+\end{theorem}
+
+For a prime $p$, every nonzero residue is a unit, so $\Z_p^\times = \{1,2,\ldots,p-1\}$.
+
+\begin{example}
+For $n = 10$, the units are $\{1,3,7,9\}$, so $\phi(10)=4$. Inverses: $3^{-1} \equiv 7$ and $9^{-1} \equiv 9 \pmod{10}$.
+\end{example}
+
+\subsection*{The Euclidean Algorithm}
+
+\begin{theorem}[Division algorithm]
+For any integers $a$ and $b$ with $b > 0$, there exist unique integers $q$ (quotient) and $r$ (remainder) such that:
+\[
+a = bq + r \quad \text{and} \quad 0 \leq r < b
+\]
+\end{theorem}
+
+\begin{theorem}[Euclidean algorithm]
+For positive integers $a$ and $b$, $\gcd(a, b)$ can be computed by repeatedly applying: $\gcd(a, b) = \gcd(b, a \bmod b)$, until one argument becomes 0. The last nonzero remainder is the gcd.
+\end{theorem}
+
+This is fast---the number of steps is at most $O(\log(\min(a,b)))$.
+
+\begin{theorem}[Extended Euclidean algorithm (Bézout's identity)]
+For any positive integers $a$ and $b$, there exist integers $x$ and $y$ such that:
+\[
+ax + by = \gcd(a, b)
+\]
+The extended Euclidean algorithm computes $x$ and $y$ by working backwards through the division steps.
+\end{theorem}
+
+\begin{strategy}[Finding modular inverses]
+To find $a^{-1} \pmod{n}$ when $\gcd(a,n) = 1$:
+\begin{enumerate}
+  \item Use the extended Euclidean algorithm to find $x, y$ with $ax + ny = 1$.
+  \item Then $a^{-1} \equiv x \pmod{n}$.
+\end{enumerate}
+Why? Because $ax + ny = 1$ means $ax \equiv 1 \pmod{n}$.
+\end{strategy}
+
+\begin{remark}[GCDs and RSA]
+RSA key generation hinges on this: choose $e$ with $\gcd(e,\phi(n)) = 1$ so that $e$ has a modular inverse $d$ modulo $\phi(n)$. The extended Euclidean algorithm computes $d$ efficiently.
+\end{remark}
+
+\subsection*{Representations of relations}
+
+\begin{definition}[Matrix representation]
+A relation $R$ on a finite set $A = \{a_1, \ldots, a_n\}$ can be represented by an $n \times n$ \textbf{relation matrix} $M$ where:
+\[
+M_{ij} = \begin{cases} 1 & \text{if } a_i R a_j \\ 0 & \text{otherwise} \end{cases}
+\]
+\end{definition}
+
+\begin{proposition}[Reading properties from the matrix]
+For a relation matrix $M$:
+\begin{itemize}
+  \item $R$ is reflexive iff all diagonal entries are 1.
+  \item $R$ is symmetric iff $M = M^T$ (the matrix is symmetric).
+  \item $R$ is antisymmetric iff $M_{ij} = 1$ and $M_{ji} = 1$ together imply $i = j$.
+\end{itemize}
+\end{proposition}
+
+\begin{definition}[Digraph representation]
+A relation $R$ on $A$ can be represented as a directed graph (digraph) with vertices $A$ and a directed edge from $a$ to $b$ whenever $aRb$.
+\end{definition}
+
+\subsection*{Closures}
+
+Sometimes a relation is \emph{almost} reflexive or transitive. Closures let us ``fix it up.''
+
+\begin{definition}[Closure]
+The \textbf{reflexive closure} of $R$ is the smallest reflexive relation containing $R$: $R \cup \{(a,a) : a \in A\}$.
+
+The \textbf{symmetric closure} of $R$ is the smallest symmetric relation containing $R$: $R \cup R^{-1}$ where $R^{-1} = \{(b,a) : (a,b) \in R\}$.
+
+The \textbf{transitive closure} of $R$, denoted $R^+$, is the smallest transitive relation containing $R$.
+\end{definition}
+
+\begin{theorem}[Computing transitive closure]
+$R^+ = R \cup R^2 \cup R^3 \cup \cdots$ where $R^n$ is the $n$-fold composition of $R$. For finite sets with $|A| = n$, we have $R^+ = R \cup R^2 \cup \cdots \cup R^n$.
+\end{theorem}
+
+The transitive closure captures reachability: $a R^+ b$ means you can get from $a$ to $b$ by following $R$-edges.
+
+\subsection*{Worked examples}
+
+\begin{example}[Verifying congruence is an equivalence relation]
+Show that congruence modulo $n$ is an equivalence relation on $\Z$.
+
+\emph{Proof.}
+\begin{itemize}
+  \item \textbf{Reflexive:} For any $a \in \Z$, we have $a - a = 0 = n \cdot 0$, so $n \mid (a - a)$. Thus $a \equiv a \pmod{n}$.
+
+  \item \textbf{Symmetric:} Suppose $a \equiv b \pmod{n}$. Then $n \mid (a - b)$, so $a - b = nk$ for some integer $k$. Then $b - a = -nk = n(-k)$, so $n \mid (b - a)$. Thus $b \equiv a \pmod{n}$.
+
+  \item \textbf{Transitive:} Suppose $a \equiv b \pmod{n}$ and $b \equiv c \pmod{n}$. Then $a - b = nj$ and $b - c = nk$ for integers $j, k$. Adding: $a - c = nj + nk = n(j + k)$. So $n \mid (a - c)$, and $a \equiv c \pmod{n}$. \qed
+\end{itemize}
+\end{example}
+
+\begin{example}[Finding a modular inverse]
+Find the inverse of $3$ modulo $7$.
+
+\emph{Solution.} We need $x$ such that $3x \equiv 1 \pmod{7}$.
+
+\textbf{Method 1 (Trial):} Just try small values: $3 \cdot 1 = 3$, $3 \cdot 2 = 6$, $3 \cdot 3 = 9 \equiv 2$, $3 \cdot 4 = 12 \equiv 5$, $3 \cdot 5 = 15 \equiv 1 \pmod{7}$. So $3^{-1} \equiv 5 \pmod{7}$.
+
+\textbf{Method 2 (Extended Euclidean):}
+\begin{align*}
+7 &= 2 \cdot 3 + 1 \\
+1 &= 7 - 2 \cdot 3 = 1 \cdot 7 + (-2) \cdot 3
+\end{align*}
+So $(-2) \cdot 3 + 1 \cdot 7 = 1$, meaning $3^{-1} \equiv -2 \equiv 5 \pmod{7}$.
+\end{example}
+
+\begin{example}[Equivalence classes from a relation]
+Let $A = \{1, 2, 3, 4\}$ and
+\[
+\begin{aligned}
+R = \{&(1,1), (1,2), (2,1), (2,2),\\
+     &(3,3), (3,4), (4,3), (4,4)\}.
+\end{aligned}
+\]
+Show this is an equivalence relation and find the equivalence classes.
+
+\emph{Solution.} Check the three properties:
+\begin{itemize}
+  \item \textbf{Reflexive:} $(1,1), (2,2), (3,3), (4,4) \in R$. \checkmark
+  \item \textbf{Symmetric:} For each $(a,b) \in R$ with $a \neq b$, we need $(b,a) \in R$. We have $(1,2)$ and $(2,1)$; $(3,4)$ and $(4,3)$. \checkmark
+  \item \textbf{Transitive:} Check chains: $(1,2), (2,1) \Rightarrow (1,1) \in R$; $(3,4), (4,3) \Rightarrow (3,3) \in R$; etc. All implied pairs are present. \checkmark
+\end{itemize}
+
+Equivalence classes: $[1] = [2] = \{1, 2\}$ and $[3] = [4] = \{3, 4\}$.
+
+The partition is $\{\{1,2\}, \{3,4\}\}$---two blocks, each containing elements that are equivalent to each other.
+\end{example}
+
+\begin{example}[Euclidean algorithm]
+Find $\gcd(252, 105)$.
+
+\emph{Solution.}
+\begin{align*}
+252 &= 2 \cdot 105 + 42 \\
+105 &= 2 \cdot 42 + 21 \\
+42 &= 2 \cdot 21 + 0
+\end{align*}
+So $\gcd(252, 105) = 21$ (the last nonzero remainder).
+\end{example}
+
+\begin{example}[Extended Euclidean algorithm]
+Express $\gcd(252, 105)$ as a linear combination of 252 and 105.
+
+\emph{Solution.} Work backwards through the Euclidean algorithm steps:
+\begin{align*}
+21 &= 105 - 2 \cdot 42 && \text{(from the second step)}\\
+   &= 105 - 2 \cdot (252 - 2 \cdot 105) && \text{(substitute for 42)}\\
+   &= 105 - 2 \cdot 252 + 4 \cdot 105 \\
+   &= 5 \cdot 105 + (-2) \cdot 252
+\end{align*}
+So $21 = 5 \cdot 105 + (-2) \cdot 252$.
+
+Check: $5 \times 105 - 2 \times 252 = 525 - 504 = 21$. \checkmark
+\end{example}
+
+\begin{example}[Toy RSA]
+This example illustrates RSA arithmetic (not secure for real use!). Let $p = 5$ and $q = 11$, so $n = pq = 55$ and $\phi(n) = (p-1)(q-1) = 4 \cdot 10 = 40$.
+
+Choose public exponent $e = 3$ (coprime to 40). Find the private exponent $d$ such that $ed \equiv 1 \pmod{40}$.
+
+\emph{Solution.} We need $3d \equiv 1 \pmod{40}$. Using extended Euclidean:
+\[
+40 = 13 \cdot 3 + 1 \implies 1 = 40 - 13 \cdot 3
+\]
+So $d \equiv -13 \equiv 27 \pmod{40}$. Check: $3 \cdot 27 = 81 = 2 \cdot 40 + 1 \equiv 1 \pmod{40}$. \checkmark
+
+\textbf{Encryption:} To encrypt message $m = 12$, compute $c \equiv m^e \pmod{n}$:
+\[
+c \equiv 12^3 = 1728 \equiv 1728 - 31 \cdot 55 = 23 \pmod{55}
+\]
+
+\textbf{Decryption:} Compute $c^d \pmod{n}$. Using repeated squaring:
+$23^2 = 529 \equiv 34 \pmod{55}$, $23^4 \equiv 34^2 = 1156 \equiv 1 \pmod{55}$.
+
+So $23^{27} = 23^{24} \cdot 23^3 = (23^4)^6 \cdot 23^3 \equiv 1^6 \cdot 12167 \equiv 12 \pmod{55}$.
+
+We recover the original message! This is how RSA encryption works (with much larger primes).
+\end{example}
+
+\begin{example}[A subtlety about relation properties]
+Prove: If $R$ is symmetric and transitive, and every element is related to \emph{something}, then $R$ is reflexive.
+
+\emph{Proof.} Let $a \in A$. By assumption, there exists some $b$ such that $aRb$. By symmetry, $bRa$. By transitivity (using $aRb$ and $bRa$), we get $aRa$. Since $a$ was arbitrary, $R$ is reflexive. \qed
+
+This is a cute trick: you might think symmetric + transitive would be enough, but you also need ``everything relates to something'' to bootstrap reflexivity.
+\end{example}
+
+\subsection*{Advanced number theory}
+
+The following theorems are powerful tools for modular arithmetic, especially in cryptography.
+
+\begin{definition}[Euler's totient function]
+For a positive integer $n$, \textbf{Euler's totient function} $\phi(n)$ counts the integers from 1 to $n$ that are coprime to $n$:
+\[
+\phi(n) = |\{k : 1 \leq k \leq n \text{ and } \gcd(k, n) = 1\}|
+\]
+\end{definition}
+
+\begin{theorem}[Computing $\phi(n)$]
+\begin{itemize}
+  \item If $p$ is prime: $\phi(p) = p - 1$ (everything except $p$ is coprime to $p$)
+  \item If $p$ is prime: $\phi(p^k) = p^{k-1}(p - 1)$
+  \item If $\gcd(m, n) = 1$: $\phi(mn) = \phi(m)\phi(n)$ (multiplicative)
+\end{itemize}
+In general, if $n = p_1^{a_1} p_2^{a_2} \cdots p_k^{a_k}$, then:
+\[
+\phi(n) = n \prod_{p \mid n} \left(1 - \frac{1}{p}\right)
+\]
+\end{theorem}
+
+\begin{example}
+Compute $\phi(12)$.
+
+\emph{Solution.} $12 = 2^2 \cdot 3$. So:
+\[
+\phi(12) = 12 \cdot \left(1 - \frac{1}{2}\right) \cdot \left(1 - \frac{1}{3}\right) = 12 \cdot \frac{1}{2} \cdot \frac{2}{3} = 4
+\]
+Verify: the integers from 1 to 12 coprime to 12 are $\{1, 5, 7, 11\}$. Indeed, there are 4.
+\end{example}
+
+\subsubsection*{Primes and RSA key generation}
+
+Primes make $\phi(n)$ easy to compute: if $n = pq$ with distinct primes, then
+\[
+\phi(n) = (p-1)(q-1).
+\]
+This is why RSA chooses $n$ as a product of two large primes: anyone can multiply $p$ and $q$ to get $n$, but without factoring $n$ it is hard to recover $\phi(n)$.
+
+\textbf{RSA (number-theory view):}
+\begin{enumerate}
+  \item Pick large primes $p, q$ and set $n = pq$.
+  \item Compute $\phi(n) = (p-1)(q-1)$.
+  \item Choose $e$ with $\gcd(e,\phi(n)) = 1$ (so $e$ is a unit in $\Z_{\phi(n)}^\times$).
+  \item Compute $d \equiv e^{-1} \pmod{\phi(n)}$ using the extended Euclidean algorithm.
+  \item Public key: $(n, e)$. Private key: $d$.
+\end{enumerate}
+
+For messages $m$ with $\gcd(m,n)=1$ (i.e., $m \in \Z_n^\times$), encryption $c \equiv m^e \pmod{n}$ and decryption $m \equiv c^d \pmod{n}$ work by Euler's theorem in the group $\Z_n^\times$.
+
+\begin{theorem}[Fermat's Little Theorem]
+If $p$ is prime and $\gcd(a, p) = 1$, then:
+\[
+a^{p-1} \equiv 1 \pmod{p}
+\]
+Equivalently, for any integer $a$: $a^p \equiv a \pmod{p}$.
+\end{theorem}
+
+\begin{example}
+Compute $2^{100} \bmod 7$.
+
+\emph{Solution.} By Fermat's Little Theorem, $2^6 \equiv 1 \pmod{7}$ (since 7 is prime and $\gcd(2,7) = 1$).
+
+Write $100 = 6 \cdot 16 + 4$. Then:
+\[
+2^{100} = (2^6)^{16} \cdot 2^4 \equiv 1^{16} \cdot 16 \equiv 16 \equiv 2 \pmod{7}
+\]
+\end{example}
+
+\begin{theorem}[Euler's Theorem]
+If $\gcd(a, n) = 1$, then:
+\[
+a^{\phi(n)} \equiv 1 \pmod{n}
+\]
+This generalizes Fermat's Little Theorem (when $n = p$ is prime, $\phi(p) = p-1$).
+\end{theorem}
+
+\begin{keyresult}
+Euler's Theorem explains \emph{why RSA works}. If $n = pq$ with primes $p, q$, and $ed \equiv 1 \pmod{\phi(n)}$, then for any message $m$ coprime to $n$:
+\[
+(m^e)^d = m^{ed} = m^{1 + k\phi(n)} = m \cdot (m^{\phi(n)})^k \equiv m \cdot 1^k = m \pmod{n}
+\]
+Decryption recovers the original message!
+\end{keyresult}
+
+\begin{theorem}[Chinese Remainder Theorem]
+Let $n_1, \ldots, n_k$ be pairwise coprime positive integers. Then for any $a_1, \ldots, a_k$, the system:
+\begin{align*}
+x &\equiv a_1 \pmod{n_1} \\
+x &\equiv a_2 \pmod{n_2} \\
+&\vdots \\
+x &\equiv a_k \pmod{n_k}
+\end{align*}
+has a unique solution modulo $N = n_1 n_2 \cdots n_k$.
+\end{theorem}
+
+\begin{example}
+Solve: $x \equiv 2 \pmod{3}$, $x \equiv 3 \pmod{5}$.
+
+\emph{Solution.} From the first equation: $x = 2 + 3t$ for some integer $t$.
+
+Substitute into the second: $2 + 3t \equiv 3 \pmod{5}$, so $3t \equiv 1 \pmod{5}$.
+
+Find $3^{-1} \pmod{5}$: $3 \cdot 2 = 6 \equiv 1$, so $t \equiv 2 \pmod{5}$.
+
+Thus $x = 2 + 3 \cdot 2 = 8$. Check: $8 = 2 + 2 \cdot 3 \equiv 2 \pmod{3}$ and $8 = 3 + 1 \cdot 5 \equiv 3 \pmod{5}$. \checkmark
+
+So $x \equiv 8 \pmod{15}$.
+\end{example}
+
+\begin{example}[Divisibility matrix]
+Write the relation matrix for ``divides'' on $\{1, 2, 3, 4\}$.
+
+\emph{Solution.} $M_{ij} = 1$ iff $i \mid j$.
+\[
+M = \begin{pmatrix}
+1 & 1 & 1 & 1 \\
+0 & 1 & 0 & 1 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1
+\end{pmatrix}
+\]
+Reading properties: diagonal is all 1s (reflexive), matrix is not symmetric (not symmetric), and it's antisymmetric and transitive. So divisibility is a partial order.
+\end{example}
+
+\begin{goingdeeper}[Going Deeper: Preorders as Categories]
+This week we discover that the arrow-and-diagram language from Weeks 1--2 applies beautifully to familiar structures: preorders. This gives us concrete, easy-to-visualize categories to practice with.
+
+For more detail, see the Category Theory Companion, Week 3.
+
+\subsubsection*{Preorders You Already Know}
+
+A \emph{preorder} is a set with a reflexive and transitive relation. You've seen many:
+\begin{itemize}
+  \item $(\N, \leq)$: natural numbers with ``less than or equal to''
+  \item $(\Pow(X), \subseteq)$: subsets of $X$ ordered by inclusion
+  \item $(Div_n, \mid)$: divisors of $n$ ordered by divisibility
+\end{itemize}
+
+\subsubsection*{Preorders ARE Categories}
+
+Here's the key insight: a preorder \emph{is} a category. Given $(P, \leq)$:
+\begin{itemize}
+  \item \textbf{Objects:} Elements of $P$
+  \item \textbf{Arrows:} There is exactly one arrow $a \to b$ if $a \leq b$, and no arrow otherwise
+  \item \textbf{Identity:} $a \leq a$ (reflexivity) gives the identity arrow $a \to a$
+  \item \textbf{Composition:} $a \leq b$ and $b \leq c$ imply $a \leq c$ (transitivity)
+\end{itemize}
+
+This is called a \emph{thin category}: between any two objects, there's at most one arrow. The existence of an arrow just records that $a \leq b$.
+
+\subsubsection*{Monotone Functions = Functors}
+
+A function $f: P \to Q$ between preorders is \textbf{monotone} if $a \leq b$ implies $f(a) \leq f(b)$. In categorical language: if there's an arrow $a \to b$, then there's an arrow $f(a) \to f(b)$. The function preserves arrows---it's a \textbf{functor}.
+
+\subsubsection*{Products and Coproducts in Preorders}
+
+The universal properties specialize nicely:
+\begin{itemize}
+  \item \textbf{Product} of $a$ and $b$ = greatest lower bound (meet)
+  \item \textbf{Coproduct} of $a$ and $b$ = least upper bound (join)
+\end{itemize}
+
+In divisibility: product $= \gcd$, coproduct $= \text{lcm}$.
+In subset inclusion: product $= \cap$, coproduct $= \cup$.
+
+\subsubsection*{Exercises: Preorders as Categories}
+
+\begin{enumerate}
+  \item Draw the divisibility preorder on $\{1, 2, 4, 8\}$ as a diagram with arrows. Is this a total order?
+
+  \item List all arrows in $(\Pow(\{1, 2\}), \subseteq)$. (Don't forget identities!)
+
+  \item Is $f(n) = n^2$ monotone from $(\N, \leq)$ to $(\N, \leq)$? What about from $(\Z, \leq)$ to $(\Z, \leq)$?
+
+  \item In $(\{1, 2, 3, 6\}, \mid)$, what is the product (glb) of 2 and 3? The coproduct (lub)?
+
+  \item Verify that $\gcd(6, 10)$ satisfies the universal property of products in divisibility.
+
+  \item Prove: if $f: P \to Q$ and $g: Q \to R$ are monotone, then $g \circ f$ is monotone.
+\end{enumerate}
+\end{goingdeeper}
+
+\subsection*{Practice}
+\begin{enumerate}
+  \item For $n = 5$, list the equivalence classes of $\Z$ modulo $n$.
+
+  \item Find the inverse of $3$ modulo $7$ using the extended Euclidean algorithm.
+
+  \item Decide whether the relation $xRy$ iff $x - y$ is even is an equivalence relation on $\Z$.
+
+  \item Prove that every equivalence relation on $A$ defines a partition of $A$.
+
+  \item Let $R = \{(a,b) \in \Z \times \Z : a \leq b\}$. Which properties does $R$ have: reflexive, symmetric, antisymmetric, transitive?
+
+  \item Find $\gcd(1071, 462)$ and express it as a linear combination.
+
+  \item Solve $17x \equiv 1 \pmod{43}$.
+
+  \item Let $R$ be a relation on $\{1,2,3\}$ with matrix:
+  \[
+  M = \begin{pmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \\ 0 & 0 & 1 \end{pmatrix}
+  \]
+  Find the transitive closure $R^+$ and give its matrix.
+
+  \item Prove: If $a \equiv b \pmod{n}$ and $c \mid n$, then $a \equiv b \pmod{c}$.
+
+  \item Show that the intersection of two equivalence relations on $A$ is an equivalence relation.
+
+  \item Compute $\phi(60)$.
+
+  \item Use Fermat's Little Theorem to find $5^{302} \bmod 7$.
+
+  \item Solve: $x \equiv 1 \pmod{4}$, $x \equiv 2 \pmod{5}$, $x \equiv 3 \pmod{7}$.
+
+  \item What are the last two digits of $7^{2024}$?
+
+  \item Draw the Hasse diagram for divisibility on $\{1,2,3,6,12\}$. Identify minimal, maximal, least, and greatest elements.
+
+  \item In $(\Pow(\{1,2,3\}), \subseteq)$, compute $\{1,2\} \wedge \{2,3\}$ and $\{1,2\} \vee \{2,3\}$.
+\end{enumerate}

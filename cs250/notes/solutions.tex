@@ -1,0 +1,932 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  mathescape=true
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Solutions to Exercises}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+%% ---------- Module 1 ----------
+\section*{Module 1}
+
+\textbf{Exercise 1.}
+Let $A = \{1,2,3,4\}$ and $B = \{3,4,5,6\}$.
+\begin{align*}
+  A \cap B &= \{3, 4\}, \\
+  A \cup B &= \{1, 2, 3, 4, 5, 6\}, \\
+  |A \times B| &= |A| \cdot |B| = 4 \times 4 = 16.
+\end{align*}
+
+\medskip
+\textbf{Exercise 2.}
+The set $\{1,\;\{1\},\;\{1,\{1\}\}\}$ has three distinct elements: $1$,
+$\{1\}$, and $\{1,\{1\}\}$.  Therefore
+$|\{1,\;\{1\},\;\{1,\{1\}\}\}| = 3$.
+
+\medskip
+\textbf{Exercise 3.}
+\begin{enumerate}[label=(\alph*)]
+  \item $a\,R\,b$ iff $a + b$ is even.
+    \begin{itemize}
+      \item \emph{Reflexive:} $a + a = 2a$, which is always even. \checkmark
+      \item \emph{Symmetric:} $a + b = b + a$, so if $a + b$ is even then
+            $b + a$ is even. \checkmark
+      \item \emph{Transitive:} Suppose $a + b$ and $b + c$ are both even.
+            Then $a + c = (a + b) + (b + c) - 2b$ is a sum of even numbers
+            minus an even number, hence even. \checkmark
+    \end{itemize}
+    All three properties hold, so $R$ is an equivalence relation.
+
+  \item $a\,R\,b$ iff $a \leq b$.
+    \begin{itemize}
+      \item \emph{Reflexive:} $a \leq a$. \checkmark
+      \item \emph{Symmetric:} Fails. $1 \leq 2$ but $2 \not\leq 1$. $\times$
+      \item \emph{Transitive:} If $a \leq b$ and $b \leq c$ then
+            $a \leq c$. \checkmark
+    \end{itemize}
+    Not an equivalence relation (symmetry fails).
+
+  \item $a\,R\,b$ iff $|a - b| \leq 1$.
+    \begin{itemize}
+      \item \emph{Reflexive:} $|a - a| = 0 \leq 1$. \checkmark
+      \item \emph{Symmetric:} $|a - b| = |b - a|$. \checkmark
+      \item \emph{Transitive:} Fails. $|0 - 1| = 1 \leq 1$ and
+            $|1 - 2| = 1 \leq 1$, but $|0 - 2| = 2 > 1$. $\times$
+    \end{itemize}
+    Not an equivalence relation (transitivity fails).
+\end{enumerate}
+
+%% ---------- Intermezzo ----------
+\section*{Intermezzo: Cardinality and Function Spaces}
+
+\textbf{Exercise 1.}
+\[
+  \mathcal{P}(\{1,2,3\}) = \bigl\{\emptyset,\;\{1\},\;\{2\},\;\{3\},\;\{1,2\},\;\{1,3\},\;\{2,3\},\;\{1,2,3\}\bigr\}.
+\]
+That is $2^3 = 8$ elements.
+
+\medskip
+\textbf{Exercise 2.}
+There are $2^3 = 8$ functions from $\{a,b,c\}$ to $\{0,1\}$.  Each function
+is the characteristic function of a subset of $\{a,b,c\}$:
+
+\begin{center}
+\begin{tabular}{l|ccc}
+\toprule
+Subset & $f(a)$ & $f(b)$ & $f(c)$ \\
+\midrule
+$\emptyset$     & 0 & 0 & 0 \\
+$\{a\}$         & 1 & 0 & 0 \\
+$\{b\}$         & 0 & 1 & 0 \\
+$\{c\}$         & 0 & 0 & 1 \\
+$\{a,b\}$       & 1 & 1 & 0 \\
+$\{a,c\}$       & 1 & 0 & 1 \\
+$\{b,c\}$       & 0 & 1 & 1 \\
+$\{a,b,c\}$     & 1 & 1 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\textbf{Exercise 3.}
+\begin{proof}
+Define $f : \mathbb{N} \to E$ by $f(n) = 2n$, where
+$E = \{0, 2, 4, 6, \ldots\}$.
+
+\emph{Injective:} If $f(n) = f(m)$, then $2n = 2m$, so $n = m$.
+
+\emph{Surjective:} Let $e \in E$.  Then $e = 2k$ for some $k \in \mathbb{N}$,
+and $f(k) = 2k = e$.
+
+Since $f$ is both injective and surjective, it is a bijection, proving that
+the even natural numbers are countably infinite.
+\end{proof}
+
+%% ---------- Module 2 ----------
+\section*{Module 2}
+
+\textbf{Exercise 1.}
+Truth table for $(p \to q) \wedge (q \to p)$:
+
+\begin{center}
+\begin{tabular}{cc|c|c|c}
+\toprule
+$p$ & $q$ & $p \to q$ & $q \to p$ & $(p \to q) \wedge (q \to p)$ \\
+\midrule
+T & T & T & T & T \\
+T & F & F & T & F \\
+F & T & T & F & F \\
+F & F & T & T & T \\
+\bottomrule
+\end{tabular}
+\end{center}
+This matches the biconditional $p \leftrightarrow q$, which is true exactly
+when $p$ and $q$ have the same truth value.
+
+\medskip
+\textbf{Exercise 2.}
+Truth table for $\lnot(p \vee q)$:
+
+\begin{center}
+\begin{tabular}{cc|c|c}
+\toprule
+$p$ & $q$ & $p \vee q$ & $\lnot(p \vee q)$ \\
+\midrule
+T & T & T & F \\
+T & F & T & F \\
+F & T & T & F \\
+F & F & F & T \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Truth table for $(\lnot p) \wedge (\lnot q)$:
+
+\begin{center}
+\begin{tabular}{cc|c|c|c}
+\toprule
+$p$ & $q$ & $\lnot p$ & $\lnot q$ & $(\lnot p) \wedge (\lnot q)$ \\
+\midrule
+T & T & F & F & F \\
+T & F & F & T & F \\
+F & T & T & F & F \\
+F & F & T & T & T \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The output columns are identical, confirming De Morgan's law
+$\lnot(p \vee q) \equiv (\lnot p) \wedge (\lnot q)$.
+
+\medskip
+\textbf{Exercise 3.}
+We claim $p \oplus q \equiv (p \wedge \lnot q) \vee (\lnot p \wedge q)$.
+Truth table:
+
+\begin{center}
+\begin{tabular}{cc|c|c|c}
+\toprule
+$p$ & $q$ & $p \wedge \lnot q$ & $\lnot p \wedge q$
+    & $(p \wedge \lnot q) \vee (\lnot p \wedge q)$ \\
+\midrule
+T & T & F & F & F \\
+T & F & T & F & T \\
+F & T & F & T & T \\
+F & F & F & F & F \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+This matches the XOR truth table (true when exactly one of $p$, $q$ is true).
+
+\medskip
+\textbf{Exercise 4.}
+A unary boolean operation takes one boolean input (2 possible values) and
+produces one boolean output.  The number of such operations is $2^2 = 4$.
+They are:
+\begin{enumerate}
+  \item Identity: $p \mapsto p$.
+  \item Negation: $p \mapsto \lnot p$.
+  \item Constant true: $p \mapsto T$.
+  \item Constant false: $p \mapsto F$.
+\end{enumerate}
+
+%% ---------- Module 3 ----------
+\section*{Module 3}
+
+\textbf{Exercise 1.}
+Truth table for $p \wedge q \to q$:
+
+\begin{center}
+\begin{tabular}{cc|c|c}
+\toprule
+$p$ & $q$ & $p \wedge q$ & $p \wedge q \to q$ \\
+\midrule
+T & T & T & T \\
+T & F & F & T \\
+F & T & F & T \\
+F & F & F & T \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Every row evaluates to T, so $p \wedge q \to q$ is a tautology.
+
+\medskip
+\textbf{Exercise 2.}
+Premises: $p \to q$, $r \to \lnot q$, $r$.  Conclusion: $\lnot p$.
+
+From $r$ (premise 3) and $r \to \lnot q$ (premise 2), by modus ponens we
+obtain $\lnot q$.  From $\lnot q$ and $p \to q$ (premise 1), by modus
+tollens we obtain $\lnot p$.
+
+Thus the argument is \textbf{valid}.  (Equivalently, one can build the full
+truth table and verify that in every critical row---where all three premises
+are true---the conclusion $\lnot p$ is also true.)
+
+\medskip
+\textbf{Exercise 3.}
+The rows with output 1 are $(P,Q,R) = (1,0,1)$ and $(P,Q,R) = (0,1,1)$.
+The DNF expression is:
+\[
+  (P \wedge \lnot Q \wedge R) \;\vee\; (\lnot P \wedge Q \wedge R).
+\]
+
+\emph{Circuit description:} Two AND gates, one for each minterm.  The first
+AND gate takes $P$, $\lnot Q$ (via a NOT gate on $Q$), and $R$.  The second
+AND gate takes $\lnot P$ (via a NOT gate on $P$), $Q$, and $R$.  The outputs
+of both AND gates feed into a single OR gate, which produces the final output.
+
+\medskip
+\textbf{Exercise 4.}
+The ``proof'' only checks the rows of the truth table where $p$ and $q$
+have the same truth value (both T or both F).  In those rows, $p \to q$
+and $q \to p$ do happen to agree.  But the proof ignores the two rows
+where $p$ and $q$ differ.
+
+When $p = T$ and $q = F$: $p \to q = F$ but $q \to p = T$.
+When $p = F$ and $q = T$: $p \to q = T$ but $q \to p = F$.
+
+Since the two formulas differ on these rows, they are \textbf{not}
+logically equivalent.  The error is an incomplete case analysis---the
+proof conveniently skipped exactly the cases that would reveal the
+formulas are different.
+
+%% ---------- Module 4 ----------
+\section*{Module 4}
+
+\textbf{Exercise 1.}
+In the formula $\exists x.\;\forall y.\;P(x, y, z)$:
+\begin{itemize}
+  \item $x$ is \textbf{bound} by $\exists$.
+  \item $y$ is \textbf{bound} by $\forall$.
+  \item $z$ is \textbf{free} (it does not appear in the scope of any
+        quantifier binding $z$).
+\end{itemize}
+
+\medskip
+\textbf{Exercise 2.}
+Original statement in symbols:
+\[
+  \forall s : \text{CS250}.\;\exists h : \text{HW}.\;\text{OnTime}(s, h).
+\]
+Negation (pushing $\lnot$ inward, flipping quantifiers):
+\[
+  \exists s : \text{CS250}.\;\forall h : \text{HW}.\;\lnot\text{OnTime}(s, h).
+\]
+In English: ``There is a student in CS 250 who did not complete any homework
+on time.''
+
+\medskip
+\textbf{Exercise 3.}
+Let $P(x,y)$ mean ``$x + y = 0$'' over $\mathbb{Z}$.
+\begin{enumerate}[label=(\alph*)]
+  \item $\forall x.\;\exists y.\;P(x,y)$.
+        \textbf{True.}  For any $x \in \mathbb{Z}$, pick $y = -x$.
+        Then $x + (-x) = 0$.
+
+  \item $\exists y.\;\forall x.\;P(x,y)$.
+        \textbf{False.}  This claims there is a single $y$ such that
+        $x + y = 0$ for \emph{all} $x$.  That would require $y = -x$ for
+        every $x$ simultaneously, which is impossible.
+\end{enumerate}
+
+%% ---------- Intermezzo: Quantifiers as Games ----------
+\section*{Intermezzo: Quantifiers as Games}
+
+\textbf{Exercise 1.}
+The game has three rounds, corresponding to the three quantifiers
+$\forall\,\epsilon$, $\exists\,\delta$, $\forall\,x$:
+
+\begin{enumerate}
+  \item \textbf{Round 1} (Challenger's move, $\forall\,\epsilon$):
+        Challenger picks any $\epsilon > 0$.  Challenger's goal is to
+        make the task as hard as possible, so they will try to pick a
+        very small $\epsilon$.
+
+  \item \textbf{Round 2} (Prover's move, $\exists\,\delta$):
+        Prover sees the chosen $\epsilon$ and picks a $\delta > 0$ in
+        response.  Prover's choice of $\delta$ can depend on $\epsilon$.
+
+  \item \textbf{Round 3} (Challenger's move, $\forall\,x$):
+        Challenger picks any $x$ satisfying $|x - 3| < \delta$, trying
+        to find an $x$ that breaks Prover's claim.
+\end{enumerate}
+
+Prover wins if, for the chosen $x$, $|x^2 - 9| < \epsilon$.  The fact
+that Prover has a winning strategy---pick $\delta$ small enough based
+on $\epsilon$---is precisely what it means for $f(x) = x^2$ to be
+continuous at $x = 3$.
+
+\medskip
+\textbf{Exercise 2.}
+Prover moves first (this is the $\exists x$) and picks $x = 0$.
+Then Challenger picks any $y$ they like (this is the $\forall y$).
+Prover wins if $x + y = y$, which becomes $0 + y = y$---true for every
+$y$.  So no matter what Challenger picks, Prover wins.
+
+The winning move is $x = 0$ because $0$ is the additive identity.
+
+%% ---------- Module 5 ----------
+\section*{Module 5}
+
+\textbf{Exercise 1.}
+\begin{proof}
+Let $r_1$ and $r_2$ be rational numbers.  By definition there exist integers
+$a_1, b_1, a_2, b_2$ with $b_1 \neq 0$ and $b_2 \neq 0$ such that
+$r_1 = a_1/b_1$ and $r_2 = a_2/b_2$.  Then
+\[
+  r_1 \cdot r_2 = \frac{a_1}{b_1} \cdot \frac{a_2}{b_2}
+               = \frac{a_1 a_2}{b_1 b_2}.
+\]
+Since $a_1 a_2$ and $b_1 b_2$ are integers and $b_1 b_2 \neq 0$, the product
+$r_1 \cdot r_2$ is rational.
+\end{proof}
+
+\medskip
+\textbf{Exercise 2.}
+The claim ``for every integer $n$, $n^2 > n$'' is \textbf{false}.
+
+Counterexample: $n = 0$.  Then $n^2 = 0$ and $n = 0$, so $n^2 = n$, not
+$n^2 > n$.
+
+(Another counterexample: $n = 1$, since $1^2 = 1 = 1$.)
+
+\medskip
+\textbf{Exercise 3.}
+$(\mathbb{Z}, -, 0)$ is \textbf{not} a group.  Associativity fails:
+$(a - b) - c \neq a - (b - c)$ in general.
+
+Concrete example:
+\begin{align*}
+  (1 - 2) - 3 &= -1 - 3 = -4, \\
+  1 - (2 - 3) &= 1 - (-1) = 2.
+\end{align*}
+Since $-4 \neq 2$, the operation is not associative, so $(\mathbb{Z}, -, 0)$
+is not a group.
+
+\medskip
+\textbf{Exercise 4.}
+The ``proof'' that every integer is even begins by writing ``Suppose
+$n = 2k$ for some integer $k$''---but $n = 2k$ is exactly the
+conclusion that $n$ is even.  The proof assumes what it is trying to
+prove.  This is \emph{begging the question} (circular reasoning).
+
+A correct proof would need to show that \emph{every} integer $n$ can be
+written as $n = 2k$ for some integer $k$.  But this is false: odd
+integers exist (e.g., $n = 3$ cannot be written as $2k$ for any integer
+$k$).  The flaw is not a small gap in an otherwise valid argument; the
+claim itself is false, and the ``proof'' hides this by assuming the
+conclusion as its starting point.
+
+%% ---------- Module 6 ----------
+\section*{Module 6}
+
+\textbf{Exercise 1.}
+\begin{align*}
+  \lfloor -3.7 \rfloor &= -4, &
+  \lceil -3.7 \rceil &= -3, \\
+  \lfloor 4 \rfloor &= 4, &
+  \lceil 4 \rceil &= 4.
+\end{align*}
+(Note: $\lfloor -3.7 \rfloor = -4$, not $-3$, because floor rounds
+\emph{down}, not toward zero.)
+
+\medskip
+\textbf{Exercise 2.}
+The additive inverse of $3$ in $\mathbb{Z}/7\mathbb{Z}$ is
+$(7 - 3) \bmod 7 = 4$.
+
+Verification: $3 + 4 = 7 \equiv 0 \pmod{7}$.  \checkmark
+
+\medskip
+\textbf{Exercise 3.}
+We need $3x \equiv 1 \pmod{5}$.  Try $x = 2$:
+\[
+  3 \cdot 2 = 6 \equiv 1 \pmod{5}.
+\]
+So the multiplicative inverse of $3$ in $\mathbb{Z}/5\mathbb{Z}$ is $2$.
+
+%% ---------- Intermezzo: What Does It Mean for Things to Be ``The Same''? ----------
+\section*{Intermezzo: What Does It Mean for Things to Be ``The Same''?}
+
+\textbf{Exercise 1.}
+Define $P_1 \sim P_2$ iff for every input $x$, $P_1(x) = P_2(x)$
+(they produce the same output on every input).
+
+This is \textbf{not} the same as checking whether the source code is
+identical.  Two programs with completely different code can produce the
+same outputs.  For example:
+
+\begin{lstlisting}[language=Python]
+def f(x): return x + x
+def g(x): return 2 * x
+\end{lstlisting}
+
+These are equivalent under the relation $\sim$ (they produce the same
+output for every input), but their source code is different.  The
+equivalence class of a sorting program contains every correct sorting
+implementation---bubble sort, merge sort, quicksort, insertion sort,
+etc.---all distinct programs, but all ``the same'' under $\sim$.
+
+This is \emph{extensional equality} (Module 1): two functions are
+equal if they agree on all inputs, regardless of how they compute
+their results.
+
+\medskip
+\textbf{Exercise 2.}
+Define $a/b \sim c/d$ iff $ad = bc$ (cross-multiplication).
+
+\emph{Reflexive:} $a/b \sim a/b$ iff $ab = ba$, which holds by
+commutativity of multiplication.  \checkmark
+
+\emph{Symmetric:} If $a/b \sim c/d$ then $ad = bc$, so $cb = da$
+(the same equation rearranged), hence $c/d \sim a/b$.  \checkmark
+
+\emph{Transitive:} Suppose $a/b \sim c/d$ and $c/d \sim e/f$.  Then
+$ad = bc$ and $cf = de$.  Multiply the first equation by $f$: $adf = bcf$.
+Multiply the second by $b$: $cfb = deb$.  So $adf = bcf = deb$, which
+gives $af \cdot d = be \cdot d$.  Since $d \neq 0$, we can cancel to get
+$af = be$, hence $a/b \sim e/f$.  \checkmark
+
+The equivalence class of $1/2$ is
+$\{1/2,\; 2/4,\; 3/6,\; -1/(-2),\; -2/(-4),\; \ldots\}$---all
+fractions that reduce to the same value.  The rational numbers
+$\mathbb{Q}$ \emph{are} these equivalence classes: just as the integers
+can be constructed as equivalence classes of pairs of natural numbers
+(with $(a,b) \sim (c,d)$ iff $a + d = b + c$), the rationals are
+constructed as equivalence classes of pairs of integers.
+
+%% ---------- Module 7 ----------
+\section*{Module 7}
+
+\textbf{Exercise 1.}
+\begin{proof}
+We prove the contrapositive: if $n$ is odd, then $n^3$ is odd.
+
+Assume $n$ is odd.  Then $n = 2k + 1$ for some integer $k$.  Compute:
+\begin{align*}
+  n^3 &= (2k+1)^3 \\
+      &= 8k^3 + 12k^2 + 6k + 1 \\
+      &= 2(4k^3 + 6k^2 + 3k) + 1.
+\end{align*}
+Since $4k^3 + 6k^2 + 3k$ is an integer, $n^3$ has the form $2m + 1$ and is
+therefore odd.
+
+By contrapositive, if $n^3$ is even then $n$ is even.
+\end{proof}
+
+\medskip
+\textbf{Exercise 2.}
+Trace of the Euclidean algorithm on $\gcd(48, 18)$:
+\begin{align*}
+  \gcd(48, 18) &: \quad 48 = 2 \cdot 18 + 12, \quad \text{so } \gcd(48,18) = \gcd(18,12). \\
+  \gcd(18, 12) &: \quad 18 = 1 \cdot 12 + 6, \quad\;\; \text{so } \gcd(18,12) = \gcd(12,6). \\
+  \gcd(12, 6)  &: \quad 12 = 2 \cdot 6 + 0, \quad\;\;\; \text{so } \gcd(12,6) = 6.
+\end{align*}
+Answer: $\gcd(48, 18) = 6$.
+
+\medskip
+\textbf{Exercise 3.}
+We want to derive $\{x = 0\}\; x := x + 3\;\{x = 3\}$.
+
+\emph{Step 1 (assignment rule).}  The assignment rule says: to derive
+$\{?\}\; x := x + 3\;\{x = 3\}$, substitute $x + 3$ for $x$ in the
+postcondition $x = 3$.  This yields the precondition $x + 3 = 3$, giving:
+\[
+  \{x + 3 = 3\}\; x := x + 3\;\{x = 3\}.
+\]
+
+\emph{Step 2 (strengthening).}  We need to show $x = 0 \implies x + 3 = 3$.
+This holds by elementary arithmetic.  By the rule of consequence
+(precondition strengthening):
+\[
+  \{x = 0\}\; x := x + 3\;\{x = 3\}.
+\]
+
+\medskip
+\textbf{Exercise 4.}
+The ``proof'' that $\sqrt{4}$ is irrational follows the structure of the
+classic $\sqrt{2}$ proof by contradiction.  It assumes $\sqrt{4} = a/b$
+with $\gcd(a,b) = 1$, squares both sides to get $4b^2 = a^2$, and
+derives that $a$ is even, say $a = 2c$.  Substituting gives
+$4b^2 = 4c^2$, so $b^2 = c^2$, hence $b = c$ (since $b, c > 0$).
+The proof then claims ``Contradiction!''
+
+But there is no contradiction.  The derivation $b = c$ together with
+$a = 2c$ gives $a = 2b$, so $\sqrt{4} = a/b = 2b/b = 2$.  This is a
+perfectly true statement---$\sqrt{4}$ really is $2$---not a
+contradiction.  The proof claims a true result is contradictory.
+
+(A secondary issue: the step from $c^2 = b^2$ to $c = b$ requires
+$c, b \geq 0$, which happens to hold here but isn't justified.
+However, the main error is that the argument produces no contradiction
+at all, because $\sqrt{4}$ \emph{is} rational.)
+
+%% ---------- Intermezzo: Proofs Are Programs ----------
+\section*{Intermezzo: Proofs Are Programs}
+
+\textbf{Exercise 1.}
+Disjunction elimination ($\vee$E) corresponds to \textbf{pattern
+matching} on a sum type, i.e., case analysis on an \texttt{Either}
+value.  Given a value of type \texttt{Either A B}, you provide two
+handlers:
+\begin{itemize}
+  \item One for the \texttt{Left a} case (handling a proof of $A$), and
+  \item One for the \texttt{Right b} case (handling a proof of $B$).
+\end{itemize}
+This is exactly proof by cases: to prove $C$ from $A \vee B$, you show
+$A \to C$ and $B \to C$ separately, then use whichever case applies.
+In Haskell:
+
+\begin{lstlisting}[language=Haskell]
+either :: (a -> c) -> (b -> c) -> Either a b -> c
+either f g (Left  a) = f a
+either f g (Right b) = g b
+\end{lstlisting}
+
+\medskip
+\textbf{Exercise 2.}
+The type $A \to (B \to A)$ corresponds to a function that takes an $a$
+and returns a function that ignores its argument and returns $a$:
+
+\begin{lstlisting}[language=Python]
+def f(a):
+    return lambda b: a
+\end{lstlisting}
+
+This is the ``constant function factory''---given any value of type $A$,
+it produces a function from $B$ to $A$ that ignores its input and always
+returns the original $a$.
+
+As a logical tautology, $A \to (B \to A)$ says: ``if $A$ is true, then
+no matter what $B$ is, $A$ is still true.''  This is obvious
+logically---having a proof of $A$ means you have a proof of $A$
+regardless of what else is going on---and the program makes it
+computationally concrete: given evidence for $A$, just hold onto it and
+ignore whatever $B$-evidence someone hands you.
+
+%% ---------- Intermezzo: Other Logics, Other Worlds ----------
+\section*{Intermezzo: Other Logics, Other Worlds}
+
+\textbf{Exercise 1.}
+\begin{enumerate}[label=(\alph*)]
+  \item ``The program eventually terminates'':
+        $\Diamond\, \mathit{halt}$.
+
+  \item ``The counter is always non-negative'':
+        $\Box\, (\mathit{counter} \geq 0)$.
+
+  \item ``Every request is eventually followed by a response'':
+        $\Box\,(\mathit{request} \to \Diamond\, \mathit{response})$.
+\end{enumerate}
+
+%% ---------- Module 8 ----------
+\section*{Module 8}
+
+\textbf{Exercise 1.}
+Recursive definition of $a_n = 3n$:
+\[
+  a_0 = 0, \qquad a_n = a_{n-1} + 3 \quad \text{for } n \geq 1.
+\]
+Verification: $a_0 = 0$, $a_1 = 0 + 3 = 3$, $a_2 = 3 + 3 = 6$,
+$a_3 = 6 + 3 = 9$.  These match $0, 3, 6, 9$.  \checkmark
+
+\medskip
+\textbf{Exercise 2.}
+\begin{proof}
+Let $P(n)$ be the statement
+$\displaystyle\sum_{i=1}^{n}(2i-1) = n^2$.
+
+\emph{Base case} ($n = 1$):
+$\displaystyle\sum_{i=1}^{1}(2i - 1) = 2(1) - 1 = 1 = 1^2$.  \checkmark
+
+\emph{Inductive step.}  Assume $P(k)$:
+$\displaystyle\sum_{i=1}^{k}(2i-1) = k^2$.
+
+Then:
+\begin{align*}
+  \sum_{i=1}^{k+1}(2i - 1)
+    &= \sum_{i=1}^{k}(2i - 1) + \bigl(2(k+1) - 1\bigr) \\
+    &= k^2 + (2k + 1) \qquad\text{(by the inductive hypothesis)} \\
+    &= k^2 + 2k + 1 \\
+    &= (k+1)^2.
+\end{align*}
+This establishes $P(k+1)$, completing the induction.
+\end{proof}
+
+\medskip
+\textbf{Exercise 3.}
+
+\begin{lstlisting}[language=Python]
+def sum_squares(n):
+    if n == 0:
+        return 0
+    else:
+        return sum_squares(n-1) + n*n
+\end{lstlisting}
+
+\begin{itemize}
+  \item The \texttt{if n == 0: return 0} branch corresponds to the
+        \textbf{base case} of the induction.
+  \item The recursive call \texttt{sum\_squares(n-1)} corresponds to the
+        \textbf{inductive hypothesis}: we assume the function already
+        computes the correct answer for $n-1$.
+  \item Adding \texttt{n*n} to the result of \texttt{sum\_squares(n-1)}
+        mirrors the \textbf{inductive step}, where we peel off the last
+        term $n^2$ and use the IH for the remaining sum.
+\end{itemize}
+
+%% ---------- Module 9 ----------
+\section*{Module 9}
+
+\textbf{Exercise 1.}
+\begin{proof}
+We prove by strong induction that every integer amount of postage
+$n \geq 12$ can be made using 4-cent and 5-cent stamps.
+
+\emph{Base cases:}
+\begin{align*}
+  12 &= 3 \times 4, \\
+  13 &= 4 + 4 + 5, \\
+  14 &= 4 + 5 + 5, \\
+  15 &= 3 \times 5.
+\end{align*}
+
+\emph{Inductive step.}  Let $n \geq 16$ and assume (strong IH) that every
+integer amount from $12$ to $n - 1$ can be made with 4-cent and 5-cent stamps.
+
+Since $n \geq 16$, we have $n - 4 \geq 12$.  By the strong inductive
+hypothesis, $n - 4$ cents can be made with 4-cent and 5-cent stamps.  Adding
+one more 4-cent stamp gives $n$ cents.
+\end{proof}
+
+\medskip
+\textbf{Exercise 2.}
+The recurrence is $T_1 = 1$, $T_k = T_{k-1} + 3$ for $k \geq 2$.
+
+\emph{Iteration:}
+\begin{align*}
+  T_k &= T_{k-1} + 3 \\
+      &= (T_{k-2} + 3) + 3 = T_{k-2} + 2 \cdot 3 \\
+      &= (T_{k-3} + 3) + 2 \cdot 3 = T_{k-3} + 3 \cdot 3 \\
+      &\;\;\vdots \\
+      &= T_1 + 3(k - 1) \\
+      &= 1 + 3(k - 1) = 3k - 2.
+\end{align*}
+
+\emph{Verification:}
+$T_1 = 3(1) - 2 = 1$ \checkmark;\quad
+$T_{k+1} = 3(k+1) - 2 = (3k - 2) + 3 = T_k + 3$ \checkmark.
+
+Closed form: $T_k = 3k - 2$.
+
+\medskip
+\textbf{Exercise 3.}
+The recurrence is $a_0 = 1$, $a_1 = 3$,
+$a_k = 4a_{k-1} - 3a_{k-2}$ for $k \geq 2$.
+
+\emph{Characteristic equation:}
+\[
+  r^2 - 4r + 3 = 0 \;\implies\; (r - 1)(r - 3) = 0
+  \;\implies\; r_1 = 1,\; r_2 = 3.
+\]
+
+\emph{General solution:}
+$a_n = \alpha \cdot 1^n + \beta \cdot 3^n = \alpha + \beta \cdot 3^n$.
+
+\emph{Solving for constants:}
+\begin{alignat*}{2}
+  a_0 &= 1 &\;\implies\;\; & \alpha + \beta = 1, \\
+  a_1 &= 3 &\;\implies\;\; & \alpha + 3\beta = 3.
+\end{alignat*}
+Subtracting the first from the second: $2\beta = 2$, so $\beta = 1$ and
+$\alpha = 0$.
+
+\emph{Closed form:} $a_n = 3^n$.
+
+%% ---------- Module 10 ----------
+\section*{Module 10}
+
+\textbf{Exercise 1.}
+Recursive definition:
+\begin{align*}
+  \texttt{reverse}(\texttt{Nil}) &= \texttt{Nil}, \\
+  \texttt{reverse}(\texttt{Cons}(x, \mathit{xs})) &= \texttt{reverse}(\mathit{xs}) \mathbin{+\!+} \texttt{Cons}(x, \texttt{Nil}).
+\end{align*}
+
+Step-by-step computation of
+$\texttt{reverse}(\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil}))))$:
+\begin{align*}
+  &\texttt{reverse}(\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil})))) \\
+  &\quad= \texttt{reverse}(\texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil})))
+           \mathbin{+\!+} \texttt{Cons}(1, \texttt{Nil}) \\
+  &\quad= \bigl(\texttt{reverse}(\texttt{Cons}(3, \texttt{Nil}))
+           \mathbin{+\!+} \texttt{Cons}(2, \texttt{Nil})\bigr)
+           \mathbin{+\!+} \texttt{Cons}(1, \texttt{Nil}) \\
+  &\quad= \bigl((\texttt{Nil} \mathbin{+\!+} \texttt{Cons}(3, \texttt{Nil}))
+           \mathbin{+\!+} \texttt{Cons}(2, \texttt{Nil})\bigr)
+           \mathbin{+\!+} \texttt{Cons}(1, \texttt{Nil}) \\
+  &\quad= \bigl(\texttt{Cons}(3, \texttt{Nil})
+           \mathbin{+\!+} \texttt{Cons}(2, \texttt{Nil})\bigr)
+           \mathbin{+\!+} \texttt{Cons}(1, \texttt{Nil}) \\
+  &\quad= \texttt{Cons}(3, \texttt{Cons}(2, \texttt{Nil}))
+           \mathbin{+\!+} \texttt{Cons}(1, \texttt{Nil}) \\
+  &\quad= \texttt{Cons}(3, \texttt{Cons}(2, \texttt{Cons}(1, \texttt{Nil}))) \\
+  &\quad= [3, 2, 1].
+\end{align*}
+
+\medskip
+\textbf{Exercise 2.}
+Define $\texttt{leaves}(t)$ by:
+\begin{align*}
+  \texttt{leaves}(\texttt{Leaf}) &= 1, \\
+  \texttt{leaves}(\texttt{Node}(l, r)) &= \texttt{leaves}(l) + \texttt{leaves}(r).
+\end{align*}
+
+\begin{proof}
+We prove $\texttt{leaves}(t) = \texttt{size}(t) + 1$ for all binary trees
+$t$ by structural induction.
+
+\emph{Base case} ($t = \texttt{Leaf}$):
+\[
+  \texttt{leaves}(\texttt{Leaf}) = 1 = 0 + 1 = \texttt{size}(\texttt{Leaf}) + 1.
+  \quad\checkmark
+\]
+
+\emph{Inductive step} ($t = \texttt{Node}(l, r)$).
+Assume (IH) that $\texttt{leaves}(l) = \texttt{size}(l) + 1$ and
+$\texttt{leaves}(r) = \texttt{size}(r) + 1$.  Then:
+\begin{align*}
+  \texttt{leaves}(\texttt{Node}(l, r))
+    &= \texttt{leaves}(l) + \texttt{leaves}(r) \\
+    &= (\texttt{size}(l) + 1) + (\texttt{size}(r) + 1)
+       \qquad\text{(by IH)} \\
+    &= \texttt{size}(l) + \texttt{size}(r) + 2 \\
+    &= (1 + \texttt{size}(l) + \texttt{size}(r)) + 1 \\
+    &= \texttt{size}(\texttt{Node}(l, r)) + 1.
+       \quad\checkmark
+\end{align*}
+\end{proof}
+
+\medskip
+\textbf{Exercise 3.}
+Define $\texttt{vars}$ on the BNF for propositional logic formulas:
+\begin{align*}
+  \texttt{vars}(T) &= 0, \\
+  \texttt{vars}(F) &= 0, \\
+  \texttt{vars}(x) &= 1, \\
+  \texttt{vars}(\mathord{\sim} L) &= \texttt{vars}(L), \\
+  \texttt{vars}(L_1 \mathbin{\wedge} L_2) &= \texttt{vars}(L_1) + \texttt{vars}(L_2), \\
+  \texttt{vars}(L_1 \mathbin{\vee} L_2) &= \texttt{vars}(L_1) + \texttt{vars}(L_2), \\
+  \texttt{vars}(L_1 \to L_2) &= \texttt{vars}(L_1) + \texttt{vars}(L_2).
+\end{align*}
+
+A structural induction proof about $\texttt{vars}$ would require:
+\begin{itemize}
+  \item \textbf{Base cases:} three cases for the atomic formulas $T$, $F$,
+        and a variable $x$.
+  \item \textbf{Inductive case for negation} ($\mathord{\sim} L$): one
+        inductive hypothesis (for $L$).
+  \item \textbf{Inductive cases for binary connectives}
+        ($\wedge$, $\vee$, $\to$): each requires two inductive hypotheses
+        (one for $L_1$ and one for $L_2$).
+\end{itemize}
+
+%% ---------- Intermezzo: The Algebra of Types ----------
+\section*{Intermezzo: The Algebra of Types}
+
+\textbf{Exercise 1.}
+Using the exponent-of-a-product law from the algebra of types:
+\[
+  (A \to B) \times (A \to C) \;\cong\; A \to (B \times C).
+\]
+A pair of functions from $A$ is the same as a single function from $A$
+that returns a pair.  Given $f : A \to B$ and $g : A \to C$, we can
+build $h : A \to (B \times C)$ by $h(a) = (f(a), g(a))$.  Conversely,
+given $h$, we recover $f = \text{fst} \circ h$ and
+$g = \text{snd} \circ h$.
+
+Under the Curry--Howard correspondence, this is the logical
+equivalence:
+\[
+  (A \to B) \wedge (A \to C) \;\equiv\; A \to (B \wedge C).
+\]
+In words: ``if $A$ implies $B$ and $A$ implies $C$, then $A$ implies
+$B$ and $C$''---and vice versa.
+
+\medskip
+\textbf{Exercise 2.}
+The BNF \texttt{Nat = Zero | Succ(Nat)} translates to $N = 1 + N$.
+``Solving'' by repeated substitution:
+\begin{align*}
+  N &= 1 + N \\
+    &= 1 + (1 + N) \\
+    &= 1 + 1 + (1 + N) \\
+    &= 1 + 1 + 1 + (1 + N) \\
+    &= \cdots \\
+    &= \underbrace{1 + 1 + 1 + \cdots}_{\text{infinitely many}}
+\end{align*}
+
+This is an infinite sum of $1$'s.  It makes perfect sense as a
+description of the natural numbers: each term ``$1$'' in the sum
+represents one specific natural number (the first $1$ is $0$, the
+second is $1$, the third is $2$, etc.).  Since each $1$ contributes
+exactly one inhabitant, the type $N$ has inhabitants
+$0, 1, 2, 3, \ldots$---exactly the natural numbers.
+
+%% ---------- Intermezzo: The Lambda Calculus ----------
+\section*{Intermezzo: The Lambda Calculus}
+
+\textbf{Exercise 1.}
+Application is left-associative, so
+$(\lambda x.\;\lambda y.\; x)\; 3\; 7 = ((\lambda x.\;\lambda y.\; x)\; 3)\; 7$.
+
+\emph{Step 1.}  Apply $(\lambda x.\;\lambda y.\; x)$ to $3$:
+substitute $3$ for $x$ in the body $\lambda y.\; x$:
+\[
+  (\lambda x.\;\lambda y.\; x)\; 3 \;\longrightarrow\; \lambda y.\; 3.
+\]
+
+\emph{Step 2.}  Apply $(\lambda y.\; 3)$ to $7$:
+substitute $7$ for $y$ in the body $3$.  Since $y$ does not appear in
+$3$, nothing changes:
+\[
+  (\lambda y.\; 3)\; 7 \;\longrightarrow\; 3.
+\]
+
+Final result: $3$.
+
+This function takes two arguments and returns the first, ignoring the
+second---it is the ``constant'' function (or, in Church encoding terms,
+it is $\text{true}$: given two options, pick the first).
+
+\medskip
+\textbf{Exercise 2.}
+Define $\text{and} = \lambda a.\;\lambda b.\; a\; b\; \text{false}$.
+
+The idea: if $a$ is true, the result depends on $b$; if $a$ is false,
+the result is false regardless.  Verification on all four cases:
+
+\medskip
+\emph{Case 1:} $\text{and}\;\text{true}\;\text{true}$:
+\begin{align*}
+  \text{and}\;\text{true}\;\text{true}
+    &= (\lambda a.\;\lambda b.\; a\; b\; \text{false})\;\text{true}\;\text{true} \\
+    &\longrightarrow (\lambda b.\; \text{true}\; b\; \text{false})\;\text{true} \\
+    &\longrightarrow \text{true}\;\text{true}\;\text{false} \\
+    &= (\lambda t.\;\lambda f.\; t)\;\text{true}\;\text{false} \\
+    &\longrightarrow (\lambda f.\; \text{true})\;\text{false} \\
+    &\longrightarrow \text{true}. \quad\checkmark
+\end{align*}
+
+\emph{Case 2:} $\text{and}\;\text{true}\;\text{false}$:
+\begin{align*}
+  &\longrightarrow \text{true}\;\text{false}\;\text{false}
+   = (\lambda t.\;\lambda f.\; t)\;\text{false}\;\text{false}
+   \longrightarrow (\lambda f.\;\text{false})\;\text{false}
+   \longrightarrow \text{false}. \quad\checkmark
+\end{align*}
+
+\emph{Case 3:} $\text{and}\;\text{false}\;\text{true}$:
+\begin{align*}
+  &\longrightarrow \text{false}\;\text{true}\;\text{false}
+   = (\lambda t.\;\lambda f.\; f)\;\text{true}\;\text{false}
+   \longrightarrow (\lambda f.\; f)\;\text{false}
+   \longrightarrow \text{false}. \quad\checkmark
+\end{align*}
+
+\emph{Case 4:} $\text{and}\;\text{false}\;\text{false}$:
+\begin{align*}
+  &\longrightarrow \text{false}\;\text{false}\;\text{false}
+   = (\lambda t.\;\lambda f.\; f)\;\text{false}\;\text{false}
+   \longrightarrow (\lambda f.\; f)\;\text{false}
+   \longrightarrow \text{false}. \quad\checkmark
+\end{align*}
+
+All four cases match the expected truth table for AND\@.
+
+\end{document}

@@ -13,7 +13,8 @@
   basicstyle=\ttfamily\small,
   frame=single,
   breaklines=true,
-  columns=fullflexible
+  columns=fullflexible,
+  mathescape=true
 }
 
 \theoremstyle{definition}
@@ -29,7 +30,7 @@
 \maketitle
 
 \section{A logic with real types}
-Now we need to start dealing with a logic that has actual types beyond just booleans: first-order predicate logic! This is going to look \emph{a lot} like propositional logic! It still has our old friends: \texttt{->}, \texttt{\^{}}, \texttt{v}, \texttt{\~{}}, T, and F but now it's also going to have $\forall$ and $\exists$ as well as a notion of predicates.
+Now we need to start dealing with a logic that has actual types beyond just booleans: first-order predicate logic\index{first-order logic}! This is going to look \emph{a lot} like propositional logic---it still has our old friends: \texttt{->}, \texttt{\^{}}, \texttt{v}, \texttt{\~{}}, T, and F---but now it's also going to have $\forall$ and $\exists$ as well as a notion of predicates.
 
 We need these things in order to add \emph{sets} (or in other words \emph{types}) to our logic. Unlike booleans, when it comes to sets we need to be able to quantify our propositions about elements.
 \begin{itemize}
@@ -38,20 +39,20 @@ We need these things in order to add \emph{sets} (or in other words \emph{types}
   \item are we making a logical claim that we know that there is an element with a certain property, although we're not naming a particular element? ($\exists x : A. \ldots$)
 \end{itemize}
 
-We also need to be able to make statements about these types, which is where our predicates come in. Now, with the tools we've seen we don't have the ability to define predicates \emph{inside} the logic, instead we need to add the predicates \emph{to} the logic and define them externally as functions: so a predicate on the type/set A is really a function \texttt{A -> Bool} where Bool is the two-point set $\{\text{True},\text{False}\}$.
+We also need to be able to make statements about these types, which is where our predicates\index{predicate} come in. With the tools we've seen, we don't have the ability to define predicates \emph{inside} the logic. Instead we need to add the predicates \emph{to} the logic and define them externally as functions: a predicate on the type/set A is really a function \texttt{A -> Bool} where Bool is the two-point set $\{\text{True},\text{False}\}$.
 
 A really special predicate is the equality predicate on each set, which is given by the diagonal relation where \texttt{a=a} is true and \texttt{a=b} is false for any b that isn't a.
 
 \section{Forall and exists}
-So we've seen, in informal mathematics, the meaning of $\forall$ and $\exists$ a few times. As we discussed above these things are used to \emph{quantify} what elements of a set/type\footnote{I'm going to probably keep doing this thing of saying set/type and the reason why I'm doing it is that there will be, in some logics a notion of ``types'' that are more general than sets. For the purposes of this class, think of them as Basically The Same Thing(tm)} a proposition is covering, which is probably why they're referred to as ``quantifiers''.
+We've seen, in informal mathematics, the meaning of $\forall$ and $\exists$ a few times. As we discussed above, these are used to \emph{quantify} what elements of a set/type\footnote{I'm going to keep saying set/type because in some logics there is a notion of ``types'' that are more general than sets. For the purposes of this class, think of them as essentially the same thing.} a proposition is covering, which is why they're referred to as ``quantifiers''.
 
-We need to describe, of course, what the semantics of these quantifiers are. There's kind of two answers in this logic. The first is that the meaning of a quantifier can be described in terms of the underlying sets and functions on sets.
+We need to describe what the semantics of these quantifiers are. There are two answers in this logic. The first is that the meaning of a quantifier can be described in terms of the underlying sets and functions on sets.
 
-So when we write ``$\forall x : A.\; P(x)$'' this is going to be true exactly when the function \texttt{P : A -> Bool} sends every element of A to True or, equivalently if you know the language of inverse images of functions, we can say that ``$\forall x : A.\; P(x)$'' is true when $P^{-1}(\text{True}) = A$.
+When we write ``$\forall x : A.\; P(x)$''\index{quantifier!universal} this is going to be true exactly when the function \texttt{P : A -> Bool} sends every element of A to True. Equivalently, if you know the language of inverse images of functions, ``$\forall x : A.\; P(x)$'' is true when $P^{-1}(\text{True}) = A$.
 
-Similarly, when we write ``$\exists x : A.\; P(x)$'' this is going to be true exactly when the function \texttt{P : A -> Bool} sends at least one element of A to True or, again in the language of inverse images of functions when the set $P^{-1}(\text{True})$ is not empty.
+Similarly, when we write ``$\exists x : A.\; P(x)$''\index{quantifier!existential} this is going to be true exactly when the function \texttt{P : A -> Bool} sends at least one element of A to True or, again in the language of inverse images of functions when the set $P^{-1}(\text{True})$ is not empty.
 
-The \emph{other} way we can define the meaning, at least for ``small'' sets (things smaller than the real numbers), is that we can define $\forall$ as a kind of Big And and $\exists$ as a kind of Big Or, where
+The \emph{other} way we can define the meaning, at least when the set is finite (so that we can literally write out the conjunction or disjunction), is that we can define $\forall$ as a kind of Big And and $\exists$ as a kind of Big Or, where
 
 ``$\forall x : A.\; P(x)$'' becomes
 
@@ -63,14 +64,32 @@ $P(x_1) \vee P(x_2) \vee \ldots$
 
 for every $x$ in $A$.
 
-You can play with these transformations for some small finite sets to prove to yourself that these definitions match up exactly.\footnote{There's a secret third way to define $\forall$ and $\exists$ in dependent type theory, my fav logical framework, and for these $\forall$ becomes a kind of function definition and $\exists$ becomes a kind of pair, like a pair in Python.}
+You can play with these transformations for some small finite sets to prove to yourself that these definitions match up exactly.\footnote{There's a secret third way to define $\forall$ and $\exists$ in dependent type theory, a logical framework where $\forall$ becomes a kind of function definition and $\exists$ becomes a kind of pair, like a pair in Python.}
+
+\subsection{Free and bound variables}
+When a quantifier introduces a variable, that variable is \emph{bound}\index{bound variable}---it belongs to the quantifier the way a function parameter belongs to the function. In ``$\forall x : A.\; P(x)$'' the variable $x$ is bound by the $\forall$. A variable that isn't captured by any quantifier is called \emph{free}\index{free variable}.
+
+If you're a programmer, you already know the distinction: bound variables are like loop variables or function parameters---they're local to their scope and you can rename them without changing anything. Free variables are like globals. Just as \texttt{def f(x): return x + 1} and \texttt{def f(y): return y + 1} define the same function, the formulas $\forall x.\; P(x)$ and $\forall y.\; P(y)$ say exactly the same thing. The bound variable is a placeholder; its name doesn't matter.
+
+Consider a formula with both kinds: $\forall x.\; P(x, y)$. Here $x$ is bound (it's under the scope of $\forall x$) and $y$ is free. This formula is \emph{not} a complete statement---its truth depends on what $y$ is. Think of it as a function with one argument still unresolved: the $\forall$ ``closed over'' $x$ but $y$ is still dangling. Only once you fix a value for $y$ (or bind it with another quantifier) do you get something with a definite truth value.
+
+Why does this matter? When we get to the proof rules later in this module, the $\forall$-elimination rule \emph{substitutes} a concrete term for the bound variable, and the $\forall$-introduction rule requires that the variable you're generalizing over is truly arbitrary---meaning it isn't free anywhere it shouldn't be. Keeping track of which variables are free and which are bound is what makes these rules safe.
+
+\bigskip
+\textbf{Exercise 1.} \label{ex:m4:1} In the formula $\exists x.\; \forall y.\; P(x, y, z)$, identify which variables are free and which are bound. Explain how you determined the status of each variable.
 
 \section{Truth sets}
-Okay so this is a pretty quick concept but it's worth giving it a name because it comes up a lot. Given a predicate $P$ on a set $A$, the \emph{truth set} of $P$ is the set
+This is a quick concept, but it comes up often enough to deserve a name.
+
+\begin{definition}[Truth set]
+Given a predicate $P$ on a set $A$, the \emph{truth set}\index{truth set} of $P$ is the set
 \[
 \{x \in A \mid P(x) \text{ is true}\}
 \]
-i.e.\ the set of all elements that make the predicate true. If you were paying attention in the last section you'll notice that this is literally just the inverse image $P^{-1}(\text{True})$ that we already talked about, but now it has a name. Think of it like a type alias in Python or Haskell---same thing, different label.\footnote{In Haskell: \texttt{type TruthSet a = Set a}. Riveting stuff.}
+i.e.\ the set of all elements that make the predicate true.
+\end{definition}
+
+If you were paying attention in the last section you'll notice that this is just the inverse image $P^{-1}(\text{True})$ that we already talked about, but now it has a name. Think of it like a type alias in Python or Haskell---same thing, different label.\footnote{Think of it as applying a filter: in Python, \texttt{truth\_set = \{x for x in A if P(x)\}}.}
 
 Let's do a couple of worked examples.
 
@@ -78,7 +97,7 @@ Let's do a couple of worked examples.
 
 \textbf{Example 2.} Let $P(x) = $ ``$1 \leq x^2 \leq 4$'' and let our set be $\mathbb{Z}$ (all integers). We need $x^2 \geq 1$, so $x \neq 0$, and $x^2 \leq 4$, so $x \in \{-2, -1, 0, 1, 2\}$. Combining these: the truth set is $\{-2, -1, 1, 2\}$.
 
-Here's the thing that ties this back to quantifiers in a nice way:
+Here's how this connects back to quantifiers:
 \begin{itemize}
   \item $\forall x : A.\; P(x)$ is true \textbf{if and only if} the truth set of $P$ equals $A$. Every element makes the predicate true, so the truth set is the whole set.
   \item $\exists x : A.\; P(x)$ is true \textbf{if and only if} the truth set of $P$ is nonempty. At least one element makes it true, so there's something in there.
@@ -87,7 +106,7 @@ Here's the thing that ties this back to quantifiers in a nice way:
 So you can think of $\forall$ as asking ``is the truth set everything?'' and $\exists$ as asking ``is the truth set nonempty?'' which is a pretty clean way to think about it.
 
 \section{Negating quantified statements}
-Alright, so this is \emph{crucial} and it comes up constantly---in proofs, in writing specifications, in checking whether your code is correct, &c. You need to be able to negate statements that have quantifiers in them.
+This is \emph{crucial} and it comes up constantly---in proofs, in writing specifications, in checking whether your code is correct, \&c. You need to be able to negate statements that have quantifiers in them.
 
 The good news is that the rules are really clean and they're basically just De Morgan's laws but for quantifiers instead of $\wedge$ and $\vee$:
 \begin{lstlisting}
@@ -97,7 +116,7 @@ $\neg$($\exists$ x : A. P(x))  $\equiv$  $\forall$ x : A. $\neg$P(x)
 
 Why do these make sense? Let's think about it. ``It's \emph{not} the case that everything satisfies $P$'' means ``there's something that \emph{doesn't} satisfy $P$.'' And ``it's \emph{not} the case that something satisfies $P$'' means ``\emph{nothing} satisfies $P$,'' which is the same as saying everything fails to satisfy $P$.
 
-And hey, remember the Big And / Big Or interpretation from the last section? This is literally just De Morgan's laws from Module 2 in disguise! Negating a big conjunction (which is what $\forall$ is) gives you a big disjunction (which is what $\exists$ is), and vice versa. Same song, different verse.\footnote{If you squint at it in exactly the right way, the entirety of first-order logic is just propositional logic with extra steps. Which is kind of the point.}
+And hey, remember the Big And / Big Or interpretation from the last section? This is just De Morgan's laws from Module 2 in disguise! Negating a big conjunction (which is what $\forall$ is) gives you a big disjunction (which is what $\exists$ is), and vice versa. The same principle applies at a larger scale.\footnote{If you squint at it in exactly the right way, the entirety of first-order logic is just propositional logic with extra steps. Which is kind of the point.}
 
 \textbf{Example 1.} Negate ``every computer has a CPU.''
 
@@ -113,6 +132,9 @@ One more pattern that shows up all the time: negating an implication \emph{insid
 \]
 which reads as ``there's some $x$ where $P(x)$ holds but $Q(x)$ doesn't.'' This is a really common pattern in counterexample-based reasoning: to disprove ``all P's are Q's'' you find a P that isn't a Q.
 
+\bigskip
+\textbf{Exercise 2.} \label{ex:m4:2} Negate the following statement and simplify: ``For every student $s$ in CS 250, there exists a homework $h$ such that $s$ completed $h$ on time.'' Write the negation in both symbols and plain English.
+
 \section{Nested quantifiers}
 Sometimes one quantifier just isn't enough and you need to stack them. This is where things get interesting.
 
@@ -122,7 +144,7 @@ Sometimes one quantifier just isn't enough and you need to stack them. This is w
 \]
 This is claiming that there's a multiplicative identity. Is it true? Yes! Take $u = 1$ and you get $1 \cdot v = v$ for all $v$. So we've \emph{witnessed} the existential by providing a concrete value.\footnote{This is exactly what the $\exists$-introduction rule does: you hand it a concrete element and a proof that the predicate holds on that element.}
 
-Here's the thing you \textbf{really} need to internalize: \textbf{order matters}. The statements $\forall x.\;\exists y.\; P(x,y)$ and $\exists y.\;\forall x.\; P(x,y)$ are \emph{very different}.
+Here's what you really need to internalize: \textbf{order matters}. The statements $\forall x.\;\exists y.\; P(x,y)$ and $\exists y.\;\forall x.\; P(x,y)$ are \emph{very different}.
 
 Let's look at a concrete case. Consider $P(x,y) = $ ``$y > x$'' over $\mathbb{R}$:
 \begin{itemize}
@@ -140,28 +162,39 @@ Negating nested quantifiers is actually straightforward: you just flip each quan
 \]
 Each $\exists$ becomes a $\forall$, each $\forall$ becomes an $\exists$, and the predicate gets negated. That's it. You just walk through the quantifiers one at a time applying the rules from the previous section.
 
-\section{Necessary and sufficient conditions}
-Alright, so this section is about translating some very common mathematical and CS jargon back into the logic we already know. The phrases ``necessary condition'' and ``sufficient condition'' show up \emph{everywhere} in textbooks, specifications, API docs, &c.\ and you need to know what they mean.
+\bigskip
+\textbf{Exercise 3.} \label{ex:m4:3} Let $P(x, y)$ mean ``$x + y = 0$'' over $\mathbb{Z}$. Determine whether each of the following is true or false, and justify your answer:
+\begin{enumerate}[label=(\alph*)]
+  \item $\forall x.\; \exists y.\; P(x, y)$
+  \item $\exists y.\; \forall x.\; P(x, y)$
+\end{enumerate}
 
-Here's the breakdown:
+\section{Necessary and sufficient conditions}
+This section is about translating some very common mathematical and CS jargon back into the logic we already know. The phrases ``necessary condition'' and ``sufficient condition'' show up \emph{everywhere} in textbooks, specifications, API docs, \&c.\ and you need to know what they mean.
+
+\begin{definition}[Necessary and sufficient conditions]
+\leavevmode
 \begin{itemize}
-  \item ``$P$ is \emph{sufficient} for $Q$'' means $P \to Q$. If $P$ happens, that's \emph{enough} to guarantee $Q$. $P$ is sufficient---it suffices.
-  \item ``$P$ is \emph{necessary} for $Q$'' means $Q \to P$, or equivalently $\neg P \to \neg Q$. You \emph{can't} have $Q$ without $P$. $P$ is a prerequisite.
-  \item ``$P$ is \emph{necessary and sufficient} for $Q$'' means $P \leftrightarrow Q$. They're logically equivalent---each one implies the other.
+  \item ``$P$ is \emph{sufficient}\index{sufficient condition} for $Q$'' means $P \to Q$. If $P$ happens, that's \emph{enough} to guarantee $Q$. $P$ is sufficient---it suffices.
+  \item ``$P$ is \emph{necessary}\index{necessary condition} for $Q$'' means $Q \to P$, or equivalently $\neg P \to \neg Q$. You \emph{can't} have $Q$ without $P$. $P$ is a prerequisite.
+  \item ``$P$ is \emph{necessary and sufficient} for $Q$'' means $P \leftrightarrow Q$, that is, $(P \to Q) \wedge (Q \to P)$. They're logically equivalent---each one implies the other.
 \end{itemize}
+\end{definition}
+
+A common point of confusion: ``$P$ is necessary for $Q$'' is $Q \to P$, \textbf{not} $P \to Q$. The necessary thing goes on the \emph{right} of the arrow when the thing that needs it is on the left. Think of it as: $Q$ requires $P$, so if you have $Q$ you must have $P$. This trips people up more than almost anything else in the course, so take a moment to make sure it sits right.
 
 \textbf{Example.} ``Being a square is sufficient for being a rectangle.'' This means: if something is a square, then it's a rectangle. Every square is a rectangle. That's $\text{Square}(x) \to \text{Rectangle}(x)$.
 
-Flipping it around: ``Being a rectangle is necessary for being a square.'' This means: if something isn't a rectangle, it can't be a square. You need rectangle-ness in order to have square-ness. That's $\text{Square}(x) \to \text{Rectangle}(x)$---the same implication, just described from the other direction.\footnote{This is the thing that trips people up the most. ``$P$ is necessary for $Q$'' is $Q \to P$, not $P \to Q$. The necessary thing goes on the \emph{right} of the arrow when the thing that needs it is on the left. Think of it as: $Q$ requires $P$, so if you have $Q$ you must have $P$.}
+Flipping it around: ``Being a rectangle is necessary for being a square.'' This means: if something isn't a rectangle, it can't be a square. You need rectangle-ness in order to have square-ness. That's $\text{Square}(x) \to \text{Rectangle}(x)$---the same implication, just described from the other direction.
 
 The connection to everything else we've been doing is pretty direct: these are just different ways of talking about implication. The reason we bring this up now is that math texts and CS specs use this language \emph{all the time} and if you don't know how to translate ``necessary'' and ``sufficient'' into arrows, you're going to have a bad time reading formal documentation.\footnote{Real example from a spec I once read: ``Authentication is necessary but not sufficient for authorization.'' Translation: $\text{Authorized} \to \text{Authenticated}$ but $\text{Authenticated} \not\to \text{Authorized}$. You need to be logged in, but being logged in doesn't mean you have permission.}
 
 \section{Proofs with this logic}
 Proofs in this logic are going to be really similar to proofs in propositional logic but there are going to be five additional rules: the intro and elimination rules of our new quantifiers plus a special rule for our $=$ operator.
 
-We'll start with the easiest which is the rule for equality
+We'll start with the easiest, which is the rule for equality.
 
-reflexivity:
+\noindent\textbf{Reflexivity:}
 \begin{lstlisting}
 assumes x : A
 -------------
@@ -170,18 +203,19 @@ shows x = x
 
 which is just that you're always allowed to conclude that a thing is equal to itself, unsurprisingly! If you're also playing the natural number game or if you ever try other interactive theorem provers you probably will see this rule called ``reflexivity'', or ``rfl''/``refl'' for short.
 
-Next we have the rule for eliminating $\forall$ because it's easier
+Next we present the rules for $\forall$. We start with elimination because it is the simpler of the two.
 
+\noindent\textbf{Elimination:}
 \begin{lstlisting}
-assumes $\forall$ x: A. P(x)
+assumes $\forall$ x : A. P(x)
         a : A
 --------------------------
 shows P(a)
 \end{lstlisting}
-which just says that if P is true on all elements of A and a is an element of A, then $P(a)$. It's kinda like applying a function, isn't it?
+This says that if $P$ is true of all elements of $A$ and $a$ is an element of $A$, then $P(a)$ holds. It's a lot like applying a function, isn't it?
 
-The introduction rule is going to look a little like the introduction rule for implication
-
+\noindent\textbf{Introduction:}
+The introduction rule is going to look a little like the introduction rule for implication.
 \begin{lstlisting}
 assumes
   proof of:
@@ -191,14 +225,16 @@ assumes
 -----------------
 shows $\forall$ x : A. P(x)
 \end{lstlisting}
-what we're doing is taking evidence that given an \emph{arbitrary} element of A we can always show that $P(a)$ is true and internalizing that into the $\forall$, the same way that we internalize the ability to prove Q assuming P into \texttt{P -> Q}.
+Side condition: the variable $a$ must really be \emph{arbitrary}. In practice that means $a$ should be fresh for the subproof and should not appear free in any undischarged assumption that the subproof depends on. Otherwise you'd be proving $P(a)$ for some \emph{special} $a$ and then incorrectly generalizing to all elements of $A$.
 
-The rules for $\exists$ are kinda dual to $\forall$.
+What we're doing is taking evidence that given an \emph{arbitrary} element of $A$ we can always show that $P(a)$ is true and internalizing that into the $\forall$, the same way that we internalize the ability to prove $Q$ assuming $P$ into \texttt{P -> Q}.
 
-Here's the elimination rule of $\exists$
+The rules for $\exists$ are the mirror image of $\forall$'s.
+
+\noindent\textbf{Elimination:}
 \begin{lstlisting}
 assumes
-  $\exists$ x. P(x)
+  $\exists$ x : A. P(x)
   subproof:
      assumes c : A
              P(c)
@@ -208,31 +244,35 @@ assumes
 shows Q
 \end{lstlisting}
 
-and the introduction rule is
+Side condition: the witness variable $c$ must be \emph{fresh}. In particular, it must not appear free in $Q$ or in any undischarged assumption outside the subproof. Otherwise the particular name chosen for the witness could leak out into the conclusion, which would make the rule unsound.
+
+This rule says: if you know something satisfying $P$ exists, and you can show that $Q$ follows from having \emph{any} element $c$ satisfying $P(c)$---without relying on which specific $c$ it is---then you can conclude $Q$. Think of it as opening a box: you know something is inside, you don't know exactly what, but you show that no matter what it turns out to be, the conclusion holds. This is why the subproof introduces a \emph{fresh} variable $c$---it represents an arbitrary witness, not a specific one.
+
+\noindent\textbf{Introduction:}
 \begin{lstlisting}
 assumes
   c : A
   P(c)
 ------------------------
-shows $\exists$ x: A. P(x)
+shows $\exists$ x : A. P(x)
 \end{lstlisting}
 
 \section{Induction, round 1}
 Here we're going to introduce the concept of the natural numbers and also the idea of natural induction. Why? We've shown how to prove things about predicates in general, but if I were to just \emph{hand} you a predicate on a set it's not like you'd know how to actually do anything with it. You don't have any handles, so to speak, for how to start your proof other than brute forcing the set-based semantics. But as we've discussed a couple of times now this won't work for infinite sets where you'd need to check the formula against potentially infinite values.
 
-Induction is a way of getting a ``handle'' on the data inside a particular set/type by defining types in a way that has structure to it.
+Induction\index{induction} is a way of getting a ``handle'' on the data inside a particular set/type by defining types in a way that has structure to it.
 
-Okay, so remember earlier how we talked about BNF syntax? The syntax where we recursively defined a set of things?
+Remember earlier how we talked about BNF syntax? The syntax where we recursively defined a set of things?
 
 Like how we defined all propositional logic formulas as
 
-$L := L \wedge L \mid L \vee L \mid L \to L \mid {\sim} L \mid T \mid F$
+$L := L \wedge L \mid L \vee L \mid L \to L \mid {\sim} L \mid T \mid F \mid x$
 
-Well we can also define the natural numbers the same way like this
+We can define the natural numbers\index{natural numbers} the same way:
 
 $\text{Nat} := 0 \mid \text{succ Nat}$
 
-This means that every natural number is going to be expressed as either 0 or one plus another natural number, and by doing this we'll have reduced the difficulty of assessing an infinite number of numbers to just \emph{two cases}.
+Every natural number is either 0 or the successor of another natural number, so checking a predicate on infinitely many values reduces to just \emph{two cases}.
 
 That's what induction buys us.
 

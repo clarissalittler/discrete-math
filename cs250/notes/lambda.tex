@@ -1,0 +1,162 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  mathescape=true
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Intermezzo: The Lambda Calculus}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+We've reached the end of CS 250. Over the past ten modules you've learned how to define data with BNF, how to prove things about data with induction, and---in the intermezzi on Curry--Howard and the algebra of types---how proofs and programs are secretly the same thing. But there's a question we left hanging all the way back in Module 1 that I want to come back to now.
+
+Remember the question? We asked: if we want to understand what computers can do \emph{ever}---not just what today's chips can handle---we need an abstract model of computation, one that doesn't depend on hardware or programming language. We said we'd leave the answer for CS 251. But we can give a preview now, and it turns out that almost everything you need to understand the answer has been hiding in this course the whole time.
+
+\section{A mathematical model of computation}
+
+In the 1930s, before electronic computers existed, a mathematician named Alonzo Church\index{Church, Alonzo} asked a foundational question: what does it mean to \emph{compute} something? His answer was the \textbf{lambda calculus}\index{lambda calculus}---the simplest possible programming language. Not a practical language you'd use to build a web app, but a theoretical one, stripped down to the absolute minimum needed to express any computation at all.
+
+How minimal? The entire language has exactly three constructs. Here's the BNF\@:
+\[
+M \;:=\; x \;\mid\; \lambda x.\; M \;\mid\; M\; M
+\]
+
+That's it. Three things:
+\begin{itemize}
+  \item \textbf{Variables} ($x$): names that stand for values. You've seen these since Module 2.
+  \item \textbf{Abstraction} ($\lambda x.\; M$): a function definition. The $\lambda$ says ``I'm defining a function whose parameter is $x$ and whose body is $M$.'' If you've written \texttt{def f(x): return M} in Python or \texttt{fun x -> M} in OCaml, you already know what this is. The $\lambda$ is just the world's oldest anonymous function syntax.
+  \item \textbf{Application} ($M\; M$): a function call. Put a function next to its argument and it runs.
+\end{itemize}
+
+No numbers. No booleans. No if-statements. No loops. No data structures. Just variables, function definitions, and function calls. You're probably thinking: how can you compute \emph{anything} with that? The answer is one of the most surprising facts in all of computer science. You can build everything from functions alone.
+
+\section{Computing with pure functions}
+
+The lambda calculus has one rule of computation, called \textbf{beta reduction}\index{beta reduction}. It says: when you apply a function to an argument, substitute the argument for the parameter in the body. In symbols:
+\[
+(\lambda x.\; M)\; N \;\longrightarrow\; M[N/x]
+\]
+where $M[N/x]$ means ``$M$ with every occurrence of $x$ replaced by $N$.'' That's it. That's the entire execution model.
+
+\begin{example}[The identity function]
+The term $\lambda x.\; x$ is a function that takes its argument and returns it unchanged. Apply it to 5:
+\[
+(\lambda x.\; x)\; 5 \;\longrightarrow\; x[5/x] \;=\; 5
+\]
+The identity function applied to 5 gives 5. Not very exciting, but it illustrates the rule.
+\end{example}
+
+\begin{example}[Applying a function twice]
+Consider the term $\lambda f.\; \lambda x.\; f\;(f\; x)$. This takes a function $f$ and a value $x$, and applies $f$ twice. If $f$ is ``add 1'' and $x$ is $0$:
+\begin{align*}
+(\lambda f.\; \lambda x.\; f\;(f\; x))\;\text{add1}\; 0
+  &\;\longrightarrow\; (\lambda x.\; \text{add1}\;(\text{add1}\; x))\; 0 \\
+  &\;\longrightarrow\; \text{add1}\;(\text{add1}\; 0) \\
+  &\;=\; \text{add1}\; 1 \\
+  &\;=\; 2
+\end{align*}
+Does this remind you of anything? In Module 4, we defined the natural numbers with a successor function $\text{succ}$ and a base case $0$. Applying $\text{succ}$ twice to $0$ gives $2$. The idea of ``iterate a function $n$ times'' is about to become very important.
+\end{example}
+
+Notice something familiar about the BNF for lambda terms. It has a recursive structure: the body of an abstraction is itself a lambda term, and both parts of an application are lambda terms. By the pattern from Module 10, this BNF gives us a principle of \emph{structural induction on lambda terms}\index{structural induction!on lambda terms}---three cases, one for each construct. This is exactly how programming language theorists prove properties of languages: by induction on the syntax. The tools you learned in Module 10 are the same tools the researchers use.
+
+\section{Church encodings---building everything from nothing}
+
+Here is where things get genuinely mind-bending. Since the lambda calculus has no built-in data types, Church figured out how to \emph{encode} data as functions. The strategy is elegant: represent a piece of data by what you can \emph{do with it}.
+
+\subsection*{Church booleans}
+
+What can you do with a boolean? You use it to choose between two alternatives. So let's define booleans as choosers:
+\begin{align*}
+\text{true}  &= \lambda t.\; \lambda f.\; t  && \text{(given two options, pick the first)} \\
+\text{false} &= \lambda t.\; \lambda f.\; f  && \text{(given two options, pick the second)}
+\end{align*}
+
+A boolean \emph{is} an if-statement. Given two branches, it picks one. In fact, the ``if'' function is almost trivial:
+\[
+\text{if} = \lambda b.\; \lambda t.\; \lambda f.\; b\; t\; f
+\]
+It just hands the two branches to the boolean and lets the boolean decide. Let's verify:
+\[
+\text{if}\;\text{true}\;a\;b \;\longrightarrow\; \text{true}\;a\;b \;\longrightarrow\; (\lambda t.\;\lambda f.\; t)\;a\;b \;\longrightarrow\; (\lambda f.\; a)\;b \;\longrightarrow\; a
+\]
+It works. And this connects directly to Module 2: we're encoding T and F---the truth values of propositional logic---as pure functions. The logical constants have become computational objects.
+
+\subsection*{Church numerals}
+
+What can you do with a natural number $n$? You can use it to \emph{repeat} something $n$ times. So let's define a natural number as a function that iterates its argument:
+\begin{align*}
+\mathbf{0} &= \lambda f.\; \lambda x.\; x              && \text{(apply $f$ zero times)} \\
+\mathbf{1} &= \lambda f.\; \lambda x.\; f\; x           && \text{(apply $f$ once)} \\
+\mathbf{2} &= \lambda f.\; \lambda x.\; f\;(f\; x)      && \text{(apply $f$ twice)} \\
+\mathbf{3} &= \lambda f.\; \lambda x.\; f\;(f\;(f\; x)) && \text{(apply $f$ three times)} \\
+    &\;\;\vdots \\
+\mathbf{n} &= \lambda f.\; \lambda x.\; f^n\; x          && \text{(apply $f$ $n$ times)}
+\end{align*}
+
+Stop and look at this. A Church numeral $\mathbf{n}$ takes a function $f$ and a starting value $x$, and applies $f$ to $x$ exactly $n$ times. Zero applies $f$ zero times (just returns $x$). One applies $f$ once. And so on.
+
+Now here's the connection I want you to see. In Module 4 we defined the natural numbers by BNF:
+
+\begin{lstlisting}
+Nat := 0 | succ(Nat)
+\end{lstlisting}
+
+Two cases: a base case ($0$) and a recursive case (apply $\text{succ}$ one more time). Church numerals are \emph{the same definition in disguise}. The base case is $x$ (the ``zero'' of the iteration). The recursive case is ``apply $f$ one more time.'' Church numeral $\mathbf{n}$ is literally $\text{succ}^n(0)$ with $\text{succ}$ renamed to $f$ and $0$ renamed to $x$. The BNF and the Church encoding are two faces of the same coin.
+
+With this insight, the successor function writes itself:
+\[
+\text{succ} = \lambda n.\; \lambda f.\; \lambda x.\; f\;(n\; f\; x)
+\]
+Given a Church numeral $n$, this produces a new numeral that applies $f$ one extra time: $n$ already applies $f$ $n$ times to $x$, and then we wrap one more $f$ around the result. That's ``apply $f$ one more time''---exactly the recursive case of the BNF\@.
+
+And addition? Apply $f$ a total of $m + n$ times by first applying it $n$ times, then $m$ more:
+\[
+\text{add} = \lambda m.\; \lambda n.\; \lambda f.\; \lambda x.\; m\; f\;(n\; f\; x)
+\]
+The term $n\; f\; x$ applies $f$ $n$ times to $x$. Then $m\; f$ applies $f$ $m$ more times to that result. Total: $m + n$ applications.
+
+\section{Why this matters}
+
+We started this course by asking whether Python and C can solve the same problems, and whether some future computer might solve problems that today's computers can't. The lambda calculus gives us the tools to answer these questions.
+
+\textbf{The Church--Turing thesis.}\index{Church--Turing thesis} In the same decade that Church invented the lambda calculus, Alan Turing independently invented a different model of computation---the Turing machine, a kind of abstract tape-reading automaton. The two models look nothing alike. But Church and Turing proved that they compute exactly the same class of functions. Every function computable by a Turing machine can be computed in the lambda calculus, and vice versa. This result has been replicated for every ``reasonable'' model of computation anyone has ever proposed: register machines, cellular automata, Post systems, RAM machines, quantum computers. They all compute the same things. The \textbf{Church--Turing thesis} is the claim that this class---the class of functions computable by any of these models---is \emph{the} right notion of ``computable.''
+
+This is the answer to Module 1's question. Python and C can solve the same problems because they are both models of computation at least as powerful as the lambda calculus (and no more powerful). No future chip will change this. The limits of computation are not engineering constraints---they are mathematical facts, and the lambda calculus is one of the cleanest ways to see them.
+
+\textbf{The lambda calculus is the ancestor of every functional language.} Haskell, ML, OCaml, Lisp, Scheme, Clojure, Erlang, F\#---all of them are, at their core, the lambda calculus with syntactic sugar on top. When you write a lambda expression in Python (\texttt{lambda x: x + 1}), you are writing a Church-style abstraction. The notation is literally named after Church's $\lambda$.
+
+\textbf{Under Curry--Howard, lambda terms are proofs.} In the previous intermezzo, we saw that proofs correspond to programs and propositions correspond to types. The programs in that correspondence are lambda terms. So the simplest possible model of computation is also the simplest possible language of mathematical proof. A lambda term of type $A \to B$ is simultaneously a function from $A$ to $B$ and a proof that $A$ implies $B$. Defining a function \emph{is} introducing an implication. Applying a function \emph{is} modus ponens. The act of computing and the act of reasoning are, at bottom, the same act.
+
+\textbf{BNF, induction, Curry--Howard, and the lambda calculus form a single story.} The BNF for lambda terms ($M := x \mid \lambda x.\; M \mid M\; M$) gives you structural induction on terms. Structural induction lets you prove properties of programs. Curry--Howard tells you those programs are proofs. And the Church--Turing thesis tells you those programs capture all of computation. The entire course---from the first BNF in Module 2 to the structural induction of Module 10, from the proof rules of Module 3 to the Curry--Howard correspondence---was building toward this point. Logic, proof, computation, and data are not four separate subjects. They are four views of one subject. CS 251 will make that precise.
+
+\section{Exercises}
+
+\bigskip
+\textbf{Exercise 1.}\label{ex:lambda:1} Evaluate $(\lambda x.\; \lambda y.\; x)\; 3\; 7$ by applying beta reduction step by step. What does this function do? (Hint: the expression $(\lambda x.\; \lambda y.\; x)\; 3\; 7$ means $((\lambda x.\; \lambda y.\; x)\; 3)\; 7$---application is left-associative.)
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:lambda:2} Write a Church encoding for the boolean operation AND\@. Hint: $\text{and} = \lambda a.\; \lambda b.\; a\; b\; \text{false}$. Verify that this definition is correct by evaluating it on all four input combinations: $\text{and}\;\text{true}\;\text{true}$, $\text{and}\;\text{true}\;\text{false}$, $\text{and}\;\text{false}\;\text{true}$, and $\text{and}\;\text{false}\;\text{false}$. For each case, show the beta reduction steps and confirm the result matches the expected truth value.
+
+\end{document}

@@ -13,7 +13,8 @@
   basicstyle=\ttfamily\small,
   frame=single,
   breaklines=true,
-  columns=fullflexible
+  columns=fullflexible,
+  mathescape=true
 }
 
 \theoremstyle{definition}
@@ -29,9 +30,9 @@
 \maketitle
 
 \section{More on proofs by contradiction and proofs by contrapositive}
-Way back in Module 3 we derived proof by contradiction as a tautology, starting from modus tollens and doing a bunch of substitution and simplification. That was important for understanding \emph{why} the technique is valid, but now we need to actually get good at \emph{using} it. So this section is going to focus on the practical mechanics of indirect proof and when to reach for it.
+Back in Module 3 we derived proof by contradiction as a tautology, starting from modus tollens and working through a bunch of substitution and simplification. That was important for understanding *why* the technique is valid, but now we need to get good at *using* it.
 
-\subsection{Proof by contradiction, in practice}
+\subsection{Proof by contradiction, in practice}\index{proof!by contradiction}
 Let's recall the shape of proof by contradiction. You want to prove some statement $P$. Instead of proving it directly, you assume $\sim P$---that is, you assume the \emph{negation} of what you want to prove---and then you show that this assumption leads to a contradiction. A contradiction is when you can derive both some statement $Q$ and its negation $\sim Q$ at the same time, which obviously can't happen. Since the assumption $\sim P$ led to nonsense, you conclude that $P$ must be true after all.
 
 The template looks like this:
@@ -48,11 +49,13 @@ When should you reach for this technique? A good rule of thumb: if the statement
 
 Let's do a classic example.
 
-\textbf{Theorem:} $\sqrt{2}$ is irrational.
+\begin{theorem}
+$\sqrt{2}$ is irrational.
+\end{theorem}
 
 \textbf{Proof} by contradiction.
 
-Assume, for the sake of contradiction, that $\sqrt{2}$ is \emph{rational}. Then by definition of rational, we can write $\sqrt{2} = \frac{a}{b}$ where $a$ and $b$ are integers with $b \neq 0$ and the fraction is in lowest terms (meaning $\gcd(a,b) = 1$---hey, look, the stuff from the next section is already showing up).
+Assume, for the sake of contradiction, that $\sqrt{2}$ is \emph{rational}\index{irrational number}. Then by definition of rational, we can write $\sqrt{2} = \frac{a}{b}$ where $a$ and $b$ are integers with $b \neq 0$ and the fraction is in lowest terms (meaning $\gcd(a,b) = 1$---hey, look, the stuff from the next section is already showing up).
 
 Squaring both sides we get $2 = \frac{a^2}{b^2}$, so $a^2 = 2b^2$.
 
@@ -63,9 +66,10 @@ Substituting back: $(2c)^2 = 2b^2$, so $4c^2 = 2b^2$, so $b^2 = 2c^2$. But this 
 Now here's the contradiction: we said the fraction $\frac{a}{b}$ was in lowest terms, meaning $a$ and $b$ share no common factors. But we just showed both $a$ and $b$ are even, so they share the common factor $2$. Contradiction!
 
 Therefore $\sqrt{2}$ is irrational.
-That's a really satisfying proof and one of the oldest in all of mathematics---it goes back to the ancient Greeks and apparently caused a minor existential crisis when they first discovered it.
 
-\subsection{Proof by contrapositive}
+That's a really satisfying proof and one of the oldest in all of mathematics---it goes back to the ancient Greeks, who were apparently quite disturbed by the discovery.
+
+\subsection{Proof by contrapositive}\index{proof!by contrapositive}
 The other indirect technique is proof by \emph{contrapositive}. This one is specifically for proving implications. So say you want to prove ``if $P$ then $Q$'', written $P \to Q$. The contrapositive of this statement is $\sim Q \to \sim P$, and it turns out these are logically equivalent!
 
 We actually already verified this back in Module 3 when we showed that modus tollens is a tautology. But let's just check the equivalence directly with a quick truth table:
@@ -87,7 +91,9 @@ Same column, so they're equivalent. This means that whenever you want to prove $
 
 Here's the classic example.
 
-\textbf{Theorem:} For any integer $n$, if $n^2$ is even then $n$ is even.
+\begin{theorem}
+For any integer $n$, if $n^2$ is even then $n$ is even.
+\end{theorem}
 
 If we tried to prove this directly we'd start with ``assume $n^2$ is even'' and then\ldots what? We know $n^2 = 2k$ for some integer $k$ but it's not obvious how to extract information about $n$ from that.
 
@@ -103,7 +109,7 @@ which is odd.
 See how much cleaner that was? The direct proof was stuck, but the contrapositive version just fell right out. The reason is that ``$n$ is odd'' gives us a concrete form to compute with ($n = 2k+1$), whereas ``$n^2$ is even'' is much harder to decompose.
 
 \subsection{Contradiction vs.\ contrapositive: when to use which}
-So you might be wondering: when should I use contradiction and when should I use contrapositive?
+You might be wondering: when should I use contradiction and when should I use contrapositive?
 
 Here's my advice:
 \begin{itemize}
@@ -112,12 +118,21 @@ Here's my advice:
   \item If you're not sure, contradiction always works as a fallback. You can always just assume the negation and see what breaks. The worst that happens is your proof is a little longer than it needs to be.
 \end{itemize}
 
+There's a subtlety worth noting for those interested in constructive mathematics. Modus tollens---from $P \to Q$ and $\lnot Q$, conclude $\lnot P$---is constructively valid and doesn't require excluded middle. But ``proof by contrapositive'' as a \emph{technique}---proving $\lnot Q \to \lnot P$ in order to establish $P \to Q$---relies on the equivalence between an implication and its contrapositive, which does require excluded middle. So strictly speaking, both contradiction and contrapositive are classical techniques. However, contrapositive proofs tend to be more transparent and informative, which is why they're generally preferred when available. In proof assistants like Lean, Agda, or Coq, you'd need to explicitly invoke a classical axiom for either technique, but a contrapositive proof usually requires it in only one place (at the very end, to flip the direction) while a contradiction proof may obscure the structure more thoroughly.
+
 In your homework this week you'll get to practice both techniques. One tip for the contradiction proofs: when you assume the negation, make sure you actually \emph{use} the assumption somewhere to derive the contradiction. If your proof never references the assumption, something has gone wrong---you've probably actually found a direct proof in disguise!
+
+\bigskip
+\textbf{Exercise 1.} \label{ex:m7:1} Prove by contrapositive: for any integer $n$, if $n^3$ is even then $n$ is even. (Hint: the structure is very similar to the $n^2$ proof above. Start by assuming $n$ is odd and show that $n^3$ is odd.)
 
 \section{GCD, Euclid's algorithm, \&c.}
 In this section, we're going to talk a little bit about Euclid's algorithm, the \emph{extended} version of Euclid's algorithm, and how it relates to finding multiplicative inverses for modular arithmetic $\mathbb{Z}\%m$.
 
-So first we can define the ``greatest common divisor'', which we'll denote as \texttt{gcd(a,b)}. The gcd is what it sounds like: the largest number that divides both of these numbers.
+First, let's nail down the definition of the ``greatest common divisor.''
+
+\begin{definition}[Greatest Common Divisor]
+For integers $a$ and $b$ that are not both zero, the \emph{greatest common divisor}\index{greatest common divisor} of $a$ and $b$, denoted $\gcd(a,b)$, is the greatest \emph{positive} integer that divides both $a$ and $b$.
+\end{definition}
 
 For example
 \begin{lstlisting}
@@ -127,59 +142,58 @@ gcd(21,35) = 7
 
 gcd(1024,1536) = 512
 
-gcd(a,0) = a
+gcd(18,0) = 18
 \end{lstlisting}
 
-The reason why that last one works is that technically any number divides 0 so the largest number that divides \texttt{a} is, well, \texttt{a} itself.
+More generally, if $a \neq 0$ then $\gcd(a,0) = |a|$. The reason is that every integer divides 0, so the common divisors of $a$ and 0 are exactly the divisors of $a$, and the greatest positive one is $|a|$. (We leave $\gcd(0,0)$ undefined.)
 
-Okay so how do you \emph{calculate} what the gcd is if it isn't obvious? The really easy solution is an algorithm called \emph{Euclid's} algorithm.
+How do you \emph{calculate} the gcd when it isn't obvious? The classic solution is \emph{Euclid's algorithm}\index{Euclidean algorithm}.
 
-Euclid's algorithm is based on the observation that if \texttt{a = n*b + r} then \texttt{gcd(a,b) = gcd(b,r)}, or in other words \texttt{gcd(a,b) = gcd(b,a\%b)}, and we can just keep doing that until we hit a termination condition, which is when we're down to 1 or 0 in the right-hand argument.
+Euclid's algorithm is based on the observation that if \texttt{a = n*b + r} then \texttt{gcd(a,b) = gcd(b,r)}, or in other words \texttt{gcd(a,b) = gcd(b,a\%b)}. We keep doing that until the right-hand argument is 0; if it hits 1 first, then we already know the gcd is 1 and can stop early.
 
-Okay, let's do a quick implementation in Python to make this clearer:
+Here's a quick implementation in Python:
 \begin{lstlisting}[language=Python]
   def gcd(a,b):
       if b == 1:
           return 1
       elif b == 0:
-          return a
+          return abs(a)
       else:
           return gcd(b,a%b)
 \end{lstlisting}
 
-It really is just that simple!
-
-So what about that whole \emph{extended} Euclidean algorithm? Well the idea behind it is that we can---simultaneously---calculate the gcd \emph{and} coefficients x,y such that
+What about the \emph{extended} Euclidean algorithm\index{extended Euclidean algorithm}? The idea is that we can simultaneously calculate the gcd \emph{and} coefficients x,y such that
 
 \begin{lstlisting}
 a*x + b*y = gcd(a,b)
 \end{lstlisting}
 
-Alright, so what's the use of this? It helps us calculate multiplicative inverses for the Nat \% n (or equivalently $\mathbb{Z}$ \% n) sets. (See Module 6: Nat \% n is a group.)
+What's the use of this? It helps us calculate multiplicative inverses in arithmetic modulo $n$. (See Module 6 for the modular-arithmetic background.)
 
-How? Well let's first assume that n is prime (this is stronger than we technically need, but it implies that \textbf{all} multiplicative inverses exist, and the case of $\mathbb{Z}$ \% a prime number is really the one we care about anyway).
+How? Well let's first assume that n is prime (this is stronger than we technically need, but it implies that every \textbf{nonzero} residue class has a multiplicative inverse, and the case of arithmetic mod a prime is really the one we care about anyway).
 
-Okay, so then we can use the extended euclidean algorithm to calculate
+Then we can use the extended Euclidean algorithm to calculate
 
 \begin{lstlisting}
 a*x + n*y = gcd(a,n)
 \end{lstlisting}
 
-but what's the gcd(a,n)? Since n is prime this must just be 1 so we've got
+but what's the gcd(a,n)? If $a$ is not divisible by $n$, then since $n$ is prime we must have $\gcd(a,n) = 1$, so we've got
 \begin{lstlisting}
 a*x + n*y = 1
 \end{lstlisting}
-and if we take \%n on both sides we get
+and reducing modulo $n$, the term $n \cdot y$ vanishes (since $n \cdot y$ is divisible by $n$), leaving us with
 \begin{lstlisting}
-(a*x) % n + (n*y)%n = 1
+(a*x) % n = 1 % n = 1
 \end{lstlisting}
 
-or in other words
-\begin{lstlisting}
-(a*x) % n = 1
-\end{lstlisting}
+which means that x is a multiplicative inverse of a modulo $n$. The crucial precondition here is $\gcd(a,n) = 1$; if the gcd is not 1, then no multiplicative inverse exists.
 
-which means that x is a multiplicative inverse of a! Alright, so with all of that let's give the extended Euclidean algorithm: it's basically the same except we're going to calculate a tuple in python instead of just one number. I'm going to follow the treatment here (\url{https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm})
+\bigskip
+\textbf{Exercise 2.} \label{ex:m7:2} Trace the Euclidean algorithm on $\gcd(48, 18)$, showing each step. That is, write out each call \texttt{gcd(a,b)} and the corresponding values of \texttt{a\%b} until you reach the base case. What is $\gcd(48,18)$?
+
+\medskip
+With all of that motivation, here's the extended Euclidean algorithm---basically the same as before except we calculate a tuple instead of just one number. I'm following the treatment here (\url{https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm})
 
 \begin{lstlisting}[language=Python]
   def egcdRec(a,b,x0,x1,y0,y1):
@@ -193,29 +207,28 @@ which means that x is a multiplicative inverse of a! Alright, so with all of tha
       return egcdRec(a,b,1,0,0,1)
 
   def modInverse(a,m):
-      _,i,_ = egcd(a,m)
-      if i > 0:
-          return i
-      else:
-          return (i + m)
+      g,i,_ = egcd(a,m)
+      if g != 1:
+          raise ValueError("inverse does not exist")
+      return i % m
 \end{lstlisting}
 
 
 \section{Programming logic}
 In this section, we're going to talk about a specific kind of logic. This material is similar to Epp section 4.10 \textbf{but} more formalized.
 
-We're going to be dealing with a specific logic called Hoare logic. \href{https://en.wikipedia.org/wiki/Hoare_logic}{Hoare logic}---invented originally by Tony Hoare---is a formal logic for reasoning about code directly. It has axioms, it has rules of inference, it has a syntax and semantics. It's a fully-fledged albeit very \emph{different} looking logic.
+We're going to be dealing with a specific logic called Hoare logic\index{Hoare logic}. \href{https://en.wikipedia.org/wiki/Hoare_logic}{Hoare logic}---invented originally by Tony Hoare---is a formal logic for reasoning about code directly. It has its own axioms, inference rules, syntax, and semantics. It's a fully-fledged albeit very \emph{different} looking logic.
 
-Each statement in Hoare logic looks like
+Each statement in Hoare logic looks like\index{Hoare triple}
 \begin{lstlisting}
 {P}C{Q}
 \end{lstlisting}
 
-Where P is a proposition about the state of the program \textbf{before} your code runs---the values of variables, output, things like that---C is the code---a series of statements in your program---and Q is another proposition about the state of the program \textbf{after} the code has run.
+Where P is a proposition about the state of the program \textbf{before} your code runs\index{precondition}---the values of variables, output, things like that---C is the code---a series of statements in your program---and Q is another proposition about the state of the program \textbf{after} the code has run\index{postcondition}.
 
-In other words, think of \{P\}C\{Q\} as saying ``if P is true then after C runs Q is true''. This is a kind of implication! After all, implication \texttt{P -> Q} says ``if P is true then Q is true''. So instead this is an implication with some work that happens in the middle.
+Think of $\{P\}C\{Q\}$ as an implication with a computational step in the middle: if $P$ holds before $C$ runs, then $Q$ holds afterward.
 
-Okay, now this programming language is going to look like a simplified version of C. It's only going to have a few kinds of statements
+The programming language we'll use is a simple imperative language, with just a few kinds of statements
 
 \begin{lstlisting}
 Assignment:
@@ -228,7 +241,7 @@ where c1 and c2 are both valid statements
 
 Conditionals:
  if b then c1 else c2
-where b is a boolean valued statement that uses (>, >=, =, /=, &c. and variables)
+where b is a boolean valued statement that uses (>, >=, =, /=, \&c. and variables)
 and c1, c2 are other valid statements in the language
 
 While:
@@ -240,7 +253,7 @@ Skip:
 
 it's a statement that does nothing
 \end{lstlisting}
-Again, this is a \textbf{very} stripped down version of something like C. It's just for the purposes of explaining some very basic concepts in terms of how we can prove code is correct!
+This is a deliberately stripped-down language---just enough to explain the basic concepts of proving code correct.
 
 Now here's our basic rules:
 
@@ -256,7 +269,7 @@ assumes: {P}c1{Q}
          {Q}c2{R}
 shows: {P}c1;c2{R}
 \end{lstlisting}
-this rule tells us that if we have a situation where c1 makes Q true if P is true, and c2 makes R true if Q is true, then we can glue these together with sequencing. This makes sense because, again, this is a kind of implication. So really this is just another version of transitivity where we can glue \texttt{P -> Q} and \texttt{Q -> R} together to show \texttt{P -> R}, but again connecting the little machines that work inside the implication.
+this rule tells us that if c1 takes us from P to Q, and c2 takes us from Q to R, then we can glue them together with sequencing. This is just transitivity---\texttt{P -> Q} and \texttt{Q -> R} give us \texttt{P -> R}---but with the code steps wired in between.
 
 \noindent\textbf{Conditionals:}
 \begin{lstlisting}
@@ -269,42 +282,42 @@ This tells us that if Q is true after c1 runs when P and B are true \textbf{and}
 
 \noindent\textbf{While:}
 \begin{lstlisting}
-assumes: {P ^ B}S{P}
+assumes: {P ^ B}c{P}
 shows: {P}while B do c{P ^ ~B}
 \end{lstlisting}
-This one feels a little weird relative to some of the past ones: so the idea here is that you want to define a kind of ``loop invariant'', a thing that is preserved each execution of the loop, and then you show that if the loop conditional is true (which it has to be if you're executing the body of the loop) then you'll preserve the loop invariant. Finally, though, you're allowed to conclude that the loop invariant doesn't just hold but also that the loop conditional must be false \textbf{because you terminated the loop}.
+The idea is to identify a \emph{loop invariant}\index{loop invariant}---a property preserved by each iteration of the loop body. You show that if the invariant and the loop condition both hold before the body executes, the invariant still holds afterward. When the loop terminates, you know the invariant holds \emph{and} the loop condition is false.
 
 The next one is definitely the weirdest, and one that we need to explain a bit.
 
-\noindent\textbf{Assignment:}
+\noindent\textbf{Assignment:}\index{assignment rule}
 \begin{lstlisting}
 {P[x/e]}x := e{P}
 \end{lstlisting}
 
-So what this is saying is that \textbf{if} the proposition P is true after substituting the expression e for the variable x, then after assignment you can just conclude that P is true.
+What this is saying is that \textbf{if} the proposition P is true after substituting the expression e for the variable x, then after assignment you can just conclude that P is true.
 
 Let's look at an example because I think it'll make more sense:
 
 If we take this fragment of a proposition, where we just are leaving a hole for ourselves in the pre-condition, and we \textbf{want} to conclude that after subtracting 1 from the variable x then x > 0
 \begin{lstlisting}
-{??}x := x -1{x > 0}
+{??} x := x - 1 {x > 0}
 \end{lstlisting}
-looking at this, what does the precondition have to be? It needs to be that x > 1 or\ldots another way to say this would be that (x - 1) > 0, which is exactly what you get if you do the substitution of x for e---which in this case is x-1.
+looking at this, what does the precondition have to be? It needs to be that x > 1 or\ldots another way to say this would be that (x - 1) > 0, which is exactly what you get if you substitute the expression e for x in P---which in this case means replacing x with x-1.
 
 So the assignment rule lets us write things like this
 \begin{lstlisting}
-{x -1 > 0} x := x -1{x > 0}
+{x - 1 > 0} x := x - 1 {x > 0}
 \end{lstlisting}
 
-Now the assignment rule isn't necessarily super helpful as written. It's too specific! Like it can't let us conclude an obvious fact like
+The assignment rule as written isn't super useful on its own --- it's too specific! Like it can't let us conclude an obvious fact like
 \begin{lstlisting}
-{x > 0} x := x + 1{x > 0}
+{x > 0} x := x + 1 {x > 0}
 \end{lstlisting}
-in other words, that if x is greater than zero incrementing it will keep it greater than zero. Y'know, the kind of thing we might need to build a loop invariant.
+in other words, that if x is greater than zero incrementing it will keep it greater than zero---exactly the kind of thing we might need to build a loop invariant.
 
 Thankfully, there's one last rule that's super useful that helps us glue all of these bits and pieces together:
 
-\noindent\textbf{Strengthening / Weakening:}
+\noindent\textbf{Strengthening / Weakening:}\index{strengthening}\index{weakening}
 \begin{lstlisting}
 assumes: {P2}c{Q2}
          P1 -> P2
@@ -312,21 +325,111 @@ assumes: {P2}c{Q2}
 shows:
 {P1}c{Q1}
 \end{lstlisting}
-Okay this will make sense if we just read it carefully: what it's saying is that if we know that \{P2\}c\{Q2\}, in other words that P2 implies Q2 \textbf{after} running the code c, and we know that P1 implies P2, and we know that Q2 implies Q1, we're allowed to glue all these facts together to make the new fact that P1 implies Q1 after c is run. Why? Because we can take the P1 and turn it into a P2, since P1 -> P2, and then we can take the resulting Q2 and turn it into a Q1 since Q2 -> Q1.
+Read it carefully: if we know that \{P2\}c\{Q2\}, in other words that P2 implies Q2 \textbf{after} running the code c, and we know that P1 implies P2, and we know that Q2 implies Q1, we're allowed to glue all these facts together to make the new fact that P1 implies Q1 after c is run. Why? Because we can take the P1 and turn it into a P2, since P1 -> P2, and then we can take the resulting Q2 and turn it into a Q1 since Q2 -> Q1.
 
 Another way of thinking of it is that you can always make the pre-condition \emph{stronger} and the post-condition \emph{weaker}.
 
 So in our above example we'd have that the assignment rule gives us
 
 \begin{lstlisting}
-{(x+1) > 0} x := x + 1{x > 0}
+{x + 1 > 0} x := x + 1 {x > 0}
 \end{lstlisting}
 but since x > 0 implies x + 1 > 0 we can use our new rule to turn this into
 \begin{lstlisting}
-{x > 0} x := x + 1{x > 0}
+{x > 0} x := x + 1 {x > 0}
 \end{lstlisting}
 which is what we wanted in the first place!
 
-Okay, so that was a lot and it's mostly an introduction for you to get a sense of how you might prove properties about programs rather than something I want you to completely absorb. In your homework for the week you're going to prove the exciting theorem that \{x = 0\}\;x := x+1;\; x := x+1\;\{x = 2\} or, in other words, that 1+1 = 2.
+\subsection{Putting it all together}
+
+Now that we have all the rules on the table, let's do a complete worked example that uses several of them in combination. We'll prove the following Hoare triple:
+
+\begin{lstlisting}
+{x = 5} x := x - 1; x := x - 1 {x = 3}
+\end{lstlisting}
+
+In other words: if $x$ starts at 5 and we subtract 1 twice, then $x$ ends up at 3. Not exactly a shock, but the point is to see how the formal machinery works end to end.
+
+We'll work backwards from the postcondition, which is generally the right strategy when the assignment rule is involved. The assignment rule tells us what the precondition \emph{must} be for a given assignment and postcondition, so starting at the end and peeling off one assignment at a time is the natural approach.
+
+\medskip
+\noindent\textbf{Step 1: Apply the assignment rule to the second assignment.}
+
+We want to end up with $\{x = 3\}$ after executing \texttt{x := x - 1}. The assignment rule says:
+\begin{lstlisting}
+{P[x/e]} x := e {P}
+\end{lstlisting}
+Here $P$ is $x = 3$ and $e$ is $x - 1$, so $P[x/(x-1)]$ means we substitute $x - 1$ for $x$ in $x = 3$, giving us $x - 1 = 3$. That produces:
+\begin{lstlisting}
+{x - 1 = 3} x := x - 1 {x = 3}            [assignment]
+\end{lstlisting}
+
+So after the first assignment runs, we need $x - 1 = 3$ (equivalently, $x = 4$) to hold.
+
+\medskip
+\noindent\textbf{Step 2: Apply the assignment rule to the first assignment.}
+
+Now we need $\{x = 4\}$ to hold after the first \texttt{x := x - 1}. Note that $x - 1 = 3$ and $x = 4$ are logically equivalent, so we can use either form; let's use $x = 4$ since it's a bit cleaner. Applying the assignment rule again with $P$ being $x = 4$ and $e$ being $x - 1$:
+
+$P[x/(x-1)]$ gives us $x - 1 = 4$. So:
+\begin{lstlisting}
+{x - 1 = 4} x := x - 1 {x = 4}            [assignment]
+\end{lstlisting}
+
+\medskip
+\noindent\textbf{Step 3: Chain the two assignments together with sequencing.}
+
+The sequencing rule says:
+\begin{lstlisting}
+assumes: {P}c1{Q}
+         {Q}c2{R}
+shows: {P}c1;c2{R}
+\end{lstlisting}
+Our two results from Steps 1 and 2 fit this pattern exactly, with $P = (x - 1 = 4)$, $Q = (x = 4)$, $c_1$ being the first \texttt{x := x - 1}, $c_2$ being the second \texttt{x := x - 1}, and $R = (x = 3)$. But we need the postcondition of the first triple to match the precondition of the second triple. The postcondition of Step 2 is $x = 4$ and the precondition of Step 1 is $x - 1 = 3$, which is the same thing (since $x - 1 = 3$ iff $x = 4$). So sequencing gives us:
+
+\begin{lstlisting}
+{x - 1 = 4} x := x - 1; x := x - 1 {x = 3}     [sequencing]
+\end{lstlisting}
+
+\medskip
+\noindent\textbf{Step 4: Use strengthening to connect to the stated precondition.}
+
+We're almost done, but notice the precondition we derived is $x - 1 = 4$ (i.e.\ $x = 5$), and the precondition we \emph{want} is $x = 5$. These are logically equivalent, so in particular $x = 5 \to x - 1 = 4$. We can use the strengthening/weakening rule:
+\begin{lstlisting}
+assumes: {P2}c{Q2}
+         P1 -> P2
+         Q2 -> Q1
+shows: {P1}c{Q1}
+\end{lstlisting}
+with $P_1 = (x = 5)$, $P_2 = (x - 1 = 4)$, $Q_1 = Q_2 = (x = 3)$, and $c$ being the full program. The implication $x = 5 \to x - 1 = 4$ holds by basic arithmetic, and $x = 3 \to x = 3$ is trivially true. So we conclude:
+
+\begin{lstlisting}
+{x = 5} x := x - 1; x := x - 1 {x = 3}     [strengthening/weakening]
+\end{lstlisting}
+
+And that's the complete proof! Let's collect the whole thing in one place for reference:
+
+\begin{lstlisting}
+(1) {x - 1 = 3} x := x - 1 {x = 3}                       [assignment]
+(2) {x - 1 = 4} x := x - 1 {x = 4}                       [assignment]
+(3) {x - 1 = 4} x := x - 1; x := x - 1 {x = 3}          [sequencing, (2)+(1)]
+(4) x = 5 -> x - 1 = 4                                    [arithmetic]
+(5) {x = 5} x := x - 1; x := x - 1 {x = 3}              [strengthening, (4)+(3)]
+\end{lstlisting}
+
+Notice the overall pattern: we used the assignment rule twice (working backwards from the postcondition), glued the results together with sequencing, and then used strengthening to hook up the precondition we actually wanted. This is the same pattern you'll use for the homework problem.
+
+\bigskip
+\textbf{Exercise 3.} \label{ex:m7:3} Prove the Hoare triple $\{x = 0\}\; x := x + 3\;\{x = 3\}$ using the assignment rule. (This is a single assignment, so you don't need sequencing---just apply the assignment rule and then use strengthening to connect the precondition you get to the one you want.)
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m7:4} Find the error in the following ``proof'' by contradiction that $\sqrt{4}$ is irrational:
+
+``Assume for contradiction that $\sqrt{4}$ is rational. Then $\sqrt{4} = a/b$ in lowest terms. Squaring: $4 = a^2/b^2$, so $a^2 = 4b^2$. This means $a^2$ is even, so $a$ is even. Write $a = 2c$. Then $4c^2 = 4b^2$, so $c^2 = b^2$, so $c = b$. But then $a = 2b$ and the fraction $a/b = 2$, so $\sqrt{4} = 2$. Contradiction!''
+
+Where exactly does the reasoning go wrong?
+
+\medskip
+That was a lot, and it's meant as an introduction to how you might prove properties about programs---not something you need to completely absorb right now. In your homework for the week you're going to prove the exciting theorem that \{x = 0\}\;x := x+1;\; x := x+1\;\{x = 2\} or, in other words, that 1+1 = 2.
 
 \end{document}

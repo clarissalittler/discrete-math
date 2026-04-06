@@ -1,0 +1,1446 @@
+* Module 1
+** A Note on The Textbook
+If you're having trouble finding a copy of Epp 5th edition try clicking this link!
+https://library.lol/main/C9C77A6273584214855A3813301DFE61
+
+** Welcome to CS 250
+ Welcome to CS 250! This class is an introduction to logic and mathematical reasoning geared towards computer scientists.
+
+ By the end of this class you will
+ + Be able to explain what a mathematical proof is
+ + Know the distinction between formal and informal proofs
+ + Be able to prove mathematical and logical statements with direct and indirect proof methods
+ + Be able to calculate truth tables for Boolean expressions
+ + Be able to define data in BNF notation
+ + Be able to explain the induction principle on the natural numbers
+ + Know how to relate induction on other types to natural induction
+ + Be able to perform simple formal proofs of program correctness
+
+That covers the *what* of this class but we haven't yet explained why you should care about it.
+** Why study logic?
+So why study logic: I have a few different points to cover here:
+ + understanding how to write proofs will let you reason about the /limits/ of computation
+ + learning logic will help you determine whether the programs you write are correct
+ + on a practical level "formal methods" --- the application of logic to computer science --- are a lucrative and in-demand field in all sorts of high-stakes computing and engineering: everything from embedded systems programming to chip design to the development of operating system components
+
+Lets break these down a little bit more.
+
+First, when I'm talking about reasoning on the limits of computation what I mean is that if we want to understand not just what computers can do /today/ but what computers can do /ever/ we need to start with an *abstract* model of computation, one that doesn't depend on a particular chip architecture or instruction set.
+
+Consider: if I /somehow/, and let's not worry about how at the moment, managed to demonstrate that *no* AMD made chip today could run a program that could read in the code of another program and print =1= if the program would run in finite time and =0= if the program will go into an infinite loop.
+
+Okay. So I've demonstrated this result. Awesome. How do I know there /won't/ be a chip that /could/ run such a program? How do we know we won't invent some new kind of computer that could do this? Maybe a quantum computer. That sounds cool and fancy, right? Maybe a quantum computer could do a bunch of things that seem impossible today?
+
+Or how about this: consider two programming languages, Python and C.
+
+If I can solve a problem in Python, do I *know* that I can always write a C program that computes the same thing? What about the other way around?
+
+I think we can all kind of intuitively /feel/ like, on some level, there isn't really a difference between what things you can compute between two languages only in how efficiently you can compute them.
+
+But Pure Vibes isn't really good enough for a computer scientist. We need the ability to /know/ whether two languages are essentially equivalent or two chips capable of running the same kinds of programs.
+
+To do that we need mathematical /models/ of computation that don't depend on any of these details, like the specifics of language or hardware. In other words, we need a model that /abstracts/ over these details.
+
+But what would you do with such a thing were you to have it?
+
+We've already determined it's not a concrete programming language with a compiler.
+
+No, instead we have to reason with mathematical tools: sets, symbols, syntax and semantics, proofs.
+
+And the question "what is a proof and how do I write one" is going to be the bulk of this class: with the actual mathematical modeling of computation and computer science being a thing that we'll leave for the sequel course CS 251.
+
+For now, I'll say a proof is a way to convince the reader, by clearly outlining a sequence of reasoning steps, that something is true
+
+[insert spiels for points two and three]
+
+And in the next section we'll cover a bit more about what that definition means.
+
+** What is logic, what is a proof?
+So in the last section we established that the point of the course is to develop the logical and mathematical tools that will let us study programs, their behavior, and their properties in an /abstract/ way independent of programming language or hardware.
+
+Now we want to introduce some of the basic mathematical concepts and formaliss we need to start down this path.
+
+The very first thing I want to discuss is /what logic is/.
+
+So logic is, and I'm borrowing from Dr. Logic's excellent lecture series (insert link) for this definition, a way to determine truth of statements from their premises by the employment of /arguments/ that are a series of valid reasoning steps.
+
+In the context of mathematics, we call a valid argument a proof.
+
+Proofs are the bread and butter of what mathematicians /do/. They're how we convince ourselves and each other that those moments of insight and creativity we have are actually true and not just wishful thinking.
+
+Here's an example of a very simple insight and proof.
+
+Let's say you were thinking about the /natural numbers/. That is the numbers that are either zero or a positive whole number. You realize "hey, thare are a lot of these. There's gotta be an infinite number of them." and now you want to convince yourself this is /true/, in other words you want to /prove/ it.
+
+To start, you have a rather clever guess on how to show this. First, you note that if you have a natural number you can always add one and it stays a whole, positive, number. Second, you decide to see what happens if there's a *finite* amount of natural numbers. You're going to /assume/ that this is true and then see if you can show it leads to something weird. 
+
+So the first consequence of there being a /finite/ number of natural numberes is that there must be a /biggest/ natural number.
+
+Why? Because for any two natural numbers one of them must be bigger than the other. So if you compare all of these finite numbers, one of them must be the biggest.
+
+Aside: can you implement this idea as a program?
+
+So, then, if we have a biggest natural number then we should be able to add one to it and get a new natural number. This new natural number must be bigger.
+
+But how can this be true if we aready found the biggest?
+
+We've found a contradiction, the weirdness we hoped to find. Normally this would be a bad thing for our mathematics but in our case it shows that our assumption that there were only a finite number of naturals was a bad assumption. Our only alternative, then, is that it is /not/ finite and thus is /infinite/.
+
+We've proved what we set out to prove, then, that there are an /infinite amount of natural numbers/.
+
+Okay, let's step back now.
+
+This is a pretty valid proof by mathematician standards but let's talk about some of the assumptions that went into it:
+
+ + first, we didn't actually show that you always get a new natural number by adding one to a natural number, we just appealed to the intuition that we've all done addition before and asserted it
+ + second, we didn't actually explain how we can generalize from "you can always compare two numbers" to "you can compare all the numbers in a collection of numbers"
+ + Third, we didn't even technically define what comparing the size of two numbers means. Did you catch that?
+ + Finally, we didn't actually justify this proof by contradiction technique. How do we know that just because we've found a contradiction from the assumption that the natural numbers are finite that we absolutely /know/ that they must instead be infinite? Heck, we didn't even define finite and infinite did we?
+
+ My point here is taht even when a mathematician writes a proof there is usually a body of assumptions, definitions, and facts that they're relying on!
+
+ Now for the world's most niche personality test:
+  + if you're completely unbothered by all these assumptions I left out, you're thinking like a mathematician: more worried about getting the right intuition and letting some things slide for the sake of clarity in the argument. You just want to get the proof done to your satisfaction so you can move onto the next cool thing that's buzzing in your brain.
+  + if you *are* bothered by it, then you're thinking like a logician: concerned about getting all the exact details of proofs correct and being incredibly clear about all the assumptions and definitions involved. You worry about whether things like "proof by contradiction" even make sense as a way of knowledge. You might like the word "epistemology"
+  + if you read all of this and thought something like "well I know there are an infinite number of natural numbers because I could write an loop that runs forever that keeps enumerating them until the heat death of the universe" then you're thinking like a /constructive/ mathematician: a blend of mathematician, logician, and computer scientist. You do math in your code and code with your math. You know languages like Agda and Idris that most people swear are not real.
+
+ Now to be clear none of these approaches is better than the others, every one has its own strengths and weaknesses.
+
+ These notes were, hoever, written by a constructive mathematician so there might be bias peeking through in how this material is presented. 
+ 
+** Variables and formulae
+So we've done a lot of setup to explain why we need to study logic and we've given a proof in a very /informal/, natural language, way. By natural language I mean human language that evolved organically as opposed to the language of mathematics or a programming language.
+
+We need to start moving from this informal language into /formal/ language, symbols with rigid meaning.
+
+We're going to make this journey piecemeal over time, learning how to take statements in human language---which can be ambiguous---and turn them into rogorous, unmistakeable, combinations of symbols.
+
+This will both help us be precise in how we do mathematics but also help us move our mathematics from pen and paper to computer programs.
+
+The first such formalization is the introduction of /variables/. You've already seen variables in algebra and programming before, although their uses are slightly different from what we're doing here.
+
+We're not "solving for x" like in algebra nor are we using variables like labeled containers as in /C/, /Python/, or similar programming languages where the contents of the container can change over time.
+
+No, instead variables as we're using them are something like generalized pronouns such as how "it" or "this" function as pronouns.
+
+There are /patterns/ to how we introduce variables like this: we name the variable and its scope and then allow ourselves to use it, e.g. "Consider a chicken *c*, such that ..." or "For all students, *s*, in CS250 ..."
+
+So for a more real example consider that in the previous section we assumed that there was a largest natural number and talked through the rest of the proof from there.
+
+Now we know how to say something like:
+"Assume there is a largest natural number, *n*, then we know that n+1 is also a natural number that that n+1>n, contradicting the assumption that *n* is largest"
+
+That's a lot clearer than trying to write it in just words, right, and all we've done is allow ourselves a little bit of abstraction.
+
+We /need/ variables to help us write more complicated kinds of logical statements as well. The first kinds we're going to talk about are what Epp calls universal, existential, and conditional.
+
+Universal statements are things like "all dogs are mammals" or "every chicken has a common ancestor". Universal statements are about something that is true for every possible examples of a "class of thing". We're going to make "class of thing" more rigorous soon but we'll let it be a little sloppy at the moment. So think "all dogs", "every person", "all programming languages". Those are "classes of thing".
+
+Universal statements can also include negatives like "no dogs are also cats" or "every person is not immortal".
+
+Existential statements are like "there is a smallest natural number" or "there is at least one rainy day each fall". These are about showing examples of something or that a thing with certain properties /exists/.
+
+These are the kinds of claims you make when you're showing a problem even has a solution. So for example if you want to say "the equation =3x - 29 = 0= has a solution", that's an existential statement.
+
+The last kind of statement Epp teases out is the "conditional statement", which are statements that involve something that's a kind of "if-then" or "when" condition inside of it.
+
+For example, "if a pear can be used as a weapon, then it is not ripe" or "if a program does not compile, then it is not correct".
+
+We can even combine all of these concepts together into an example such as "for every equation of the form =m*x + b = y=, where =m= is not =0=, there exists a solution". This is a universal wrapped around a conditional wrapped around an existential.
+
+So now we're ready to make the "class of thing" concept a little more formal and talk about /sets/.
+** Sets and pairs
+In the previous section we talked about classes of things such as "all dogs" or "all C programs". In mathematics, we call these collections /sets/.
+
+We denote a /set/ as curly braces like this ={ }=, often with commas separating the things---the elements---of the set.
+
+={red, green, blue}=
+
+={you, your friend, your friend's friend}=
+
+={the best chicken, the worst chicken}=
+
+These are very /abstract/ collections.
+
+If you have a *thing* =x= and a *collection of things* =A=, you can then ask the question "is =x= in =A=?" We generally write this as $x \in A$. Similarly, we write "is =x= not in =A=" as $x \notin A$.
+
+So how do we make sets? There are there basic ways:
+ The first is that you can take a finite number of things and just put them between the curly-braces and call that a set. That's how our first few examples worked.
+
+ The second is that you can take /other/ sets and then apply a condition---a /predicate/---onto it to make a new set. The easiest example is that you can take $\mathbb{N}$, the set of all natural numbers, and then filter out all the even numbers to get the set of all odd natural numbers. If you've seen Python's "list comprehensions" before, then you have seen a similar concept.
+
+ In symbols, we denote this with "set-builder notation" so we can write the above description as
+
+$\{n| n \in \mathbb{N} , n \% 2 = 1}$
+
+But how do you get things like "the set of all natural numbers" in the first place? That brings us to the third way to define sets, which is /inductively/ and we're going to sorta informally introduce how to do this by example until the second half of the course where we make it all more rigorous. 
+
+Okay now that we have set-building notation we can start to introduce a bunch of operations /on/ sets like so:
+
+$A \cap B := \{ x | x \in A \text{ and } x \in B\}$, which is the intersection of two sets. This is the set of elements that $A$ and $B$ have in common.
+
+$A \cup B :=  \{ x | x \in A \text{ or } x \in B\}$, which is the union of two sets. This is the set of elements that are either in $A$ or in $B$.
+
+The next concept we need to introduce is the idea of a /subset/. Assume sets $A$ and $B$, we say that $A$ is a subset of $B$ when every element of $A$ is also an element of $B$. We denote this in symbols as $A \subseteq B$.
+
+Okay, we're now heading to talking about a thing that seems obvious but is incredibly important and---in the history of mathematics---quite divisive: equality of sets. So we're going to go with the definition that two sets are equal exactly when $A \subseteq B$ and $B \subseteq A$, in other words when the two sets have /exactly/ the same elements.
+
+This has a couple of implications: first, that there's no sense of /ordering/ in sets: $\{a,b,c\} = \{c,b,a\} = \{c,a,b\}$. Second, that it doesn't matter how you build the sets. You could get the "set of natural numbers divisible by four" either as ${x | x \in \mathBB{N}, x \% 4 = 0\}$ or as a two step process of first getting the even numbers $E$ ${x | x \in \mathBB{N}, x \% 2 = 0\}$ and then performing this as ${x | x \in E, x \% 4 = 0\}$. Either way, you get the "same" set of numbers because they have the same elements.
+
+This is called /extensional/ equality, that is equality because the two things look the same from "the outside".
+
+I want to hint at why this is a useful yet /controversial/ definition by asking a simple question: when are two programs the same? Is producing the same output for the same input enough to call the programs the same? Why or why not?
+
+The final concept to discuss with sets is another operation: the /product/ of sets. So we need to talk about this because we're going to present an alternative to Epp's presentation. Her focus is a very classical one, on how to define essentially everything from just a couple of operations on sets. So she shows how to, from the basic definitions, come up with an idea of product of sets. It's a good trick, I recommend reading it once, but it's honestly not how a lot of foundational mathematics is done these days, at least not the kind you'll see as a computer scientist.
+
+/Instead/ we tend to introduce "tuples" as another basic datatype. You've seen tuples before: coordinates! $(3,4)$ is three units in the x-direction, four units in the y-direction. Tuples are kind of the opposite of sets. They have /order/ and a /fixed size/. If you want an analogy think of it like arrays in C/C++. You can have arrays of arbitrary size but any /given/ array has a size that you decided on, allocated, in advance.
+
+So now we can define $A \times B = \{(a,b)| a \in A, b \in B\}$, which is the set of tuples made from $A$ and $B$. 
+
+Okay, /with all of that/ we can now move onto the last topic of this first module: functions and relations.
+** Functions and relations
+
+Like with the last section we're going to diverge a little bit from Epp. So a function $f$ from a set $A$ to a set $B$, denoted as $f : A \rightarrow B$, is an assignment of elements of $A$ to elements of $B$ such that if $f(a) = b$ and $f(a) = c$ then $b = c$. In other words, $f$ is a gadget that sends each element of $A$ to /one/ element of $B$.
+
+Epp defines a function as a subset of $A \times B$, which is /sorta/ true but in general "a function as gadget that assigns elements of one set to another set" and "the subset of tuples in $A \times B$ that describes the action of the function" are two different concepts that we need to keep distinct. This goes back to the question about when two programs are the same that we proposed in the previous section.
+
+It's important to note that functions in mathematics can both include things that we know how to calculate, like $f(x) = x +1$, as well as things we don't really know how to calculate like a function that maps each C program that implements a function from integers to integers to the smallest numerical input that doesn't cause it to go into an infinite loop. That's a weird function, but it's a well-defined one, and it's definitely not something you can calculate.
+
+The other concept to discuss are /relations/. Relations are what you get when you relax the "assigns elements of $A$ to just one element of $B$" requirement. We've already seen one important relation! $A \subseteq B$ is a relation. Obviously you can have $A \subseteq B$ and $A \subseteq C$ without $B$ and $C$ being the same, because $\{1\} \subseteq \{1,2\}$ and $\{1\} \subseteq \{1,3\}$.
+
+That's a lot of material for this first week /but/ this was the big heavy-lifting setup week. Lots and lots of prefatory material that you may or may not have seen before that just needs to wash over you before we jump into the rest of the course.
+
+Next week we start doing /logic/.
+* Module 2
+** Logical formulas, formalized
+With all our mathematical preliminaries out of the way we're going to be ready to start dealing with logic more formally. Now, early attempts at talking about logic were focused on rhetoric and how to make arguments in human language. They were still focused on reasoning but didn't treat it in this /symbolic/ way that we do in modern times where we turn logic into formulas and equations and symbols.
+
+In this class, I'm not only going to take a symbolic approach to logic like Epp but I'm going to take a very "computer sciencey" approach, discussing logic kind of like it's a programming language.
+
+The general pattern of introducing logics---plural, yes, because there are many possible logics the same way there are many possible programming languages, each serving its own purpose---is that you define it as having a /syntax/ and a /semantics/.
+
+The /syntax/ of the logic is a lot like when we talk about the syntax of any programming language: what are the combination of symbols of a "valid" program/formula. The syntax tells use how we're allowed to make the formulas in our logic in order to establish the ground rules and forms.
+
+The /semantics/ of a logic tells us what the formulas of the logic *mean*. In ordinary programming languages the semantics are typically implemented as, well, the compiler or interpreter of the language. It's the definition of what it means to take a /syntactically valid/ program and what it does when you run it. For (most) logics, the semantics tells us how to take a formula and turn it into a mathematical function that takes in arguments and returns either "true" or "false".
+
+Now what does true and false mean here? That's a complicated question, something that could be an entire PhD's worth of study to investigate, /buuut/ ultimately we can define "true" as "reflects reality" and "false" as "contradicts reality". For most of this class, you can think of "true" and "false" a lot like the boolean types you find in every programming language.
+
+Okay so the first logic we're going to deal with is really simple. It only has booleans as data, variables, and a few logical connectives: and (/\), or ( \ /), not (~) , and implication (->). The idea of this logic is that it encompasses basic operations for how to connect statements about the world and their relationship to each other. It's all verbs, no nouns, but it still helps give some intuition of how reasoning works.
+
+
+We're going to express this using something called Back-Naur form (https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form) which is a really convenient way to describe grammars of simple languages, like this one, and something you'll see more of as you study computer science.
+
+L := T | F | L ^ L | L v L | ~L | L -> L | x
+
+BNF is a way to describe how to build things, recursively. It tell us, in this case, that to build an "L" you have a bunch of possibilities that are separated by the | symbol. You can follow this recursively, continuing to substitute in things for any L symbols that appear until you only have base cases (here: variables, T, and F). 
+
+Here's some examples to help clarify how this is used. This grammar tells us that
+
+ + T is a valid formula
+ + F is a valid formula
+ + T ^ (x v y) is a valid formula
+ + T -> L is not a valid formula because there's still an L
+ + T + F is not a valid formula because + isn't an allowed symbol in the syntax
+ + heck is a valid formula, a single variable named heck
+
+Okay, since this is the syntax now we need to define the /semantics/ of this logic. We already have named these pieces and now we can give an informal semantics before presenting our final explanation of meaning:
+
+ + T is just T, the boolean value for true
+ + F is just F, the boolean value for false
+ + p ^ q is /and/ and is true when p and q are both true
+ + p v q is /or/ and is true when *either* p or q are true, but *both* can be true
+ + ~ p is /not/ and is true when p isn't
+ + p -> q is /implication/ and is meant to capture that q is made true by p being true, it's going to be true *if* p is true when q is true
+ + variables are true when you plug in a true value into them
+
+Okay so that's the informal semantics, now what's the /formal/ semantics? We're going to explain it in terms of *truth tables*.
+
+A truth table is a way of describing the /graph/ of the function that a formula represents, and since all the arguments to these functions are just booleans and can be enumerated easily we can describe the graph is able to be represented as a table. 
+
+Let's start with variables
+| x | x |
+|---+---|
+| T | T |
+| F | F |
+
+okay, so a variable is just an identity function, a "diagonal" function as we've called it before.
+
+From here, we can build up the meaning of any formula piecemeal and describe the meaning of connectives in terms of "p" and "q" as subformulas, so when we write something like this:
+
+| p | q | p ^ q |
+|---+---+-------|
+| T | T | T     |
+| F | T | F     |
+| F | F | F     |
+| F | T | F     |
+
+what we're saying is that if we've already evaluated the meaning of "p" and "q" we can plug in their values and get the meaning of when they're connected by an /and/. So we can read this table off and it matches the informal meaning we described above: p ^ q is true exactly when p is true and q is true and false otherwise.
+
+Now we have p v q
+
+| p | q | p v q |
+|---+---+-------|
+| T | T | T     |
+| T | F | T     |
+| F | T | T     |
+| F | F | F     |
+
+Which tells us that p v q is true when either p or q is true (including both of them).
+
+Now we can do /not/
+
+| p | ~ p |
+|---+-----|
+| T | F   |
+| F | T   |
+
+And now we're getting to the weird one which is implication. So the intuition is that we want p -> q to be true if p being true makes q be true, in other words I can take the knowledge that p is true and then conclude that q is true. (Sidenote: there's a sense, that we might get into later in this course, that implication really is a function that takes in a proof that p is true and turns it /into/ a proof that q is true, so just keep that idea in mind). Now /do I care/ if q is true without p being true? In our first choice of logic, the answer is "no", and in fact we're going to make the decision that F -> p is true no matter what p is, because it's basically irrelevant to what we want implication to mean. This has some odd implications! Namely, that from a false conclusion you could just conclude anything! We'll dig into that more as we go.
+
+For now, the truth table:
+
+| p | q | p -> q |
+|---+---+--------|
+| T | T | T      |
+| T | F | F      |
+| F | T | T      |
+| F | F | T      |
+
+Okay and now that we have these truth tables let's show how to combine them together in an example:
+
+| x | y | z | ((x v y) ^ z) -> x                  |
+|---+---+---+-------------------------------------|
+| T | T | T | ((T v T) ^ T) -> T ==> T            |
+| T | T | F | ((T v T) ^ F) -> T ==> F -> T ==> T |
+| T | F | T | ((T v F) ^ T) -> T ==> T            |
+| T | F | F | ((T v F) ^ F) -> T ==> F -> T ==> T |
+| F | T | T | ((F v T) ^ T) -> F ==> T -> F ==> F |
+| F | T | F | ((F v T) ^ F) -> F ==> F -> F ==> T |
+| F | F | T | ((F v F) ^ T) -> F ==> F -> F ==> T |
+| F | F | F | F -> F ==> T                        |
+
+whew! That was a lot but hopefully you can see that, in principle, you could use truth tables to calculate the meaning of any formula as a function.
+
+In the next section we're going to talk about some of the consequences of this semantics and what it means for us.
+** Tautologies and equivalences
+So having talked about our very first logic, which is usually called "propositional logic", we can start discussing some of the implications and structure in this logic.
+
+First, let's talk about /tautologies/. These are the formulas whose meaning is *always* true, no matter what values you put into all the variables. For example, for any formula p we have that p v ~p is a tautology! Let's check the truth table:
+
+| p | p v ~p    |
+|---+-----------|
+| T | T v F = T |
+| F | F v T = T |
+
+So no matter what value the sub-formula p takes, you get true.
+
+Since propositional logic is a really simple logic, one that only has booleans as data, the tautologies aren't /super/ interesting but they tell us some interesting things about valid reasoning. The above tautology tells us that for any formula---for any statement about the world---either the claim is true or it is false.
+
+Okay, so maybe that doesn't seem profound but this is called "the law of the excluded middle" and is actually pretty controversial in the history of logic! In /this/ propositional logic and /this/ notion of "truth", however, we can always conclude that if something isn't false it must be true.
+
+We'll come back to tautologies a bit later when we want to talk about reasoning and proof a little more explicitly, but for now just keep in mind the idea that they provide us with general strategies for what valid reasoning should kinda look like.
+
+Another thing we can do with truth tables is calculate /equivalences/, that is we can figure out when formulas are equivalent to each other. Since we're defining the meaning of a formula *as its truth table*, we can show that formulas are /logically/ equivalent exactly when they have the same truth table.
+
+So, for example, we're going to prove two formulas that end up being useful in some optimizations: de Morgan's laws! (https://en.wikipedia.org/wiki/De_Morgan%27s_laws)
+
+So let's start with the law that ~(p ^ q) = (~p) v (~q). We'll calculate both of their truth tables and compare!
+
+| p | q | ~(p ^ q) |
+|---+---+----------|
+| T | T | F        |
+| T | F | T        |
+| F | T | T        |
+| F | F | T        |
+
+and
+
+| p | q | (~p) v (~q) |
+|---+---+-------------|
+| T | T | F           |
+| T | F | T           |
+| F | T | T           |
+| F | F | T           |
+
+These are clearly the same!
+
+Try proving the other law ~(p v q) = (~p) ^ (~q) yourself!
+
+De Morgan's laws, basically, tell us how the operation ~ distributes over the binary operations ^ and v.
+
+Now what else can we do with these kind of equivalences? This is where we introduce the concept of "functional completeness": how few of operations do you need to recreate all the logical operations on booleans?
+
+So, for example, we have the operation p -> q. To recall, this operation has the following truth table:
+
+| p | q | p -> q |
+|---+---+--------|
+| T | T | T      |
+| T | F | F      |
+| F | T | T      |
+| F | F | T      |
+
+Now it turns out this is identical to the proof table of (~p) v q
+
+| p | q | (~p) v q  |
+|---+---+-----------|
+| T | T | F v T = T |
+| T | F | F v F = F |
+| F | T | T v T = T |
+| F | F | T v F = T |
+
+Wouldja look at that! So, technically, we don't even *need* implication in this logic (and I cannot stress enough /this logic/ because this relationship doesn't hold in a lot of other logics) if we have ~ and v.
+
+This means that we know just having v, ^, and ~ is "functionally complete" because it can describe all the operations of this logic.
+
+This observation leads right into the proofs for this week where you need to show just how small you can go in terms of functional completeness!
+
+** Addendum: nand, xor, and how many binary operations are there?
+  There are some additional operations that you /can/ define that we haven't defined yet.
+
+  The first of these we'll call xor (sometimes shown with the \oplus symbol), the /exclusive/ or and it has the following truth table:
+
+  xor
+  | p | q | p xor q |
+  |---+---+---------|
+  | T | T | F       |
+  | T | F | T       |
+  | F | T | T       |
+  | F | F | F       |
+
+  This is true if /either/ p or q is true but not when /both/ are true.
+
+  The second of these is /nand/, which is just "not-and" and it's rather important to the design of circuits:
+
+  nand
+  | p | q | p nand q |
+  |---+---+----------|
+  | T | T | F        |
+  | T | F | T        |
+  | F | T | T        |
+  | F | F | T        |
+
+Now an obvious question, and one that comes up in the homework of the accompanying class to these notes, is /how many of these operations are there and what are they?/
+
+So we can approach this /exhaustively/. A binary operation takes two (2) arguments, each of which is a boolean and can take two values. That's where we get the form of the truth tables above!
+
+ | p | q | ??? |
+ |---+---+-----|
+ | T | T | ?   |
+ | T | F | ?   |
+ | F | T | ?   |
+ | F | F | ?   |
+
+So how many different binary operations are even definable? That's equivalent to asking how many different truth tables are possible. There's a distinct truth table for every choice of how we fill in those ?s in the table above. Well, okay, we know how to do this! Each of those four slots involves making a choice between one of two things: T and F. So the total number of choices must be 2*2*2*2 = 2^4 which is 16.
+
+So what you need to do to prove /functional completeness/ of a set of boolean operators you need to show that for any possible truth table you can find a way to use those operators to replicate it. So let's do a concrete example:
+
+Here's our truth table for implication
+
+| p | q | p -> q |
+|---+---+--------|
+| T | T | T      |
+| T | F | F      |
+| F | T | T      |
+| F | F | T      |
+
+Now let's show that with just or, and, & not we can replicate the implication operator:
+
+| p | q | (~p) v q |
+|---+---+----------|
+| T | T | T        |
+| T | F | F        |
+| F | T | T        |
+| F | F | T        |
+
+So solving these little puzzles is the point of the homework this week.
+
+* Module 3
+** Tautologies as reasoning
+  So we've talked through a few different things about the /syntax/ and the /semantics/ of our first logic, propositional logic, and we've alluded to this idea that tautologies---formulas whose truth tables are always true---tell us *something* about what counts as valid reasoning.
+
+  Now it's time to make that truly concrete and help explain some of these connections between natural human intuition and reasoning, informal mathematics, and formalized reasoning in a logic.
+
+  So the first thing we're going to do is look at a few examples.
+
+  Consider the formula =p ^ q -> p=. You can read this as "if p and q are true then p is true". A reasonable assertion!
+
+  But reasonable isn't good enough. We need to show that this is always the case, and we can do that by calculating its truth table.
+
+  | p | q | p ^ q -> p   |
+  |---+---+--------------|
+  | T | T | T            |
+  | T | F | F -> T ==> T |
+  | F | T | F -> F ==> T |
+  | F | F | F -> F ==> T |
+
+  so this is, in fact, /a tautology/.
+
+But we can also interpret this tautology as saying something like
+
+If we start with the premises =p= and =q= then we can conclude =p=. This represents a kind of shift between a logical and a kind of metalogical notion of reasoning. In one, we use the literal implication operator =->= and in the other we use the intuitive notion of /if/ and /then/.
+
+This goes the other way too. For example, consider that most famous of reasoning steps "modus ponens"---which you rarely hear /called/ modus ponens outside of very pretentious contexts.[fn:1] Modus ponens is simply this:
+
+ If =p= is true, and I know that =p= /implies/ =q=, then I can conclude =p=.
+
+ It's a pretty intuitive concept because it just formalizes the meaning of "implication". One =p= implies =q= means that =p= being true /forces/ =q= to be true.
+
+ A different way to write modus ponens is to take the approach the book takes, which will look remarkably like the way statements of theorems and proofs will look once you get to the Natural Number Game later in the class.
+
+ (a) =p=
+ (b) =p -> q=
+ show: =q=
+
+This form is kinda convenient because it helps us make clear what the formula corresponding to the theorem, the statement being posited as true, looks like: you take every premise and put an =^= between all of them and then put a =->= between that big anded thing and the thing being shown.
+
+So here the corresponding formula, which we hope to show is a tautology, would be =(p ^ (p -> q)) ->q=.
+
+Let's justify this by taking a look at its proof table
+
+| p | q | (p ^ (p -> q)) ->q        |
+|---+---+---------------------------|
+| T | T | T                         |
+| T | F | (T ^ (T -> F)) -> T ==> T |
+| F | T | (F ^ (F -> T)) -> T ==> T |
+| F | F | (F ^ (F -> F)) -> F ==> F |
+
+So this proof table is all Ts all the time, so it /is/ in fact a tautology! This means that we've described a valid method of proof after all.
+
+And, again, this isn't super surprising because we literally defined implication---as a boolean operator---to behave this way.
+** A thorough derivation of proof by contradiction
+Before we jump into all the other methods of proof that we can justify as tautologies, I want to dig way too deeply into /proof by contradiction/, which you might recognize from our very first unit in this class when we proved that there were an infinite number of natural numbers. To do that we need to explore the /other/ latin proof method: modus tollens
+
+Modus tollens is a way of dealing with implication and things that /aren't/ true. In the semi-formal proof structure, modus tolens says that
+
+(a) =p -> q=
+(b) =~q=
+shows: =~p=
+
+Let's talk about what this means before we jump into the truth table: if we know that =p= implies =q=, but that =q= isn't true, we then know that =p= /can't/ be true because if it was true it would force =q= to be true. For example, if you know that if you get over 80% on the final exam you'll get an A in the class, but you see that your final grade was an AB, then you /know/ that you got less than 80% on the final.
+
+Again, this is just a restating our of intuition about what implication must mean but in the negative rather than positive sense.
+
+But let's check that it's a tautology and thus valid reasoning
+
+| p | q | ((p -> q) ^ ~q) -> ~p                |
+|---+---+--------------------------------------|
+| T | T | ((T -> T) ^ F) -> F ==> F -> F ==> T |
+| T | F | ((T -> F) ^ T) -> F ==> F -> F ==> T |
+| F | T | ((F -> T) ^ F) -> T ==> F -> T ==> T |
+| F | F | ((F -> F) ^ T) -> T ==> T -> T ==> T |
+
+Okay, thank goodness, this is firmly a tautology as well!
+
+So what about proof by contradiction? This is where it's important to remember that the =p= and =q= aren't necessarily variables but are generalized sub-formula, you can stick another formula inside there and the result should be valid. Since the tautologies are /always/ true it doesn't even matter what values the sub-formula take.
+
+So proof by contradiction is, essentially,
+
+(a) =~p= -> =r ^ ~r=
+shows: =p=
+
+
+In other words, if assuming =p= is false leads to a contradiction (that you can conclude---for some =r=---that =r= is true /and/ =~r= is true) then you can conclude =p=. How is this modus tollens? Well we take modus tollens and substitute in =~p= for the =p= in the formula and =~r ^ r= instead of =q=.
+
+We then get the formula---which again, we know is a tautology---
+
+=(((~p -> (r ^ ~r)) ^ ~(r ^ ~r)) -> p=
+
+This is almost the right form but look at that goofy =~(r ^ ~r)= in there! What do we do about it? Well remember by De Morgan's laws we have that this should actually become
+
+=~r v ~~r=
+
+which is basically okay except for this little ~~r that's sitting there that we don't know what to do with. Sure, maybe you've heard the concept of "double negation" but let's not take anything for granted until we check the proof tables.
+
+| p | ~~p      |
+|---+----------|
+| T | ~F ==> T |
+| F | ~T ==> F |
+
+Okay, so not-not p is p. Neat. In which case we have our expression above become =~r v r= but we recognize that one as a tautology we saw earlier! The thing about it being a tautology is that it means we can just substitute T for it instead so our formula for proof by contradiction becomes
+
+=(((~p -> (r ^ ~r)) ^ T) -> p=
+
+which can simplify even further to
+
+=(~p -> (r ^ ~r)) -> p=
+
+which is exactly what we proposed as the rule for proof by contradiction!
+
+And since we did this entirely by substituting formula into a tautology and simplifying, we don't even need to check the proof table to guarantee correctness!
+
+** A proof system for propositional logic
+
+So do we /always/ have to proof things within the logic by appealing to truth tables? It sorta works for propositional logic, because in this logic all our variables are booleans and can take one of two (2) values: T or F.
+
+In the next module, though, we're going to add one of the simplest possible new types of data to our logic that aren't just booleans: the natural numbers, i.e. 0, 1, 2, &c.
+
+As we proved together in our very first week of class there are an infinite number of natural numbers so already we can no longer check "truth tables" of every possible value of every variable in order to determine whether the statement is true.
+
+No, instead, we need to have a system for doing /proofs/ within the logic, methods of reasoning that we know are "sound"---or in other words will always produce logically valid results no matter how they're chained and combined together.
+
+Now, we can't just make up these proof rules out of nothing: we need to have some way of checking that these are valid in the first place, and that's where the /semantics/ of a logic are necessary. We can check that the rules of proof work with the semantics and don't do anything wild like let you conclude false things from true ones.
+
+I know this discussion is a little abstract but I'm just trying to motivate some of the "why" in ways that I don't think are normally given in introductory explanations of logic.
+
+So all that being said now we're going to list out the proof rules for this logic and then show that they're solid with the semantics, which in this case means checking truth tables.
+
+We've already talked about a couple of the rules: modus ponens and modus tollens, the rules for implication.
+
+But for every binary operator we've seen there are rules for how to build it and how to /use/ it. These are called introduction and elimination rules, respectively.
+
+psst: dear reader, if you might wonder what the introduction rule is for implication well we'll come back to that at the end of this section
+
+*** Rules for ^
+introduction rule
+#+begin_example
+(a) p
+(b) q
+shows p ^ q
+#+end_example
+
+
+in other words that if you know that p is true and q is true then you know that p and q is true. Unsurprising!
+
+In terms of the validation of this rule this means that we'd need to show that
+
+p ^ q -> p ^ q
+
+is a tautology
+
+But this is obvious because we can easily show that =a -> a= for any subformula =a= that we choose to substitute in.
+
+| a | a -> a     |
+|---+------------|
+| T | T -> T = T |
+| F | F -> F = T |
+
+What about the /elimination/ rules for ^? There are two of them:
+
+#+begin_example
+(a) p ^ q
+shows p
+
+#+end_example
+
+and
+#+begin_example
+(b) p ^ q
+shows q
+#+end_example
+
+These are unsurprising and I'll leave validating them as tautologies an exercise left to the reader
+*** Rules for =v=
+So because =v= is the mirror of ^ it's not surprising that there are going to be two introduction rules and two elimination rules.
+
+What are the introduction rules?
+#+begin_example
+(a) p
+shows p v q
+#+end_example
+
+#+begin_example
+(a) q
+shows p v q
+#+end_example
+
+
+These, again, just follow from the very definition of what =v= is as an operator and it's readily shown that =p -> p v q= and =q -> p v q= are both tautologies.
+
+What's more complicated is the elimination rule. So if you think about it for a second to get some intuition what does it /mean/ to prove that =(p v q) -> r=? Well you don't know /which/ of =p= and =q= are true, right? It could be either, so what you're actually saying is "whether p or q is true I know r is true" which we can break down like this
+#+begin_example
+(a) p v q
+(b) p -> r
+(c) q -> r
+shows r
+#+end_example
+
+And we can validate this with a truth table like so (this is going to be a little ugly so hold on)
+
+| p | q | r | ((p v q) ^ (p -> r) ^ (q -> r)) -> r |
+| T | T | T | (T ^ T ^ T) -> T ==> T               |
+| T | T | F | (T ^ F ^ F) -> F ==> T               |
+| T | F | T | (T ^ T ^ T) -> T ==> T               |
+| T | F | F | (T ^ F ^ F) -> F ==> T               |
+| F | T | T | (T ^ T ^ T) -> T ==> T               |
+| F | T | F | (T ^ T ^ F) -> T ==> T               |
+| F | F | T | (F ^ T ^ T) -> T ==> T               |
+| F | F | F | (F ^ T ^ T) -> F ==> T               |
+
+So what does this rule actually tell us? It is, as the book points out, the formal logic of /proof by cases/. Proof by cases is something we've already informally encountered in the class and it's the implicitly what works behind homework 2: for each of the 16 possible truth tables of binary operators, you show that you can prove the proposition, so you know it's true for all of them (all in this case functioning like a Big Or)[fn:2]
+*** Negation
+This is a fun one because we've essentially seen the rules for this already:
+
+the introduction of negation is just the proof by contradiction rule
+
+I'm going to include a little bit of a footnote[fn:3] here and say that in a lot of logics negation is /defined/ as =~p = p -> F=. One such logic is the logic behind Lean 4, which you'll be playing with as part of learning The Natural Number Game.
+
+The elimination rule of negation is, then, just our proof by contradiction rule but with p flipped with ~p. 
+*** T and F
+Okay technically there are introduction and elimination rules for the constants T and F as well. What's fun about this is that there's /only/ an introduction rule for T and /only/ an elimination rule for F.
+
+#+begin_example
+
+introduction for T:
+shows T
+#+end_example
+
+Yeah, that's it. You can just conclude T. You can't conclude anything by assume T is true because it /just is/. 
+
+elimination for F:
+#+begin_example
+(a) F
+shows p
+#+end_example
+
+Wait, what? What is p here? Well it's literally anything. Because if you assume false you can conclude anything. To understand this, follow our rules for how to convert a proof in the above form into its corresponding tautology and then look at what the truth table would be.
+*** Implication
+Okay we saved implication for last because it's (dot dot dot) a little weird.
+
+The elimination rule for implication is just modus ponens. That's easy. It's the introduction that's weird. Because it's more like 
+
+#+begin_example
+(a) has a proof that assuming p, shows q
+show p -> q
+#+end_example
+
+So why this is weird is because we have these two layers: /implication/ inside the logic and proofs which are about connecting taking a set of premises and ending in a conclusion which are kind of /metalogical/.
+
+And the introduction rule of implication lets us take a proof, a metalogical thing, and turn it into a /in logic/ implication. Then the elimination rule lets us take an /in logic/ implication and use it inside a proof.
+*** Extra proof rules
+There are a handful of proof rules we're going to introduce to help us out, based on tautologies:
+
+an important one 
+#+begin_example
+shows (p v ~p)
+#+end_example
+
+with no assumptions
+
+This is going to help us deal with a bunch of proofs by giving us the ability to, essentially, use subformulas without any assumptions.
+
+We're going to call this rule "excluded middle"
+
+Also we have the maybe obvious rule of proof by assumption:
+
+#+begin_example
+(a) p
+shows p
+#+end_example
+
+This is just a rule that lets us formally use our assumptions in our proofs
+** Examples of doing proofs
+So now lets dig into some proofs and seeing how they actually work. For example, let's see if we can /prove/ some laws:
+
+Proofs systems, formal proofs in a logic, are going to look a little different than the kind of thing we've done before:
+
+I'm going to try and make the notation not /super/ painful but it might feel clunky at first:
+
+Let's make an important derived rule: transitivity of implication
+#+begin_example
+Theorem: Assuming p -> q, q -> r, show p -> r
+Proof:
+(a) p -> q, by assumption
+(b) q -> r, by assumption
+(c) proof that assuming p, shows r
+          subproof: (i) p, by assumption
+                    (j) q, by modus ponens with (i) and (a)
+                    show r, by modus ponens with (j) and (b)
+shows p -> r by introduction of implication
+#+end_example 
+
+
+#+begin_example
+Theorem: Assuming p -> q, show ~p v q
+Proof:
+(a) p -> q, by assumption
+(b) p v ~p, by excluded middle
+(c) ~p -> ~p, by identify of implication
+(d) q -> ~p v q by introduction of v 
+(e) p -> ~p v q by transitivity of (a) and (d)
+(e) ~p -> ~p v q, by introduction of v
+shows ~p v q, by elimination of v with (b), (d), (e)
+#+end_example
+** Addendum: differences in terminology and additional derivable proof rules for homework
+*** Conjunctive normal form
+ To say a formula is in [[https://en.wikipedia.org/wiki/Conjunctive_normal_form][conjunctive normal form]] is to simply state that it is a bunch of logical statements that are all connected by =^= /and/ that all the possible =^= s have been moved outside of nested formulae. 
+
+ So for example
+
+ #+begin_example
+(p -> q) ^ (p v ~p) ^ (q -> (p -> r))
+ #+end_example
+is in conjunctive normal form but
+
+#+begin_example
+(p -> q) ^ (~(p v q))
+#+end_example
+is /not/ in conjunctive normal form because by de morgan's laws it can be turned into
+
+#+begin_example
+(p -> q) ^ ((~p) ^ (~q))
+#+end_example
+
+we can be rewritten as
+
+#+begin_example
+(p -> q) ^ (~p) ^ (~q)
+#+end_example
+
+and /this/ is in conjunctive normal form.
+*** Disjunctive normal form
+This is like CNF except where you have =v= instead of =^= between all the statements. So the following is in disjunctive normal form
+#+begin_example
+(p -> q) v (q ^ r) v (~r)
+#+end_example
+
+but the following is not because it could, again, be simplified by de morgan's laws
+#+begin_example
+(p -> q) v (~(q ^ r))
+#+end_example
+
+*** Derivable rules of inference
+So there are a number of extra rules you can derive that are useful for proofs, some of them are so useful they get extra special names:
+
+double negation:
+
+#+begin_example
+(a) ~~ q
+shows q
+#+end_example
+
+disjunctive syllogism (there's two versions of it)
+#+begin_example
+(a) p v q
+(b) ~q
+shows p
+#+end_example
+
+#+begin_example
+(a) p v q
+(b) ~p
+shows q
+#+end_example
+*** Differences in verbiage
+So the webwork problems might refer to "hypothetical syllogism", this is just a different way of saying "transitive property of implication" which we derived above
+
+In other words,
+#+begin_example
+(a) p -> q
+(b) q -> r
+shows p -> r
+#+end_example
+*** Bitwise logical operators
+So there is a question in the webwork assignment that refers to bitwise logical operators like you may have seen in C or C++. However! Not everyone's classes actually *covered* bitwise operators, so it would be a mistake on our part to not cover them here: if you see something like
+
+#+begin_example
+0101 ^ 1100
+#+end_example
+
+The way you calculate this is to go bit by bit and do the operation, gluing the pieces together at the end. So in this case we have a bitwise and, so calculate this as doing the ^ operator to each pair of bits---treating 0 as false and 1 as true.
+
+#+begin_example
+0 ^ 1 = 0
+1 ^ 1 = 1
+0 ^ 0 = 0
+1 ^ 0 = 0
+
+0100
+#+end_example
+
+Similarly
+#+begin_example
+0101 v 1100
+#+end_example
+becomes
+#+begin_example
+0 v 1 = 1
+1 v 1 = 1
+0 v 0 = 0
+1 v 0 = 1
+
+1101
+#+end_example
+
+* Module 4
+** A logic with real types
+Now we need to start dealing with a logic that has actual types beyond just booleans: first-order predicate logic! This is going to look /a lot/ like propositional logic! It still has our old friends: =->=, =^=, =v=, =~=, T, and F but now it's also going to have \forall and \exists as well as a notion of predicates.
+
+We need these things in order to add /sets/ (or in other words /types/) to our logic. Unlike booleans, when it comes to sets we need to be able to quantify our propositions about elements.
+ + are we making a logical claim about a particular element? (i.e. that zero is the identity of addition)
+ + are we making a logical claim about about all elements in A? (\forall x : A. ...)
+ + are we making a logical claim that we know that there is an element with a certain property, although we're not naming a particular element? (\exists x : A. ...)
+
+We also need to be able to make statements about these types, which is where our predicates come in. Now, with the tools we've seen we don't have the ability to define predicates /inside/ the logic, instead we need to add the predicates /to/ the logic and define them externally as functions: so a predicate on the type/set A is really a function =A -> Bool= where Bool is the two-point set {True,False}.
+
+A really special predicate is the equality predicate on each set, which is given by the diagonal relation where =a=a= is true and =a=b= is false for any b that isn't a.
+** Forall and exists
+So we've seen, in informal mathematics, the meaning of \forall and \exists a few times. As we discussed above these things are used to /quantify/ what elements of a set/type[fn:4] a proposition is covering, which is probably why they're referred to as "quantifiers".
+
+We need to describe, of course, what the semantics of these quantifiers are. There's kind of two answers in this logic. The first is that the meaning of a quantifier can be described in terms of the underlying sets and functions on sets.
+
+So when we write "\forall x : A. P(x)" this is going to be true exactly when the function =P : A -> Bool= sends every element of A to True or, equivalently if you know the language of inverse images of functions, we can say that "\forall x : A. P(x)" is true when P^-1(True) = A.
+
+Similarly, when we write "\exists x : A. P(x)" this is going to be true exactly when the function =P : A -> Bool= sends at least one element of A to True or, again in the language of inverse images of functions when the set P^-1(True) is not empty.
+
+The /other/ way we can define the meaning, at least for "small" sets (things smaller than the real numbers), is that we can define \forall as a kind of Big And and \exists as a kind of Big Or, where
+
+"\forall x : A. P(x)" becomes
+
+P(x1) ^ P(x2) ^ ...
+
+for every x in the set A. Similarly, "\exists x : A. P(x)" becomes
+
+P(x1) v P(x2) v ...
+
+for every x in A.
+
+You can play with these transformations for some small finites sets to prove to yourself that these definitions match up exactly. [fn:5]
+
+
+** Proofs with this logic
+Proofs in this logic are going to be really similar to proofs in propositional logic but there are going to be five additional rules: the intro and elimination rules of our new quantifiers plus a special rule for our = operator.
+
+We'll start with the easiest which is the rule for equality
+
+reflexivity:
+#+begin_example
+assumes x : A
+-------------
+shows x = x
+#+end_example
+
+which is just that you're always allowed to conclude that a thing is equal to itself, unsurprisingly! If you're also playing the natural number game or if you ever try other interactive theorem provers you probably will see this rulde called "reflexivity", or "rfl"/"refl" for short.
+
+Next we have the rule for eliminating \forall because it's easier
+
+#+begin_example
+assumes \forall x: A. P(x)
+        a : A
+--------------------------
+shows P(a)
+#+end_example
+which just says that if P is true on all elements of A and a is an element of A, then P(a). It's kinda like applying a function, isn't it?
+
+The introduction rule is going to look a little like the introduction rule for implication
+
+#+begin_example
+assumes
+  proof of:
+    assumes a : A
+    -------------
+    shows P(a)
+-----------------
+shows \forall x : A. P(x)
+#+end_example
+what we're doing is taking evidence that given an /arbitrary/ element of A we can always show that P(a) is true and internalizing that into the \forall, the same way that we internalize the ability to prove Q assuming P into =P -> Q=.
+
+The rules for \exists are kinda dual to \forall.
+
+Here's the elimination rule of \exists
+#+begin_example
+assumes
+  \exists x. P(x)
+  subproof:
+     assumes c : A
+             P(c)
+     -------------
+     shows Q
+------------------
+shows Q
+#+end_example
+
+and the introduction rule is
+#+begin_example
+assumes
+  c : A
+  P(c)
+------------------------
+shows \exists x: A. P(x)
+#+end_example
+
+** Induction, round 1
+ Here we're going to introduce the concept of the natural numbers and also the idea of natural induction. Why? Because we've shown how to prove things in general about predicates but if I were to just /hand/ you a predicate on a set it's not like you'd know how to actually do anything with it. You don't have any handles, so to speak, for how to start your proof other than brute forcing the set-based semantics. But as we've discussed a couple of times now this won't work for infinite sets where you'd need to check the formula against potentially infinite values.
+
+ Induction is a way of getting a "handle" on the data inside a particular set/type by defining types in a way that has structure to it.
+
+ Okay, so remember earlier how we talked about BNF syntax? The syntax where we recursively defined a set of things?
+
+ Like how we defined all propositional logic formulas as
+
+ L := L ^ L | L v L | L -> L | ~ L | T | F
+
+ Well we can also define the natural numbers the same way like this
+
+ Nat := 0 | succ Nat
+
+ This means that every natural number is going to be expressed as either 0 or one plus another natural number, and by doing this we'll have reduced the difficulty of assessing an infinite number of numbers to just /two cases/.
+
+ That's what induction buys us.
+
+ Now if you're playing the natural number game you'll have already seen what the induction rule based on this definition is but let's spell it out:
+
+natural induction
+#+begin_example
+ assumes P(0)
+         subproof:
+           assumes P(n)
+           ------------
+           shows P(succ n)
+--------------------------
+shows \forall n : Nat. P(n)
+#+end_example
+
+What this is saying is that if you can show that you P is true on 0 and if you can show that with evidence that P(n) is true you can prove P(n+1), then you can prove that P is true on all natural numbers.
+
+Note how the base case is the same as the base case of the recursion and that the second part follows the recursive structure of the BNF syntax. 
+
+** Addendum on notation:
+Sometimes you might see the ": A" part left out of quantifiers, like
+
+"\forall x. P(x)"
+
+instead. This is valid syntax /if/ we've defined in advance what our "domain of discourse" is. Then and only then can we leave out naming what set we're talking about because there's only /one/ set.
+* Module 5
+This module is, in a sense, a bit of a breather. We're not going to be dealing with new concepts but rather getting practice with informal proofs after doing a lot of deep diving into formal logical rules.
+
+The relevant sections of Epp give us a lot of time to practice proofs with numbers, and they're very well written and even call out some topics I think are important: a games-based approach to quantifiers, constructive vs. non-constructive proofs of \exists, the relationship between writing proofs and writing computer programs (although somewhat coyly calling it out more as analogy than mathematical relationship).
+
+So what I think might be useful as an addition to the text, rather than attempting to recapitulate its content, is to give lots of examples of proofs in a different context than numbers.
+
+So I'm going to talk about /groups/.
+** What is a group?
+A group is kind of Fisher-Price's My First Abstract Algebra, it's an incredibly useful but very simple concept in mathematics that shows up over and over again. It's also simple enough to start with if you've never seen any abstract algebra before.
+
+So the definition of a group is that
+
+#+begin_quote
+A group is a set G, an element e : G, and a binary operation * : G -> G -> G that satisfies the following axioms[fn:7]:
+
+(left-identity) \forall g : G. e * g = g
+(right-identity) \forall g : G. g * e = g
+and \forall g : G. \exists g^-1 : G.
+   (left-inverse) g^-1 * g = e
+   (right-inverse) g * g^-1 = e
+#+end_quote
+
+So what is this saying? A group is a triple of data: a base set, G, a binary operation * on the set, and an element e that acts as the identity on for the multiplication on the set. Of the four axioms we give the first two guarantee that the identity really acts as an identity and the second two define that for every element, it has an inverse that can be used to cancel it out!
+
+Okay so let's start by proving that some things *are* or are *not* groups.
+** The integers with addition is a group
+Proposal: the set of integers, Z, is a group with addition and an identity element of 0.
+Proof:
+To prove this we need to show all four axioms are valid on the integers. We're allowed to assume the standard definitions of addition, negation, and 0 since we're proving that these form a group not defining them formally. If you were doing this /inside/ a logic you'd have to first use the tools of the logic to give definitions for Z and for all the operations on it. This is kinda what you have to do in the Natural Number Game.
+
+Proof of left-identity:
+ Let n : Z, an arbitrary element, we need to show that 0 + n = n. But this follows by the definition of addition on Z!
+Proof of right-identity:
+ Let n : Z, an arbitrary element, we need to show that n + 0 = n. But this follows by the definition of addition on Z!
+
+Now to show the inverses we need to show that for every element of Z we have a proposed inverse-under-addition for this element, and /then/ we prove that the element really is both the left and right inverse.
+
+Well the obvious candidate for every n : Z would be -n!
+
+So now the theorems we need to prove become
+
+\forall n. (-n) + n = 0
+
+\forall n. n + (-n) = 0
+
+but this is just a funnily written subtraction! And we already have defined subtraction to work this way, so our sub-theorems work automatically.
+
+Thus we've shown that (Z,+,0) is a group
+** The integers with multiplication is /not/ a group
+We can /disprove/ that the integers with multiplication as the binary operation and 1 as the identity are a group easily. We just need to show one of the theorems cannot hold.
+
+So let's show that inverses don't exist!
+
+Consider multiplying any two integers m,n that are not 1. We have then, by definition of multiplication[fn:6] that m*n > m and m*n > n. This of course means that m*n > 1, and thus for any element n : Z there is no element that can act as the inverse.
+
+So it's not a group!
+
+** Proof of uniqueness of identity
+We can also prove properties about /all/ groups not just a specific group. Like let's prove the uniqueness of identity elements. In other words, that if there are two elements in a group that satisfy the identity axioms then they must be *equal*.
+
+Theorem: Let (G,*,e) be a group and let e' : G satisfy the left and right identity properties then e = e'
+Proof:
+ We'll prove this by calculation with the properties of identity.
+
+#+begin_example
+ e = e*e'
+ e*e' = e'
+#+end_example
+and thus e = e'.
+* Intermezzo: More on natural induction
+In order to help explain more about how natural induction works, let's tackle some proofs like those in The Natural Number Game except we'll do it /informally/.
+For the purposes of these proofs we'll assume that the definition of addition by recursion on the second argument is
+
+n + 0 = n
+n + (succ m) = succ (n + m)
+
+** Proof that 0 + m = m
+We have automatically from the definition of addition by recursion that n + 0 = n, but what about the other way?
+Theorem: \forall m. 0 + m = m
+Proof by induction on my.
+Case m = 0: Need to prove that 0 + 0 = 0, but this follows immediately by the definition of addition.
+Case m = succ m'
+Assuming 0 + m' = m'
+Shows 0 + succ m' = succ m'
+
+By the definition of addition,
+0 + succ m' = succ (0 + m')
+but
+succ (0 + m') = succ m' by the induction hypothesis that 0 + m' = m'
+
+QED
+** Proof that (succ n) + m = succ (n + m)
+Proof by induction m
+Case m = 0. succ n + 0 = succ (n + 0)
+immediate from the definition of addition
+Case m = succ m'
+Assuming: (succ n) + m' = succ (n + m')
+Shows: (succ n) + (succ m') = succ (n + (succ m'))
+(succ n) + (succ m')
+ = succ (succ n + m')
+ = succ (succ (n + m')) by the induction hypothesis
+
+but the right hand side tells us
+ succ (n + (succ m')) = succ (succ (n + m')), by the definition of addition
+ 
+so we end up with
+
+succ (succ (n + m')) = succ (succ (n + m'))
+which is true by reflexivity
+
+** Proof that addition is associative
+Theorem: \forall n m. n + (m + r) = (n + m) + r
+Proof by induction on n.
+Case n = 0: Need to prove that \forall m r. 0 + (m + r) = (0 + m) + r
+Immediate from the fact that 0 is a unit
+m + r = m + r, which is true by reflexivity
+Case n = (succ n'): Need to prove that *assuming* \forall m r. (n' + m) + r = n' + (m + r) we can derive (succ n' + m) + r = succ n' + (m + r)
+
+(succ n' + m) + r = succ (n' + m) + r, by our theorem above
+ = succ ((n' + m) + r), by the same theorem
+ = succ (n' + (m + r)), by the induction hypothesis
+
+ and the right hand side similarly transforms
+ succ n' + (m + r) = succ (n' + (m + r))
+
+ so we have
+ succ (n' + (m + r)) = succ (n' + (m + r))
+ which is true by reflexivity
+
+** Proof that addition is commutative
+Theorem: \forall n m. n + m = n + m
+
+Proof by induction on n.
+Case n = 0: Need to prove that \forall m. 0 + m = m + 0
+This is immediately solved by the fact that 0 is the left and right identity for addition, so this simplifies to m = m which is true by the definition of = (i.e. by reflexivity)
+
+Case n = (succ n'): Need to prove that *assuming* \forall m. n' + m = m + n' we can show \forall m. (succ n') + m = m + (succ n')
+
+so by the definition of addition we have
+m + (succ n') = succ (m + n')
+
+and by one of the above theorems we have that
+(succ n') + m = succ (n' + m)
+but
+succ (n' + m) = succ (m + n') by the induction hypothesis
+
+and thus
+succ (m + n') = succ (m + n')
+which is true by reflexivity
+  
+* Module 6
+** An aside on the modulus operation
+ So an operation that's important in both mathematics and computer science is the modulus operator, sometimes call =mod= or =%=.
+
+ So this is the operation that gives us the remainder when you've performed integer division.
+
+ Examples:
+ #+begin_example
+ 5 % 2 = 1
+ 9 % 3 = 0
+ 59 % 4 = 3
+ #+end_example
+
+ But let's talk about some of the important properties of this operation and why it matters to computer scientists and mathematicians.
+
+ So the modulus operation is able to take the natural numbers---which are NOT a group under addition, because there are no additive inverses---and give it really nice properties!
+
+** Nat % n is a group
+For any n : Nat, we can define the set ={x % n | x : Nat}=. This set *is* actually a group under addition, with the overloaded operation + used to mean something a little different
+#+begin_example
+q, r : Nat % n
+q + r = (q + r)%n
+#+end_example
+
+In other words, we take the addition like normal natural numbers and then the modulus.
+
+This has some fun effects! First, it means we do have inverses for our operation:
+
+For every q : Nat % n, the inverse is the number r = (n - q) % n
+
+Why is this the inverse? Because
+#+begin_example
+q + (n - q) = (q + n - q)%n
+            = n%n
+            = 0
+#+end_example
+
+The identity is still 0.
+** Nat % p, where p is prime
+So when the number you're taking the modulus by is prime something *really* special happens. It isn't just a group with addition, but if you exclude 0 it's also a group under the multiplication
+#+begin_example
+q, r : Nat % p
+q * r = (q * r)%p
+#+end_example
+It's maybe not obvious that there are inverses to the multiplication but there are.[fn:8] [fn:9]
+
+The importance of this is that it makes Nat % p a *finite field*, which is actually really important in cryptography!
+
+https://en.wikipedia.org/wiki/Finite_field_arithmetic
+https://en.wikipedia.org/wiki/Finite_field#Discrete_logarithm
+** Proofs by cases and the connection to or-elimination
+One of the concepts that the book gets into the reading for this section is the idea that whenever you want to prove something where there are multiple cases you need to isolate those cases and prove each of them in turn. This is really just another version of v-elimination! If you have an exhaustive set of cases for the data of your problem, like a number is either 0 or non-zero or a number is positive, zero, or negative or a number is either odd or even &c. then you can assume one of these and perform v-elimination on it!
+
+In other words, when something like =even(n) v odd(n)= is a tautology, you can just assume it!
+
+This is basically the same idea as having an exhaustive set of cases in an if-statement when you're programming!
+
+* Module 7
+** More on proofs by contradiction and proofs by contrapositive
+** GCD, Euclid's algorithm, &c.
+In this section, we're going to talk a little bit about Euclid's algorithm, the /extended/ version of Euclid's algorithm, and how it relates to finding multiplicative inverses for modular arithmetic Z%m
+
+So first we can define the "greatest common divisor", which we'll denote as =gcd(a,b)=. The gcd is what it sounds like: the largest number that divides both of these numbers. 
+
+For example
+#+begin_example
+gcd(12,24) = 12
+
+gcd(21,35) = 7
+
+gcd(1024,1536) = 512
+
+gcd(a,0) = a
+#+end_example
+
+The reason why that last one works is that technically any number divides 0 so the largest number that divides =a= is, well, =a= itself.
+
+Okay so how do you /calculate/ what the gcd is if it isn't obvious? The really easy solution is an algorithm called /euclid's/ algorithm.
+
+Euclid's algorithm is based on the observation that if =a = n*b + r= then =gcd(a,b) = gcd(b,r)=, or in other words =gcd(a,b) = gcd(b,a%b)=, and we can just do that until we hit a termination condition which would be the when we're down to 1 or 0 in the righthand argument.
+
+Okay, let's do an implementation in python right quick in order to make this be a little more clear:
+#+begin_src python :tangle gcd.py
+  def gcd(a,b):
+      if b == 1:
+          return 1
+      elif b == 0:
+          return a
+      else:
+          return gcd(b,a%b)
+#+end_src
+
+It really is just that simple!
+
+So what about that whole /extended/ euclidean algorithm? Well the idea behind it is that we can---simultaneously---calculate the gcd /and/ coefficients x,y such that
+
+#+begin_example
+a*x + b*y = gcd(a,b)
+#+end_example
+
+Alright, so what's the use of this? Well! It helps us calculate multiplicative inverses for the Nat % n [or equivalently Z % n, where Z is the integers] sets. (see: [[*Nat % n is a group][Nat % n is a group]])
+
+How? Well let's first assume that n is prime (this is stronger than we technically mean but it implies that *all* multiplicative inverses exist, and the case of Z % a prime number is really the one we care about anyway)
+
+Okay, so then we can use the extended euclidean algorithm to calculate
+
+#+begin_example
+a*x + n*y = gcd(a,n)
+#+end_example
+
+but what's the gcd(a,n)? Since n is prime this must just be 1 so we've got
+#+begin_example
+a*x + n*y = 1
+#+end_example
+and if we take %n on both sides we get
+#+begin_example
+(a*x) % n + (n*y)%n = 1
+#+end_example
+
+or in other words
+#+begin_example
+(a*x) % n = 1
+#+end_example
+
+which means that x is a multiplicative inverse of a! Alright, so with all of that let's give the extended euclidean algorithm: it's basically the same except we're going to calculate a tuple in python instead of just one number. I'm going to follow the treatment here (https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm)
+
+#+begin_src python :tangle egcd.py
+  def egcdRec(a,b,x0,x1,y0,y1):
+      if b == 0:
+          return (a,x0,y0)
+      else:
+          q = a // b
+          return egcdRec(b,a%b,x1,x0 - q*x1,y1,y0 - q*y1)
+
+  def egcd(a,b):
+      return egcdRec(a,b,1,0,0,1)
+
+  def modInverse(a,m):
+      _,i,_ = egcd(a,m)
+      if i > 0:
+          return i
+      else:
+          return (i + m)
+#+end_src
+
+
+** Programming logic
+In this section, we're going to talk about a specific kind of logic. This material is similar to Epp section 4.10 *but* more formalized.
+
+We're going to be dealing with a specific logic called Hoare logic. [[https://en.wikipedia.org/wiki/Hoare_logic][Hoare logic]]---invented originally by Tony Hoare---is a formal logic for reasoning about code directly. It has axioms, it has rules of inference, it has a syntax and semantics. It's a fully-fledged albeit very /different/ looking logic.
+
+Each statement in Hoare logic looks like
+#+begin_example
+{P}C{Q}
+#+end_example
+
+Where P is a proposition about the state of program *before* your code runs---the values of variables, output, things like that---C is the code, series of statements in your program, and Q is another proposition about the state of the program *after* the code has run.
+
+In other words, think of {P}C{Q} as saying "if P is true then after C runs Q is true". This is like a kind of implication! After all, implication =P -> Q= says "if P is true then Q is true". So instead this is an implication with some work that happens in the middle.
+
+Okay, now this programming language is going to look like a simplified version of C. It's only going to have a few kinds of statements
+
+#+begin_example
+Assignment:
+ x := e
+where e is a valid arithmetic expression (one that uses +, -, *, /, numbers, or variables)
+
+Sequencing:
+ c1 ; c2
+where c1 and c2 are both valid statements
+
+Conditionals:
+ if b then c1 else c2
+where b is a boolean valued statement that uses (>, >=, =, /=, &c. and variables)
+and c1, c2 are other valid statements in the language
+
+While:
+ while b do c
+where b is boolean valued statement, like above, and c is a valid statement
+
+Skip:
+ skip
+
+it's a statement that does nothing
+#+end_example
+Again, this is a *very* stripped down version of something like C. It's just for the purposes of explaining some very basic concepts in terms of how we can prove code is correct!
+
+Now here's our basic rules:
+Skip:
+#+begin_example
+{P}skip{P}
+#+end_example
+this rule tells us that skip changes nothing. If the proposition P was true before it's true after skip.
+
+Sequencing:
+#+begin_example
+assumes: {P}c1{Q}
+         {Q}c2{R}
+shows: {P}c1;c2{R}
+#+end_example
+this rule tells us that if we have a situation where c1 makes Q true if P is true, and c2 makes R true if Q is true, then we can glue these together with sequencing. This makes sense because, again, this is a kind of implication. So really this is just another version of transitivity where we can glue =P -> Q= and =Q -> R= together to show =P -> R=, but again connecting the little machines that work inside the implication.
+
+Conditionals:
+#+begin_example
+assumes: {P ^ B}c1{Q}
+         {P ^ ~B}c2{Q}
+shows: {P}if B then c1 else c2{Q}
+#+end_example
+
+This tells us that if Q is true after c1 runs when P and B are true *and* Q is true after c2 runs when P is true and B is false, then P implies Q when the conditional statement is run. The way to think of this is that if you take the "true" branch you're not just assuming P is true but you're also allowed to assume B is true *because you took the true branch*, and conversely for when you take the false branch. 
+
+While:
+#+begin_example
+assumes: {P ^ B}S{P}
+shows: {P}while B do c{P ^ ~B}
+#+end_example
+This one feels a little weird relative to some of the past ones: so the idea here is that you want to define a kind of "loop invariant", a thing that is preserved each execution of the loop, and then you show that if the loop conditional is true (which it has to be if you're executing the body of the loop) then you'll preserve the loop invariant. Finally, though, you're allowed to conclude that the loop invariant doesn't just hold but also that the loop conditional must be false *because you terminated the loop*. 
+
+The next one is definitely the weirdest and one that we need to explain a bit
+
+Assignment:
+#+begin_example
+{P[x/e]}x := e{P}
+#+end_example
+
+So what this is saying is that *if* the proposition P is true after substituting the expression e for the variable x, then after assignment you can just conclude that P is true.
+
+Let's look at an example because I think it'll make more sense:
+
+If we take this fragment of a proposition, where we just are leaving a hole for ourselves in the pre-condition, and we *want* to conclude that after subtracting 1 from the variable x then x > 0
+#+begin_example
+{??}x := x -1{x > 0}
+#+end_example
+looking at this, what does the precondition have to be? It needs to be that x > 1 or...another way to say this would be that (x - 1) >0, which is exactly what you get if you do the substitution of x for e---which in this case is x-1.
+
+So the assignment rule lets us write things like this
+#+begin_example
+{x -1 > 0} x := x -1{x > 0}
+#+end_example
+
+Now the assignment rule isn't necessarily super helpful as written. It's too specific! Like it can't let us conclude an obvious fact like
+#+begin_example
+{x > 0} x := x + 1{x > 0}
+#+end_example
+in other words, that if x is greater than zero incrementing it will keep it greater than zero. Y'know, the kind of thing we might need to build a loop invariant.
+
+Thankfully, there's one last rule that's super useful that helps us glue all of these bits and pieces together:
+
+Strengthening / Weakening:
+#+begin_example
+assumes: {P2}c{Q2}
+         P1 -> P2
+         Q2 -> Q1
+shows:
+{P1}c{Q1}
+#+end_example
+Okay this will make sense if we just read it carefully: what it's saying is that if we know that {P2}c{Q2}, in other words that P2 implies Q2 *after* running the code c, and we know that P1 implies P2, and we know that Q2 implies P1, we're allowed to glue all these facts together to make the new fact that P1 implies Q1 after c is run. Why? Because we can take the P1 and turn it into a P2, since P1 -> P2, and then we can take the resulting Q2 and turn it into a Q1 since Q2 -> Q1.
+
+Another way of thinking of it is that you can always make the pre-condition /stronger/ and the post-condition /weaker/.
+
+So in our above example we'd have that the assignment rule gives us
+
+#+begin_example
+{(x+1) > 0} x := x + 1{x > 0}
+#+end_example
+but since x > 0 implies x +1 > 0 we can use our new rule to turn this into
+#+begin_example
+{x > 0} x := x + 1{x > 0}
+#+end_example
+which is what we wanted in the first place!
+
+Okay, so that was a lot and it's mostly an introduction for you to get a sense of how you might prove properties about programs rather than something I want you to completely absorb. In your homework for the week you're going to prove the exciting theorem that {x = 0}x = x+1; x = x+1{x = 2} or, in other words, that 1+1 = 2.
+
+* Module 8
+** Definition by recursion
+** Sequences by recursion
+* Module 9
+* Module 10
+** Inductive definitions of graphs
+* Footnotes
+
+[fn:9] Okay in reality it's just kind of a tedious thing to prove and maybe I'll add it in for the heck of it at some point, for all our edification 
+[fn:8] Proof: trust me, bro 
+
+[fn:7] There's actually a secret fifth axiom which is that the binary operation has to be associative, that is (a * b) * c = a * (b * c), but I kinda left it out in this presentation because it's way harder than you think to come up with an operation that *isn't* associative 
+[fn:6] If you want a bonus challenge, prove this property of multiplication with natural induction! It's not too hard but is a good exercise 
+
+[fn:5] There's a secret third way to define \forall and \exists in dependent type theory, my fav logical framework, and for these \forall becomes a kind of function definition and \exists becomes a kind of pair, like a pair in Python.  
+[fn:4] I'm going to probably keep doing this thing of saying set/type and the reason why I'm doing it is that there will be, in some logics a notion of "types" that are more general than sets. For the purposes of this class, think of them as Basically The Same Thing(tm)
+
+[fn:3] but not an actual footnote, that's this, here, the thing you're reading that's just a joke and adds nothing to the text 
+[fn:2] So what's a little wild about this one is that when we see the meaning of forall there is a sense in which it really is an "infinitely big and" and "there exists" is a "infinitely big or". 
+
+[fn:1] I don't know what it is but I swear it's a red flag if you meet someone who says modus ponens in casual conversation, even when that conversation is about mathematics and logic 

@@ -1,0 +1,109 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\pow}{\mathscr{P}}
+
+\usepackage{mathrsfs}   % for \mathscr
+
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{center}
+  {\Large\bfseries Weekly Assignment: Relations (Epp Ch.\ 8)}
+\end{center}
+
+\bigskip
+
+\noindent
+Complete each of the following problems.  Show all work and justify your answers.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 1} (Epp 8.1 \#4 c, d). \;
+Define a relation $P$ on $\Z$ as follows: For every ordered pair $(m, n) \in \Z \times \Z$,
+\[
+  m \mathrel{P} n \;\iff\; m \text{ and } n \text{ have a common prime factor.}
+\]
+
+\begin{enumerate}[label=\alph*., start=3]
+  \item Is $0 \mathrel{P} 5$?
+  \item Is $8 \mathrel{P} 8$?
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 2} (Epp 8.1 \#6 b, c). \;
+Let $X = \{a, b, c\}$.  Define a relation $\mathrel{S}$ on $\pow(X)$ as follows:
+For all sets $A$ and $B$ in $\pow(X)$,
+\[
+  A \mathrel{S} B \;\iff\; A \cap B \neq \varnothing.
+\]
+
+\begin{enumerate}[label=\alph*., start=2]
+  \item Is $\{a, b\} \mathrel{S} \{b, c\}$?
+  \item Is $\{a, b\} \mathrel{S} \{a, b, c\}$?
+\end{enumerate}
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 3} (Epp 8.2 \#10). \;
+$C$ is the circle relation on the set of real numbers:
+For every $x, y \in \R$,
+\[
+  x \mathrel{C} y \;\iff\; x^{2} + y^{2} = 1.
+\]
+Determine whether $C$ is reflexive, symmetric, transitive, or none of these.
+Justify your answers.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 4} (Epp 8.2 \#19). \;
+Define a relation $I$ on $\R$ as follows: For all real numbers $x$ and $y$,
+\[
+  x \mathrel{I} y \;\iff\; x - y \text{ is irrational.}
+\]
+Determine whether $I$ is reflexive, symmetric, transitive, or none of these.
+Justify your answers.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 5} (Epp 8.3 \#14). \;
+Let $A$ be the set of all strings of $0$'s, $1$'s, and $2$'s that have length~4 and
+for which the sum of the characters in the string is less than or equal to~2.
+A relation $R$ is defined on $A$ as follows: For every $s, t \in A$,
+\[
+  s \mathrel{R} t \;\iff\; \text{the sum of the characters of } s
+    \text{ equals the sum of the characters of } t.
+\]
+Find the distinct equivalence classes of $R$.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 6} (Epp 8.5 \#6). \;
+Let $P$ be the set of all people who have ever lived, and define a relation $R$
+on $P$ as follows: For every $r, s \in P$,
+\[
+  r \mathrel{R} s \;\iff\; r \text{ is an ancestor of } s,\; \text{or } r = s.
+\]
+Is $R$ a partial order relation?  Prove or give a counterexample.
+
+\bigskip
+
+%% ─────────────────────────────────────────────
+\noindent\textbf{Problem 7}. \;
+Let $R$ and $S$ be relations on a set $A$.
+Prove or disprove: if $R$ and $S$ are transitive, then $R \cup S$ is transitive.
+
+\end{document}

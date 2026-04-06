@@ -13,7 +13,8 @@
   basicstyle=\ttfamily\small,
   frame=single,
   breaklines=true,
-  columns=fullflexible
+  columns=fullflexible,
+  mathescape=true
 }
 
 \theoremstyle{definition}
@@ -30,11 +31,9 @@
 
 \section{Tautologies as reasoning}
 
-So we've talked through a few different things about the \emph{syntax} and the \emph{semantics} of our first logic, propositional logic, and we've alluded to this idea that tautologies---formulas whose truth tables are always true---tell us \textbf{something} about what counts as valid reasoning.
+We've talked through a few different things about the \emph{syntax} and the \emph{semantics} of our first logic, propositional logic, and we've alluded to this idea that tautologies---formulas whose truth tables are always true---tell us \textbf{something} about what counts as valid reasoning.
 
 Now it's time to make that truly concrete and help explain some of these connections between natural human intuition and reasoning, informal mathematics, and formalized reasoning in a logic.
-
-So the first thing we're going to do is look at a few examples.
 
 Consider the formula \texttt{p \^{} q -> p}. You can read this as ``if p and q are true then p is true''. A reasonable assertion!
 
@@ -53,13 +52,13 @@ F & F & $F \to F \Longrightarrow T$ \\
 \end{tabular}
 \end{center}
 
-so this is, in fact, \emph{a tautology}.
+This is, in fact, \emph{a tautology}.
 
 But we can also interpret this tautology as saying something like
 
 If we start with the premises \texttt{p} and \texttt{q} then we can conclude \texttt{p}. This represents a shift between a logical and a metalogical notion of reasoning. In one, we use the literal implication operator \texttt{->} and in the other we use the intuitive notion of \emph{if} and \emph{then}.
 
-This goes the other way too. For example, consider that most famous of reasoning steps ``modus ponens''---which you rarely hear \emph{called} modus ponens outside of very pretentious contexts.\footnote{I don't know what it is but I swear it's a red flag if you meet someone who says modus ponens in casual conversation, even when that conversation is about mathematics and logic} Modus ponens is simply this:
+This goes the other way too. For example, consider that most famous of reasoning steps ``modus ponens''---\footnote{I swear it's a red flag if someone says ``modus ponens'' in casual conversation, even when that conversation is about mathematics and logic.} Modus ponens\index{modus ponens} is simply this:
 
 If \texttt{p} is true, and I know that \texttt{p} \emph{implies} \texttt{q}, then I can conclude \texttt{q}.
 
@@ -71,11 +70,11 @@ A different way to write modus ponens is to take the approach the book takes, wh
 (b) \texttt{p -> q}\\
 show: \texttt{q}
 
-This form is kinda convenient because it helps us make clear what the formula corresponding to the theorem, the statement being posited as true, looks like: you take every premise and put an \texttt{\^{}} between all of them and then put a \texttt{->} between that big anded thing and the thing being shown.
+This form is convenient because it makes clear what formula corresponds to the theorem. To build it: conjoin all the premises with \texttt{\^{}}, then put a \texttt{->} between that conjunction and the conclusion.
 
-So here the corresponding formula, which we hope to show is a tautology, would be \texttt{(p \^{} (p -> q)) ->q}.
+Here the corresponding formula, which we hope to show is a tautology, would be \texttt{(p \^{} (p -> q)) ->q}.
 
-Let's justify this by taking a look at its proof table
+Let's justify this by taking a look at its truth table
 
 \begin{center}
 \begin{tabular}{ccl}
@@ -90,15 +89,15 @@ F & F & $(F \wedge (F \to F)) \to F \Longrightarrow T$ \\
 \end{tabular}
 \end{center}
 
-So this truth table is all Ts all the time, so it \emph{is} in fact a tautology! This means that we've described a valid method of proof after all.
+This truth table is all Ts, so it \emph{is} in fact a tautology! This means that we've described a valid method of proof after all.
 
-And, again, this isn't super surprising because we literally defined implication---as a boolean operator---to behave this way.
+This isn't surprising --- we defined implication to behave exactly this way.
 
 \section{A thorough derivation of proof by contradiction}
 
-Before we jump into all the other methods of proof that we can justify as tautologies, I want to dig way too deeply into \emph{proof by contradiction}, which you might recognize from our very first unit in this class when we proved that there were an infinite number of natural numbers. To do that we need to explore the \emph{other} Latin proof method: modus tollens.
+Before we cover the remaining proof methods, let's dig into \emph{proof by contradiction} in detail, which you might recognize from our very first unit in this class when we proved that there were an infinite number of natural numbers. To do that we need to explore the \emph{other} Latin proof method: modus tollens.
 
-Modus tollens is a way of dealing with implication and things that \emph{aren't} true. In the semi-formal proof structure, modus tollens says that
+Modus tollens\index{modus tollens} is a way of dealing with implication and things that \emph{aren't} true. In the semi-formal proof structure, modus tollens says that
 
 (a) \texttt{p -> q}\\
 (b) \texttt{\~{}q}\\
@@ -123,26 +122,26 @@ F & F & $((F \to F) \wedge T) \to T \Longrightarrow T \to T \Longrightarrow T$ \
 \end{tabular}
 \end{center}
 
-Okay, thank goodness, this is firmly a tautology as well!
+Good --- this is firmly a tautology.
 
-So what about proof by contradiction? This is where it's important to remember that the \texttt{p} and \texttt{q} aren't necessarily variables but are generalized sub-formulas, you can stick another formula inside there and the result should be valid. Since the tautologies are \emph{always} true it doesn't even matter what values the sub-formula take.
+What about proof by contradiction? This is where it's important to remember that the \texttt{p} and \texttt{q} aren't necessarily variables but are generalized sub-formulas---you can stick another formula inside there and the result should be valid. Since the tautologies are \emph{always} true it doesn't even matter what values the sub-formula take.
 
-So proof by contradiction is, essentially,
+Proof by contradiction\index{proof!by contradiction} is, essentially,
 
 (a) \texttt{\~{}p} $\to$ \texttt{r \^{} \~{}r}\\
 shows: \texttt{p}
 
-In other words, if assuming \texttt{p} is false leads to a contradiction (that you can conclude---for some \texttt{r}---that \texttt{r} is true \emph{and} \texttt{\~{}r} is true) then you can conclude \texttt{p}. How is this modus tollens? Well we take modus tollens and substitute in \texttt{\~{}p} for the \texttt{p} in the formula and \texttt{\~{}r \^{} r} instead of \texttt{q}.
+In other words, if assuming \texttt{p} is false leads to a contradiction (that you can conclude---for some \texttt{r}---that \texttt{r} is true \emph{and} \texttt{\~{}r} is true) then you can conclude \texttt{p}. How is this modus tollens? Well we take modus tollens and substitute in \texttt{\~{}p} for the \texttt{p} in the formula and \texttt{r \^{} \~{}r} instead of \texttt{q}.
 
 We then get the formula---which again, we know is a tautology---
 
-\texttt{(((\~{}p -> (r \^{} \~{}r)) \^{} \~{}(r \^{} \~{}r)) -> p}
+\texttt{(((\~{}p -> (r \^{} \~{}r)) \^{} \~{}(r \^{} \~{}r)) -> \~{}\~{}p)}
 
-This is almost the right form but look at that goofy \texttt{\~{}(r \^{} \~{}r)} in there! What do we do about it? Well remember by De Morgan's laws we have that this should actually become
+This is almost the right form but look at that goofy \texttt{\~{}(r \^{} \~{}r)} in there! By De Morgan's laws we have that this should actually become
 
 \texttt{\~{}r v \~{}\~{}r}
 
-which is basically okay except for this little $\lnot\lnot r$ that's sitting there that we don't know what to do with. Sure, maybe you've heard the concept of ``double negation'' but let's not take anything for granted until we check the proof tables.
+which still contains $\lnot\lnot r$. We should verify double negation with a truth table rather than taking it for granted.
 
 \begin{center}
 \begin{tabular}{cl}
@@ -155,21 +154,23 @@ F & $\lnot T \Longrightarrow F$ \\
 \end{tabular}
 \end{center}
 
-Okay, so not-not p is p. Neat. In which case our expression above becomes \texttt{\~{}r v r} but we recognize that one as a tautology we saw earlier! The thing about it being a tautology is that it means we can just substitute T for it instead so our formula for proof by contradiction becomes
+Okay, so not-not p is p. Neat. In which case the \texttt{\~{}(r \^{} \~{}r)} part of our expression becomes \texttt{\~{}r v r}, and we recognize that one as a tautology we saw earlier! The thing about it being a tautology is that it means we can just substitute T for it instead so our formula for proof by contradiction becomes
 
-\texttt{(((\~{}p -> (r \^{} \~{}r)) \^{} T) -> p}
+\texttt{(((\~{}p -> (r \^{} \~{}r)) \^{} T) -> \~{}\~{}p)}
 
 which can simplify even further to
 
-\texttt{(\~{}p -> (r \^{} \~{}r)) -> p}
+\texttt{(\~{}p -> (r \^{} \~{}r)) -> \~{}\~{}p}
 
-which is exactly what we proposed as the rule for proof by contradiction!
+and since \texttt{\~{}\~{}p} is equivalent to \texttt{p}, this is exactly the proof-by-contradiction rule we wanted.
 
-And since we did this entirely by substituting formula into a tautology and simplifying, we don't even need to check the proof table to guarantee correctness!
+And since we did this entirely by substituting formula into a tautology and simplifying, we don't even need to check the truth table to guarantee correctness!
+
+Notice that this derivation relied on double negation elimination---the step where we replaced \texttt{\~{}\~{}p} with \texttt{p}---which is equivalent to excluded middle. This makes full proof by contradiction a \emph{classical} technique; it doesn't work in constructive logic, where you can't just erase double negations. What about proof by contrapositive? The situation is subtler than it might seem. Modus tollens---from $P \to Q$ and $\lnot Q$, conclude $\lnot P$---is constructively valid. But ``proof by contrapositive'' as a technique means proving $\lnot Q \to \lnot P$ to establish $P \to Q$, and that equivalence also requires excluded middle. So both contradiction and contrapositive, as proof techniques, are classical. The difference is that contrapositive proofs tend to be more \emph{informative}---they show you the structure of the argument rather than just ruling out alternatives. We'll revisit this distinction more carefully in Module 7.
 
 \section{A proof system for propositional logic}
 
-So do we \emph{always} have to prove things within the logic by appealing to truth tables? It sorta works for propositional logic, because in this logic all our variables are booleans and can take one of two (2) values: T or F.
+Do we \emph{always} have to prove things within the logic by appealing to truth tables? Truth tables work fine for propositional logic, because in this logic all our variables are booleans and can take one of two values: T or F.
 
 In the next module, though, we're going to add one of the simplest possible new types of data to our logic that aren't just booleans: the natural numbers, i.e.\ 0, 1, 2, \&c.
 
@@ -179,26 +180,23 @@ No, instead, we need to have a system for doing \emph{proofs} within the logic, 
 
 Now, we can't just make up these proof rules out of nothing: we need to have some way of checking that these are valid in the first place, and that's where the \emph{semantics} of a logic are necessary. We can check that the rules of proof work with the semantics and don't do anything wild like let you conclude false things from true ones.
 
-I know this discussion is a little abstract but I'm just trying to motivate some of the ``why'' in ways that I don't think are normally given in introductory explanations of logic.
-
-So all that being said now we're going to list out the proof rules for this logic and then show that they're solid with the semantics, which in this case means checking truth tables.
+With that motivation in hand, let's list out the proof rules and check them against the truth-table semantics, which in this case means checking truth tables.
 
 We've already talked about a couple of the rules: modus ponens and modus tollens, the rules for implication.
 
-But for every binary operator we've seen there are rules for how to build it and how to \emph{use} it. These are called introduction and elimination rules, respectively.
+But for every binary operator we've seen there are rules for how to build it and how to \emph{use} it. These are called introduction\index{introduction rule} and elimination\index{elimination rule} rules, respectively.
 
 Psst: dear reader, if you're wondering what the introduction rule for implication is, we'll come back to that at the end of this section.
 
-\subsection{Rules for $\wedge$}
+\subsection{Rules for conjunction}
 
-introduction rule
+\noindent\textbf{Introduction:}
 \begin{lstlisting}
 (a) p
 (b) q
 shows p ^ q
 \end{lstlisting}
-
-in other words that if you know that p is true and q is true then you know that p and q is true. Unsurprising!
+In other words, if you know that p is true and q is true then you know that p and q is true. Unsurprising!
 
 In terms of the validation of this rule this means that we'd need to show that
 
@@ -219,26 +217,28 @@ F & $F \to F = T$ \\
 \end{tabular}
 \end{center}
 
-What about the \emph{elimination} rules for $\wedge$? There are two of them:
+\noindent\textbf{Elimination:}
+There are two elimination rules for $\wedge$:
 
 \begin{lstlisting}
 (a) p ^ q
 shows p
 \end{lstlisting}
 
-and
 \begin{lstlisting}
-(b) p ^ q
+(a) p ^ q
 shows q
 \end{lstlisting}
+These are unsurprising.
 
-These are unsurprising, and I'll leave validating them as tautologies as an exercise for the reader.
+\bigskip
+\textbf{Exercise 1.}\label{ex:m3:1} Validate that $p \wedge q \to q$ is a tautology by computing its truth table.
 
 \subsection{Rules for \texttt{v}}
 
 Since $\vee$ is the mirror of $\wedge$, it's not surprising that there are going to be two introduction rules and one elimination rule.
 
-What are the introduction rules?
+\noindent\textbf{Introduction:}
 \begin{lstlisting}
 (a) p
 shows p v q
@@ -248,10 +248,10 @@ shows p v q
 (a) q
 shows p v q
 \end{lstlisting}
+These just follow from the very definition of what \texttt{v} is as an operator and you can verify that \texttt{p -> p v q} and \texttt{q -> p v q} are both tautologies.
 
-These, again, just follow from the very definition of what \texttt{v} is as an operator and it's readily shown that \texttt{p -> p v q} and \texttt{q -> p v q} are both tautologies.
-
-What's more complicated is the elimination rule. So if you think about it for a second to get some intuition what does it \emph{mean} to prove that \texttt{(p v q) -> r}? Well you don't know \emph{which} of \texttt{p} and \texttt{q} are true, right? It could be either, so what you're actually saying is ``whether p or q is true I know r is true'' which we can break down like this
+\noindent\textbf{Elimination:}
+What does it \emph{mean} to prove that \texttt{(p v q) -> r}? You don't know which of \texttt{p} and \texttt{q} is true, so what you're saying is ``whether p or q is true I know r is true'' which we can break down like this:
 \begin{lstlisting}
 (a) p v q
 (b) p -> r
@@ -271,56 +271,67 @@ T & T & F & $(T \wedge F \wedge F) \to F \Longrightarrow T$ \\
 T & F & T & $(T \wedge T \wedge T) \to T \Longrightarrow T$ \\
 T & F & F & $(T \wedge F \wedge F) \to F \Longrightarrow T$ \\
 F & T & T & $(T \wedge T \wedge T) \to T \Longrightarrow T$ \\
-F & T & F & $(T \wedge T \wedge F) \to T \Longrightarrow T$ \\
+F & T & F & $(T \wedge T \wedge F) \to F \Longrightarrow T$ \\
 F & F & T & $(F \wedge T \wedge T) \to T \Longrightarrow T$ \\
 F & F & F & $(F \wedge T \wedge T) \to F \Longrightarrow T$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-So what does this rule actually tell us? It is, as the book points out, the formal logic of \emph{proof by cases}. Proof by cases is something we've already informally encountered in the class and it's the implicitly what works behind homework 2: for each of the 16 possible truth tables of binary operators, you show that you can prove the proposition, so you know it's true for all of them (all in this case functioning like a Big Or)\footnote{So what's a little wild about this one is that when we see the meaning of forall there is a sense in which it really is an ``infinitely big and'' and ``there exists'' is a ``infinitely big or''.}
+What does this rule actually tell us? It is, as the book points out, the formal logic of \emph{proof by cases}. Proof by cases is something we've already informally encountered in the class and it's implicitly what works behind homework 2: for each of the 16 possible truth tables of binary operators, you show that you can prove the proposition, so you know it's true for all of them (all in this case functioning like a Big Or).
+
+And here's something worth flagging for later: when we eventually see the meaning of $\forall$ and $\exists$, there is a sense in which $\forall$ really is an ``infinitely big $\wedge$'' and $\exists$ is an ``infinitely big $\vee$.''
 
 \subsection{Negation}
 
-This is a fun one because we've essentially seen the rules for this already:
+This is a fun one because we've essentially seen the rules for this already.
 
-the introduction of negation is just the proof by contradiction rule
+\noindent\textbf{Introduction:}
+\begin{lstlisting}
+(a) assuming p leads to a contradiction
+shows ~p
+\end{lstlisting}
+In other words, if assuming $p$ lets you derive both $q$ and $\lnot q$ for some $q$, then you can conclude $\lnot p$. This is sometimes called ``proof by negation'' to distinguish it from full proof by contradiction.
+It's worth noting that in a lot of logics negation is \emph{defined} as \texttt{\~{}p = p -> F}. One such logic is the logic behind Lean 4, which you'll be playing with as part of learning The Natural Number Game.
 
-I'm going to include a little bit of a footnote\footnote{but not an actual footnote, that's this, here, the thing you're reading that's just a joke and adds nothing to the text} here and say that in a lot of logics negation is \emph{defined} as \texttt{\~{}p = p -> F}. One such logic is the logic behind Lean 4, which you'll be playing with as part of learning The Natural Number Game.
-
-The elimination rule of negation is, then, just our proof by contradiction rule but with $p$ flipped with $\lnot p$.
+\noindent\textbf{Elimination:}
+\begin{lstlisting}
+(a) ~~p
+shows p
+\end{lstlisting}
+This is double negation elimination, and as we discussed in the proof-by-contradiction section, it requires excluded middle. In constructive logic, you can always go from $p$ to $\lnot\lnot p$, but not the other way.
 
 \subsection{T and F}
 
-Okay technically there are introduction and elimination rules for the constants T and F as well. What's fun about this is that there's \emph{only} an introduction rule for T and \emph{only} an elimination rule for F.
+There are also introduction and elimination rules for the constants T and F as well. What's fun about this is that there's \emph{only} an introduction rule for T and \emph{only} an elimination rule for F.
 
+\noindent\textbf{Introduction (T):}
 \begin{lstlisting}
-
-introduction for T:
 shows T
 \end{lstlisting}
+That's it --- you can just conclude T. It needs no premises. And there's no elimination rule because knowing T gives you no new information.
 
-Yeah, that's it. You can just conclude T. You can't conclude anything by assuming T is true because it \emph{just is}.
-
-elimination for F:
+\noindent\textbf{Elimination (F):}
 \begin{lstlisting}
 (a) F
 shows p
 \end{lstlisting}
-
 Wait, what? What is p here? Well it's literally anything. Because if you assume false you can conclude anything. To understand this, follow our rules for how to convert a proof in the above form into its corresponding tautology and then look at what the truth table would be.
 
 \subsection{Implication}
 
 Okay, we saved implication for last because it's\ldots a little weird.
 
-The elimination rule for implication is just modus ponens. That's easy. It's the introduction that's weird. Because it's more like
+\noindent\textbf{Elimination:}
+The elimination rule for implication is just modus ponens. That's easy.
+
+\noindent\textbf{Introduction:}
+It's the introduction that's weird. Because it's more like:
 
 \begin{lstlisting}
 (a) has a proof that assuming p, shows q
 show p -> q
 \end{lstlisting}
-
 Why is this weird? Because we have two layers: \emph{implication} inside the logic, and \emph{proofs} which take a set of premises and derive a conclusion, which is kind of a \emph{metalogical} activity.
 
 The introduction rule of implication lets us take a proof---a metalogical thing---and turn it into an implication \emph{within} the logic. Then the elimination rule lets us take an implication within the logic and use it inside a proof.
@@ -340,6 +351,8 @@ This is going to help us deal with a bunch of proofs by giving us the ability to
 
 We're going to call this rule ``excluded middle''
 
+It's worth pausing to note that this rule is a \emph{choice}. The introduction and elimination rules for conjunction, disjunction, and implication are all constructively valid, as is negation \emph{introduction} (proof by negation). But negation \emph{elimination} (double negation elimination) requires excluded middle. Excluded middle is the specific axiom you add on top of those structural rules to get \emph{classical} logic. Without it, you have what's called intuitionistic or constructive logic, where every proof of a disjunction $p \vee q$ must actually demonstrate \emph{which} of $p$ or $q$ holds. We're choosing to include excluded middle in this course, but it's worth knowing that this is precisely the thing that separates classical from constructive reasoning.
+
 Also we have the maybe obvious rule of proof by assumption:
 
 \begin{lstlisting}
@@ -347,15 +360,86 @@ Also we have the maybe obvious rule of proof by assumption:
 shows p
 \end{lstlisting}
 
-This is just a rule that lets us formally use our assumptions in our proofs
+This is just a rule that lets us formally use our assumptions in our proofs.
+
+\section{Arguments and validity}
+
+Now we need to actually talk about what it means for an argument to be \emph{valid}, because this is something that the assignments lean on heavily and it's worth being really precise about.
+
+An \emph{argument form}\index{argument form} is just a sequence of statements called \emph{premises} followed by a \emph{conclusion}. We write the premises on top, draw a little horizontal line, and then write the conclusion below it with a $\therefore$ symbol. For example, here's the argument form for modus ponens:
+
+\begin{lstlisting}
+p -> q
+p
+------
+therefore q
+\end{lstlisting}
+
+When is an argument form \emph{valid}? An argument form is valid\index{valid argument} if whenever \textbf{all} the premises are true, the conclusion is also true. Another way to say this: take the conjunction of all the premises, form its implication to the conclusion, and check whether \emph{that} whole formula is a tautology. If it is, the argument is valid. If it's not, the argument is invalid and there exists some assignment of truth values where all the premises hold but the conclusion doesn't.
+
+How do we actually \emph{test} validity? You build a truth table for all the variables involved, find the rows where every single premise evaluates to true---these are the \emph{critical rows}---and then check whether the conclusion is also true in those rows. If the conclusion is true in every critical row, valid. If there's even one critical row where the conclusion is false, invalid.
+
+Let's work through an example. Consider the argument \texttt{p v q, \~{}q $\therefore$ p}---this is called \emph{disjunctive syllogism}\index{disjunctive syllogism} and we listed it in the derivable rules section below, but let's actually verify it.
+
+\begin{center}
+\begin{tabular}{ccccc}
+\toprule
+$p$ & $q$ & $p \vee q$ & $\lnot q$ & $p$ \\
+\midrule
+T & T & T & F & T \\
+T & F & T & T & T \\
+F & T & T & F & F \\
+F & F & F & T & F \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The critical rows are the ones where \emph{both} premises are true, i.e.\ where \texttt{p v q} is T \emph{and} \texttt{\~{}q} is T. That's only the second row (p=T, q=F). And in that row the conclusion \texttt{p} is T. So the argument is valid!
+
+Now here's where things get interesting, because there are two extremely common \emph{fallacies}\index{fallacy}\footnote{A fallacy is just an argument form that looks plausible but is actually invalid. The whole point of formal logic is to catch these things before they sneak into your reasoning.} that trip people up constantly:
+
+\textbf{Converse error}\index{converse error} (also called ``affirming the consequent''): this is the argument form
+\begin{lstlisting}
+p -> q
+q
+------
+therefore p
+\end{lstlisting}
+
+This is \textbf{invalid}. Here's the intuition: ``if it's raining then the ground is wet; the ground is wet; therefore it's raining.'' But the sprinklers could be on! Just because the ground is wet doesn't mean it rained. The problem is that you're confusing \texttt{p -> q} with its \emph{converse} \texttt{q -> p}, and an implication and its converse are \textbf{not} logically equivalent (you can verify this by comparing their truth tables).
+
+\textbf{Inverse error}\index{inverse error} (also called ``denying the antecedent''): this is the argument form
+\begin{lstlisting}
+p -> q
+~p
+------
+therefore ~q
+\end{lstlisting}
+
+Also \textbf{invalid}. ``If it's raining then the ground is wet; it's not raining; therefore the ground is not wet.'' Again, sprinklers. You're confusing \texttt{p -> q} with its \emph{inverse} \texttt{\~{}p -> \~{}q}, which again is not logically equivalent to the original.
+
+One nice thing about all of this machinery is that you can \emph{chain} argument forms together to build longer deductions. This is what a formal proof really is: you start with your premises, apply rules of inference one step at a time, and each step produces a new known fact that you can use in later steps. Think of it like writing a program where each line is a function call that's justified by one of our rules---modus ponens, disjunctive syllogism, \&c.---and the ``return value'' feeds into the next line. You keep going until you reach the conclusion.
+
+Here's a quick example of chaining. Suppose our premises are \texttt{p -> q}, \texttt{q -> r}, and \texttt{p}. We want to conclude \texttt{r}. The deduction looks like:
+
+\begin{lstlisting}
+1. p -> q         premise
+2. q -> r         premise
+3. p              premise
+4. q              modus ponens on 3, 1
+5. r              modus ponens on 4, 2
+\end{lstlisting}
+
+Each line is justified by exactly one rule and refers back to earlier lines. That's the whole game. It's very much like a sequence of statements in a program where each variable depends on previously computed values.
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:m3:2} Determine whether the following argument is valid or invalid. If invalid, find a counterexample row. Premises: $p \to q$, $r \to \lnot q$, $r$. Conclusion: $\lnot p$.
 
 \section{Examples of doing proofs}
 
-So now let's dig into some proofs and see how they actually work. For example, let's see if we can \emph{prove} some laws:
+Now let's dig into some proofs and see how they actually work. For example, let's see if we can \emph{prove} some laws:
 
-Proofs systems, formal proofs in a logic, are going to look a little different than the kind of thing we've done before:
-
-I'm going to try and make the notation not \emph{super} painful but it might feel clunky at first:
+Proof systems---formal proofs in a logic---are going to look a little different than the kind of thing we've done before.
 
 Let's make an important derived rule: transitivity of implication
 \begin{lstlisting}
@@ -375,88 +459,53 @@ Theorem: Assuming p -> q, show ~p v q
 Proof:
 (a) p -> q, by assumption
 (b) p v ~p, by excluded middle
-(c) ~p -> ~p, by identity of implication
-(d) q -> ~p v q, by introduction of v
-(e) p -> ~p v q, by transitivity of (a) and (d)
-(f) ~p -> ~p v q, by introduction of v
-shows ~p v q, by elimination of v with (b), (e), (f)
+(c) q -> ~p v q, by introduction of -> and v
+(d) p -> ~p v q, by transitivity of (a) and (c)
+(e) ~p -> ~p v q, by introduction of -> and v
+shows ~p v q, by elimination of v with (b), (d), (e)
 \end{lstlisting}
 
-\section{Arguments and validity}
+\subsection{Conjunctive normal form}
 
-Alright so now we need to actually talk about what it means for an argument to be \emph{valid}, because this is something that the assignments lean on heavily and it's worth being really precise about.
+A formula is in \href{https://en.wikipedia.org/wiki/Conjunctive_normal_form}{conjunctive normal form}\index{conjunctive normal form (CNF)} (CNF) when it is a conjunction of \emph{clauses}, where each clause is a disjunction of \emph{literals}. A literal is either a variable or its negation (e.g.\ \texttt{p} or \texttt{\~{}p}).
 
-So an \emph{argument form} is just a sequence of statements called \emph{premises} followed by a \emph{conclusion}. We write the premises on top, draw a little horizontal line, and then write the conclusion below it with a $\therefore$ symbol. For example, here's the argument form for modus ponens:
+For example
 
 \begin{lstlisting}
-p -> q
-p
-------
-therefore q
+(p v ~q) ^ (~p v q v r) ^ (q)
 \end{lstlisting}
+is in conjunctive normal form: it is a conjunction of three clauses, each of which is a disjunction of literals.
 
-Okay so when is an argument form \emph{valid}? An argument form is valid if whenever \textbf{all} the premises are true, the conclusion is also true. Another way to say this: take the conjunction of all the premises, slap an implication arrow to the conclusion, and check whether \emph{that} whole formula is a tautology. If it is, the argument is valid. If it's not, the argument is invalid and there exists some assignment of truth values where all the premises hold but the conclusion doesn't.
-
-So how do we actually \emph{test} validity? You build a truth table for all the variables involved, find the rows where every single premise evaluates to true---these are the \emph{critical rows}---and then check whether the conclusion is also true in those rows. If the conclusion is true in every critical row, valid. If there's even one critical row where the conclusion is false, invalid.
-
-Let's work through an example. Consider the argument \texttt{p v q, \~{}q $\therefore$ p}---this is called \emph{disjunctive syllogism} and we listed it in the derivable rules section below, but let's actually verify it.
-
-\begin{center}
-\begin{tabular}{ccccc}
-\toprule
-$p$ & $q$ & $p \vee q$ & $\lnot q$ & $p$ \\
-\midrule
-T & T & T & F & T \\
-T & F & T & T & T \\
-F & T & T & F & F \\
-F & F & F & T & F \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-The critical rows are the ones where \emph{both} premises are true, i.e.\ where \texttt{p v q} is T \emph{and} \texttt{\~{}q} is T. That's only the second row (p=T, q=F). And in that row the conclusion \texttt{p} is T. So the argument is valid!
-
-Now here's where things get interesting, because there are two extremely common \emph{fallacies}\footnote{A fallacy is just an argument form that looks plausible but is actually invalid. The whole point of formal logic is to catch these things before they sneak into your reasoning.} that trip people up constantly:
-
-\textbf{Converse error} (also called ``affirming the consequent''): this is the argument form
-\begin{lstlisting}
-p -> q
-q
-------
-therefore p
-\end{lstlisting}
-
-This is \textbf{invalid}. Here's the intuition: ``if it's raining then the ground is wet; the ground is wet; therefore it's raining.'' But the sprinklers could be on! Just because the ground is wet doesn't mean it rained. The problem is that you're confusing \texttt{p -> q} with its \emph{converse} \texttt{q -> p}, and we showed earlier that an implication and its converse are \textbf{not} logically equivalent.
-
-\textbf{Inverse error} (also called ``denying the antecedent''): this is the argument form
-\begin{lstlisting}
-p -> q
-~p
-------
-therefore ~q
-\end{lstlisting}
-
-Also \textbf{invalid}. ``If it's raining then the ground is wet; it's not raining; therefore the ground is not wet.'' Again, sprinklers. You're confusing \texttt{p -> q} with its \emph{inverse} \texttt{\~{}p -> \~{}q}, which again is not logically equivalent to the original.
-
-So one nice thing about all of this machinery is that you can \emph{chain} argument forms together to build longer deductions. This is what a formal proof really is: you start with your premises, apply rules of inference one step at a time, and each step produces a new known fact that you can use in later steps. Think of it like writing a program where each line is a function call that's justified by one of our rules---modus ponens, disjunctive syllogism, \&c.---and the ``return value'' feeds into the next line. You keep going until you reach the conclusion.
-
-Here's a quick example of chaining. Suppose our premises are \texttt{p -> q}, \texttt{q -> r}, and \texttt{p}. We want to conclude \texttt{r}. The deduction looks like:
+On the other hand,
 
 \begin{lstlisting}
-1. p -> q         premise
-2. q -> r         premise
-3. p              premise
-4. q              modus ponens on 3, 1
-5. r              modus ponens on 4, 2
+~(p v q)
+\end{lstlisting}
+is \emph{not} in conjunctive normal form because \texttt{\~{}(p v q)} is not a disjunction of literals. However, by De Morgan's laws it can be rewritten as
+
+\begin{lstlisting}
+(~p) ^ (~q)
 \end{lstlisting}
 
-Each line is justified by exactly one rule and refers back to earlier lines. That's the whole game. It's very much like a sequence of statements in a program where each variable depends on previously computed values.
+and \emph{this} is in CNF (a conjunction of two single-literal clauses).
+
+\subsection{Disjunctive normal form}
+
+A formula is in disjunctive normal form\index{disjunctive normal form (DNF)} (DNF) when it is a disjunction of \emph{terms}, where each term is a conjunction of \emph{literals}. So the following is in disjunctive normal form
+\begin{lstlisting}
+(p ^ ~q) v (~p ^ q ^ r) v (q)
+\end{lstlisting}
+
+but the following is not because \texttt{\~{}(q \^{} r)} is not a conjunction of literals
+\begin{lstlisting}
+(p ^ q) v (~(q ^ r))
+\end{lstlisting}
 
 \section{Digital logic circuits}
 
-So here's where things get fun and we connect all this abstract boolean algebra stuff to the real physical world. It turns out that the logical operations we've been studying---AND, OR, NOT---have direct physical implementations called \emph{logic gates}. An AND gate is a little electronic component that takes two input signals and produces an output that's 1 (high voltage) only when both inputs are 1. An OR gate outputs 1 when at least one input is 1. A NOT gate (also called an \emph{inverter}) takes one input and flips it. There are also NAND gates, which are just an AND followed by a NOT, and it turns out these are particularly important because you can build literally every other gate out of just NAND gates.\footnote{This is called functional completeness and it's honestly one of the coolest facts in all of computer science. Your entire computer could, in principle, be built out of nothing but NAND gates.}
+Here's where things get fun and we connect all this abstract boolean algebra stuff to the real physical world. It turns out that the logical operations we've been studying---AND, OR, NOT---have direct physical implementations called \emph{logic gates}\index{logic gate}. An AND gate is a little electronic component that takes two input signals and produces an output that's 1 (high voltage) only when both inputs are 1. An OR gate outputs 1 when at least one input is 1. A NOT gate (also called an \emph{inverter}) takes one input and flips it. There are also NAND gates, which are just an AND followed by a NOT, and it turns out these are particularly important because you can build literally every other gate out of just NAND gates.\footnote{This is called functional completeness and it's honestly one of the coolest facts in all of computer science. Your entire computer could, in principle, be built out of nothing but NAND gates.}
 
-A \emph{circuit} is just a composition of gates---you wire the output of one gate into the input of another. If you think about it this is exactly function composition! The output of gate $f$ becomes the input of gate $g$, so you're computing $g(f(x))$. It's functions all the way down.
+A \emph{circuit}\index{circuit} is just a composition of gates---you wire the output of one gate into the input of another. If you think about it this is exactly function composition! The output of gate $f$ becomes the input of gate $g$, so you're computing $g(f(x))$. It's functions all the way down.
 
 To \emph{evaluate} a circuit you trace signals from the inputs through each gate to the output, applying the truth table of each gate as you go. Let's do an example: suppose we have inputs P and Q, and the circuit works like this. Q branches into two paths: one path goes to an OR gate together with P, and the other path goes through a NOT gate. Then the output of the OR gate and the output of the NOT gate both feed into an AND gate, and that's our final output.
 
@@ -477,9 +526,9 @@ $P$ & $Q$ & $P \vee Q$ & $\lnot Q$ & $(P \vee Q) \wedge \lnot Q$ & Output \\
 \end{tabular}
 \end{center}
 
-So this circuit computes the function that's true exactly when P is true and Q is false---which is just \texttt{P \^{} \~{}Q}. Interesting that our three-gate circuit could have been built with two gates! This is the kind of optimization that boolean algebra helps us find.
+This circuit computes the function that's true exactly when P is true and Q is false---which is just \texttt{P \^{} \~{}Q}. Interesting that our three-gate circuit could have been built with two gates! This is the kind of optimization that boolean algebra helps us find.
 
-Okay but here's the really cool part: how do you \emph{build} a circuit from a truth table? This is where disjunctive normal form comes back in a big way. Remember DNF? Here's the recipe:
+But here's the really cool part: how do you \emph{build} a circuit from a truth table? This is where disjunctive normal form comes back in a big way. Remember DNF? Here's the recipe:
 
 \begin{enumerate}
 \item Look at every row of the truth table where the output is 1.
@@ -487,63 +536,39 @@ Okay but here's the really cool part: how do you \emph{build} a circuit from a t
 \item OR all of those ANDs together.
 \end{enumerate}
 
-So for instance if you have a truth table with inputs P, Q and the output is 1 only when P=1, Q=0 or P=0, Q=1, you'd get the DNF expression \texttt{(P \^{} \~{}Q) v (\~{}P \^{} Q)}---which, hey, that's XOR! And now you have a direct recipe for wiring up the gates: two AND gates (one for each term), some NOT gates for the negations, and one OR gate to combine them.
+For instance, if you have a truth table with inputs P, Q and the output is 1 only when P=1, Q=0 or P=0, Q=1, you'd get the DNF expression \texttt{(P \^{} \~{}Q) v (\~{}P \^{} Q)}---which, hey, that's XOR! And now you have a direct recipe for wiring up the gates: two AND gates (one for each term), some NOT gates for the negations, and one OR gate to combine them.
 
-This is why DNF matters---it gives you a completely mechanical way to turn \emph{any} truth table into a working circuit. And this is literally how hardware design works at the lowest level. Computer chips are just enormous networks of logic gates, millions and millions of them wired together. The boolean algebra we learned earlier in this module \emph{is} the mathematics of chip design. When hardware engineers want to make a circuit smaller or faster, they're essentially doing the same kind of simplification we did with De Morgan's laws and distributivity---reducing the number of gates needed to compute the same function.
+This is why DNF matters---it gives you a completely mechanical way to turn \emph{any} truth table into a working circuit. And this is literally how hardware design works at the lowest level. Computer chips are just enormous networks of logic gates, millions and millions of them wired together. The boolean algebra we learned in Module 2 \emph{is} the mathematics of chip design. When hardware engineers want to make a circuit smaller or faster, they're essentially doing the same kind of simplification we did with De Morgan's laws and distributivity---reducing the number of gates needed to compute the same function.
+
+Notice how this connects back to functional completeness from the previous module. The DNF construction is actually a \emph{proof} that AND, OR, and NOT are functionally complete: given any truth table whatsoever, DNF hands you a circuit built entirely from those three gates. And since we showed in that module that NAND alone can simulate AND, OR, and NOT, it follows that NAND alone is functionally complete---which is exactly why real hardware can be (and often is) built entirely from NAND gates.
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m3:3} Given the truth table where the output is 1 only for inputs (P=1, Q=0, R=1) and (P=0, Q=1, R=1), write the DNF expression and describe the circuit.
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m3:4} Find the error in the following ``proof'' that $p \to q$ is logically equivalent to $q \to p$:
+
+``Consider any assignment. If $p$ and $q$ are both true, then both $p \to q$ and $q \to p$ are true. If both are false, then both implications are true (since $F \to F = T$). So they always have the same truth value, and are logically equivalent.''
+
+What case does this argument miss?
 
 \section{Addendum: differences in terminology and additional derivable proof rules for homework}
 
-\subsection{Conjunctive normal form}
-
-To say a formula is in \href{https://en.wikipedia.org/wiki/Conjunctive_normal_form}{conjunctive normal form} is to simply state that it is a bunch of logical statements that are all connected by \texttt{\^{}} \emph{and} that all the possible \texttt{\^{}}s have been moved outside of nested formulae.
-
-So for example
-
-\begin{lstlisting}
-(p -> q) ^ (p v ~p) ^ (q -> (p -> r))
-\end{lstlisting}
-is in conjunctive normal form but
-
-\begin{lstlisting}
-(p -> q) ^ (~(p v q))
-\end{lstlisting}
-is \emph{not} in conjunctive normal form because by de morgan's laws it can be turned into
-
-\begin{lstlisting}
-(p -> q) ^ ((~p) ^ (~q))
-\end{lstlisting}
-
-which can be rewritten as
-
-\begin{lstlisting}
-(p -> q) ^ (~p) ^ (~q)
-\end{lstlisting}
-
-and \emph{this} is in conjunctive normal form.
-
-\subsection{Disjunctive normal form}
-
-This is like CNF except where you have \texttt{v} instead of \texttt{\^{}} between all the statements. So the following is in disjunctive normal form
-\begin{lstlisting}
-(p -> q) v (q ^ r) v (~r)
-\end{lstlisting}
-
-but the following is not because it could, again, be simplified by de morgan's laws
-\begin{lstlisting}
-(p -> q) v (~(q ^ r))
-\end{lstlisting}
-
 \subsection{Derivable rules of inference}
 
-So there are a number of extra rules you can derive that are useful for proofs, some of them are so useful they get extra special names:
+There are a number of extra rules you can derive that are useful for proofs, some of them are so useful they get extra special names:
 
-double negation:
+Note: double negation elimination ($\lnot\lnot q$ shows $q$) was already listed as the elimination rule for negation in Section 3.3 above.
 
+modus tollens:
 \begin{lstlisting}
-(a) ~~ q
-shows q
+(a) p -> q
+(b) ~q
+shows ~p
 \end{lstlisting}
+We derived this as a tautology in Section 2. It can also be derived from implication elimination and negation introduction.
 
+\bigskip
 disjunctive syllogism (there's two versions of it)
 \begin{lstlisting}
 (a) p v q
@@ -570,7 +595,7 @@ shows p -> r
 
 \subsection{Bitwise logical operators}
 
-So there is a question in the webwork assignment that refers to bitwise logical operators like you may have seen in C or C++. However! Not everyone's classes actually \textbf{covered} bitwise operators, so it would be a mistake on our part to not cover them here: if you see something like
+There is a question in the webwork assignment that refers to bitwise logical operators like you may have seen in C or C++. However! Not everyone's classes actually \textbf{covered} bitwise operators, so it would be a mistake on our part to not cover them here: if you see something like
 
 \begin{lstlisting}
 0101 ^ 1100

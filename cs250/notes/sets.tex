@@ -1,0 +1,217 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  mathescape=true
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\title{CS 250 --- Intermezzo: Cardinality and Function Spaces}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+In Module 1 we introduced sets, functions, and the power set. We said the cardinality of a finite set is just the number of distinct elements it contains. But we also mentioned sets like $\mathbb{N}$ and $\mathbb{Z}$ that are infinite. How do you compare the sizes of infinite sets? Do all infinite sets have the ``same amount'' of infinity?
+
+The answer is \emph{no}, and the story of how we know that---and the beautiful connection between power sets and function spaces that falls out of it---is what this chapter is about.
+
+\section{Comparing set sizes}
+
+For finite sets, cardinality is easy: count the elements. $|\{a,b,c\}| = 3$ and $|\{0,1\}| = 2$, so $\{a,b,c\}$ is bigger. Done.
+
+But what about infinite sets? You can't count to infinity and compare the totals. We need a different strategy. The key idea, due to Georg Cantor in the 1870s, is to use \emph{functions} to compare sizes.
+
+If you can pair up every element of $A$ with a unique element of $B$ and vice versa---a perfect matching with nothing left over on either side---then $A$ and $B$ have ``the same size.'' The function that does this pairing is called a \emph{bijection}, and it's built from two simpler properties.
+
+\begin{definition}[Injection (one-to-one)]
+A function $f : A \to B$ is \emph{injective}\index{injection} (or \emph{one-to-one}) if no two inputs map to the same output: whenever $f(a_1) = f(a_2)$, we have $a_1 = a_2$.
+\end{definition}
+
+An injection maps distinct inputs to distinct outputs---no two inputs share an output. Every input gets its own unique output. The function $f(x) = 2x$ on the integers is injective because different inputs always produce different outputs. The function $g(x) = x^2$ on $\mathbb{Z}$ is \emph{not} injective because $g(3) = g(-3) = 9$---two different inputs, same output.
+
+\begin{definition}[Surjection (onto)]
+A function $f : A \to B$ is \emph{surjective}\index{surjection} (or \emph{onto}) if every element of $B$ is hit: for every $b \in B$, there exists some $a \in A$ with $f(a) = b$.
+\end{definition}
+
+A surjection means nothing in the codomain is left out. Every possible output actually gets produced by some input. If $f : \mathbb{Z} \to \mathbb{Z}$ is defined by $f(x) = 2x$, then $f$ is \emph{not} surjective because odd numbers are never hit. But $g : \mathbb{Z} \to \mathbb{Z}$ defined by $g(x) = x + 1$ is surjective because every integer $n$ is $g(n-1)$.
+
+\begin{definition}[Bijection]
+A function $f : A \to B$ is a \emph{bijection}\index{bijection} if it is both injective and surjective. Equivalently, $f$ is a bijection if it has an inverse: a function $f^{-1} : B \to A$ such that $f^{-1}(f(a)) = a$ for all $a \in A$ and $f(f^{-1}(b)) = b$ for all $b \in B$.
+\end{definition}
+
+A bijection is a perfect pairing---every element of $A$ matches exactly one element of $B$, and every element of $B$ matches exactly one element of $A$. When a bijection $f : A \to B$ exists, we say $A$ and $B$ have the same cardinality, written $|A| = |B|$.
+
+For finite sets this lines up with our intuition: $\{a,b,c\}$ and $\{1,2,3\}$ have the same cardinality because we can pair them up (say $a \mapsto 1, b \mapsto 2, c \mapsto 3$). But the power of this definition is that it also works for infinite sets, where counting fails.
+
+\section{Countable infinity}
+
+$\mathbb{N} = \{0, 1, 2, 3, \ldots\}$ is infinite. Are there other infinite sets that are ``the same size'' as $\mathbb{N}$?
+
+Consider $\mathbb{Z}$, the integers: $\ldots, -3, -2, -1, 0, 1, 2, 3, \ldots$ At first glance $\mathbb{Z}$ looks ``twice as big'' as $\mathbb{N}$ because it extends in both directions. But that intuition is misleading. We can construct a bijection $f : \mathbb{N} \to \mathbb{Z}$ by zigzagging:
+\[
+0 \mapsto 0, \quad 1 \mapsto -1, \quad 2 \mapsto 1, \quad 3 \mapsto -2, \quad 4 \mapsto 2, \quad 5 \mapsto -3, \quad 6 \mapsto 3, \quad \ldots
+\]
+
+More precisely:
+\[
+f(n) = \begin{cases} n/2 & \text{if } n \text{ is even} \\ -(n+1)/2 & \text{if } n \text{ is odd} \end{cases}
+\]
+
+This is a bijection. Every integer appears exactly once in the list $0, -1, 1, -2, 2, -3, 3, \ldots$, so $|\mathbb{N}| = |\mathbb{Z}|$. Infinity is weird: a set that looks ``twice as big'' turns out to be exactly the same size.
+
+It turns out that $\mathbb{Q}$, the rational numbers, is also the same size as $\mathbb{N}$. The proof uses a clever diagonal enumeration often called Cantor's pairing function---you arrange the rationals in a grid and then zigzag through them. We won't go through the details here, but the punchline is the same: you can list all the rationals, one by one, without missing any.
+
+\begin{definition}[Countably infinite]
+A set $S$ is \emph{countably infinite}\index{countably infinite} if there is a bijection $f : \mathbb{N} \to S$. A set is \emph{countable}\index{countable} if it is either finite or countably infinite.
+\end{definition}
+
+Intuitively, a set is countable if you can write its elements as a (possibly infinite) list: a first element, a second element, a third, and so on, eventually hitting everything. The integers can be listed ($0, 1, -1, 2, -2, \ldots$), so they're countable. The rationals can be listed too (with some cleverness), so they're also countable.
+
+\medskip
+\noindent\textbf{Hilbert's Hotel.} Here's a fun thought experiment that helps build intuition for why infinity behaves so strangely. Imagine a hotel with infinitely many rooms, numbered $1, 2, 3, \ldots$, and every room is occupied. A new guest arrives. Can you fit them in?
+
+Yes! Move every current guest from room $n$ to room $n+1$. Room 1 is now free for the new guest. In fact, you can fit infinitely many new guests the same way: move guest $n$ to room $2n$, freeing up all the odd-numbered rooms. This is essentially the same bijection trick we used above---infinity plus one is still the same infinity. It's not that the hotel ``got bigger''; it's that the pairing between guests and rooms changed.
+
+\section{Uncountable infinity---Cantor's diagonal argument}
+
+So $\mathbb{N}$, $\mathbb{Z}$, and $\mathbb{Q}$ are all the same size. You might start to wonder: is \emph{every} infinite set countable? Maybe infinity just comes in one flavor?
+
+No. The set $\mathbb{R}$ of real numbers is \emph{not} countable\index{uncountable}. There are strictly more real numbers than natural numbers. This was proved by Cantor in 1891 with one of the most famous arguments in all of mathematics: the \emph{diagonal argument}\index{Cantor's diagonal argument}.
+
+\begin{theorem}[Cantor]
+The set of real numbers in the interval $[0, 1)$ is uncountable.
+\end{theorem}
+
+\begin{proof}
+We proceed by contradiction. Assume, for the sake of argument, that we \emph{can} list all the real numbers in $[0,1)$. That means there's a bijection from $\mathbb{N}$ to $[0,1)$, giving us an enumeration $r_1, r_2, r_3, \ldots$ that includes every real number in $[0,1)$.
+
+Write each $r_i$ in its decimal expansion:
+\begin{align*}
+r_1 &= 0.d_{11}\, d_{12}\, d_{13}\, d_{14}\, \ldots \\
+r_2 &= 0.d_{21}\, d_{22}\, d_{23}\, d_{24}\, \ldots \\
+r_3 &= 0.d_{31}\, d_{32}\, d_{33}\, d_{34}\, \ldots \\
+r_4 &= 0.d_{41}\, d_{42}\, d_{43}\, d_{44}\, \ldots \\
+&\;\;\vdots
+\end{align*}
+
+Now construct a new real number $d = 0.e_1\, e_2\, e_3\, e_4\, \ldots$ by choosing each digit to \emph{differ} from the corresponding diagonal entry. Specifically, set
+\[
+e_n = \begin{cases} 5 & \text{if } d_{nn} \neq 5 \\ 6 & \text{if } d_{nn} = 5 \end{cases}
+\]
+
+The number $d$ is in $[0,1)$, so it should appear somewhere in our list. But $d$ differs from $r_1$ in the first digit, from $r_2$ in the second digit, from $r_3$ in the third digit, and in general from $r_n$ in the $n$th digit. So $d \neq r_n$ for every $n$. This means $d$ is \emph{not} in our list---contradicting the assumption that the list was complete.
+\end{proof}
+
+Notice the proof technique: we assumed something and derived a contradiction, so the assumption must be false. This is \emph{proof by contradiction}, the same technique we used in Module 1 to show there are infinitely many natural numbers. We'll formalize this technique properly in Module 3.
+
+The deeper lesson is the \emph{method}: construct something that systematically disagrees with every entry in a supposed complete list. This ``diagonalization'' idea is incredibly powerful and shows up in several places across mathematics and computer science.
+
+\medskip
+\noindent\textbf{Forward look.} This diagonal argument has the same structure as the proof that the halting problem is undecidable, which you'll see in CS 251. The idea of constructing something that disagrees with every entry in a list---a function that does the opposite of whatever the $n$th program does on input $n$---is exactly the same trick. If you understand Cantor's argument, you already understand the skeleton of one of the most important results in theoretical computer science.
+
+\section{Function spaces}
+
+Let's change gears. Given two sets $A$ and $B$, it's natural to ask: how many functions are there from $A$ to $B$?
+
+The set of \emph{all} functions from $A$ to $B$ is written $B^A$\index{function space} (read ``$B$ to the $A$'').
+
+Why the exponential notation? Because for finite sets, $|B^A| = |B|^{|A|}$. Here's why: to define a function $f : A \to B$, you need to decide, for each element of $A$, which element of $B$ it maps to. That's $|B|$ choices for each of the $|A|$ elements, giving $|B|^{|A|}$ total functions.
+
+\begin{example}
+Let $A = \{a, b\}$ and $B = \{0, 1\}$. Then $|B^A| = 2^2 = 4$. The four functions are:
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Function & $f(a)$ & $f(b)$ \\
+\midrule
+$f_1$ & 0 & 0 \\
+$f_2$ & 0 & 1 \\
+$f_3$ & 1 & 0 \\
+$f_4$ & 1 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+That's all of them. Each row is a complete function from $A$ to $B$---for each input in $A$, it specifies exactly one output in $B$.
+\end{example}
+
+If you're a Python programmer, you can think of $B^A$ as the type \texttt{Dict[A, B]} where every key in \texttt{A} is required to be present. A function is just a dictionary with no missing keys.
+
+You might also write the function space as $A \to B$ instead of $B^A$. Both notations are common. The exponential notation emphasizes the counting formula; the arrow notation emphasizes that we're talking about functions.
+
+\section{The power set is a function space---the punchline}
+
+Here is the connection that ties this chapter together. Recall from Module 1 that the power set $\mathcal{P}(A)$ is the set of all subsets of $A$, and that $|\mathcal{P}(A)| = 2^{|A|}$ for finite sets. We said each element is either ``in'' a subset or ``not in'' it---two choices per element. But now we can say something much more precise.
+
+Every subset $S \subseteq A$ can be described by a function $\chi_S : A \to \{0, 1\}$ called its \emph{characteristic function}\index{characteristic function} (or \emph{indicator function}\index{indicator function}):
+\[
+\chi_S(x) = \begin{cases} 1 & \text{if } x \in S \\ 0 & \text{if } x \notin S \end{cases}
+\]
+
+Conversely, every function $f : A \to \{0, 1\}$ determines a subset $\{x \in A \mid f(x) = 1\}$. These two operations are inverses of each other: going from subset to characteristic function and back gives you the same subset, and going from function to subset and back gives you the same function.
+
+In other words, there is a \emph{bijection} between $\mathcal{P}(A)$ and $\{0,1\}^A$. We write this as
+\[
+\mathcal{P}(A) \cong 2^A
+\]
+where $2$ is shorthand for the two-element set $\{0,1\}$.
+
+\begin{example}
+Let $A = \{a, b, c\}$. The subset $\{a, c\}$ corresponds to the characteristic function $\chi_{\{a,c\}} : A \to \{0,1\}$ defined by:
+\[
+a \mapsto 1, \quad b \mapsto 0, \quad c \mapsto 1
+\]
+And the function $g : A \to \{0,1\}$ with $g(a) = 0, g(b) = 1, g(c) = 0$ corresponds to the subset $\{b\}$.
+
+Every subset gets a unique function, every function gets a unique subset, and nothing is left over on either side. That's a bijection.
+\end{example}
+
+This explains \emph{why} $|\mathcal{P}(A)| = 2^{|A|}$. It's not just a coincidence or a counting trick---it's because the power set literally \emph{is} the function space $2^A$, and function spaces have exponential cardinality:
+\[
+|\mathcal{P}(A)| = |2^A| = |\{0,1\}^A| = |\{0,1\}|^{|A|} = 2^{|A|}
+\]
+
+Subsets, characteristic functions, and bit strings of length $|A|$ are three descriptions of the same object. When you pick a subset of $A$, you're making a binary choice for each element---in or out, 1 or 0. That \emph{is} a function to $\{0,1\}$. That \emph{is} a bit string. Three descriptions, one object.
+
+\medskip
+\noindent\textbf{Forward look: predicates.} When we introduce predicates in Module 4, a predicate on a set $A$ will be defined as a function $A \to \text{Bool}$. The truth set of the predicate---the set of elements making it true---is exactly the subset corresponding to this characteristic function. So predicates, subsets, and functions to Bool are three views of a single concept.
+
+\medskip
+\noindent\textbf{Cantor's theorem and the hierarchy of infinities.} Here's something to chew on. Cantor proved that $|\mathcal{P}(A)| > |A|$ for \emph{any} set $A$---even infinite ones. There is no bijection between a set and its power set; the power set is always strictly bigger. (The proof is another diagonal argument!)
+
+Combined with $\mathcal{P}(\mathbb{N}) \cong 2^{\mathbb{N}}$, this gives us an infinite hierarchy of infinities, each strictly larger than the last:
+\[
+|\mathbb{N}| \;<\; |2^{\mathbb{N}}| \;<\; |2^{2^{\mathbb{N}}}| \;<\; \cdots
+\]
+
+The first level is the countable infinity we've been working with. The second, $|2^{\mathbb{N}}|$, turns out to equal $|\mathbb{R}|$---the cardinality of the real numbers. There are strictly more real numbers than natural numbers (we proved this!), and strictly more subsets of the reals than reals, and so on forever. Infinity isn't one thing --- it's an entire hierarchy, and it goes up forever.
+
+\section{Exercises}
+
+\bigskip
+\textbf{Exercise 1.}\label{ex:m1b:1} List all elements of $\mathcal{P}(\{1, 2, 3\})$. How many are there?
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:m1b:2} How many functions are there from $\{a, b, c\}$ to $\{0, 1\}$? List them by giving the characteristic function (that is, the values $f(a), f(b), f(c)$) for each subset of $\{a, b, c\}$.
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m1b:3} Prove that the set of even natural numbers $E = \{0, 2, 4, 6, \ldots\}$ is countably infinite by giving an explicit bijection $f : \mathbb{N} \to E$. Verify that your function is both injective and surjective.
+
+\end{document}
