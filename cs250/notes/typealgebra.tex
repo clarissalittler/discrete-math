@@ -190,4 +190,39 @@ That structure has a name, by the way. It's called a \emph{rig}\index{rig} (a ``
 \bigskip
 \textbf{Exercise 2.}\label{ex:ta:2} The BNF for natural numbers is \texttt{Nat = Zero | Succ(Nat)}, which in our algebraic notation is $N = 1 + N$. Write this as a ``polynomial equation'' and ``solve'' for $N$ by expanding as a series. Does the series $1 + 1 + 1 + 1 + \cdots$ make sense as a description of the natural numbers? (Hint: what does $1^n = 1$ mean for the $n$th term?)
 
+\bigskip
+\textbf{Exercise 3.}\label{ex:ta:3} (Distributivity, programmatically.) Use the algebra of types to simplify $(A + B) \times (C + D)$. What single ``polynomial'' do you get? Convert your answer back into a Python data structure: write a class hierarchy or tagged union with one constructor for each summand of the result. What logical tautology does this correspond to under Curry--Howard?
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:ta:4} (Solving for non-empty lists.) Define non-empty lists by the BNF
+\[
+  \texttt{NEList A} = A \;\mid\; A \times \texttt{NEList A}
+\]
+that is, ``either a single $A$, or an $A$ followed by a non-empty list of $A$.'' Translate this to a polynomial equation in $L$ (where $L = \texttt{NEList A}$), solve for $L$ algebraically, and expand the result as a series. What kinds of values appear in the series, and how does that match the structure of a non-empty list?
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:ta:5} (The \texttt{Maybe} type.) The type \texttt{Maybe A} (in Haskell) is defined as \texttt{Just A | Nothing}. In algebraic notation: $\texttt{Maybe } A = A + 1$.
+\begin{enumerate}[label=(\alph*)]
+  \item What is $|\texttt{Maybe } A|$ in terms of $|A|$?
+  \item What is $|\texttt{Maybe (Maybe } A\texttt{)}|$ in terms of $|A|$?
+  \item Express \texttt{Maybe (Maybe A)} as an algebraic expression and simplify. Why does the answer match the cardinality formula in (b)?
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 6.}\label{ex:ta:6} (A function that returns a pair is a pair of functions.) Verify the isomorphism
+\[
+  A \to (B \times C) \;\cong\; (A \to B) \times (A \to C)
+\]
+by writing two Python functions: one that converts the left side into the right side, and one that converts the right side into the left side. Verify (informally, by trying out a few examples) that they are inverses of each other. What does this say in pure-arithmetic terms about the equation $(b \cdot c)^a = b^a \cdot c^a$?
+
+\section*{Further reading}
+
+If the algebra of types appeals to you, here is where to go next. The connection to combinatorics is deep and beautiful.
+
+\begin{itemize}
+  \item Conor McBride, ``The Derivative of a Regular Type is its Type of One-Hole Contexts,'' unpublished manuscript (2001), available on the author's homepage at \texttt{strictlypositive.org}. A short, witty, surprisingly elementary derivation of why \emph{differentiating} an algebraic data type literally gives you its zipper. Connects high-school calculus to programming in a way undergraduates love.
+  \item Brent Yorgey, ``Species and Functors and Types, Oh My!'' \emph{Haskell Symposium 2010}. Written explicitly as an accessible bridge between Joyal's combinatorial species and the algebraic data types programmers already know. The most undergraduate-friendly entry point to species I know of.
+  \item Philippe Flajolet and Robert Sedgewick, \emph{\href{https://ac.cs.princeton.edu/home/}{Analytic Combinatorics}}, Cambridge University Press (2009), Chapter I (``Symbolic Methods''). The full book PDF is freely available on Sedgewick's Princeton homepage. Chapter I introduces the symbolic method---sums, products, sequences as type combinators with generating functions---at exactly the level a strong undergrad can handle.
+\end{itemize}
+
 \end{document}

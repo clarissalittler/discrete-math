@@ -337,7 +337,64 @@ Which properties do our other examples satisfy? ``Less than'' on the integers is
 \bigskip
 \textbf{Exercise 3.}\label{ex:m1:3} For each of the following relations on $\mathbb{Z}$, determine whether it is reflexive, symmetric, and/or transitive: (a) $a\, R\, b$ iff $a + b$ is even; (b) $a\, R\, b$ iff $a \leq b$; (c) $a\, R\, b$ iff $|a - b| \leq 1$.
 
+\section{How to write a proof}
+
+You now have enough vocabulary---sets, functions, relations---to start writing proofs about them. But when you sit down to actually write one, it can be hard to know where to begin. This section gives practical advice about formatting and structure. We're not learning proof \emph{techniques} yet (that starts in Module 3); we're just learning how to put words on the page.
+
+\subsection*{A proof is a piece of writing}
+
+A proof is not a calculation, a formula, or a wall of symbols. It is a short essay that explains, step by step, \emph{why} something is true. Each sentence should either state a fact, introduce a definition, or draw a conclusion from what came before. If you can't explain a step in words, you probably don't understand it yet.
+
+Here are the ground rules:
+\begin{enumerate}
+  \item \textbf{State what you are proving.} Open with something like ``We prove that \ldots'' or ``We want to show that \ldots''. Don't make the reader guess your goal.
+  \item \textbf{Introduce variables before you use them.} If your proof involves a number, a set, or a function, give it a name and say where it comes from. ``Let $n$ be a positive integer'' or ``Consider an arbitrary $x \in \mathbb{R}$'' or ``Define $f : A \to B$ by $f(x) = x^2$.''
+  \item \textbf{Write in complete sentences.} Mathematical symbols are parts of sentences, not replacements for them. Don't write a bare chain of equations with no words connecting them.
+  \item \textbf{Justify each step.} After every claim, the reader should be able to see \emph{why} it follows---from a definition, from a previous step, or from a well-known fact.
+  \item \textbf{End with a clear conclusion.} Finish with ``Therefore \ldots'' or ``This completes the proof.'' The reader should know when you're done and what you've established.
+\end{enumerate}
+
+\subsection*{When the problem has cases}
+
+Many proofs, including ones you'll see on this week's assignment, naturally split into cases. For instance, you might need to show something holds ``for all positive integers $A$,'' but the argument is different depending on whether $A$ is even or odd. In that situation:
+
+\begin{itemize}
+  \item State explicitly that you are splitting into cases and say what they are: ``We consider two cases: $A$ is even, and $A$ is odd.''
+  \item Handle each case separately. Label them clearly (``\textbf{Case 1:} $A$ is even.'') and give a self-contained argument for each one.
+  \item After the cases, tie them together: ``Since every positive integer is either even or odd, these two cases are exhaustive, and the proof is complete.''
+\end{itemize}
+
+The key requirement is that your cases \emph{cover all the possibilities}. If there's a scenario you didn't address, your proof has a gap.
+
+\subsection*{Using definitions}
+
+When a proof asks whether something is or isn't a function, or whether a relation has a particular property, \emph{go back to the definition}. This is the single most important habit in proof-writing.
+
+For example, if you need to show that a certain relation is a function, you should explicitly invoke the definition: a function $f : A \to B$ assigns every element of $A$ to \emph{exactly one} element of $B$. So you need to show two things: (1) for every input there is at least one output, and (2) for every input there is at most one output. Conversely, to show something is \emph{not} a function, it suffices to find a single input that has zero outputs or more than one.
+
+Don't skip this step. Even if the answer feels obvious, the proof isn't complete until you've connected your argument to the actual definitions.
+
+\subsection*{An example: good vs.\ bad}
+
+Suppose we want to prove that the relation $y^2 = x$ on the reals is not a function (with $x$ as input and $y$ as output).
+
+\medskip
+\noindent\textbf{Bad version:}
+\begin{quote}
+$y^2 = x$ is not a function because $x = 4$ gives $y = 2$ and $y = -2$.
+\end{quote}
+
+This has the right idea but it doesn't explain \emph{why} having two values of $y$ is a problem. The reader is left to fill in the reasoning.
+
+\medskip
+\noindent\textbf{Good version:}
+\begin{quote}
+We show that the relation $y^2 = x$ on $\mathbb{R}$ is not a function from $x$ to $y$. By definition, a function must assign each input $x$ to exactly one output $y$. Consider $x = 4$. Then $y^2 = 4$, which has two real solutions: $y = 2$ and $y = -2$. Since the input $x = 4$ corresponds to two different outputs, the relation violates the uniqueness requirement and is therefore not a function.
+\end{quote}
+
+Notice what the good version does: it states the goal, invokes the definition, gives the specific example, and explicitly connects the example back to the definition to reach the conclusion. Every step is justified. That's all a proof needs to be.
+
 \bigskip
-This has been a foundational week: sets, tuples, functions, and relations are the vocabulary we'll use for the rest of the course. In the next module we start doing \emph{logic}.
+This has been a foundational week: sets, tuples, functions, relations, and some practical advice about proof-writing are the vocabulary we'll use for the rest of the course. In the next module we start doing \emph{logic}.
 
 \end{document}

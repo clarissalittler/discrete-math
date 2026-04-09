@@ -170,4 +170,43 @@ If this is your only logic or discrete math course, you can get by just fine wit
 
 Think of this intermezzo as a Rosetta Stone: you now know two ways to write the same rules and can translate between them.
 
+\section{Exercises}
+
+\bigskip
+\textbf{Exercise 1.}\label{ex:gentzen:1} Build a Gentzen-style proof tree for the tautology
+\[
+  A \wedge (B \wedge C) \;\to\; (A \wedge B) \wedge C
+\]
+(associativity of conjunction in one direction). Indicate which assumption is discharged by the final $\to$I and what each intermediate step is.
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:gentzen:2} Build a Gentzen-style proof tree for transitivity of implication:
+\[
+  (A \to B) \to ((B \to C) \to (A \to C)).
+\]
+You will need three nested $\to$I rules at the bottom of the tree (one for each implication you need to introduce). Carefully bracket each discharged assumption.
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:gentzen:3} Build a Gentzen-style proof tree for the contrapositive direction
+\[
+  (p \to q) \;\to\; (\lnot q \to \lnot p).
+\]
+Recall that $\lnot p$ can be treated as $p \to \bot$, so $\lnot$I is a special case of $\to$I. Identify each discharged assumption.
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:gentzen:4} Build a Gentzen-style proof tree for $p \vee p \to p$ using the disjunction-elimination rule $\vee$E. (Hint: assume $p \vee p$, then use $\vee$E with the two ``branches'' $p \to p$, both of which are trivially provable by $\to$I on a trivial subderivation.)
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:gentzen:5} Take any proof from Module 3 written in the \texttt{lstlisting} format and translate it into a Gentzen tree. Then translate it back. Convince yourself that the two formats are interchangeable but that the tree version makes the dependency structure between steps more visible.
+
+\section*{Further reading}
+
+If the tree-style notation appeals to you and you want to see where it leads, the following are accessible next steps.
+
+\begin{itemize}
+  \item Frank Pfenning, \href{https://www.cs.cmu.edu/~fp/courses/15317-s23/lectures/02-natded.pdf}{\emph{Natural Deduction}} (lecture notes for CMU 15-317, ``Constructive Logic''). The single best gentle introduction to natural deduction in tree form, with exactly the discipline of introduction and elimination rules used here.
+  \item Jan von Plato, ``\href{https://projecteuclid.org/journals/bulletin-of-symbolic-logic/volume-18/issue-3/Gentzens-proof-systems-byproducts-in-a-work-of-genius/10.2178/bsl/1344861886.short}{Gentzen's Proof Systems: Byproducts in a Work of Genius},'' \emph{Bulletin of Symbolic Logic} \textbf{18}(3), 313--367 (2012). A historical and conceptual essay on how Gentzen actually invented natural deduction and the sequent calculus, written for a logic-curious but non-specialist audience.
+  \item Dag Prawitz, \emph{\href{https://store.doverpublications.com/0486446557.html}{Natural Deduction: A Proof-Theoretical Study}}, Almqvist \& Wiksell (1965); Dover reprint (2006). The first chapter is the canonical exposition of normalization---``every detour can be removed''---which is the proof-theory version of evaluating a program. Stop at the end of Chapter I; later chapters are more technical.
+\end{itemize}
+
 \end{document}

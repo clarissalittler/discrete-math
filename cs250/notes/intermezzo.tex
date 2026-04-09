@@ -168,4 +168,41 @@ which is true by reflexivity.
 
 QED
 
+\section{Exercises}
+
+\bigskip
+\textbf{Exercise 1.}\label{ex:induction:1} Define multiplication on the natural numbers by recursion on the second argument:
+\begin{align*}
+n \cdot 0 &= 0 \\
+n \cdot (\text{succ}\; m) &= n + (n \cdot m)
+\end{align*}
+Prove by induction on $m$ that $\forall m.\; 0 \cdot m = 0$. (As with the addition proof, the right identity is automatic from the definition, and the left identity needs induction.)
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:induction:2} Using the multiplication defined in Exercise 1 and the addition lemmas proved in this chapter, prove by induction on $m$ that $\forall m.\; 1 \cdot m = m$, where $1 = \text{succ}\; 0$. You will need to use $0 \cdot m = 0$ from the previous exercise.
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:induction:3} Prove by induction on $n$ that $n + n$ is always even. (``Even'' here means: there exists $k$ such that $n + n = k + k$. The witness for the existential is, naturally, $n$ itself---the interesting part is writing the induction step out cleanly using only the addition lemmas.)
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:induction:4} Define the predecessor function on natural numbers by
+\begin{align*}
+\text{pred}\;0 &= 0 \\
+\text{pred}\;(\text{succ}\; n) &= n
+\end{align*}
+Prove by induction on $n$ that $\forall n.\; \text{pred}\;(\text{succ}\; n) = n$. (Easy.) Then explain in one sentence why the statement $\forall n.\; \text{succ}\;(\text{pred}\; n) = n$ is \emph{not} provable: where does the induction break down?
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:induction:5} Reflect: in each of the four proofs in this chapter, identify exactly which step ``does work'' (i.e., uses a lemma that itself required induction) and which steps are pure unfolding of definitions. Why is it that none of these theorems can be proved by definition unfolding alone?
+
+\section*{Further reading}
+
+For a deeper look at why induction works, where it comes from, and what it can and cannot do:
+
+\begin{itemize}
+  \item Leon Henkin, ``On Mathematical Induction,'' \emph{American Mathematical Monthly} \textbf{67}(4), 323--338 (1960). The classic expository article distinguishing the \emph{principle} of induction from the \emph{axiom}, and showing precisely which Peano axioms are needed to prove commutativity and associativity of addition---the same proofs we just walked through.
+  \item George P\'olya, \emph{\href{https://press.princeton.edu/books/paperback/9780691025094/mathematics-and-plausible-reasoning-volume-1}{Induction and Analogy in Mathematics}} (volume I of \emph{Mathematics and Plausible Reasoning}), Princeton University Press (1954), particularly the chapter on mathematical induction. P\'olya's gentle, example-driven exposition is aimed at students discovering proof for the first time.
+  \item Edmund Landau, \emph{Foundations of Analysis}, Chelsea (1951; original German 1930), Chapter 1. Landau builds the natural numbers from the Peano axioms and proves commutativity and associativity of addition with full inductive rigor in about ten pages---you can literally check every step. Terse but transparent.
+\end{itemize}
+
 \end{document}

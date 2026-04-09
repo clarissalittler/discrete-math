@@ -123,4 +123,26 @@ So the next time you declare two things ``the same''---whether in a proof, a pro
 \bigskip
 \textbf{Exercise 2.}\label{ex:equiv:2} Consider the set of fractions $\{a/b \mid a, b \in \mathbb{Z},\; b \neq 0\}$. Define an equivalence relation $\sim$ that captures when two fractions represent the same rational number. (That is, give a precise condition for when $a/b \sim c/d$.) Verify that your relation is reflexive, symmetric, and transitive. What are the equivalence classes? How does this connect to the construction of the integers from pairs of naturals discussed above?
 
+\bigskip
+\textbf{Exercise 3.}\label{ex:equiv:3} (Equivalence as cardinality.) Define a relation on sets by $A \sim B$ iff there exists a bijection $f : A \to B$. Verify that $\sim$ is reflexive, symmetric, and transitive. (For symmetry, you need to invert a bijection; for transitivity, you need to compose two bijections.) What is the equivalence class of $\{a, b, c\}$? What concept does the choice of equivalence class abstract away?
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:equiv:4} (Anagrams as a quotient.) Define a relation on the set of English words by: $w_1 \sim w_2$ iff $w_2$ can be obtained from $w_1$ by reordering the letters. (So ``stop,'' ``tops,'' ``pots,'' ``opts,'' and ``spot'' all sit in the same class.) Verify that $\sim$ is an equivalence relation. List a few elements of the equivalence class of ``listen.'' What computational object naturally serves as a \emph{representative} of each class?
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:equiv:5} (Equivalence classes partition the set.) Prove the following: if $\sim$ is an equivalence relation on $A$ and $a \sim b$, then $[a] = [b]$ as sets. (You will need both directions: $[a] \subseteq [b]$ and $[b] \subseteq [a]$. Use the symmetry and transitivity axioms.) Conclude that two equivalence classes are either equal or disjoint, and hence the equivalence classes \emph{partition} $A$.
+
+\bigskip
+\textbf{Exercise 6.}\label{ex:equiv:6} (Graph isomorphism.) Two simple graphs $G = (V_1, E_1)$ and $H = (V_2, E_2)$ are isomorphic if there is a bijection $\varphi : V_1 \to V_2$ such that $\{u, v\} \in E_1$ iff $\{\varphi(u), \varphi(v)\} \in E_2$. Show that graph isomorphism is an equivalence relation on the set of all simple graphs. Then exhibit two graphs on four vertices that are isomorphic and two that are not. What ``information'' does an isomorphism class of graphs remember, and what does it forget?
+
+\section*{Further reading}
+
+For more on the philosophical and mathematical content of ``what does it mean for two things to be the same?'':
+
+\begin{itemize}
+  \item Barry Mazur, ``\href{https://people.math.osu.edu/cogdell.1/6112-Mazur-www.pdf}{When is one thing equal to some other thing?}'' in \emph{Proof and Other Dilemmas: Mathematics and Philosophy} (B.~Gold and R.~A.~Simons, eds.), Mathematical Association of America (2008). The single best expository essay for undergraduates on equivalence, quotient, and ``sameness.'' Mazur writes beautifully and assumes almost nothing.
+  \item Steve Awodey, ``\href{https://www.andrew.cmu.edu/user/awodey/preprints/siu.pdf}{Structuralism, Invariance, and Univalence},'' \emph{Philosophia Mathematica} \textbf{22}(1), 1--11 (2014). A short, accessible philosophical essay on what it means for two mathematical structures to be ``the same'' and on why equivalence (rather than literal equality) is the right notion. The closing section connects to the modern Univalence axiom in homotopy type theory.
+  \item Paul Halmos, \emph{Naive Set Theory}, Springer (1960; reprint 1974), Sections 7--8. Not a paper, but Halmos's two-page treatment of equivalence relations and partitions is the canonical undergraduate reference and pairs nicely with the philosophical pieces above.
+\end{itemize}
+
 \end{document}

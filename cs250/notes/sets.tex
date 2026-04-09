@@ -214,4 +214,34 @@ The first level is the countable infinity we've been working with. The second, $
 \bigskip
 \textbf{Exercise 3.}\label{ex:m1b:3} Prove that the set of even natural numbers $E = \{0, 2, 4, 6, \ldots\}$ is countably infinite by giving an explicit bijection $f : \mathbb{N} \to E$. Verify that your function is both injective and surjective.
 
+\bigskip
+\textbf{Exercise 4.}\label{ex:m1b:4} Show that the open interval $(0, 1)$ has the same cardinality as the entire real line $\mathbb{R}$ by exhibiting an explicit bijection between them. (Hint: a function from trigonometry, or a rational function involving $\frac{1}{x}$ and $\frac{1}{1-x}$, will do the job.) The takeaway: a tiny-looking interval can hold ``just as many'' points as the whole line.
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:m1b:5} (Cantor's theorem, general form.) Let $A$ be any set and suppose, for contradiction, that there is a surjection $f : A \to \mathcal{P}(A)$. Define
+\[
+  D = \{ a \in A \mid a \notin f(a) \}.
+\]
+Since $D \subseteq A$ and $f$ is surjective, there must exist some $d \in A$ with $f(d) = D$. Derive a contradiction by asking whether $d \in D$ or $d \notin D$. Conclude that $|\mathcal{P}(A)| > |A|$ for every set $A$.
+
+\bigskip
+\textbf{Exercise 6.}\label{ex:m1b:6} (Diagonalization in disguise.) Suppose someone hands you an infinite list $f_0, f_1, f_2, \ldots$ of functions $\mathbb{N} \to \mathbb{N}$. Define a new function $g : \mathbb{N} \to \mathbb{N}$ by
+\[
+  g(n) = f_n(n) + 1.
+\]
+Show that $g$ does not appear anywhere in the list. (That is: for every $n$, $g \neq f_n$ as functions.) Conclude that no countable list can contain every function $\mathbb{N} \to \mathbb{N}$. Compare this to the structure of the proof of Cantor's theorem above and to the proof that the halting problem is undecidable.
+
+\bigskip
+\textbf{Exercise 7.}\label{ex:m1b:7} List all eight functions from $\{0, 1, 2\}$ to $\{a, b\}$ in a table (one row per function, columns $f(0), f(1), f(2)$). Verify directly that this gives $|\{a,b\}|^{|\{0,1,2\}|} = 2^3 = 8$ functions, and confirm that each function corresponds to a distinct subset of $\{0, 1, 2\}$ via the characteristic-function interpretation.
+
+\section*{Further reading}
+
+If the diagonal argument or the hierarchy of infinities caught your interest, here are a few accessible papers and articles to explore.
+
+\begin{itemize}
+  \item Robert Gray, ``Georg Cantor and Transcendental Numbers,'' \emph{American Mathematical Monthly} \textbf{101}(9), 819--832 (1994). A clean historical account of Cantor's \emph{original} 1874 uncountability argument (which was not the diagonal argument!) and how the diagonal version came later. Excellent for seeing how the ideas in this chapter actually developed.
+  \item Martin Davis, ``\href{https://archive.org/details/mathematicstoday00stee}{What is a Computation?}'' in L.~A.~Steen (ed.), \emph{Mathematics Today: Twelve Informal Essays}, Springer (1978). Davis walks you from Cantor's diagonal argument straight to the unsolvability of the halting problem in a way that requires almost no prior CS background---perfect if you want to see the ``forward look'' from this chapter cashed out.
+  \item Raymond Smullyan, \emph{\href{https://academic.oup.com/book/54024}{Diagonalization and Self-Reference}}, Oxford Logic Guides 27, Oxford University Press (1994). A whole book---but the early chapters are gentle, and they show how Cantor, G\"odel, and Tarski are all variations on a single self-referential theme.
+\end{itemize}
+
 \end{document}

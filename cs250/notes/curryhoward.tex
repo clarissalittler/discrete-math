@@ -173,4 +173,39 @@ So if you add excluded middle as an axiom, what you're doing, computationally, i
 \bigskip
 \textbf{Exercise 2.}\label{ex:ch:2} The formula $A \to (B \to A)$ is a tautology (you can check it with a truth table if you like). Under Curry--Howard, this corresponds to a type: a function that takes an \texttt{A} and returns a function from \texttt{B} to \texttt{A}. Write a Python function with this type signature. What does it do? Why does it make sense that this is a tautology?
 
+\bigskip
+\textbf{Exercise 3.}\label{ex:ch:3} (Currying.) The tautology
+\[
+  ((A \wedge B) \to C) \;\leftrightarrow\; (A \to (B \to C))
+\]
+is one of the most important equivalences in logic, and under Curry--Howard it is the operation of \emph{currying}. Write two Python functions:
+\begin{itemize}
+  \item \texttt{curry}, taking a function of type \texttt{(A,~B) -> C} and returning a function of type \texttt{A -> (B -> C)}.
+  \item \texttt{uncurry}, doing the reverse.
+\end{itemize}
+Verify that \texttt{curry} and \texttt{uncurry} are inverses of each other. What is this saying logically?
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:ch:4} (Function composition is transitivity.) The tautology
+\[
+  (A \to B) \to ((B \to C) \to (A \to C))
+\]
+says that implication is transitive. Write a Python function \texttt{compose(f, g)} that takes \texttt{f : A -> B} and \texttt{g : B -> C} and returns a function from \texttt{A} to \texttt{C}. The proof of transitivity \emph{is} the definition of function composition. Trace which step of the logical proof corresponds to which line of code.
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:ch:5} (Vacuous truth and the empty type.) Under Curry--Howard, the type \texttt{Void} (the empty type) corresponds to the proposition $\bot$. The principle of \emph{ex falso quodlibet} says $\bot \to A$ for any $A$. Write a Python function (or pseudocode) of type \texttt{Void -> A} for any \texttt{A}. (Hint: there are no values of type \texttt{Void}, so the function never actually has to return anything---you can never call it with a real argument.) Why does the lack of values in \texttt{Void} make this trivially valid?
+
+\bigskip
+\textbf{Exercise 6.}\label{ex:ch:6} (The classical/constructive divide.) Try to write a Python function \texttt{lem} of type \texttt{() -> Either A (A -> Void)}---that is, a function that, for an arbitrary type \texttt{A}, returns either a value of type \texttt{A} (a ``proof of $A$'') or a function from \texttt{A} to \texttt{Void} (a ``proof of $\lnot A$''). This is the law of excluded middle, $A \vee \lnot A$. Explain in one paragraph why no such function exists in general: what would such a function be doing if \texttt{A} were the type ``codes of Turing machines that halt on every input''?
+
+\section*{Further reading}
+
+If the proofs-as-programs idea grabs you, the following are the canonical entry points.
+
+\begin{itemize}
+  \item Philip Wadler, ``\href{https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-types/propositions-as-types.pdf}{Propositions as Types},'' \emph{Communications of the ACM} \textbf{58}(12), 75--84 (2015). \emph{The} accessible undergraduate-friendly tour of the Curry--Howard correspondence, with historical context, examples in modern languages, and Wadler's characteristic clarity. If you read only one paper this term, read this one.
+  \item William A.\ Howard, ``\href{https://www.cs.cmu.edu/~crary/819-f09/Howard80.pdf}{The Formulae-as-Types Notion of Construction},'' in J.\ R.\ Hindley and J.\ P.\ Seldin (eds.), \emph{To H.\ B.\ Curry: Essays on Combinatory Logic, Lambda Calculus and Formalism}, Academic Press (1980); manuscript circulated 1969. The original short note that started everything. Only about a dozen pages, and the first half is genuinely readable once you have seen natural deduction.
+  \item Philip Wadler, ``\href{https://homepages.inf.ed.ac.uk/wadler/papers/frege/frege.pdf}{Proofs are Programs: 19th Century Logic and 21st Century Computing},'' \emph{Dr.\ Dobb's Journal} (2000). A shorter, more popular precursor to ``Propositions as Types,'' pitched at working programmers---good as a warm-up before tackling the CACM piece.
+\end{itemize}
+
 \end{document}

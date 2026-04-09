@@ -145,4 +145,29 @@ Describe the game: who moves first? What does each player choose at each turn? W
 \bigskip
 \textbf{Exercise 2.} \label{ex:games:2} In the game for $\exists x.\; \forall y.\; (x + y = y)$, what is Prover's winning move? (Hint: Prover moves first. What value of $x$ makes the inner statement true no matter what Challenger picks for $y$?)
 
+\bigskip
+\textbf{Exercise 3.} \label{ex:games:3} Consider the formula $\forall x \in \mathbb{N}.\; \exists y \in \mathbb{N}.\; y > x$ over the natural numbers. Describe the game in detail (who moves first, who moves second, what they choose, what Prover must achieve). Then give Prover's winning strategy as an explicit function $f$ such that $f(x)$ is Prover's response when Challenger picks $x$.
+
+\bigskip
+\textbf{Exercise 4.} \label{ex:games:4} Now consider $\exists y \in \mathbb{N}.\; \forall x \in \mathbb{N}.\; y > x$. Describe the game and explain, in game-theoretic terms, exactly why Prover \emph{cannot} win, no matter what value of $y$ they pick first. Connect your answer to the difference between a strategy and a constant in the discussion above.
+
+\bigskip
+\textbf{Exercise 5.} \label{ex:games:5} (Quantifier games for arithmetic identities.) Describe the game corresponding to the statement $\forall n \in \mathbb{N}.\; \forall m \in \mathbb{N}.\; n + m = m + n$. Both quantifiers are universal, so Challenger gets to pick \emph{both} values. What does Prover have to demonstrate? In what sense is this game ``trivial,'' even though there are infinitely many possible challenges?
+
+\bigskip
+\textbf{Exercise 6.} \label{ex:games:6} (Strategies as functions.) The Skolem form of $\forall x.\; \exists y.\; R(x, y)$ replaces the existential by a function: $\exists f.\; \forall x.\; R(x, f(x))$. Explain how this transformation matches what the game interpretation says about Prover's strategy. (Hint: in the game for $\forall x.\; \exists y.\; R(x, y)$, Prover responds to each $x$ with some $y$. Bundle all those responses into a single object. What is that object?)
+
+\bigskip
+\textbf{Exercise 7.} \label{ex:games:7} Consider the game for $\forall x.\; (P(x) \vee \lnot P(x))$ over a finite universe $\{a_1, \ldots, a_n\}$. Show that Prover has a winning strategy as long as Prover can decide, for each $a_i$, whether $P(a_i)$ holds. Now imagine $P$ is a property that requires checking infinitely many cases (like ``$x$ is the code of a Turing machine that halts on every input''). Why does the strategy break down? Connect this to the discussion of constructive vs.\ classical logic in the chapter.
+
+\section*{Further reading}
+
+If you want to follow the threads from games into theoretical computer science and modern cryptography:
+
+\begin{itemize}
+  \item Jaakko Hintikka, ``Language-Games for Quantifiers,'' \emph{American Philosophical Quarterly} Monograph Series no.\ 2 (1968), 46--72. Hintikka's own short and accessible exposition of how quantifiers are best read as a two-player game between a Verifier and a Falsifier---the philosophical source of the framework in this chapter.
+  \item Shafi Goldwasser, Silvio Micali, and Charles Rackoff, ``\href{https://people.csail.mit.edu/silvio/Selected\%20Scientific\%20Papers/Proof\%20Systems/The_Knowledge_Complexity_Of_Interactive_Proof_Systems.pdf}{The Knowledge Complexity of Interactive Proof Systems},'' \emph{SIAM Journal on Computing} \textbf{18}(1), 186--208 (1989). The foundational paper on interactive proofs and zero-knowledge. The first few sections, where they set up the Prover/Verifier game, are surprisingly accessible and put a precise mathematical frame around the picture sketched in the chapter.
+  \item Oded Goldreich, \emph{\href{https://www.wisdom.weizmann.ac.il/~oded/zk-tut02.html}{Zero-Knowledge: A Tutorial}}, available on the author's homepage at the Weizmann Institute. Written explicitly to be the most accessible on-ramp to zero-knowledge proofs for non-specialists. If interactive proofs caught your attention, this is where to go next.
+\end{itemize}
+
 \end{document}

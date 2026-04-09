@@ -305,7 +305,13 @@ Solution. One explicit listing is 0, 1, −1, 2, −2, 3, −3, …
 Formally, define f: ℕ → ℤ by f(0)=0 and for n≥1:
 if n is even, f(n)=n/2; if n is odd, f(n)=−(n+1)/2.
 This hits every integer exactly once, so it is a bijection and ℤ is countable. ■
-\subsubsection*{Example 2.6 (Diagonal argument idea)}
+\subsubsection*{Example 2.6 (ℚ is countable)}
+Show that ℚ is countable.
+Solution. Consider pairs (p,q) with p∈ℤ and q∈ℕ, q≥1. List pairs by diagonals
+|p|+q = 1,2,3,…; each diagonal is finite, so ℤ×ℕ is countable.
+Map (p,q) ↦ p/q. This hits every rational, so ℚ is countable. (If you want a bijection,
+restrict to reduced pairs with gcd(p,q)=1.) ■
+\subsubsection*{Example 2.7 (Diagonal argument idea)}
 Why is the set of all infinite binary strings uncountable?
 Sketch. Suppose, for contradiction, that you could list them as s₀, s₁, s₂, … where
 each sᵢ is an infinite 0–1 sequence.
@@ -400,6 +406,19 @@ An integer a has a multiplicative inverse mod n if there exists x such that ax �
 (mod n).
 Such an inverse exists iff gcd(a,n)=1. The extended Euclidean algorithm can find it.
 
+Units and the group of invertible residues
+The residues modulo n that are coprime to n form a multiplicative group, often written
+$(\mathbb{Z}/n\mathbb{Z})^\times$. Its size is φ(n), the Euler totient function:
+φ(n) = |\{k : 1 ≤ k ≤ n and gcd(k,n)=1\}|.
+For a prime p, every nonzero residue is a unit, so |(\mathbb{Z}/p\mathbb{Z})^\times| = p−1.
+
+RSA and why gcd/prime factors matter
+RSA chooses n=pq with large primes p and q. Then φ(n)=(p−1)(q−1).
+Pick e with gcd(e,φ(n))=1, so e has an inverse d modulo φ(n). The extended Euclidean
+algorithm computes d. Encryption is c ≡ m\textasciicircum{}e (mod n); decryption is
+m ≡ c\textasciicircum{}d (mod n). This works (for messages coprime to n) because
+m lives in the group $(\mathbb{Z}/n\mathbb{Z})^\times$ and Euler’s theorem applies.
+
 \subsubsection*{Example 3.4 (Find an inverse mod 26)}
 Find the inverse of 7 modulo 26.
 Solution. We need x such that 7x ≡ 1 (mod 26). Try the Euclidean algorithm:
@@ -475,11 +494,18 @@ How many integers from 1 to 100 are divisible by 2 or 5?
 Solution. Let A be multiples of 2, B be multiples of 5.
 |A|=⌊100/2⌋=50, |B|=⌊100/5⌋=20, |A∩B|=multiples of 10: ⌊100/10⌋=10.
 So |A∪B|=50+20−10=60. ■
+\subsubsection*{Example 4.4 (Inclusion–exclusion with three sets)}
+How many integers from 1 to 100 are divisible by 2, 3, or 5?
+Solution. Let A be multiples of 2, B of 3, C of 5.
+|A|=50, |B|=33, |C|=20.
+|A∩B|=⌊100/6⌋=16, |A∩C|=⌊100/10⌋=10, |B∩C|=⌊100/15⌋=6.
+|A∩B∩C|=⌊100/30⌋=3.
+Thus |A∪B∪C| = 50+33+20 −16−10−6 +3 = 74. ■
 \subsection{9.4 The pigeonhole principle}
 The pigeonhole principle is a small idea with disproportionate power: if you put more
 objects than boxes, then some box contains at least two objects. The generalized version
 says: if N objects are placed into k boxes, then some box contains at least ⌈N/k⌉ objects.
-\subsubsection*{Example 4.4 (Birth months)}
+\subsubsection*{Example 4.5 (Birth months)}
 Show that in any group of 13 people, at least two were born in the same month.
 Solution. There are 12 months (boxes) and 13 people (objects). By the pigeonhole
 principle, some month contains at least two birthdays. ■
@@ -791,6 +817,12 @@ Relax from s: dist[a]=2, dist[b]=5. Next pick a (2). Relax from a:
 via a→b: dist[b] becomes min(5, 2+1)=3. via a→t: dist[t]=8.
 Next pick b (3). Relax from b: dist[t] becomes min(8, 3+2)=5.
 So the shortest distance s→t is 5, achieved by s→a→b→t. ■
+\subsubsection*{Example 8.4 (BFS vs DFS spanning trees)}
+Let G have vertices \{1,2,3,4,5\} and edges \{1,2\}, \{1,3\}, \{2,4\}, \{3,4\}, \{4,5\}.
+Start at 1 and break ties by choosing the smallest numbered neighbor.
+BFS (layer-by-layer) yields the spanning tree edges \{1,2\}, \{1,3\}, \{2,4\}, \{4,5\}.
+DFS (go deep, then backtrack) yields \{1,2\}, \{2,4\}, \{4,3\}, \{4,5\}.
+Both are valid spanning trees, but they reflect different exploration strategies. ■
 \subsection*{Week 8 problem set}
 \textbf{M8-1.} A connected graph has 15 vertices and 14 edges. It has no cycles. Prove it is a
 tree.
@@ -859,6 +891,16 @@ State | on 0 | on 1
 ------+------|------
   E   |  E   |  O
   O   |  O   |  E
+\subsubsection*{Example 9.3 (Subset construction)}
+Convert this NFA for “strings over \{0,1\} containing 01” into a DFA.
+NFA states: q₀ (start), q₁ (just saw 0), q₂ (accept). Transitions:
+q₀ on 0→\{q₀,q₁\}, on 1→\{q₀\}; q₁ on 1→\{q₂\}, on 0→∅; q₂ loops on 0 or 1.
+Subset construction yields reachable DFA states
+\{q₀\}, \{q₀,q₁\}, \{q₀,q₂\}, \{q₀,q₁,q₂\}.
+Accepting DFA states are those containing q₂. Example transitions:
+\{q₀\} --0→ \{q₀,q₁\}, --1→ \{q₀\};
+\{q₀,q₁\} --0→ \{q₀,q₁\}, --1→ \{q₀,q₂\};
+\{q₀,q₂\} --0→ \{q₀,q₁,q₂\}, --1→ \{q₀,q₂\}. ■
 \subsection{12.3 Simplifying (minimizing) finite-state automata}
 Different DFAs can recognize the same language. Minimization produces an equivalent
 DFA with as few states as possible. The key idea is state equivalence: two states p and q
@@ -868,7 +910,7 @@ A practical minimization method is partition refinement: start by splitting stat
 accepting vs non-accepting, then repeatedly split blocks when transitions on some symbol
 go to different blocks.
 
-\subsubsection*{Example 9.3 (Mini minimization example)}
+\subsubsection*{Example 9.4 (Mini minimization example)}
 Suppose a DFA has states \{A,B,C,D\}, accepting states \{C,D\}. If A and B both go to
 C on input 0 and to D on input 1, and C and D both loop to themselves on both
 symbols, then A and B are equivalent and can be merged.
@@ -963,6 +1005,12 @@ T(n)=2T(n/2)+n
 After k steps: T(n)=2\textasciicircum{}k T(n/2\textasciicircum{}k)+k·n.
 Stop when n/2\textasciicircum{}k=1 ⇒ k=log₂ n. Then:
 T(n)=n·T(1)+(log₂ n)·n = n + n log₂ n = Θ(n log n). ■
+\subsubsection*{Example 10.5 (Master theorem, Case 3)}
+Solve T(n)=2T(n/2)+n².
+Here a=2, b=2, so n\textasciicircum{}log₂ a = n. Since f(n)=n² grows faster than n,
+this is Case 3 (work outside recursion dominates).
+Regularity check: 2·(n/2)² = n²/2 ≤ (1/2)·n².
+Therefore T(n)=Θ(n²). ■
 \subsection*{Week 10 problem set}
 \textbf{M10-1.} Order the following functions from slowest-growing to fastest-growing (as n→∞):
 log n, n, n log n, n², 2ⁿ.

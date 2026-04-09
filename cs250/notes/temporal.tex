@@ -153,4 +153,40 @@ Same methodology. Same pattern. New domain. The toolkit from Modules 2--3 transf
   \item ``Every request is eventually followed by a response.'' (Let $\mathit{request}$ and $\mathit{response}$ be atomic propositions.)
 \end{enumerate}
 
+\bigskip
+\textbf{Exercise 2.}\label{ex:temp:2} Express each of the following in temporal logic. Be precise; if a property requires more than one operator, use whichever combination you need.
+\begin{enumerate}[label=(\alph*)]
+  \item ``Two trains are never on the same section of track at the same time.'' (Let $\mathit{train}_1$ and $\mathit{train}_2$ be atomic propositions for ``train 1 is on the section'' and ``train 2 is on the section.'')
+  \item ``Once an alarm goes off, it stays on until manually reset.'' (Use $\mathit{alarm}$ and $\mathit{reset}$.)
+  \item ``Every login is eventually followed by a logout, and every logout is preceded by a login.''
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:temp:3} (Duality.) Show that $\lnot \Diamond p \equiv \Box \lnot p$ directly from the semantics: $s_i \models \lnot \Diamond p$ iff there is no $j \geq i$ with $s_j \models p$ iff $s_j \models \lnot p$ for every $j \geq i$ iff $s_i \models \Box \lnot p$. Compare this argument to the proof of De Morgan's law $\lnot (\exists x.\; P(x)) \equiv \forall x.\; \lnot P(x)$ from Module 4.
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:temp:4} (Distinguishing $\Diamond \Box p$ and $\Box \Diamond p$.) These two formulas look similar but say very different things. For each one, give a precise English translation (``it is the case that\ldots''), and exhibit an infinite sequence of states $s_0, s_1, s_2, \ldots$ that satisfies one but not the other. (Hint: think about what happens if $p$ holds at every \emph{even} state but not at any odd state.)
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:temp:5} (Temporal Hoare logic.) Recall the while rule from Module 7. Express the following property in LTL: ``At every state during the loop, the invariant $P$ holds.'' How does the LTL formulation make explicit what was implicit in the Hoare rule? In one or two sentences, what does temporal logic give you that Hoare logic does not?
+
+\bigskip
+\textbf{Exercise 6.}\label{ex:temp:6} (Safety vs.\ liveness.) Classify each of the following formulas as a \emph{safety} property (something bad never happens), a \emph{liveness} property (something good eventually happens), or both:
+\begin{enumerate}[label=(\alph*)]
+  \item $\Box \lnot \mathit{deadlock}$
+  \item $\Box (\mathit{request} \to \Diamond \mathit{response})$
+  \item $\Diamond \Box \mathit{stable}$
+  \item $\Box \Diamond \mathit{progress}$
+\end{enumerate}
+
+\section*{Further reading}
+
+If you want to see temporal logic and model checking in real industrial use:
+
+\begin{itemize}
+  \item Chris Newcombe, Tim Rabbat, Fan Zhang, Bogdan Munteanu, Marc Brooker, and Michael Deardeuff, ``How Amazon Web Services Uses Formal Methods,'' \emph{Communications of the ACM} \textbf{58}(4), 66--73 (2015). A wonderfully accessible report by practicing engineers on how AWS uses TLA+ to verify the correctness of distributed systems like S3 and DynamoDB. If you wonder why anyone outside academia cares about temporal logic, this is your answer.
+  \item Edmund M.\ Clarke, E.\ Allen Emerson, and Joseph Sifakis, ``Model Checking: Algorithmic Verification and Debugging,'' \emph{Communications of the ACM} \textbf{52}(11), 74--84 (2009). The Turing Award lecture: a retrospective on how model checking was developed and why it works. Written for a general CS audience.
+  \item Amir Pnueli, ``The Temporal Logic of Programs,'' \emph{18th Annual Symposium on Foundations of Computer Science} (FOCS), 46--57 (1977). The founding paper of program temporal logic. Sections 1--2 are historically essential and undergraduate-readable; later sections get more technical.
+\end{itemize}
+
 \end{document}
