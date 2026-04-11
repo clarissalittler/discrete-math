@@ -293,6 +293,51 @@ What this is saying is that if you can show that P is true on 0 and if you can s
 
 Note how the base case is the same as the base case of the recursion and that the second part follows the recursive structure of the BNF syntax.
 
+\subsection{Induction in action: a worked example}
+The rule is doing a lot of work in not very much space, so let's actually \emph{use} it on something. We need a predicate to prove and that means we need at least one operation on the natural numbers to talk about. So we'll define addition.
+
+Addition on the naturals can be defined---like everything else around here---recursively. We do it by recursing on the second argument:
+\begin{align*}
+n + 0 &= n \\
+n + (\text{succ}\; m) &= \text{succ}\;(n + m)
+\end{align*}
+Read this as ``adding zero to anything gives you the thing back, and adding the successor of $m$ to $n$ is the same thing as adding $m$ to $n$ and then taking the successor.'' If you stare at it long enough, this is really just saying ``adding $m+1$ is the same as adding $m$ and then adding $1$.''
+
+Now notice something. The equation $n + 0 = n$ is true \emph{for free}---it's literally how we defined what \texttt{+ 0} \emph{means}. We don't need induction or any clever argument here, it just falls out of unfolding the definition.
+
+What about the \emph{other} direction, though: is $0 + n = n$? You might think this is also free by symmetry, but it isn't! Our definition of addition recurses on the \emph{second} argument, which means the case where $0$ sits on the \emph{left} is not directly handled by the definition. We have to actually \emph{prove} this one, and induction is the tool.
+
+\textbf{Theorem.} $\forall n : \text{Nat}.\; 0 + n = n$.
+
+\textbf{Proof.} By induction on $n$.
+
+\emph{Base case ($n = 0$).} We need to show $0 + 0 = 0$. But this falls out of the definition of \texttt{+ 0}---adding zero hands you back what you started with.
+
+\emph{Inductive step ($n = \text{succ}\; n'$).} The inductive hypothesis tells us that $0 + n' = n'$. We need to show $0 + (\text{succ}\; n') = \text{succ}\; n'$. So we just chase the definition:
+\begin{align*}
+0 + (\text{succ}\; n') &= \text{succ}\;(0 + n') && \text{by the second equation of \texttt{+}} \\
+                       &= \text{succ}\; n'      && \text{by the inductive hypothesis}
+\end{align*}
+which is exactly what we wanted. \hfill$\square$
+
+\bigskip
+That's it. That is what an inductive proof on the natural numbers actually looks like. The skeleton was: state the predicate, handle the case where $n$ is $0$, then assume the predicate holds for some $n'$ and use that assumption to prove it for $\text{succ}\; n'$. The base case and the inductive step \emph{exactly} mirror the BNF for Nat---there are two cases in the definition and two cases in the proof, and they line up one-for-one. That's not a coincidence, that's the whole point.
+
+Here's a perspective that might help if you're a programmer. An inductive proof is structured \emph{exactly} like a recursive function. There's a base case (when the argument is $0$) and a recursive case (when the argument is $\text{succ}\; n'$, where you ``call yourself'' on $n'$). The thing being ``returned'' is a proof rather than a number, but the shape is the same. In fact, if you've ever written a recursive function and felt like you were ``trusting'' the recursive call to do the right thing, congratulations: you've already felt the inductive hypothesis from the inside.\footnote{``Assume the recursive call works'' and ``assume $P(n')$'' really are the same move. We're going to come back to this in a much bigger way in the Curry--Howard intermezzo, once we've built up the vocabulary to say it precisely.}
+
+\bigskip
+\textbf{Exercise 4.} \label{ex:m4:4} Prove that for all $n : \text{Nat}$, $n + 1 = \text{succ}\; n$, where $1 = \text{succ}\; 0$. This one is a bit of a trick: figure out whether you actually need induction here, or whether you can do it just by unfolding the definition of \texttt{+}. (Hint: think about which equation of \texttt{+} fires when the second argument is $\text{succ}\; 0$.)
+
+\bigskip
+\textbf{Exercise 5.} \label{ex:m4:5} Take the natural induction rule above and look at it side by side with the BNF $\text{Nat} := 0 \mid \text{succ Nat}$. Identify exactly which part of the rule comes from which case of the BNF. Then, by analogy, write down what the induction rule would look like for the type
+\[
+\text{Counter} := \text{zero} \mid \text{tickA Counter} \mid \text{tickB Counter}
+\]
+You don't have to prove anything with it---just write down the rule.\footnote{If your rule has three premises, you're on the right track. If it has two, you forgot a case. If it has four, you've invented something interesting and we should talk.}
+
+\bigskip
+We've barely scratched the surface here. The intermezzo immediately after this chapter walks through several more proofs in this same style---commutativity and associativity of addition, among others---to get you really comfortable with the pattern. And much later, in Module 8, we'll come back to induction in a bigger way once we have sequences and summation in hand. The point of this section was just to break the seal: now you've seen one inductive proof from end to end, and the rule isn't just sitting there as a piece of inscrutable notation.
+
 \section{Addendum on notation}
 Sometimes you might see the ``: A'' part left out of quantifiers, like
 
