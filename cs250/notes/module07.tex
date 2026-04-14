@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Module 7: Indirect Proof, the Euclidean Algorithm, and Hoare Logic}
 \author{}
@@ -28,6 +8,12 @@
 
 \begin{document}
 \maketitle
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Reading map.} This module covers \textbf{Epp §4.6--4.8} (§4.7, 4.8, and 4.10 in the 5th edition): indirect proof (contradiction and contrapositive), the Euclidean algorithm, and an introduction to programming logic (Hoare logic). \textbf{Prerequisites:} Modules 3 (proof systems), 5 (direct proof), and 6 (modular arithmetic---the extended Euclidean algorithm is how we justify that multiplicative inverses mod $p$ exist). \textbf{Relevant intermezzi:} ``Proofs Are Programs'' (Curry--Howard; read after this module)---the connection between Hoare logic and the Curry--Howard view of proofs is worth seeing twice. \textbf{Practice from Epp:} §4.6 exercises on contradiction proofs (irrationality of $\sqrt{2}$ and friends); §4.7 exercises on contrapositive; any exercises involving the Euclidean algorithm. Epp's §4.10 on program correctness is less comprehensive than the Hoare-logic treatment here, but is worth skimming for additional examples.
+\end{minipage}}
+\end{center}
 
 \section{More on proofs by contradiction and proofs by contrapositive}
 Back in Module 3 we derived proof by contradiction as a tautology, starting from modus tollens and working through a bunch of substitution and simplification. That was important for understanding *why* the technique is valid, but now we need to get good at *using* it.
@@ -122,9 +108,6 @@ There's a subtlety worth noting for those interested in constructive mathematics
 
 In your homework this week you'll get to practice both techniques. One tip for the contradiction proofs: when you assume the negation, make sure you actually \emph{use} the assumption somewhere to derive the contradiction. If your proof never references the assumption, something has gone wrong---you've probably actually found a direct proof in disguise!
 
-\bigskip
-\textbf{Exercise 1.} \label{ex:m7:1} Prove by contrapositive: for any integer $n$, if $n^3$ is even then $n$ is even. (Hint: the structure is very similar to the $n^2$ proof above. Start by assuming $n$ is odd and show that $n^3$ is odd.)
-
 \section{GCD, Euclid's algorithm, \&c.}
 In this section, we're going to talk a little bit about Euclid's algorithm, the \emph{extended} version of Euclid's algorithm, and how it relates to finding multiplicative inverses for modular arithmetic $\mathbb{Z}\%m$.
 
@@ -188,9 +171,6 @@ and reducing modulo $n$, the term $n \cdot y$ vanishes (since $n \cdot y$ is div
 \end{lstlisting}
 
 which means that x is a multiplicative inverse of a modulo $n$. The crucial precondition here is $\gcd(a,n) = 1$; if the gcd is not 1, then no multiplicative inverse exists.
-
-\bigskip
-\textbf{Exercise 2.} \label{ex:m7:2} Trace the Euclidean algorithm on $\gcd(48, 18)$, showing each step. That is, write out each call \texttt{gcd(a,b)} and the corresponding values of \texttt{a\%b} until you reach the base case. What is $\gcd(48,18)$?
 
 \medskip
 With all of that motivation, here's the extended Euclidean algorithm---basically the same as before except we calculate a tuple instead of just one number. I'm following the treatment here (\url{https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm})
@@ -419,17 +399,194 @@ And that's the complete proof! Let's collect the whole thing in one place for re
 
 Notice the overall pattern: we used the assignment rule twice (working backwards from the postcondition), glued the results together with sequencing, and then used strengthening to hook up the precondition we actually wanted. This is the same pattern you'll use for the homework problem.
 
-\bigskip
-\textbf{Exercise 3.} \label{ex:m7:3} Prove the Hoare triple $\{x = 0\}\; x := x + 3\;\{x = 3\}$ using the assignment rule. (This is a single assignment, so you don't need sequencing---just apply the assignment rule and then use strengthening to connect the precondition you get to the one you want.)
+\subsection{A worked while-loop proof}
+
+Straight-line code is the easy case for Hoare logic. The \emph{real} test is a loop, because loops are where programs can actually go wrong in interesting ways. Let's do a full worked example with a while loop so you see how the invariant machinery pays off.
+
+Our program computes the sum $0 + 1 + 2 + \cdots + n$ by counting up from 0:
+\begin{lstlisting}
+{n >= 0}
+i := 0;
+s := 0;
+while i < n do
+  i := i + 1;
+  s := s + i
+{s = n*(n+1)/2}
+\end{lstlisting}
+We want to prove that this program really does leave $s$ equal to $n(n+1)/2$, the usual closed form for the first $n$ positive integers.
+
+The hard part of a while-loop proof is choosing the \emph{loop invariant}: a proposition that holds every time control reaches the top of the loop. Our invariant is going to be
+\[
+  \text{Inv} \;:=\; (0 \leq i \leq n) \wedge \bigl(s = i(i+1)/2\bigr).
+\]
+Read it as: the loop variable $i$ is somewhere between $0$ and $n$, and the running sum $s$ already equals the sum of the first $i$ positive integers. That's the useful fact we want to carry through the loop.
+
+The proof has three parts, which is typical for while-loop proofs:
+\begin{enumerate}
+  \item \textbf{Establishment:} after the initialization (\texttt{i := 0; s := 0}), the invariant holds.
+  \item \textbf{Preservation:} if the invariant and the loop condition both hold before one execution of the body, the invariant still holds after.
+  \item \textbf{Termination:} when the loop exits, the invariant plus the negated loop condition imply the desired postcondition.
+\end{enumerate}
+
+\textbf{Part 1: Establishment.} After \texttt{i := 0; s := 0} we have $i = 0$ and $s = 0$. Then:
+\begin{itemize}
+  \item $0 \leq i = 0 \leq n$ (using the precondition $n \geq 0$). \checkmark
+  \item $s = 0$ and $i(i+1)/2 = 0 \cdot 1 / 2 = 0$, so $s = i(i+1)/2$. \checkmark
+\end{itemize}
+So Inv holds after the initialization. Formally this is two applications of the assignment rule plus strengthening, but we'll summarize as:
+\begin{lstlisting}
+{n >= 0} i := 0; s := 0 {Inv}            [assignment x2 + strengthening]
+\end{lstlisting}
+
+\textbf{Part 2: Preservation.} We need to show
+\begin{lstlisting}
+{Inv ^ (i < n)} i := i + 1; s := s + i {Inv}
+\end{lstlisting}
+We work backward from the postcondition, applying the assignment rule twice.
+
+\emph{Step 2a.} Apply the assignment rule to \texttt{s := s + i}. The postcondition is Inv, i.e., $(0 \leq i \leq n) \wedge (s = i(i+1)/2)$. Substituting $s + i$ for $s$ in the postcondition gives
+\[
+  (0 \leq i \leq n) \wedge (s + i = i(i+1)/2).
+\]
+Call this Mid. So:
+\begin{lstlisting}
+{Mid} s := s + i {Inv}                    [assignment]
+\end{lstlisting}
+
+\emph{Step 2b.} Apply the assignment rule to \texttt{i := i + 1}. The postcondition is now Mid, and we substitute $i + 1$ for $i$ throughout:
+\[
+  (0 \leq i + 1 \leq n) \wedge (s + (i + 1) = (i+1)((i+1)+1)/2).
+\]
+Simplify: $0 \leq i + 1 \leq n$ becomes $-1 \leq i \leq n - 1$, which combined with $i \geq 0$ (from the invariant before the body ran) gives $0 \leq i \leq n - 1$, i.e., $i < n$. And the arithmetic equation simplifies as follows:
+\begin{align*}
+  s + (i + 1) &= (i+1)(i+2)/2 \\
+  s &= (i+1)(i+2)/2 - (i + 1) \\
+    &= (i+1)\bigl((i+2)/2 - 1\bigr) \\
+    &= (i+1) \cdot i / 2 \\
+    &= i(i+1)/2.
+\end{align*}
+So the required precondition for the body is
+\[
+  (0 \leq i \leq n - 1) \wedge (s = i(i+1)/2),
+\]
+which is exactly Inv combined with $i < n$---that is, $\text{Inv} \wedge (i < n)$. (Recall $0 \leq i \leq n$ from the invariant and $i < n$ from the loop guard give $0 \leq i \leq n - 1$.) \checkmark
+
+By sequencing and strengthening we get:
+\begin{lstlisting}
+{Inv ^ (i < n)} i := i + 1; s := s + i {Inv}   [sequencing + strengthening]
+\end{lstlisting}
+That's the preservation step.
+
+\textbf{Part 3: Apply the while rule and check termination.} The while rule says: if $\{Inv \wedge B\}\, c\, \{Inv\}$, then $\{Inv\}\, \text{while}\, B\, \text{do}\, c\, \{Inv \wedge \neg B\}$. In our case $B$ is $i < n$ and we just proved $\{Inv \wedge (i < n)\}\, c\, \{Inv\}$, so:
+\begin{lstlisting}
+{Inv} while i < n do (i := i + 1; s := s + i) {Inv ^ ~(i < n)}     [while]
+\end{lstlisting}
+Now ``$Inv \wedge \neg(i < n)$'' unpacks to $(0 \leq i \leq n) \wedge (s = i(i+1)/2) \wedge (i \geq n)$. Combining $i \leq n$ and $i \geq n$ forces $i = n$, and then $s = i(i+1)/2 = n(n+1)/2$. So the postcondition implies $s = n(n+1)/2$, which is what we wanted.
+
+Finally, chain everything together with sequencing:
+\begin{lstlisting}
+{n >= 0} i := 0; s := 0; while i < n do (...) {s = n*(n+1)/2}
+\end{lstlisting}
+
+A small note on \emph{partial} vs.\ \emph{total} correctness. The while rule as stated establishes \emph{partial} correctness: ``if the loop terminates, the postcondition holds.'' It says nothing about whether the loop terminates. For full \emph{total} correctness you need to also argue that the loop actually halts, which you typically do by showing that some quantity (called a \emph{variant}) strictly decreases on each iteration and is bounded below. In our example, $n - i$ is a good variant: it starts at $n$, decreases by $1$ each iteration, and can't go below $0$ while the loop guard $i < n$ still holds. So after at most $n$ iterations, the loop exits. That's enough for total correctness. Epp and most intro courses stop at partial correctness; we will too, but be aware the stronger result is available.
+
+\medskip
+That was a lot, and it's meant as an introduction to how you might prove properties about programs---not something you need to completely absorb right now. In your homework for the week you're going to prove the exciting theorem that $\{x = 0\}\;x := x+1;\; x := x+1\;\{x = 2\}$ or, in other words, that $1 + 1 = 2$.
+
+\section{Common mistakes}
+
+\begin{enumerate}
+  \item \textbf{Contradiction without using the assumption.} In a proof by contradiction you assume $\lnot P$, derive a contradiction, and conclude $P$. If the derivation of the contradiction never actually references the assumption $\lnot P$, you've proved $P$ \emph{directly}, not by contradiction---and you probably should have written a direct proof instead. Watch for this on your own work.
+  \item \textbf{``Same form, different meaning.''} In the $\sqrt{2}$-is-irrational proof, a student might write $a^2 = 2b^2$ and conclude ``$a$ is even.'' The right reasoning chain is $a^2$ is even $\Rightarrow$ $a$ is even (a separate lemma that itself requires a short proof by cases on the parity of $a$). Writing ``$a$ is even'' without justifying the intermediate ``$a^2$ is even implies $a$ is even'' is skipping a step.
+  \item \textbf{Using proof by contrapositive on the wrong direction.} To prove $P \to Q$ by contrapositive, you prove $\lnot Q \to \lnot P$. Not $\lnot P \to \lnot Q$---that's the \emph{inverse}, which is not equivalent. Mnemonic: swap \emph{and} negate.
+  \item \textbf{Forgetting that the assignment rule substitutes in the postcondition, not the precondition.} The rule is $\{P[x/e]\}\, x := e\, \{P\}$: the postcondition $P$ is what you start with, and you substitute $e$ for $x$ inside $P$ to get the required precondition. Students sometimes try to substitute in the precondition instead, which gives nonsense.
+  \item \textbf{Applying the assignment rule forward.} The assignment rule tells you what precondition is required for a given postcondition---it's a \emph{backward} rule. You can try to use it forward (``here's my precondition, what's the postcondition?''), but that rarely gives you what you want, because the naive forward version produces too-strong postconditions. Always apply it backward.
+  \item \textbf{Loop invariant is too weak.} The invariant has to be strong enough that, combined with $\neg B$ at loop exit, it implies the desired postcondition. An invariant that only says ``$0 \leq i \leq n$'' is true but doesn't mention $s$, and so can't prove anything about $s$'s final value. If your invariant doesn't \emph{include} the thing you care about, it isn't doing its job.
+  \item \textbf{Loop invariant is too strong.} At the other extreme, an invariant that includes facts that aren't actually preserved will fail the preservation step. If you can't prove $\{Inv \wedge B\}\, c\, \{Inv\}$, the invariant was too ambitious and needs to be relaxed.
+  \item \textbf{Forgetting the base case of induction inside a Hoare proof.} When your invariant holds at the start (establishment), that \emph{is} the base case of an induction on how many times the loop has executed. If you don't verify establishment, you haven't even started the induction.
+\end{enumerate}
+
+\section{Summary and looking ahead}
+
+\begin{keytakeaway}
+  \item \emph{Proof by contradiction}: assume $\lnot P$, derive $\bot$, conclude $P$. Good for proving negative statements (``there is no $\ldots$,'' ``$\sqrt{2}$ is not rational'').
+  \item \emph{Proof by contrapositive}: to prove $P \to Q$, prove $\lnot Q \to \lnot P$ instead. Usually cleaner than contradiction when the goal is an implication.
+  \item The \emph{Euclidean algorithm} computes $\gcd(a, b)$ by repeatedly replacing $(a, b)$ with $(b, a \bmod b)$. The \emph{extended} version computes integers $x, y$ with $ax + by = \gcd(a, b)$; this is how you compute multiplicative inverses mod a prime.
+  \item \emph{Hoare logic} reasons about imperative programs via triples $\{P\}\, c\, \{Q\}$: if $P$ holds before $c$ runs, then $Q$ holds after. Each language construct has its own proof rule, and the assignment rule is applied \emph{backward} (substitute in the postcondition).
+  \item A \emph{loop invariant} is the induction hypothesis for a while loop. It must hold on entry (establishment), be preserved by the body (preservation), and imply the postcondition on exit (termination).
+\end{keytakeaway}
+
+\begin{summarybox}
+\textbf{What we built this module.} We finished the ``how to write a proof'' thread that started in Module 1 and grew through Modules 5 and 6. You now have direct proof, counterexample, existence, proof by cases, proof by contradiction, and proof by contrapositive---essentially the full toolkit of informal mathematics. The Hoare-logic material pivoted to the computer-science payoff: the same disciplined case-by-case reasoning we've been doing all term can be applied to programs, giving formal guarantees about what code does.
+
+\medskip
+\textbf{Looking ahead.} Modules 8--10 pick up the induction thread. Module 8 revisits natural induction with the full sum-notation toolkit, Module 9 introduces strong induction and the characteristic-equation method for recurrences, and Module 10 generalizes induction to arbitrary recursive data types (structural induction). The intermezzi around here---especially ``Proofs Are Programs'' (Curry--Howard) and ``Other Logics, Other Worlds''---are the payoff for the proof-techniques thread and are worth reading before you start Module 8.
+\end{summarybox}
+
+\section{Exercises}
+
+Organized into \textbf{warm-up} (mechanical practice), \textbf{standard} (indirect-proof and single-Hoare-rule problems), \textbf{challenge} (longer proofs, including a while-loop Hoare argument), and \textbf{connection} (programming and forward pointers). Solutions are in the appendix.
+
+\subsection*{Warm-up}
+
+\textbf{Exercise 1.}\label{ex:m7:1} Prove by contrapositive: for any integer $n$, if $n^3$ is even then $n$ is even. (Hint: the structure is very similar to the $n^2$ proof above. Start by assuming $n$ is odd and show that $n^3$ is odd.)
 
 \bigskip
-\textbf{Exercise 4.}\label{ex:m7:4} Find the error in the following ``proof'' by contradiction that $\sqrt{4}$ is irrational:
+\textbf{Exercise 2.}\label{ex:m7:2} Trace the Euclidean algorithm on $\gcd(48, 18)$, showing each step. That is, write out each call \texttt{gcd(a,b)} and the corresponding values of \texttt{a\%b} until you reach the base case. What is $\gcd(48,18)$?
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m7:3} Prove the Hoare triple $\{x = 0\}\; x := x + 3\;\{x = 3\}$ using the assignment rule. (This is a single assignment, so you don't need sequencing---just apply the assignment rule and then use strengthening to connect the precondition you get to the one you want.)
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m7:4} Apply the assignment rule backward: for each of the following, find the precondition that the assignment rule gives.
+\begin{enumerate}[label=(\alph*)]
+  \item $\{?\} \; x := x + 5 \; \{x > 10\}$
+  \item $\{?\} \; y := 2 y \; \{y = 8\}$
+  \item $\{?\} \; z := x - y \; \{z = 0\}$
+\end{enumerate}
+
+\subsection*{Standard}
+
+\textbf{Exercise 5.}\label{ex:m7:5} Prove by contradiction: $\sqrt{3}$ is irrational. (Follow the same template as the $\sqrt{2}$ proof, but use the fact that $a^2$ is divisible by $3$ implies $a$ is divisible by $3$, which itself follows from a case analysis on $a \bmod 3$.)
+
+\bigskip
+\textbf{Exercise 6.}\label{ex:m7:6} Find the error in the following ``proof'' by contradiction that $\sqrt{4}$ is irrational:
 
 ``Assume for contradiction that $\sqrt{4}$ is rational. Then $\sqrt{4} = a/b$ in lowest terms. Squaring: $4 = a^2/b^2$, so $a^2 = 4b^2$. This means $a^2$ is even, so $a$ is even. Write $a = 2c$. Then $4c^2 = 4b^2$, so $c^2 = b^2$, so $c = b$. But then $a = 2b$ and the fraction $a/b = 2$, so $\sqrt{4} = 2$. Contradiction!''
 
 Where exactly does the reasoning go wrong?
 
-\medskip
-That was a lot, and it's meant as an introduction to how you might prove properties about programs---not something you need to completely absorb right now. In your homework for the week you're going to prove the exciting theorem that \{x = 0\}\;x := x+1;\; x := x+1\;\{x = 2\} or, in other words, that 1+1 = 2.
+\bigskip
+\textbf{Exercise 7.}\label{ex:m7:7} Prove the Hoare triple $\{x = 0 \wedge y = 0\}\; x := x + 1;\; y := y + 1\;\{x + y = 2\}$. Use the assignment rule twice (once for each assignment), chain them with sequencing, and finish with strengthening.
+
+\bigskip
+\textbf{Exercise 8.}\label{ex:m7:8} Use the extended Euclidean algorithm to find integers $x$ and $y$ with $17 x + 5 y = 1$. Then read off the multiplicative inverse of $17$ modulo $5$, and the multiplicative inverse of $5$ modulo $17$. Verify both answers.
+
+\subsection*{Challenge}
+
+\textbf{Exercise 9.}\label{ex:m7:9} Prove by contradiction: there is no largest prime number. (Hint: suppose there is a largest prime $p$ and consider the number $2 \cdot 3 \cdot 5 \cdot 7 \cdots p + 1$, the product of all primes up to $p$ plus one. What can you say about this number?)
+
+\bigskip
+\textbf{Exercise 10.}\label{ex:m7:10} Give a complete Hoare-logic proof of partial correctness for the following program, which computes $2^n$ into the variable $y$:
+\begin{lstlisting}
+{n >= 0}
+y := 1;
+i := 0;
+while i < n do
+  y := 2 * y;
+  i := i + 1
+{y = 2^n}
+\end{lstlisting}
+Choose an appropriate loop invariant (hint: it should say something about $y$ in terms of $i$ and $n$), then carry out the three steps---establishment, preservation, termination---following the worked example in the module. You do not need to prove total correctness, but note what variant would work for it.
+
+\bigskip
+\textbf{Exercise 11.}\label{ex:m7:11} Prove: for every pair of positive integers $a$ and $b$, $\gcd(a, b) = \gcd(b, a \bmod b)$ (assuming $b \neq 0$). This is the correctness lemma for Euclid's algorithm. (Hint: show that the set of common divisors of $\{a, b\}$ equals the set of common divisors of $\{b, a \bmod b\}$, then conclude that the greatest elements of the two sets are the same.)
+
+\subsection*{Connection}
+
+\textbf{Exercise 12.}\label{ex:m7:12} (Programming.) Write a Python function \texttt{egcd(a, b)} that implements the extended Euclidean algorithm and returns a tuple $(g, x, y)$ with $g = \gcd(a, b)$ and $a \cdot x + b \cdot y = g$. Then write \texttt{mod\_inverse\_via\_egcd(a, n)} that uses \texttt{egcd} to compute $a^{-1} \bmod n$, raising \texttt{ValueError} if $\gcd(a, n) \neq 1$. Test it on the same inputs as Module~6 Exercise~13 (brute-force version) and verify you get the same answers. Which implementation is asymptotically faster, and why?
+
+\bigskip
+\textbf{Exercise 13.}\label{ex:m7:13} (Intermezzo pointer.) The ``Proofs Are Programs'' intermezzo (Curry--Howard) immediately follows this module. Hoare logic and Curry--Howard are two very different ways of connecting proofs and programs: Hoare logic is about \emph{verifying that a given imperative program meets a specification}, while Curry--Howard says that \emph{a proof in constructive logic \textbf{is} a program}. Read the intermezzo and, in a short paragraph, explain which of these two correspondences is more natural for reasoning about the merge-sort algorithm, and why.
 
 \end{document}

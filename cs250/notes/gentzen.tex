@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Intermezzo: Inference Rules as Trees}
 \author{}
@@ -37,62 +17,117 @@ The idea is simple. You draw a horizontal line. Above the line go the \emph{prem
 
 \section{The rules, redux}
 
-Let's revisit the rules from Module 3, but now in this new notation. We'll use \LaTeX's \verb|\dfrac| command, so these are literally just fractions where the numerator is what you know and the denominator is what you conclude.
+Let's revisit the rules from Module 3, but now in this new notation. We'll use the \texttt{bussproofs} package, which is the standard \LaTeX{} tool for typesetting natural-deduction proof trees: each rule is drawn with its premises on top, a horizontal line, and the conclusion underneath, with the rule name attached to the right edge.
 
 \subsection{Conjunction}
 
 \noindent\textbf{Introduction:}
 If you know $p$ and you know $q$, you can conclude $p \wedge q$:
-\[
-\dfrac{p \quad q}{p \wedge q}\;\wedge\text{I}
-\]
+\begin{center}
+\begin{prooftree}
+\AxiomC{$p$}
+\AxiomC{$q$}
+\RightLabel{$\wedge$I}
+\BinaryInfC{$p \wedge q$}
+\end{prooftree}
+\end{center}
 This is the same rule as the \texttt{lstlisting} version from Module 3---premises (a) $p$ and (b) $q$, conclusion $p \wedge q$---just written more compactly.
 
 \noindent\textbf{Elimination:}
 If you know $p \wedge q$, you can pull out either piece:
-\[
-\dfrac{p \wedge q}{p}\;\wedge\text{E}_1
-\qquad\qquad
-\dfrac{p \wedge q}{q}\;\wedge\text{E}_2
-\]
+\begin{center}
+\begin{minipage}{0.35\textwidth}
+\centering
+\begin{prooftree}
+\AxiomC{$p \wedge q$}
+\RightLabel{$\wedge$E$_1$}
+\UnaryInfC{$p$}
+\end{prooftree}
+\end{minipage}
+\begin{minipage}{0.35\textwidth}
+\centering
+\begin{prooftree}
+\AxiomC{$p \wedge q$}
+\RightLabel{$\wedge$E$_2$}
+\UnaryInfC{$q$}
+\end{prooftree}
+\end{minipage}
+\end{center}
 
 \subsection{Disjunction}
 
 \noindent\textbf{Introduction:}
 If you know one disjunct, you can conclude the disjunction:
-\[
-\dfrac{p}{p \vee q}\;\vee\text{I}_1
-\qquad\qquad
-\dfrac{q}{p \vee q}\;\vee\text{I}_2
-\]
+\begin{center}
+\begin{minipage}{0.35\textwidth}
+\centering
+\begin{prooftree}
+\AxiomC{$p$}
+\RightLabel{$\vee$I$_1$}
+\UnaryInfC{$p \vee q$}
+\end{prooftree}
+\end{minipage}
+\begin{minipage}{0.35\textwidth}
+\centering
+\begin{prooftree}
+\AxiomC{$q$}
+\RightLabel{$\vee$I$_2$}
+\UnaryInfC{$p \vee q$}
+\end{prooftree}
+\end{minipage}
+\end{center}
 Notice that you get to ``make up'' the other disjunct---if you know $p$, you can conclude $p \vee q$ for \emph{any} $q$. Remember from Module 3 that $p \to (p \vee q)$ really is a tautology.
 
 \noindent\textbf{Elimination (proof by cases):}
-\[
-\dfrac{p \vee q \quad p \to r \quad q \to r}{r}\;\vee\text{E}
-\]
+\begin{center}
+\begin{prooftree}
+\AxiomC{$p \vee q$}
+\AxiomC{$p \to r$}
+\AxiomC{$q \to r$}
+\RightLabel{$\vee$E}
+\TrinaryInfC{$r$}
+\end{prooftree}
+\end{center}
 This is the rule we worked through with the eight-row truth table. If you know $p \vee q$ and you can get to $r$ from either side, you've got $r$.
 
 \subsection{Implication}
 
 \noindent\textbf{Elimination (modus ponens):}
-\[
-\dfrac{p \quad p \to q}{q}\;\to\text{E}
-\]
+\begin{center}
+\begin{prooftree}
+\AxiomC{$p$}
+\AxiomC{$p \to q$}
+\RightLabel{$\to$E}
+\BinaryInfC{$q$}
+\end{prooftree}
+\end{center}
 Our old friend. If you know $p$ and you know $p \to q$, you get $q$.
 
 \noindent\textbf{Modus tollens:}
-\[
-\dfrac{p \to q \quad \lnot q}{\lnot p}\;\text{MT}
-\]
+\begin{center}
+\begin{prooftree}
+\AxiomC{$p \to q$}
+\AxiomC{$\lnot q$}
+\RightLabel{MT}
+\BinaryInfC{$\lnot p$}
+\end{prooftree}
+\end{center}
 If you know $p \to q$ and you know $\lnot q$, you can conclude $\lnot p$. This is the ``backdoor'' version of modus ponens: instead of affirming the antecedent, you deny the consequent. Unlike the contrapositive \emph{technique}, modus tollens as a single inference step is constructively valid.
 
 \noindent\textbf{Introduction:}
-This is the rule that was ``a little weird'' in Module 3, and the tree notation actually makes it \emph{clearer}. The idea is: if you can derive $q$ while \emph{temporarily assuming} $p$, then you can discharge that assumption and conclude $p \to q$. We write the discharged assumption in square brackets:
-\[
-\dfrac{\begin{matrix}[p] \\ \vdots \\ q\end{matrix}}{p \to q}\;\to\text{I}
-\]
-The $[p]$ means ``$p$ was assumed for the sake of this derivation, and now we're done with it.''\index{discharged assumption} The dots indicate that there's a subderivation---possibly several steps---that gets from $p$ to $q$. Once you apply $\to$I, the assumption $p$ is \emph{discharged}: it's no longer something you're assuming, because you've packaged it up inside the implication.
+This is the rule that was ``a little weird'' in Module 3, and the tree notation actually makes it \emph{clearer}. The idea is: if you can derive $q$ while \emph{temporarily assuming} $p$, then you can discharge that assumption and conclude $p \to q$. We write the discharged assumption in square brackets, with an ellipsis indicating a subderivation:
+\begin{center}
+\begin{prooftree}
+\AxiomC{$[p]$}
+\noLine
+\UnaryInfC{$\vdots$}
+\noLine
+\UnaryInfC{$q$}
+\RightLabel{$\to$I}
+\UnaryInfC{$p \to q$}
+\end{prooftree}
+\end{center}
+The $[p]$ means ``$p$ was assumed for the sake of this derivation, and now we're done with it.''\index{discharged assumption} Once you apply $\to$I, the assumption $p$ is \emph{discharged}: it's no longer something you're assuming, because you've packaged it up inside the implication.
 
 This is exactly the same as the two-layer structure from Module 3 where we had ``has a proof that assuming $p$, shows $q$''---the bracket notation is just the standard way of writing that in tree form.
 
@@ -100,25 +135,50 @@ This is exactly the same as the two-layer structure from Module 3 where we had `
 
 \noindent\textbf{Introduction:}
 If assuming $p$ lets you derive a contradiction ($\bot$), then you can discharge that assumption and conclude $\lnot p$:
-\[
-\dfrac{\begin{matrix}[p] \\ \vdots \\ \bot\end{matrix}}{\lnot p}\;\lnot\text{I}
-\]
+\begin{center}
+\begin{prooftree}
+\AxiomC{$[p]$}
+\noLine
+\UnaryInfC{$\vdots$}
+\noLine
+\UnaryInfC{$\bot$}
+\RightLabel{$\lnot$I}
+\UnaryInfC{$\lnot p$}
+\end{prooftree}
+\end{center}
 This works exactly like $\to$I: the brackets around $p$ mean that $p$ was a temporary assumption, and it gets discharged when you apply the rule. In fact, in many formulations of logic $\lnot p$ is simply \emph{defined} as $p \to \bot$, so $\lnot$I is literally a special case of $\to$I.
 
 \noindent\textbf{Elimination (double negation):}
-\[
-\dfrac{\lnot\lnot p}{p}\;\lnot\text{E}
-\]
+\begin{center}
+\begin{prooftree}
+\AxiomC{$\lnot\lnot p$}
+\RightLabel{$\lnot$E}
+\UnaryInfC{$p$}
+\end{prooftree}
+\end{center}
 If you know $\lnot\lnot p$, you can conclude $p$. Note that this rule requires the law of excluded middle---it is not valid in constructive logic. In a proof assistant like Agda or Coq, you would need to explicitly invoke a classical axiom to use it. The direction $p \to \lnot\lnot p$ is constructively valid, but eliminating the double negation is the part that requires classical reasoning (see the discussion in Module 3).
 
 \subsection{Constants}
 
 For completeness:
-\[
-\dfrac{}{T}\;T\text{I}
-\qquad\qquad
-\dfrac{\bot}{p}\;\bot\text{E}
-\]
+\begin{center}
+\begin{minipage}{0.35\textwidth}
+\centering
+\begin{prooftree}
+\AxiomC{}
+\RightLabel{$T$I}
+\UnaryInfC{$T$}
+\end{prooftree}
+\end{minipage}
+\begin{minipage}{0.35\textwidth}
+\centering
+\begin{prooftree}
+\AxiomC{$\bot$}
+\RightLabel{$\bot$E}
+\UnaryInfC{$p$}
+\end{prooftree}
+\end{minipage}
+\end{center}
 $T$ can always be concluded (no premises needed---note the empty space above the line). We write $\bot$ (pronounced ``bottom'' or ``absurdity'') for the constant false---this is the same as $F$ from Module 2, just in standard natural deduction notation. From $\bot$ you can conclude literally anything, which is the ``ex falso'' principle.
 
 \section{Composing rules into proof trees}
@@ -130,14 +190,19 @@ Let's redo the transitivity-of-implication proof from Module 3. We want to show:
 \text{Given } p \to q \text{ and } q \to r, \text{ prove } p \to r.
 \]
 Here's the tree:
-\[
-\dfrac{
-  \dfrac{
-    \dfrac{[p] \quad p \to q}{q}\;\to\text{E}
-    \quad q \to r
-  }{r}\;\to\text{E}
-}{p \to r}\;\to\text{I}
-\]
+\begin{center}
+\begin{prooftree}
+\AxiomC{$[p]$}
+\AxiomC{$p \to q$}
+\RightLabel{$\to$E}
+\BinaryInfC{$q$}
+\AxiomC{$q \to r$}
+\RightLabel{$\to$E}
+\BinaryInfC{$r$}
+\RightLabel{$\to$I}
+\UnaryInfC{$p \to r$}
+\end{prooftree}
+\end{center}
 Read it from the bottom up: we want $p \to r$, so we use $\to$I, which means we need to derive $r$ from the assumption $[p]$. To get $r$ we use modus ponens with $q \to r$, but we need $q$. To get $q$ we use modus ponens with $[p]$ and $p \to q$. Done.
 
 The assumptions $p \to q$ and $q \to r$ are \emph{undischarged}---they sit at the leaves of the tree as open assumptions. The assumption $[p]$ is discharged by the $\to$I at the root.

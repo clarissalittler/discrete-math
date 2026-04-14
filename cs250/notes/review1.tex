@@ -1,0 +1,134 @@
+\documentclass[11pt]{article}
+\input{cs250preamble}
+
+\title{CS 250 --- Cumulative Review 1 (after Module 3)}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{The point of this review}
+
+You've now seen three modules' worth of material: sets, functions, and proof-writing basics (Module~1); propositional logic with truth-table semantics (Module~2); and proof systems with natural-deduction-style rules (Module~3). In this short review chapter we pick one small but non-trivial result and prove it \emph{three different ways}, each way using a different module's toolkit. The point is to see explicitly how the three modules connect---how the same mathematical fact can be established semantically (via truth tables), syntactically (via inference rules), or by direct set-theoretic manipulation---and to consolidate the vocabulary before you move on to predicate logic in Module~4.
+
+\section*{The result}
+
+We'll prove the following tautology of propositional logic:
+\[
+  (p \to q) \;\wedge\; (p \to r) \;\equiv\; p \to (q \wedge r).
+\]
+
+In English: ``$p$ implies both $q$ and $r$'' is equivalent to ``$p$ implies the conjunction $q \wedge r$.'' This is a small but useful identity that lets you factor out a common hypothesis across two implications. It also shows up in the proof of every structured induction where you need to prove two things from the same assumption.
+
+\section*{Proof 1: By truth table (Module 2 style)}
+
+Both sides are formulas over the three variables $p, q, r$. Logical equivalence is defined as ``same truth table,'' so we build truth tables for both sides and compare. We need eight rows, one for each assignment to $(p, q, r)$.
+
+\begin{center}
+\begin{tabular}{ccc|cc|c|c|c}
+\toprule
+$p$ & $q$ & $r$ & $p \to q$ & $p \to r$ & $(p \to q) \wedge (p \to r)$ & $q \wedge r$ & $p \to (q \wedge r)$ \\
+\midrule
+T & T & T & T & T & T & T & T \\
+T & T & F & T & F & F & F & F \\
+T & F & T & F & T & F & F & F \\
+T & F & F & F & F & F & F & F \\
+F & T & T & T & T & T & T & T \\
+F & T & F & T & T & T & F & T \\
+F & F & T & T & T & T & F & T \\
+F & F & F & T & T & T & F & T \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Columns 6 and 8 (the two full sides of the equivalence) match on every row, so the two formulas are logically equivalent. \hfill$\square$
+
+This proof is mechanical and leaves no doubt, but it also gives you no \emph{insight} into why the equivalence holds. If someone asked you to explain the result, you'd say ``it worked out in every row,'' which isn't very satisfying.
+
+\section*{Proof 2: By formal derivation (Module 3 style)}
+
+The same result, established syntactically using the introduction and elimination rules from Module~3. Because this is an equivalence, we need to prove both directions. We'll write the proofs in the numbered-line format from Module~3; you could also do them as Gentzen trees if you prefer.
+
+\subsection*{Direction 1: $(p \to q) \wedge (p \to r) \;\to\; p \to (q \wedge r)$}
+
+\begin{lstlisting}
+Assume: (p -> q) ^ (p -> r)
+
+(1) (p -> q) ^ (p -> r)     by assumption
+(2) p -> q                  by ^-elimination on (1)
+(3) p -> r                  by ^-elimination on (1)
+(4) subproof:
+      (4a) p                by assumption
+      (4b) q                by modus ponens on (4a), (2)
+      (4c) r                by modus ponens on (4a), (3)
+      (4d) q ^ r            by ^-introduction on (4b), (4c)
+    shows q ^ r
+(5) p -> (q ^ r)            by ->-introduction on subproof (4)
+\end{lstlisting}
+
+\subsection*{Direction 2: $p \to (q \wedge r) \;\to\; (p \to q) \wedge (p \to r)$}
+
+\begin{lstlisting}
+Assume: p -> (q ^ r)
+
+(1) p -> (q ^ r)            by assumption
+(2) subproof:
+      (2a) p                by assumption
+      (2b) q ^ r            by modus ponens on (2a), (1)
+      (2c) q                by ^-elimination on (2b)
+    shows q
+(3) p -> q                  by ->-introduction on subproof (2)
+(4) subproof:
+      (4a) p                by assumption
+      (4b) q ^ r            by modus ponens on (4a), (1)
+      (4c) r                by ^-elimination on (4b)
+    shows r
+(5) p -> r                  by ->-introduction on subproof (4)
+(6) (p -> q) ^ (p -> r)     by ^-introduction on (3), (5)
+\end{lstlisting}
+
+Since both directions are derivable, the formulas are equivalent in the proof system. \hfill$\square$
+
+This proof is more verbose than the truth-table version, but it tells you \emph{why} the equivalence holds: you can turn a proof of $(p \to q) \wedge (p \to r)$ into a proof of $p \to (q \wedge r)$ (and back again) by rearranging the same basic steps. In the Curry--Howard view, both formulas correspond to the same ``function of type $p$ returning a pair $(q, r)$,'' which is a genuine computational content that the truth-table proof doesn't touch.
+
+\section*{Proof 3: By sets (Module 1 style)}
+
+Here's a third angle---the one you might not have expected. A predicate on a set is just a subset (the truth set), and propositional equivalences become set identities under this reading. Let's reinterpret the whole claim in set-theoretic language.
+
+Fix any set $U$ and think of $p, q, r$ as subsets of $U$, representing the truth sets of predicates. The connective $p \to q$ is the set of elements where ``if $p$ then $q$'' holds---which is every element where $p$ is false \emph{or} $q$ is true, i.e., $\overline{p} \cup q$. Similarly $q \wedge r$ becomes $q \cap r$. The equivalence we want to prove becomes the set identity
+\[
+  (\overline{p} \cup q) \cap (\overline{p} \cup r) \;=\; \overline{p} \cup (q \cap r).
+\]
+
+This is just \emph{distributivity of union over intersection}, a basic set identity from Module~1! Let's verify it in both directions.
+
+\emph{$(\subseteq)$.} Let $x \in (\overline{p} \cup q) \cap (\overline{p} \cup r)$. Then $x$ is in both $\overline{p} \cup q$ and $\overline{p} \cup r$. Case on whether $x \in \overline{p}$:
+\begin{itemize}
+  \item If $x \in \overline{p}$, then $x \in \overline{p} \cup (q \cap r)$ by definition of union.
+  \item If $x \notin \overline{p}$, then (since $x \in \overline{p} \cup q$) we must have $x \in q$; and (since $x \in \overline{p} \cup r$) we must have $x \in r$. So $x \in q \cap r$, hence $x \in \overline{p} \cup (q \cap r)$.
+\end{itemize}
+Either way, $x$ is in the right-hand side.
+
+\emph{$(\supseteq)$.} Let $x \in \overline{p} \cup (q \cap r)$. Then either $x \in \overline{p}$ or $x \in q \cap r$.
+\begin{itemize}
+  \item If $x \in \overline{p}$, then $x \in \overline{p} \cup q$ and $x \in \overline{p} \cup r$, so $x$ is in their intersection.
+  \item If $x \in q \cap r$, then $x \in q$ and $x \in r$, so again $x \in \overline{p} \cup q$ and $x \in \overline{p} \cup r$, and $x$ is in their intersection.
+\end{itemize}
+
+Both directions hold, so the set identity is established. Translating back to propositional logic: $(p \to q) \wedge (p \to r) \equiv p \to (q \wedge r)$. \hfill$\square$
+
+\section*{What we learned}
+
+Three proofs, three very different flavors:
+\begin{itemize}
+  \item The \textbf{truth-table proof} is a finite, mechanical check. It's the fastest to write but gives no insight into ``why.'' This is the view from Module~2.
+  \item The \textbf{formal derivation} follows the connective structure of the formulas, using one introduction or elimination rule at each step. It's longer but it \emph{explains} the equivalence as a rearrangement of basic proof steps. This is the view from Module~3, and it's the one closest to how a proof assistant like Lean would actually check the fact.
+  \item The \textbf{set-theoretic proof} reinterprets the problem entirely, turning propositional equivalence into a set-identity question. It's a reminder that the tools from Module~1 aren't just warm-ups---they're alternative vantage points for everything that follows.
+\end{itemize}
+
+The fact that all three proofs exist isn't a coincidence. One of the deepest results about propositional logic---the \emph{completeness theorem}---says that a formula is a semantic tautology (truth-table true) if and only if it has a syntactic derivation (provable from the inference rules). And the set-theoretic reading is what you get when you interpret propositional formulas in the ``Boolean algebra of subsets'' of a fixed universe---a genuine, well-defined algebraic structure.
+
+If you only remember one thing from this review chapter, make it this: \emph{the same fact can wear many different hats}. When you get stuck proving something one way, try translating the problem into a different language. The fact hasn't moved; only your perspective has.
+
+\end{document}

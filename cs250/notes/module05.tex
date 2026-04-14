@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Module 5: Informal Proofs and Groups}
 \author{}
@@ -28,6 +8,12 @@
 
 \begin{document}
 \maketitle
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Reading map.} This module covers \textbf{Epp §4.1--4.3} (§4.1--4.4 in the 5th edition): direct proof, proof by counterexample, proofs involving rational numbers and divisibility, and existence proofs. \textbf{Prerequisites:} Modules 1--4 (especially the $\forall$ and $\exists$ proof rules from Module 4). \textbf{Relevant intermezzi:} ``What Does It Mean for Things to Be `The Same'?'' (equivalence relations; read after Module 6) ties into the group-theory section here. \textbf{Practice from Epp:} §4.1 exercises on direct proofs about even/odd and divisibility; §4.2 exercises on rational-number proofs; §4.3 exercises on divisibility; and any `disprove with counterexample' problems from those sections.
+\end{minipage}}
+\end{center}
 
 This module is, in a sense, a breather. We're not introducing new concepts here --- instead we're getting practice with informal proofs after several modules of formal logic.
 
@@ -107,9 +93,6 @@ A real number $r$ is \emph{rational}\index{rational number} if $r = a/b$ where $
 
 Showing that a number is rational is really just an existence proof --- you need to exhibit the integers $a$ and $b$. For example, $0.75$ is rational because $0.75 = 3/4$, and we've exhibited $a = 3$, $b = 4$\footnote{Technically you could also use $a = 6$, $b = 8$, or any other representation. There's no uniqueness requirement in the definition, though you can get uniqueness if you insist on lowest terms.}.
 
-\bigskip
-\textbf{Exercise 1.} \label{ex:m5:1} Prove: the product of two rational numbers is rational. (Use the same unpack-algebra-repack pattern from the proofs above.)
-
 \section{Counterexample}
 
 Direct proofs let you \emph{prove} universal statements. But what if a universal statement is \emph{false}? How do you disprove it?
@@ -125,9 +108,6 @@ So to disprove a universal, you just need to find one concrete value that breaks
 That's the whole proof. One example. That's all you need.
 
 Here's the important asymmetry: to \textbf{prove} a universal statement you need to work with an \emph{arbitrary} element --- you can't pick a specific one, because you need the argument to work for all of them. But to \textbf{disprove} a universal you just need \emph{one specific} counterexample. This asymmetry shows up everywhere and is worth internalizing.
-
-\bigskip
-\textbf{Exercise 2.} \label{ex:m5:2} Disprove: for every integer $n$, $n^2 > n$. (Find a counterexample and verify it.)
 
 If you're a programmer, think of it this way: proving a function is correct means showing it works \emph{for all inputs}. Finding a bug means finding \emph{one bad input}. Testing is the art of finding counterexamples; formal verification is the art of proving universals. That's why testing can show the presence of bugs but never their absence\footnote{This is usually attributed to Dijkstra, and it's one of those quotes that sounds deep until you realize it's just the logical asymmetry between $\forall$ and $\exists$ wearing a trench coat.}.
 
@@ -212,16 +192,6 @@ but this is just a funnily written subtraction! And we already have defined subt
 
 Thus we've shown that $(\mathbb{Z},+,0)$ is a group. \hfill $\square$
 
-\bigskip
-\textbf{Exercise 3.} \label{ex:m5:3} Is $(\mathbb{Z}, -, 0)$ a group (the integers with subtraction as the binary operation and $0$ as the proposed identity)? Either verify all four axioms or find one that fails.
-
-\bigskip
-\textbf{Exercise 4.}\label{ex:m5:4} Find the error in the following ``proof'' that every integer is even:
-
-``Let $n$ be an integer. Suppose $n = 2k$ for some integer $k$. Then $n = 2k$, which is even by definition. Therefore $n$ is even.''
-
-What proof technique error does this commit?
-
 \section{The integers under multiplication do \emph{not} form a group}
 We can \emph{disprove} that the integers with multiplication as the binary operation and 1 as the identity are a group easily. We just need to show one of the theorems cannot hold.
 
@@ -248,5 +218,116 @@ and thus $e = e'$. \hfill $\square$
 \bigskip
 
 This result tells us something important: the identity element of a group isn't just convenient notation---it's \emph{forced}. Any element that behaves like an identity must be the same as the one we started with. This kind of uniqueness result is typical in algebra: the axioms pin things down more tightly than you might expect.
+
+\section{Proof by exhaustion}
+
+There's one more direct-proof technique that deserves a name because it comes up constantly, especially in computer science: \emph{proof by exhaustion}\index{proof!by exhaustion}.
+
+A proof by exhaustion is what you do when the domain you're quantifying over is finite (or can be split into finitely many cases), so you can just \emph{check each case} directly. You literally list them out and verify the predicate on each one.
+
+\textbf{Claim.} Every even integer $n$ with $4 \leq n \leq 12$ can be written as a sum of two prime numbers.
+
+\textbf{Proof by exhaustion.}
+\begin{itemize}
+  \item $4 = 2 + 2$ (both prime)
+  \item $6 = 3 + 3$ (both prime)
+  \item $8 = 3 + 5$ (both prime)
+  \item $10 = 3 + 7 = 5 + 5$ (both decompositions work)
+  \item $12 = 5 + 7$ (both prime)
+\end{itemize}
+That exhausts the five cases, so the claim holds on the range $\{4, 6, 8, 10, 12\}$. \hfill$\square$
+
+The technique is banal in the abstract---``check every case''---but it is \emph{exactly} what you do when proving things like ``every binary boolean operator can be expressed in terms of $\lnot$ and $\wedge$'' (the 16-case exercise from the assignment this term). There are finitely many binary boolean operators (sixteen of them, as you proved in Module 2), and you verify the property on each one. That's proof by exhaustion in action.
+
+Proof by exhaustion is technically just a special case of proof by cases (which we covered formally as $\vee$-elimination in Module 3): each case is a disjunct in ``$x = x_1$ or $x = x_2$ or $\ldots$ or $x = x_{16}$,'' and we prove the conclusion from each disjunct. It earns its own name because in practice it's distinctive: the disjuncts are forced by the finiteness of the domain rather than by some clever case split you chose, and the argument often reduces to a table.
+
+A few cautions:
+\begin{itemize}
+  \item Exhaustion only works on \emph{finite} domains (or at most finitely many distinguishable cases, when the domain is infinite but the cases cover it). If the claim is universal over $\mathbb{Z}$, exhaustion is not available to you.
+  \item You have to genuinely cover \emph{every} case. If you list 15 of the 16 binary operators and say ``similar argument for the last one,'' you haven't completed the proof.
+  \item The conclusion only applies to the cases you listed. My ``corrected claim'' above is specifically about $\{4, 6, 8, 10\}$, not about all even integers. (The unrestricted claim ``every even integer $\geq 4$ is a sum of two primes'' is the famous \emph{Goldbach conjecture}, which is still open as of 2026. Exhaustion on a finite sub-case is not the same as a proof for infinitely many cases, which is a whole other tool---induction---that we'll come back to in Modules 8--10.)
+\end{itemize}
+
+\section{Common mistakes}
+
+\begin{enumerate}
+  \item \textbf{``Suppose $n = 2k$'' is not a proof that $n$ is even.} This is the error in Exercise~\ref{ex:m5:7} (and it's a real thing students write). A direct proof that $n$ is even, starting from some hypothesis about $n$, has to \emph{derive} an integer $k$ with $n = 2k$ from the hypothesis, not \emph{assume} it. ``Suppose $n = 2k$'' is an assumption, not a conclusion.
+  \item \textbf{Picking a specific example when proving universally.} If the claim is ``for all integers $n$, $n^2 \geq n$,'' you cannot ``prove'' it by saying ``take $n = 5$: $25 \geq 5$. \checkmark'' That verifies \emph{one case}, not all cases. For $\forall$ you need an arbitrary element.
+  \item \textbf{Confusing ``there exists'' with ``there exists a \emph{unique}.''} The $\exists$ quantifier says ``at least one,'' not ``exactly one.'' If the claim asks for uniqueness, you owe a uniqueness argument in addition to the existence argument.
+  \item \textbf{Inverting ``necessary'' and ``sufficient'' on group axioms.} To be a group, the axioms are all \emph{necessary}---you need every one. If you verify three of the four axioms and not the fourth, you haven't proved ``it's a group''; the best you've done is rule out three ways it could fail.
+  \item \textbf{Not actually using the inverse axiom after invoking it.} A very common error in group-theory proofs: students write ``let $g^{-1}$ be the inverse of $g$'' and then never actually use the fact that $g \cdot g^{-1} = e$. If the proof works without that fact, you haven't used the group structure---you've proved something else.
+  \item \textbf{Forgetting one direction of ``if and only if.''} A biconditional claim needs two separate arguments: $(\Rightarrow)$ and $(\Leftarrow)$. Students often prove one direction and stop. If the claim is $P \leftrightarrow Q$, you are not done until you have proofs of both $P \to Q$ and $Q \to P$.
+\end{enumerate}
+
+\section{Summary and looking ahead}
+
+\begin{keytakeaway}
+  \item \emph{Direct proof} is the default: assume the hypothesis, unpack the definitions, do the algebra, repack the conclusion. Most proofs follow this shape.
+  \item A \emph{counterexample} is the universal disprover: one concrete instance is enough to kill a universal claim.
+  \item A \emph{constructive existence proof} exhibits a specific witness and verifies the predicate on it. Constructive proofs correspond to programs that compute the witness.
+  \item \emph{Proof by exhaustion} handles finite case splits mechanically: list every case, check each one, conclude. It's a special case of $\vee$-elimination.
+  \item A \emph{group} is a set with an associative operation, an identity, and inverses for every element. The axioms pin down a lot of structure---identity is unique, inverses are unique, $(g^{-1})^{-1} = g$.
+\end{keytakeaway}
+
+\begin{summarybox}
+\textbf{What we built this module.} This was the first module where we really \emph{wrote proofs}. The unpack-algebra-repack pattern is the single most important habit to build this term; it's worth more than any specific theorem in this chapter. Groups gave us a second context---beyond number theory---where the same habit pays off, and the group axioms will recur throughout the course ($\mathbb{Z}/n\mathbb{Z}$ under addition, the nonzero residues mod a prime under multiplication, etc.).
+
+\medskip
+\textbf{Looking ahead.} Module 6 introduces modular arithmetic and proof by cases, both of which lean on the habits we just built. You'll use direct proof plus case analysis on $n \bmod d$ to prove facts like ``every even integer in \{4,\ldots,12\} is a sum of two primes.'' After Module 6, the equivalence-relation intermezzo cashes in on the group theory here by showing how modular congruence partitions $\mathbb{Z}$ into cosets.
+\end{summarybox}
+
+\section{Exercises}
+
+Organized into \textbf{warm-up} (mechanical practice on direct proof and counterexample), \textbf{standard} (group verification and typical assignment-style problems), \textbf{challenge} (reasoning about general groups and proof by exhaustion), and \textbf{connection} (programming and forward pointers). Solutions are in the appendix.
+
+\subsection*{Warm-up}
+
+\textbf{Exercise 1.}\label{ex:m5:1} Prove: the product of two rational numbers is rational. (Use the same unpack-algebra-repack pattern from the proofs in this module.)
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:m5:2} Disprove: for every integer $n$, $n^2 > n$. (Find a counterexample and verify it.)
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m5:3} Prove directly: the sum of any three consecutive integers is divisible by $3$. (Hint: if the first of the three is $n$, what are the other two?)
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m5:4} Prove directly: for all integers $a$, $b$, $c$ with $a \neq 0$, if $a \mid b$ and $a \mid c$, then $a \mid (b + c)$.
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:m5:5} Disprove the claim: ``every prime number is odd.'' (This should take one line.)
+
+\subsection*{Standard}
+
+\textbf{Exercise 6.}\label{ex:m5:6} Is $(\mathbb{Z}, -, 0)$ a group (the integers with subtraction as the binary operation and $0$ as the proposed identity)? Either verify all four axioms or find one that fails.
+
+\bigskip
+\textbf{Exercise 7.}\label{ex:m5:7} Find the error in the following ``proof'' that every integer is even:
+
+``Let $n$ be an integer. Suppose $n = 2k$ for some integer $k$. Then $n = 2k$, which is even by definition. Therefore $n$ is even.''
+
+What proof-technique error does this commit?
+
+\bigskip
+\textbf{Exercise 8.}\label{ex:m5:8} Show that $(\mathbb{Q} \setminus \{0\},\, \cdot,\, 1)$---the nonzero rationals under multiplication, with identity $1$---is a group. Verify all four axioms, and be sure to exhibit the inverse of an arbitrary nonzero rational.
+
+\bigskip
+\textbf{Exercise 9.}\label{ex:m5:9} Show that $(\mathbb{N},\, +,\, 0)$---the natural numbers under addition---is \emph{not} a group. Which axiom fails, and why?
+
+\subsection*{Challenge}
+
+\textbf{Exercise 10.}\label{ex:m5:10} Prove that in any group $(G, *, e)$, inverses are unique: if $h$ and $h'$ both satisfy $g * h = e$ and $h * g = e$, and also $g * h' = e$ and $h' * g = e$, then $h = h'$. (Hint: compute $h * g * h'$ in two different ways, analogous to the uniqueness-of-identity proof in this module.)
+
+\bigskip
+\textbf{Exercise 11.}\label{ex:m5:11} Prove by exhaustion: every unary boolean function (there are 4 of them---see Module~2) is expressible as a formula using only the variable $p$ and the connectives $\{\lnot, \vee\}$ (i.e.\ without using $\wedge$, $\to$, or the constants $T$, $F$). You do not need to show that these are the only such formulas, just that at least one such formula exists for each of the four unary functions.
+
+\bigskip
+\textbf{Exercise 12.}\label{ex:m5:12} Prove: in any group $(G, *, e)$, $(g^{-1})^{-1} = g$ for every $g \in G$. (That is, the inverse of the inverse is the original element.) Make sure to explicitly invoke the inverse axiom at the right moment.
+
+\subsection*{Connection}
+
+\textbf{Exercise 13.}\label{ex:m5:13} (Programming.) For small $n$, the set $\mathbb{Z}/n\mathbb{Z} = \{0, 1, \ldots, n-1\}$ with addition modulo $n$ and identity $0$ is a group. Write a Python function \texttt{is\_group(carrier, op, identity)} that takes a finite list \texttt{carrier}, a binary operation \texttt{op} (as a callable), and an \texttt{identity} element, and checks---by exhaustive brute force---whether the three data form a group. The function should check associativity, the identity axioms, and the existence of inverses. Test it on $\mathbb{Z}/5\mathbb{Z}$ under addition (should return \texttt{True}) and on $\mathbb{Z}/5\mathbb{Z}$ under multiplication with identity $1$ (should return \texttt{False}---why?). This is proof by exhaustion, but automated.
+
+\bigskip
+\textbf{Exercise 14.}\label{ex:m5:14} (Intermezzo pointer.) The intermezzo ``What Does It Mean for Things to Be `The Same'?'' (placed after Module~6) introduces equivalence relations---the abstract machinery for saying when two mathematical objects should be treated as the same. As a preview: given a group $(G, *, e)$ and a subgroup $H \subseteq G$ (closed under $*$, containing $e$, closed under inverses), define the relation $a \sim b$ iff $a^{-1} * b \in H$. Argue informally that this relation is reflexive, symmetric, and transitive---i.e., it's an equivalence relation on $G$. You do not need a fully rigorous proof; just check each property by invoking the group axioms.
 
 \end{document}

@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Module 1: Welcome, Sets, and Functions}
 \author{}
@@ -202,17 +182,43 @@ The general pattern is $\{x \mid x \in S, P(x)\}$, which reads ``the set of all 
 
 But how do you get things like ``the set of all natural numbers'' in the first place? That brings us to the third way to define sets, which is \emph{inductively}. We'll introduce this informally by example until the second half of the course, where we make it all more rigorous.
 
-With set-builder notation in hand, we can introduce some basic operations on sets.
+With set-builder notation in hand, we can introduce some basic operations on sets. A standard way to \emph{visualize} these operations is with a \emph{Venn diagram}\index{Venn diagram}: each set is drawn as a circle, and you shade the region corresponding to the set you're describing. Venn diagrams aren't rigorous proofs---they're intuition pumps---but they're enormously useful for figuring out what a set expression \emph{means} before you sit down to verify it.
 
 \begin{definition}[Intersection]
 The \emph{intersection}\index{intersection@$\cap$ (intersection)} of two sets $A$ and $B$ is the set of elements they have in common:
 $A \cap B := \{ x \mid x \in A \text{ and } x \in B\}$.
 \end{definition}
 
+\begin{center}
+\begin{tikzpicture}
+  \begin{scope}
+    \clip (-0.9, 0) circle (1.3);
+    \fill[blue!25] (0.9, 0) circle (1.3);
+  \end{scope}
+  \draw[thick] (-0.9, 0) circle (1.3);
+  \draw[thick] (0.9, 0) circle (1.3);
+  \node at (-1.6, 1.1) {$A$};
+  \node at (1.6, 1.1) {$B$};
+  \node at (0, -1.8) {$A \cap B$};
+\end{tikzpicture}
+\end{center}
+
 \begin{definition}[Union]
 The \emph{union}\index{union@$\cup$ (union)} of two sets $A$ and $B$ is the set of elements in either $A$ or $B$:
 $A \cup B :=  \{ x \mid x \in A \text{ or } x \in B\}$.
 \end{definition}
+
+\begin{center}
+\begin{tikzpicture}
+  \fill[blue!25] (-0.9, 0) circle (1.3);
+  \fill[blue!25] (0.9, 0) circle (1.3);
+  \draw[thick] (-0.9, 0) circle (1.3);
+  \draw[thick] (0.9, 0) circle (1.3);
+  \node at (-1.6, 1.1) {$A$};
+  \node at (1.6, 1.1) {$B$};
+  \node at (0, -1.8) {$A \cup B$};
+\end{tikzpicture}
+\end{center}
 
 \begin{definition}[Subset]
 Given sets $A$ and $B$, we say $A$ is a \emph{subset}\index{subset} of $B$, written $A \subseteq B$, when every element of $A$ is also an element of $B$.
@@ -223,9 +229,36 @@ The \emph{difference}\index{set!difference} of sets $A$ and $B$, written $A \set
 $A \setminus B := \{x \mid x \in A \text{ and } x \notin B\}$.
 \end{definition}
 
+\begin{center}
+\begin{tikzpicture}
+  \begin{scope}
+    \clip (-0.9, 0) circle (1.3);
+    \fill[blue!25] (-3, -2) rectangle (3, 2);
+    \fill[white] (0.9, 0) circle (1.3);
+  \end{scope}
+  \draw[thick] (-0.9, 0) circle (1.3);
+  \draw[thick] (0.9, 0) circle (1.3);
+  \node at (-1.6, 1.1) {$A$};
+  \node at (1.6, 1.1) {$B$};
+  \node at (0, -1.8) {$A \setminus B$};
+\end{tikzpicture}
+\end{center}
+
 \begin{definition}[Complement]
 Given a universal set $U$ that contains all elements under discussion, the \emph{complement}\index{set!complement} of $A$, written $\overline{A}$, is $U \setminus A = \{x \mid x \in U \text{ and } x \notin A\}$.
 \end{definition}
+
+\begin{center}
+\begin{tikzpicture}
+  \fill[blue!25] (-2.5, -1.6) rectangle (2.5, 1.6);
+  \fill[white] (0, 0) circle (1.1);
+  \draw[thick] (-2.5, -1.6) rectangle (2.5, 1.6);
+  \draw[thick] (0, 0) circle (1.1);
+  \node at (-2.2, 1.3) {$U$};
+  \node at (0, 0) {$A$};
+  \node at (0, -2.0) {$\overline{A}$};
+\end{tikzpicture}
+\end{center}
 
 The complement only makes sense relative to some agreed-upon universe $U$. When we write $\overline{A}$ we're implicitly assuming everyone knows what $U$ is.
 
@@ -284,12 +317,6 @@ $A \times B = \{(a,b) \mid a \in A, b \in B\}$.
 
 With all of that, we can move on to the last topic of this first module: functions and relations.
 
-\bigskip
-\textbf{Exercise 1.}\label{ex:m1:1} Let $A = \{1, 2, 3, 4\}$ and $B = \{3, 4, 5, 6\}$. Compute $A \cap B$, $A \cup B$, and $|A \times B|$.
-
-\bigskip
-\textbf{Exercise 2.}\label{ex:m1:2} What is $|\{1, \{1\}, \{1, \{1\}\}\}|$? Be careful---count distinct elements.
-
 \section{Functions and relations}
 
 As with the last section we'll diverge a little from Epp here.
@@ -333,9 +360,6 @@ A relation that is reflexive, symmetric, \emph{and} transitive is called an \emp
 Equality is the canonical equivalence relation---it's reflexive ($a = a$), symmetric ($a = b$ implies $b = a$), and transitive ($a = b$ and $b = c$ implies $a = c$). We'll see other equivalence relations later in the course, such as modular congruence.
 
 Which properties do our other examples satisfy? ``Less than'' on the integers is transitive ($a < b$ and $b < c$ implies $a < c$) but not reflexive ($3 \not< 3$) and not symmetric ($3 < 5$ but $5 \not< 3$). The subset relation $\subseteq$ is reflexive ($A \subseteq A$) and transitive but not symmetric ($\{1\} \subseteq \{1,2\}$ but $\{1,2\} \not\subseteq \{1\}$).
-
-\bigskip
-\textbf{Exercise 3.}\label{ex:m1:3} For each of the following relations on $\mathbb{Z}$, determine whether it is reflexive, symmetric, and/or transitive: (a) $a\, R\, b$ iff $a + b$ is even; (b) $a\, R\, b$ iff $a \leq b$; (c) $a\, R\, b$ iff $|a - b| \leq 1$.
 
 \section{How to write a proof}
 
@@ -393,6 +417,92 @@ We show that the relation $y^2 = x$ on $\mathbb{R}$ is not a function from $x$ t
 \end{quote}
 
 Notice what the good version does: it states the goal, invokes the definition, gives the specific example, and explicitly connects the example back to the definition to reach the conclusion. Every step is justified. That's all a proof needs to be.
+
+\section{Summary and looking ahead}
+
+\begin{keytakeaway}
+  \item A \emph{set} is an unordered, duplicate-free collection of elements; equality is \emph{extensional} (two sets are equal when they have the same elements).
+  \item Standard set operations: union $\cup$, intersection $\cap$, difference $\setminus$, complement $\overline{\cdot}$, Cartesian product $\times$, power set $\mathcal{P}$. The power set of an $n$-element set has $2^n$ elements.
+  \item A \emph{function} $f : A \to B$ is a total, single-valued assignment from $A$ to $B$. Dropping totality gives a \emph{partial function}.
+  \item A \emph{relation} between $A$ and $B$ is any subset of $A \times B$. Relations on a single set can be \emph{reflexive}, \emph{symmetric}, or \emph{transitive}; a relation with all three properties is an \emph{equivalence relation}.
+  \item A proof is a short essay, not a column of symbols. State the goal, introduce variables, justify every step, end with a clear conclusion. When in doubt, \emph{go back to the definition}.
+\end{keytakeaway}
+
+\begin{summarybox}
+\textbf{What we built this module.} We laid the vocabulary groundwork for the rest of the course. Sets and functions are the universe inside which we'll do everything else; the definitions of reflexive, symmetric, and transitive relations are the pattern we'll meet over and over (equivalence relations in Module 6, modular congruence, the $\leq$ ordering, the Curry--Howard correspondence in the intermezzo). The proof-writing advice at the end is a preview of the habit you'll practice all term: every step in a proof should be something you can explain in a sentence, grounded in a definition.
+
+\medskip
+\textbf{Looking ahead.} Module 2 starts the formal logic thread: we'll define propositional logic with a BNF grammar and give its truth-table semantics. That logic has just two values---true and false---so we can check everything exhaustively, which makes it a clean place to build habits before we add quantifiers (Module 4) and proofs-on-infinite-data (Module 8). Along the way, the intermezzo after this module (``Cardinality and Function Spaces'') uses the set and function vocabulary from here to show that some infinities are bigger than others---a real surprise that's worth the detour.
+\end{summarybox}
+
+\section{Exercises}
+
+The exercises below are organized into four tiers. The \textbf{warm-ups} are short, mechanical checks on the definitions---do them all. The \textbf{standard} problems are closer to what you'll see on an assignment or exam. The \textbf{challenge} problems ask you to stitch several ideas together and are the ones most worth discussing with a study partner. The \textbf{connection} problems point outward---to programming, to the intermezzo on cardinality, or to later modules. Solutions for all of these are in the appendix, but resist the temptation to look until you've tried.
+
+\subsection*{Warm-up}
+
+\textbf{Exercise 1.}\label{ex:m1:1} Let $A = \{1, 2, 3, 4\}$ and $B = \{3, 4, 5, 6\}$. Compute $A \cap B$, $A \cup B$, $A \setminus B$, and $|A \times B|$.
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:m1:2} What is $|\{1, \{1\}, \{1, \{1\}\}\}|$? Be careful---count distinct elements.
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m1:3} Rewrite the set $\{n \mid n \in \mathbb{N},\; n^2 < 20\}$ by listing its elements explicitly (``roster notation''). Then do the same for $\{n \mid n \in \mathbb{Z},\; -3 \leq n < 3\}$.
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m1:4} Let $S = \{1, 2, \{1\}, \{1, 2\}\}$. For each of the following, say whether it is true, false, or a type error (``type error'' means the claim doesn't even make sense---e.g., asking whether a number is a subset of another number):
+\begin{enumerate}[label=(\alph*)]
+  \item $1 \in S$
+  \item $\{1\} \in S$
+  \item $\{1\} \subseteq S$
+  \item $\{1, 2\} \in S$
+  \item $\{1, 2\} \subseteq S$
+  \item $\{\{1\}\} \subseteq S$
+  \item $2 \subseteq S$
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:m1:5} List all eight elements of $\mathcal{P}(\{a, b, c\})$ and verify that there are $2^3$ of them. Then list all six elements of $\{a, b\} \times \{1, 2, 3\}$.
+
+\subsection*{Standard}
+
+\textbf{Exercise 6.}\label{ex:m1:6} For each of the following relations on $\mathbb{Z}$, determine whether it is reflexive, symmetric, and/or transitive: (a) $a\, R\, b$ iff $a + b$ is even; (b) $a\, R\, b$ iff $a \leq b$; (c) $a\, R\, b$ iff $|a - b| \leq 1$.
+
+\bigskip
+\textbf{Exercise 7.}\label{ex:m1:7} For each of the following ``assignments'' from $\mathbb{R}$ to $\mathbb{R}$, decide whether it is a function (in the total, single-valued sense of the definition in this module). If it isn't, say which requirement fails---totality or uniqueness---and give a witness. If it is, say so explicitly.
+\begin{enumerate}[label=(\alph*)]
+  \item $f(x) = 1/x$.
+  \item $f(x) = \sqrt{x}$ (taking only the non-negative square root).
+  \item The relation $\{(x, y) \mid y^3 = x\}$, viewed as an assignment $x \mapsto y$.
+  \item The relation $\{(x, y) \mid y^2 = x\}$, viewed as an assignment $x \mapsto y$.
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 8.}\label{ex:m1:8} Prove the distributive law $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ by showing both containments. That is, show $A \cap (B \cup C) \subseteq (A \cap B) \cup (A \cap C)$ and vice versa, each by picking an arbitrary element of the left-hand side and arguing that it must be in the right-hand side. Use the ``state goal, introduce variable, justify every step'' advice from the proof-writing section.
+
+\bigskip
+\textbf{Exercise 9.}\label{ex:m1:9} Prove or disprove: for all sets $A$ and $B$, if $A \subseteq B$ then $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. (Reminder: to prove an implication about sets, start by assuming the hypothesis and by picking an arbitrary element of the set whose containment you want to show.)
+
+\subsection*{Challenge}
+
+\textbf{Exercise 10.}\label{ex:m1:10} Let $A$ and $B$ be finite sets. Prove that
+\[
+  |A \cup B| = |A| + |B| - |A \cap B|.
+\]
+Give a plain-English argument (``every element of $A \cup B$ is counted \ldots''). This is your first taste of \emph{inclusion--exclusion}, which generalizes to arbitrary finite unions and is one of the foundational tools of combinatorics.
+
+\bigskip
+\textbf{Exercise 11.}\label{ex:m1:11} A \emph{relation on $A$} is a subset of $A \times A$, so relations on $A$ are themselves elements of the power set $\mathcal{P}(A \times A)$. If $|A| = n$, how many distinct relations are there on $A$? How many are reflexive? (Hint for the second part: a reflexive relation \emph{must} contain all $n$ diagonal pairs, and is free to include or exclude each of the remaining pairs.)
+
+\bigskip
+\textbf{Exercise 12.}\label{ex:m1:12} Here is a classic bad argument: ``Symmetry and transitivity together force reflexivity. After all, if $a\, R\, b$, then by symmetry $b\, R\, a$, and so by transitivity $a\, R\, a$.'' Find the flaw---this really is a common error---and then exhibit a concrete relation on $\{1, 2, 3\}$ that is symmetric and transitive but \emph{not} reflexive. What additional assumption would you need for the argument to go through?
+
+\subsection*{Connection}
+
+\textbf{Exercise 13.}\label{ex:m1:13} (Programming.) Write a Python function \texttt{cartesian(xs, ys)} that takes two lists and returns the Cartesian product as a list of tuples, \emph{without} using \texttt{itertools.product}. Test it on \texttt{cartesian([1,2],\ ['a','b','c'])} and verify it produces the same six tuples you listed by hand in Exercise~\ref{ex:m1:5}. Then answer: if \texttt{xs} has length $m$ and \texttt{ys} has length $n$, how many element comparisons does your implementation do?
+
+\bigskip
+\textbf{Exercise 14.}\label{ex:m1:14} (Intermezzo pointer.) The intermezzo after this module, ``Cardinality and Function Spaces,'' is about counting functions between finite sets. As a warm-up for it: how many functions are there from $\{a, b, c\}$ to $\{0, 1\}$? List them all as tables. Can you see why the answer is $2^3$ and not $3^2$? (Which set plays the role of ``exponent''?)
 
 \bigskip
 This has been a foundational week: sets, tuples, functions, relations, and some practical advice about proof-writing are the vocabulary we'll use for the rest of the course. In the next module we start doing \emph{logic}.

@@ -1,35 +1,9 @@
 \documentclass[11pt]{report}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
+\input{cs250preamble}
 \usepackage{standalone}
 \usepackage{makeidx}
 \makeindex
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
-
-\hypersetup{
-  colorlinks=true,
-  linkcolor=blue!60!black,
-  urlcolor=blue!60!black
-}
 
 \title{CS 250: Introduction to Logic and\\Mathematical Reasoning\\[10pt]\large Course Notes}
 \author{}
@@ -47,6 +21,10 @@
 % Suppress \maketitle in included module files
 \def\maketitle{}
 
+\chapter*{Preface and Reading Guide}
+\addcontentsline{toc}{chapter}{Preface and Reading Guide}
+\input{frontmatter}
+
 \chapter{Welcome, Sets, and Functions}
 \input{module01}
 
@@ -63,6 +41,10 @@
 \chapter*{Intermezzo: Inference Rules as Trees}
 \addcontentsline{toc}{chapter}{Intermezzo: Inference Rules as Trees}
 \input{gentzen}
+
+\chapter*{Cumulative Review 1}
+\addcontentsline{toc}{chapter}{Cumulative Review 1 (after Module 3)}
+\input{review1}
 
 \chapter{First-Order Predicate Logic}
 \input{module04}
@@ -84,6 +66,10 @@
 \chapter*{Intermezzo: What Does It Mean for Things to Be ``The Same''?}
 \addcontentsline{toc}{chapter}{Intermezzo: What Does It Mean for Things to Be ``The Same''?}
 \input{equivalence}
+
+\chapter*{Cumulative Review 2}
+\addcontentsline{toc}{chapter}{Cumulative Review 2 (after Module 6)}
+\input{review2}
 
 \chapter{Indirect Proof, the Euclidean Algorithm, and Hoare Logic}
 \input{module07}
@@ -113,9 +99,19 @@
 \addcontentsline{toc}{chapter}{Intermezzo: The Lambda Calculus}
 \input{lambda}
 
+\chapter*{Cumulative Review 3}
+\addcontentsline{toc}{chapter}{Cumulative Review 3 (after Module 10)}
+\input{review3}
+
 \appendix
 \chapter{Notation Summary}
 \input{notation}
+
+\chapter{Glossary}
+\input{glossary}
+
+\chapter{Further Reading}
+\input{bibliography}
 
 \chapter{Solutions to Exercises}
 \input{solutions}

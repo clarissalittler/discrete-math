@@ -1,0 +1,97 @@
+\documentclass[11pt]{article}
+\input{cs250preamble}
+
+\title{CS 250 --- Cumulative Review 2 (after Module 6)}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{The point of this review}
+
+We're now halfway through the first term, and the toolkit has grown considerably. In Module~4 we added \emph{predicate logic} and a first taste of induction on $\mathbb{N}$; in Module~5 we learned to write \emph{informal proofs} (direct, counterexample, existence, and the group axioms); in Module~6 we introduced \emph{modular arithmetic} and \emph{proof by cases} on residue classes. Adding those to the set-and-propositional-logic foundation from Modules 1--3 gives us enough machinery to prove real, non-trivial theorems---the kind that appear in number theory textbooks.
+
+In this review chapter we pick one classical result, prove it carefully, and then trace through the proof to highlight how every module's tools contribute. The result is:
+
+\begin{theorem}
+For every integer $n$, the quantity $n^3 - n$ is divisible by $6$.
+\end{theorem}
+
+This is the right level of difficulty for a mid-term review: it is clearly non-trivial (you have to combine at least two separate arguments to get the factor of $6$), but it is also clean enough that the proof fits on one page. Let's go.
+
+\section*{The proof}
+
+We first rewrite the quantity in a more suggestive form:
+\[
+  n^3 - n = n(n^2 - 1) = n(n-1)(n+1) = (n-1) \cdot n \cdot (n+1).
+\]
+So $n^3 - n$ is the product of three consecutive integers.
+
+To show $6 \mid n^3 - n$, it suffices (by a consequence of the Chinese Remainder Theorem, since $\gcd(2, 3) = 1$) to show that both $2$ and $3$ divide $n^3 - n$. We'll handle each divisibility separately.
+
+\subsection*{Step 1: $2 \mid n^3 - n$}
+
+Among any two consecutive integers, one is even. So among $n-1$, $n$, $n+1$, at least one is even---in fact, \emph{at least} one (and possibly two) are even. Therefore the product $(n-1) \cdot n \cdot (n+1)$ is even, i.e., $2 \mid n^3 - n$.
+
+If you want a more formal version of this: proceed by cases on the parity of $n$ (the two-residue-class partition of $\mathbb{Z}$ we get from the quotient-remainder theorem mod $2$):
+
+\emph{Case 1: $n$ is even.} Then $n = 2k$ for some integer $k$, and $(n-1) \cdot n \cdot (n+1) = 2k \cdot (n-1)(n+1) = 2 \cdot [k(n-1)(n+1)]$. The bracketed quantity is an integer, so $2$ divides the product.
+
+\emph{Case 2: $n$ is odd.} Then $n - 1$ is even, so $n - 1 = 2j$ for some integer $j$, and the product becomes $2j \cdot n \cdot (n+1) = 2 \cdot [j \cdot n \cdot (n+1)]$, which is even.
+
+Either way, the product is even.
+
+\subsection*{Step 2: $3 \mid n^3 - n$}
+
+This is the more interesting half. We use \emph{proof by cases on $n \bmod 3$}: by the quotient-remainder theorem, every integer $n$ satisfies exactly one of $n \equiv 0, 1, 2 \pmod 3$.
+
+\emph{Case 1: $n \equiv 0 \pmod 3$.} Then $3 \mid n$, so $3 \mid n(n-1)(n+1)$.
+
+\emph{Case 2: $n \equiv 1 \pmod 3$.} Then $n - 1 \equiv 0 \pmod 3$, so $3 \mid (n-1)$, so $3 \mid n(n-1)(n+1)$.
+
+\emph{Case 3: $n \equiv 2 \pmod 3$.} Then $n + 1 \equiv 0 \pmod 3$, so $3 \mid (n+1)$, so $3 \mid n(n-1)(n+1)$.
+
+In every case, $3$ divides the product.
+
+\subsection*{Combining: $6 \mid n^3 - n$}
+
+We've shown that $2 \mid n^3 - n$ and $3 \mid n^3 - n$. Since $\gcd(2, 3) = 1$, the two divisibilities combine: if integers $a$ and $b$ are coprime and both divide $m$, then $ab$ divides $m$.
+
+This is the mini-CRT fact we noted in Module~6. Here's a short direct argument: by B\'ezout's identity (coming in Module~7, but elementary enough to give here), since $\gcd(2, 3) = 1$ there exist integers $x, y$ with $2x + 3y = 1$. Multiplying by $m$, we get $m = 2xm + 3ym$. If $2 \mid m$ (so $m = 2m'$) and $3 \mid m$ (so $m = 3m''$), then $m = 2xm + 3ym = 2x(3m'') + 3y(2m') = 6(xm'' + ym')$, which is divisible by $6$.
+
+So $6 \mid n^3 - n$ for every integer $n$. \hfill$\square$
+
+\section*{Tracing the toolkit}
+
+Now let's go back and count which modules contributed what to that proof.
+
+\begin{itemize}
+  \item \textbf{Module 1} (sets, functions, proof-writing) gave us the disciplined prose style: state the goal, introduce variables, justify each step, conclude clearly. Every ``Let $n = 2k$ for some integer $k$'' and every ``By definition of divisibility\ldots'' is a habit from Module~1.
+  \item \textbf{Module 2} (propositional logic) sat quietly in the background. Every case analysis we did was justified by a tautology of propositional logic---specifically, the disjunction $(n \equiv 0 \pmod 3) \vee (n \equiv 1 \pmod 3) \vee (n \equiv 2 \pmod 3)$, combined with $\vee$-elimination.
+  \item \textbf{Module 3} (proof systems) is what makes our casual use of $\vee$-elimination rigorous. The ``proof by cases'' we did in Step~2 is formally an application of the $\vee$-elimination rule from Module~3; each case branch is a subproof. The Gentzen intermezzo sketches how to draw the full derivation as a tree.
+  \item \textbf{Module 4} (predicate logic and induction) gave us the quantifier vocabulary. ``Every integer $n$'' is $\forall n : \mathbb{Z}$; ``some integer $k$ with $n = 2k$'' is $\exists k : \mathbb{Z}$. When we write ``let $n$ be an arbitrary integer,'' we are invoking $\forall$-introduction. When we write ``$n = 2k$ for some integer $k$,'' we are using $\exists$-elimination to extract the witness from the hypothesis ``$n$ is even.''
+  \item \textbf{Module 5} (direct proof, groups) provided the overall proof style: unpack the definitions (``even means $n = 2k$''), do the algebra, repack the result (``hence $2 \mid n^3 - n$''). The uniqueness arguments in Module~5 trained the habit of asking ``is the thing I just chose arbitrary?''
+  \item \textbf{Module 6} (modular arithmetic and proof by cases) is the star of this proof. The case split on $n \bmod 3$ uses the quotient-remainder theorem to guarantee the three cases are exhaustive, and the final CRT-flavored combination step uses precisely the mini-CRT we highlighted in Module~6. The entire shape of Step~2 is Module-6 shape.
+\end{itemize}
+
+Every module contributed, and dropping any one of them would make the proof harder (or would force us to use a different approach). The moral is that the modules aren't independent silos: each one adds a layer of tooling that sits on top of the previous ones, and a real proof freely draws on all of them at once.
+
+\section*{A variant to chew on}
+
+Here's a closely related claim you can try yourself: \emph{for every integer $n$, the quantity $n^5 - n$ is divisible by $30$.} (Note: $30 = 2 \cdot 3 \cdot 5$.) You'll need cases on $n \bmod 5$ and a similar coprime-combination step. Try it. If you can do it, you've earned the first half of the term.
+
+A slightly harder variant: \emph{for every prime $p$ and every integer $n$, $p \mid n^p - n$.} This is Fermat's Little Theorem, and it generalizes both of the above. The standard proof uses induction (Module~8) plus the binomial theorem, so you'll want to revisit this once you've done Module~8.
+
+\section*{Where we're going}
+
+Modules 7--10 take the toolkit two more steps forward:
+\begin{itemize}
+  \item Module~7 adds \emph{indirect proof} (contradiction and contrapositive), the \emph{Euclidean algorithm} (which makes B\'ezout's identity computational), and a first taste of \emph{Hoare logic} for program correctness.
+  \item Modules 8 and 9 revisit \emph{induction} in a bigger way: summation identities, strong induction, recurrence solving.
+  \item Module~10 generalizes induction to arbitrary recursive data types (\emph{structural induction}), completing the arc that started with BNF definitions in Module~2.
+\end{itemize}
+
+After Module~10, the third cumulative review chapter ties everything together.
+
+\end{document}

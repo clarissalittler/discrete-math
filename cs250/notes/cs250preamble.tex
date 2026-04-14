@@ -1,0 +1,74 @@
+% cs250preamble.tex --- shared preamble for CS 250 course notes
+%
+% This file is \input by main.tex and by each individual module
+% file so that each module can still compile standalone. Any
+% package or custom-environment change should be made here, not
+% in the individual module files.
+
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, shapes.gates.logic.US, shapes.gates.logic.IEC, arrows.meta, positioning, calc, trees}
+\usepackage{bussproofs}
+\usepackage{mdframed}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  columns=fullflexible,
+  mathescape=true
+}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!60!black
+}
+
+% Key-takeaway box: used at the end of major sections and at the end of
+% each module to summarise the main points. Expects \item bullets inside.
+\newmdenv[
+  linewidth=0.8pt,
+  linecolor=blue!40!black,
+  backgroundcolor=blue!3,
+  skipabove=8pt,
+  skipbelow=8pt,
+  innertopmargin=7pt,
+  innerbottommargin=7pt,
+  innerleftmargin=9pt,
+  innerrightmargin=9pt
+]{keytakeawaybox}
+\newenvironment{keytakeaway}{%
+  \begin{keytakeawaybox}%
+  \noindent\textbf{Key takeaways.}%
+  \begin{itemize}[leftmargin=1.3em, topsep=2pt, itemsep=1pt, label=\textbullet]%
+}{%
+  \end{itemize}%
+  \end{keytakeawaybox}%
+}
+
+% Summary/looking-ahead environment: used once at the end of each module
+% to wrap up what the module built and point forward.
+\newmdenv[
+  linewidth=0.8pt,
+  linecolor=gray!60,
+  backgroundcolor=gray!5,
+  skipabove=8pt,
+  skipbelow=8pt,
+  innertopmargin=7pt,
+  innerbottommargin=7pt,
+  innerleftmargin=9pt,
+  innerrightmargin=9pt
+]{summarybox}

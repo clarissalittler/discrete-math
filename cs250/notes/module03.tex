@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Module 3: Proof Systems for Propositional Logic}
 \author{}
@@ -28,6 +8,12 @@
 
 \begin{document}
 \maketitle
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Reading map.} This module covers \textbf{Epp §2.3--2.4}: valid and invalid arguments, and digital logic circuits. \textbf{Prerequisites:} Modules 1 and 2 (sets, truth tables, tautologies, De Morgan's laws). \textbf{Relevant intermezzi:} ``Inference Rules as Trees'' (Gentzen) --- this module introduces rules of inference in a list format, and the Gentzen intermezzo shows the same rules in a more visual proof-tree form that generalizes to the later modules. \textbf{Practice from Epp:} §2.3 exercises on validity testing via critical rows; §2.3 exercises on identifying converse and inverse errors; §2.4 exercises on translating between circuits and boolean expressions, and on DNF/CNF conversion.
+\end{minipage}}
+\end{center}
 
 \section{Tautologies as reasoning}
 
@@ -231,9 +217,6 @@ shows q
 \end{lstlisting}
 These are unsurprising.
 
-\bigskip
-\textbf{Exercise 1.}\label{ex:m3:1} Validate that $p \wedge q \to q$ is a tautology by computing its truth table.
-
 \subsection{Rules for \texttt{v}}
 
 Since $\vee$ is the mirror of $\wedge$, it's not surprising that there are going to be two introduction rules and one elimination rule.
@@ -432,9 +415,6 @@ Here's a quick example of chaining. Suppose our premises are \texttt{p -> q}, \t
 
 Each line is justified by exactly one rule and refers back to earlier lines. That's the whole game. It's very much like a sequence of statements in a program where each variable depends on previously computed values.
 
-\bigskip
-\textbf{Exercise 2.}\label{ex:m3:2} Determine whether the following argument is valid or invalid. If invalid, find a counterexample row. Premises: $p \to q$, $r \to \lnot q$, $r$. Conclusion: $\lnot p$.
-
 \section{Examples of doing proofs}
 
 Now let's dig into some proofs and see how they actually work. For example, let's see if we can \emph{prove} some laws:
@@ -505,9 +485,50 @@ but the following is not because \texttt{\~{}(q \^{} r)} is not a conjunction of
 
 Here's where things get fun and we connect all this abstract boolean algebra stuff to the real physical world. It turns out that the logical operations we've been studying---AND, OR, NOT---have direct physical implementations called \emph{logic gates}\index{logic gate}. An AND gate is a little electronic component that takes two input signals and produces an output that's 1 (high voltage) only when both inputs are 1. An OR gate outputs 1 when at least one input is 1. A NOT gate (also called an \emph{inverter}) takes one input and flips it. There are also NAND gates, which are just an AND followed by a NOT, and it turns out these are particularly important because you can build literally every other gate out of just NAND gates.\footnote{This is called functional completeness and it's honestly one of the coolest facts in all of computer science. Your entire computer could, in principle, be built out of nothing but NAND gates.}
 
+Each of these gates has a standard symbol used in circuit diagrams:
+
+\begin{center}
+\begin{tikzpicture}[every node/.style={font=\small}]
+  \node[and gate US, draw, logic gate inputs=nn] (g1) at (0, 0) {};
+  \node[below=0.2cm of g1] {AND};
+
+  \node[or gate US, draw, logic gate inputs=nn] (g2) at (2.5, 0) {};
+  \node[below=0.2cm of g2] {OR};
+
+  \node[not gate US, draw] (g3) at (5, 0) {};
+  \node[below=0.2cm of g3] {NOT};
+
+  \node[nand gate US, draw, logic gate inputs=nn] (g4) at (7.5, 0) {};
+  \node[below=0.2cm of g4] {NAND};
+\end{tikzpicture}
+\end{center}
+
+The distinctive shapes---a shield for AND, a crescent for OR, a triangle with a bubble for NOT---go back to the 1940s and are universal in chip-design documentation. The little ``bubble'' on the output of NOT (and NAND, NOR, etc.) indicates negation.
+
 A \emph{circuit}\index{circuit} is just a composition of gates---you wire the output of one gate into the input of another. If you think about it this is exactly function composition! The output of gate $f$ becomes the input of gate $g$, so you're computing $g(f(x))$. It's functions all the way down.
 
-To \emph{evaluate} a circuit you trace signals from the inputs through each gate to the output, applying the truth table of each gate as you go. Let's do an example: suppose we have inputs P and Q, and the circuit works like this. Q branches into two paths: one path goes to an OR gate together with P, and the other path goes through a NOT gate. Then the output of the OR gate and the output of the NOT gate both feed into an AND gate, and that's our final output.
+To \emph{evaluate} a circuit you trace signals from the inputs through each gate to the output, applying the truth table of each gate as you go. Let's do an example: suppose we have inputs P and Q, and the circuit works like this. Q branches into two paths: one path goes to an OR gate together with P, and the other path goes through a NOT gate. Then the output of the OR gate and the output of the NOT gate both feed into an AND gate, and that's our final output. Here's the circuit drawn out:
+
+\begin{center}
+\begin{tikzpicture}[every node/.style={font=\small}, >={Stealth[length=2mm]}]
+  \node[or gate US, draw, logic gate inputs=nn] (or1) at (3, 0.7) {};
+  \node[not gate US, draw] (not1) at (3, -0.8) {};
+  \node[and gate US, draw, logic gate inputs=nn] (and1) at (5.5, 0) {};
+
+  \node at (0.3, 1.0) {$P$};
+  \node at (0.3, -0.6) {$Q$};
+
+  \draw[->] (0.5, 1.0) -- ($(or1.input 1)$);
+  \draw (0.5, -0.6) -- (1.7, -0.6);
+  \draw (1.7, -0.6) -- (1.7, 0.4);
+  \draw[->] (1.7, 0.4) -- ($(or1.input 2)$);
+  \draw[->] (0.5, -0.6) -- ($(not1.input)$);
+
+  \draw[->] (or1.output) -- ($(and1.input 1)$);
+  \draw[->] (not1.output) -- ($(and1.input 2)$);
+  \draw[->] (and1.output) -- +(0.7, 0) node[right] {Output};
+\end{tikzpicture}
+\end{center}
 
 With P=1 and Q=0: the OR gate computes OR(1,0) = 1, the NOT gate computes NOT(0) = 1, and the AND gate computes AND(1,1) = 1. So the circuit outputs 1 for that input.
 
@@ -541,16 +562,6 @@ For instance, if you have a truth table with inputs P, Q and the output is 1 onl
 This is why DNF matters---it gives you a completely mechanical way to turn \emph{any} truth table into a working circuit. And this is literally how hardware design works at the lowest level. Computer chips are just enormous networks of logic gates, millions and millions of them wired together. The boolean algebra we learned in Module 2 \emph{is} the mathematics of chip design. When hardware engineers want to make a circuit smaller or faster, they're essentially doing the same kind of simplification we did with De Morgan's laws and distributivity---reducing the number of gates needed to compute the same function.
 
 Notice how this connects back to functional completeness from the previous module. The DNF construction is actually a \emph{proof} that AND, OR, and NOT are functionally complete: given any truth table whatsoever, DNF hands you a circuit built entirely from those three gates. And since we showed in that module that NAND alone can simulate AND, OR, and NOT, it follows that NAND alone is functionally complete---which is exactly why real hardware can be (and often is) built entirely from NAND gates.
-
-\bigskip
-\textbf{Exercise 3.}\label{ex:m3:3} Given the truth table where the output is 1 only for inputs (P=1, Q=0, R=1) and (P=0, Q=1, R=1), write the DNF expression and describe the circuit.
-
-\bigskip
-\textbf{Exercise 4.}\label{ex:m3:4} Find the error in the following ``proof'' that $p \to q$ is logically equivalent to $q \to p$:
-
-``Consider any assignment. If $p$ and $q$ are both true, then both $p \to q$ and $q \to p$ are true. If both are false, then both implications are true (since $F \to F = T$). So they always have the same truth value, and are logically equivalent.''
-
-What case does this argument miss?
 
 \section{Addendum: differences in terminology and additional derivable proof rules for homework}
 
@@ -625,5 +636,103 @@ becomes
 
 1101
 \end{lstlisting}
+
+\section{Common mistakes}
+
+The module already highlighted the two famous fallacies---converse error and inverse error. Here are the other mistakes that show up in grading.
+\begin{enumerate}
+  \item \textbf{Confusing implication inside the logic with ``shows'' in a proof.} Writing $p \to q$ in a proof as a rule of inference is a \emph{metalogical} claim (you can turn a proof of $p$ into a proof of $q$). Writing $p \to q$ as a formula is an object-level assertion about truth values. These are connected by the introduction and elimination rules for $\to$, but they're not the same thing. If a problem asks for a proof ``assuming $p$, show $q$,'' you cannot write $p \to q$ as your first line---you have to actually produce the inner proof and then apply $\to$-introduction.
+  \item \textbf{Misusing $\vee$-elimination.} The disjunction-elimination rule says: from $p \vee q$, $p \to r$, \emph{and} $q \to r$, conclude $r$. Students often skip one of the two implications---they show $p \to r$, forget $q \to r$, and try to conclude $r$ anyway. That's not valid; you need \emph{both} cases to cover the disjunction.
+  \item \textbf{Mixing up CNF and DNF connectives.} CNF is ``\emph{and} of \emph{or}s'' and DNF is ``\emph{or} of \emph{and}s.'' A helpful mnemonic: \textbf{C}NF has \textbf{C}onjunction at the outside; \textbf{D}NF has \textbf{D}isjunction at the outside. Students write a DNF formula and call it CNF; you can avoid this by always naming the outer connective first.
+  \item \textbf{Forgetting to check every critical row.} A valid argument is one where the conclusion is true \emph{in every row where all the premises are true}. Students sometimes spot one row where it works and declare the argument valid without checking the others. One row is enough to \emph{disprove} validity, but not to \emph{prove} it.
+  \item \textbf{``Proof by assumption'' is not ``assume anything.''} The rule lets you use something you have \emph{already assumed} (or already derived) as a line of the proof. It does not let you invent new assumptions mid-proof. If you want to introduce a new assumption, you must be starting a subproof (for $\to$-introduction, $\vee$-elimination, or negation introduction).
+\end{enumerate}
+
+\section{Summary and looking ahead}
+
+\begin{keytakeaway}
+  \item Every binary connective has \emph{introduction} and \emph{elimination} rules. Introduction rules tell you how to build a formula; elimination rules tell you how to use one. The pattern scales to every logic we'll see.
+  \item \emph{Modus ponens} (implication elimination) and \emph{modus tollens} are the two workhorse rules for reasoning with implications. Modus tollens is modus ponens run backwards through the contrapositive.
+  \item \emph{Excluded middle} ($p \vee \lnot p$) is an \emph{axiom}, not a consequence of the other rules. Adding it to constructive logic yields classical logic. Proof by contradiction depends on it; proof by contrapositive also depends on it in subtle ways.
+  \item \emph{Converse error} and \emph{inverse error} are the two classic fallacies about implications. Students make them constantly. If you're about to conclude $p$ from $p \to q$ and $q$, stop---that's the converse error.
+  \item \emph{Disjunctive} and \emph{conjunctive} normal forms give a mechanical bridge between truth tables and circuits: DNF is ``or of ands,'' CNF is ``and of ors.'' Both are functionally complete.
+\end{keytakeaway}
+
+\begin{summarybox}
+\textbf{What we built this module.} We now have two ways to establish a propositional-logic fact: by truth table (Module 2) and by derivation in a formal proof system (this module). The two approaches are \emph{equivalent}---a formula is a tautology iff it has a derivation---but they feel very different in practice. Truth tables are mechanical but explode exponentially; derivations are smaller but require insight. The digital-logic section tied both back to the physical world: every circuit is a formula, every formula can be built from NAND gates, and real hardware is a forest of these structures.
+
+\medskip
+\textbf{Looking ahead.} Module 4 takes the logic-building pattern and applies it to a strictly more expressive logic: first-order predicate logic, which adds $\forall$ and $\exists$ on top of everything we have. The proof rules for the quantifiers have the same introduction/elimination shape as the propositional ones. Before you get there, read the Gentzen intermezzo to see the same rules in tree form, and/or the ``Cardinality and Function Spaces'' intermezzo if you haven't yet---both foreshadow Module 4's style of reasoning.
+\end{summarybox}
+
+\section{Exercises}
+
+Organized into \textbf{warm-up} (mechanical application of rules and tautology checks), \textbf{standard} (typical assignment-style validity and proof problems), \textbf{challenge} (synthesis across rules and fallacies), and \textbf{connection} (programming and intermezzo pointers). Solutions are in the appendix.
+
+\subsection*{Warm-up}
+
+\textbf{Exercise 1.}\label{ex:m3:1} Validate that $p \wedge q \to q$ is a tautology by computing its truth table.
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:m3:2} For each pair of formulas, decide whether they are logically equivalent by computing truth tables. If they are equivalent, say so; if not, give a specific row where they disagree.
+\begin{enumerate}[label=(\alph*)]
+  \item $p \to q$ and $\lnot p \vee q$
+  \item $p \to q$ and $q \to p$
+  \item $p \wedge (p \to q)$ and $p \wedge q$
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m3:3} For each of the following, state whether the conclusion follows by \textbf{modus ponens}, by \textbf{modus tollens}, or by \textbf{neither}. If ``neither,'' say what's wrong.
+\begin{enumerate}[label=(\alph*)]
+  \item Premises: $p \to q$, $p$. Conclusion: $q$.
+  \item Premises: $p \to q$, $\lnot q$. Conclusion: $\lnot p$.
+  \item Premises: $p \to q$, $q$. Conclusion: $p$.
+  \item Premises: $p \to q$, $\lnot p$. Conclusion: $\lnot q$.
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m3:4} Convert the formula $\lnot(p \wedge q) \vee r$ into CNF. (Hint: start by using De Morgan's laws to push the negation inward.)
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:m3:5} Convert the same formula $\lnot(p \wedge q) \vee r$ into DNF. Your two answers to Exercises 4 and 5 should be different formulas (but should represent the same boolean function, so they should have the same truth table).
+
+\subsection*{Standard}
+
+\textbf{Exercise 6.}\label{ex:m3:6} Determine whether the following argument is valid or invalid. If invalid, find a counterexample row. Premises: $p \to q$, $r \to \lnot q$, $r$. Conclusion: $\lnot p$.
+
+\bigskip
+\textbf{Exercise 7.}\label{ex:m3:7} Given the truth table where the output is 1 only for inputs (P=1, Q=0, R=1) and (P=0, Q=1, R=1), write the DNF expression and describe the circuit.
+
+\bigskip
+\textbf{Exercise 8.}\label{ex:m3:8} Give a step-by-step formal proof (numbered lines, each with a justification from one of the rules) that from the premises $p \to q$ and $p \to r$ you can conclude $p \to (q \wedge r)$. You will need to use $\to$-introduction (so your proof has a subproof) and $\wedge$-introduction. Compare your answer to Exercise~7 of Module 2, which is the corresponding truth-table fact.
+
+\bigskip
+\textbf{Exercise 9.}\label{ex:m3:9} From the premises $\{p \vee q,\; \lnot p,\; q \to r\}$, give a step-by-step formal proof of $r$. (Hint: use disjunctive syllogism to get $q$ first, then modus ponens.)
+
+\subsection*{Challenge}
+
+\textbf{Exercise 10.}\label{ex:m3:10} Find the error in the following ``proof'' that $p \to q$ is logically equivalent to $q \to p$:
+
+``Consider any assignment. If $p$ and $q$ are both true, then both $p \to q$ and $q \to p$ are true. If both are false, then both implications are true (since $F \to F = T$). So they always have the same truth value, and are logically equivalent.''
+
+What case does this argument miss, and what is a specific counterexample?
+
+\bigskip
+\textbf{Exercise 11.}\label{ex:m3:11} Show that excluded middle and double-negation elimination are equivalent as proof rules. That is, assuming you already have the other introduction and elimination rules for $\wedge$, $\vee$, $\to$, $\lnot$, $T$, $F$:
+\begin{enumerate}[label=(\alph*)]
+  \item Show that from $p \vee \lnot p$ you can derive $\lnot\lnot p \to p$. (Hint: start a subproof assuming $\lnot\lnot p$, then use $\vee$-elimination on $p \vee \lnot p$.)
+  \item Show that from $\lnot\lnot p \to p$ you can derive $p \vee \lnot p$. (This is the harder direction. Hint: it suffices to derive $\lnot\lnot(p \vee \lnot p)$, which \emph{is} constructively provable. Start by assuming $\lnot(p \vee \lnot p)$ and deriving a contradiction.)
+\end{enumerate}
+Conclusion: adding either rule to constructive logic gives you the same classical logic.
+
+\bigskip
+\textbf{Exercise 12.}\label{ex:m3:12} A formula in $n$ variables has a truth table with $2^n$ rows. Using the DNF recipe from this module, show that every boolean function on $n$ variables has a DNF formula with at most $2^n$ disjuncts. When does it have exactly $2^n$? When does it have zero?
+
+\subsection*{Connection}
+
+\textbf{Exercise 13.}\label{ex:m3:13} (Programming.) Write a Python function \texttt{dnf(f, n)} that takes a boolean function \texttt{f} of $n$ arguments and returns a string representing a DNF formula that implements \texttt{f}. For example, \texttt{dnf(lambda x, y: x != y, 2)} should return something like \texttt{"(x and not y) or (not x and y)"} (XOR in DNF form). Use \texttt{itertools.product} to enumerate all input rows, as in the previous module. Apply your function to the three-input ``exactly-one'' function from Module~2 Exercise~9 and verify you get a three-term DNF.
+
+\bigskip
+\textbf{Exercise 14.}\label{ex:m3:14} (Intermezzo pointer.) The intermezzo ``Inference Rules as Trees'' (Gentzen) presents the rules of this module as proof \emph{trees} rather than numbered lines. As a preview: take your numbered proof from Exercise~8 and draw it as a tree, where each node is a derived formula and its children are the hypotheses that justified it by some rule. (You can use ASCII art or sketch it on paper.) What does the subproof structure of Exercise~8 correspond to in tree form?
 
 \end{document}

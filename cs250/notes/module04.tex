@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Module 4: First-Order Predicate Logic}
 \author{}
@@ -28,6 +8,12 @@
 
 \begin{document}
 \maketitle
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Reading map.} This module covers \textbf{Epp §3.1--3.4} (predicates, quantified statements, and arguments with quantified statements) and \textbf{§5.2} (the principle of mathematical induction; we return to this in Module 8). \textbf{Prerequisites:} Modules 1--3 (sets and functions, propositional logic, proof systems). \textbf{Relevant intermezzi:} ``More on Natural Induction'' (immediately after this module, walks through commutativity and associativity of $+$ inductively) and ``Quantifiers as Games'' (gives a game-semantic intuition for nested $\forall/\exists$). \textbf{Practice from Epp:} §3.1 exercises on translating English into symbolic statements; §3.2 exercises on negating quantified statements; §3.3--3.4 exercises on validity in predicate logic; §5.2 exercises on simple induction.
+\end{minipage}}
+\end{center}
 
 \section{A logic with real types}
 Now we need to start dealing with a logic that has actual types beyond just booleans: first-order predicate logic\index{first-order logic}! This is going to look \emph{a lot} like propositional logic---it still has our old friends: \texttt{->}, \texttt{\^{}}, \texttt{v}, \texttt{\~{}}, T, and F---but now it's also going to have $\forall$ and $\exists$ as well as a notion of predicates.
@@ -74,9 +60,6 @@ If you're a programmer, you already know the distinction: bound variables are li
 Consider a formula with both kinds: $\forall x.\; P(x, y)$. Here $x$ is bound (it's under the scope of $\forall x$) and $y$ is free. This formula is \emph{not} a complete statement---its truth depends on what $y$ is. Think of it as a function with one argument still unresolved: the $\forall$ ``closed over'' $x$ but $y$ is still dangling. Only once you fix a value for $y$ (or bind it with another quantifier) do you get something with a definite truth value.
 
 Why does this matter? When we get to the proof rules later in this module, the $\forall$-elimination rule \emph{substitutes} a concrete term for the bound variable, and the $\forall$-introduction rule requires that the variable you're generalizing over is truly arbitrary---meaning it isn't free anywhere it shouldn't be. Keeping track of which variables are free and which are bound is what makes these rules safe.
-
-\bigskip
-\textbf{Exercise 1.} \label{ex:m4:1} In the formula $\exists x.\; \forall y.\; P(x, y, z)$, identify which variables are free and which are bound. Explain how you determined the status of each variable.
 
 \section{Truth sets}
 This is a quick concept, but it comes up often enough to deserve a name.
@@ -132,9 +115,6 @@ One more pattern that shows up all the time: negating an implication \emph{insid
 \]
 which reads as ``there's some $x$ where $P(x)$ holds but $Q(x)$ doesn't.'' This is a really common pattern in counterexample-based reasoning: to disprove ``all P's are Q's'' you find a P that isn't a Q.
 
-\bigskip
-\textbf{Exercise 2.} \label{ex:m4:2} Negate the following statement and simplify: ``For every student $s$ in CS 250, there exists a homework $h$ such that $s$ completed $h$ on time.'' Write the negation in both symbols and plain English.
-
 \section{Nested quantifiers}
 Sometimes one quantifier just isn't enough and you need to stack them. This is where things get interesting.
 
@@ -161,13 +141,6 @@ Negating nested quantifiers is actually straightforward: you just flip each quan
 \neg(\exists u : \mathbb{R}.\;\forall v : \mathbb{R}.\; uv = v) \;\equiv\; \forall u : \mathbb{R}.\;\exists v : \mathbb{R}.\; uv \neq v
 \]
 Each $\exists$ becomes a $\forall$, each $\forall$ becomes an $\exists$, and the predicate gets negated. That's it. You just walk through the quantifiers one at a time applying the rules from the previous section.
-
-\bigskip
-\textbf{Exercise 3.} \label{ex:m4:3} Let $P(x, y)$ mean ``$x + y = 0$'' over $\mathbb{Z}$. Determine whether each of the following is true or false, and justify your answer:
-\begin{enumerate}[label=(\alph*)]
-  \item $\forall x.\; \exists y.\; P(x, y)$
-  \item $\exists y.\; \forall x.\; P(x, y)$
-\end{enumerate}
 
 \section{Necessary and sufficient conditions}
 This section is about translating some very common mathematical and CS jargon back into the logic we already know. The phrases ``necessary condition'' and ``sufficient condition'' show up \emph{everywhere} in textbooks, specifications, API docs, \&c.\ and you need to know what they mean.
@@ -326,16 +299,6 @@ That's it. That is what an inductive proof on the natural numbers actually looks
 Here's a perspective that might help if you're a programmer. An inductive proof is structured \emph{exactly} like a recursive function. There's a base case (when the argument is $0$) and a recursive case (when the argument is $\text{succ}\; n'$, where you ``call yourself'' on $n'$). The thing being ``returned'' is a proof rather than a number, but the shape is the same. In fact, if you've ever written a recursive function and felt like you were ``trusting'' the recursive call to do the right thing, congratulations: you've already felt the inductive hypothesis from the inside.\footnote{``Assume the recursive call works'' and ``assume $P(n')$'' really are the same move. We're going to come back to this in a much bigger way in the Curry--Howard intermezzo, once we've built up the vocabulary to say it precisely.}
 
 \bigskip
-\textbf{Exercise 4.} \label{ex:m4:4} Prove that for all $n : \text{Nat}$, $n + 1 = \text{succ}\; n$, where $1 = \text{succ}\; 0$. This one is a bit of a trick: figure out whether you actually need induction here, or whether you can do it just by unfolding the definition of \texttt{+}. (Hint: think about which equation of \texttt{+} fires when the second argument is $\text{succ}\; 0$.)
-
-\bigskip
-\textbf{Exercise 5.} \label{ex:m4:5} Take the natural induction rule above and look at it side by side with the BNF $\text{Nat} := 0 \mid \text{succ Nat}$. Identify exactly which part of the rule comes from which case of the BNF. Then, by analogy, write down what the induction rule would look like for the type
-\[
-\text{Counter} := \text{zero} \mid \text{tickA Counter} \mid \text{tickB Counter}
-\]
-You don't have to prove anything with it---just write down the rule.\footnote{If your rule has three premises, you're on the right track. If it has two, you forgot a case. If it has four, you've invented something interesting and we should talk.}
-
-\bigskip
 We've barely scratched the surface here. The intermezzo immediately after this chapter walks through several more proofs in this same style---commutativity and associativity of addition, among others---to get you really comfortable with the pattern. And much later, in Module 8, we'll come back to induction in a bigger way once we have sequences and summation in hand. The point of this section was just to break the seal: now you've seen one inductive proof from end to end, and the rule isn't just sitting there as a piece of inscrutable notation.
 
 \section{Addendum on notation}
@@ -344,5 +307,124 @@ Sometimes you might see the ``: A'' part left out of quantifiers, like
 ``$\forall x.\; P(x)$''
 
 instead. This is valid syntax \emph{if} we've defined in advance what our ``domain of discourse'' is. Then and only then can we leave out naming what set we're talking about because there's only \emph{one} set.
+
+\section{Common mistakes}
+
+Quantifier logic is where students stop making mistakes on truth tables and start making mistakes on \emph{scope}, so the common mistakes here are qualitatively different from the propositional ones.
+
+\begin{enumerate}
+  \item \textbf{Swapping $\forall$ and $\exists$ when negating.} Students often write $\lnot (\forall x.\; P(x)) \equiv \forall x.\; \lnot P(x)$, which is wrong. Each quantifier \emph{flips} when you push a negation through it. The right answer is $\exists x.\; \lnot P(x)$. Mnemonic: ``not every'' becomes ``some don't.''
+  \item \textbf{Inverting ``necessary'' and ``sufficient.''} ``$P$ is necessary for $Q$'' means $Q \to P$, not $P \to Q$. Students confidently write the arrow the wrong way and it's one of the most common errors on exams. Keep saying it out loud: \emph{necessary things go on the right of the arrow; sufficient things go on the left.}
+  \item \textbf{Treating $\forall\exists$ and $\exists\forall$ as the same.} They are not. $\forall x.\;\exists y.\; y > x$ is true over the reals, but $\exists y.\;\forall x.\; y > x$ is false. The order decides whether the witness $y$ is allowed to depend on $x$ or has to be a single fixed value that works uniformly. Whenever you see two or more quantifiers, read them left to right as nested function scopes: the outer one is free to vary as the inner one ``looks at'' it.
+  \item \textbf{Variable capture when renaming.} If you want to rename a bound variable, the new name must be \emph{fresh}---not already appearing free in the body. Renaming $\forall x.\; \exists y.\; R(x, y)$ to $\forall y.\; \exists y.\; R(y, y)$ is not a ``rename''; it's a nonsense formula, because the inner $y$ now shadows the outer $y$.
+  \item \textbf{Forgetting to use the inductive hypothesis.} In an inductive proof, the whole point of the inductive step is that you \emph{get} to assume $P(n)$ and use it. If your inductive step works without ever mentioning the inductive hypothesis, one of two things is true: either you didn't actually need induction (because the claim follows directly from unfolding definitions, as in Exercise~9 below) or your proof is wrong.
+  \item \textbf{Generalizing over a non-arbitrary variable.} The $\forall$-introduction rule has a side condition: the variable you generalize over must be truly arbitrary (fresh in the surrounding assumptions). If you've been manipulating a specific element called $a$ and then try to conclude ``$\forall x.\; P(x)$'' from ``$P(a)$,'' you need to have \emph{not} used any special property of $a$ in the derivation. Otherwise you'd be over-generalizing---proving something only about $a$ but pretending it holds for all elements.
+\end{enumerate}
+
+\section{Summary and looking ahead}
+
+\begin{keytakeaway}
+  \item First-order predicate logic adds two quantifiers ($\forall$, $\exists$) and \emph{predicates} on top of propositional logic. Semantically, $\forall x : A.\; P(x)$ holds iff $P^{-1}(\text{True}) = A$; $\exists x : A.\; P(x)$ holds iff $P^{-1}(\text{True})$ is non-empty.
+  \item Quantifiers \emph{flip} under negation: $\lnot\forall = \exists\lnot$ and $\lnot\exists = \forall\lnot$. These are De Morgan's laws for quantifiers.
+  \item \emph{Bound} variables are local to their quantifier; \emph{free} variables are global. You can rename bound variables but only to fresh names (no capture).
+  \item The order of nested quantifiers matters: $\forall x.\exists y.\; P(x,y)$ lets $y$ depend on $x$, while $\exists y.\forall x.\; P(x,y)$ forces a single uniform $y$. These are genuinely different statements.
+  \item \emph{Natural induction} on $\mathbb{N}$ is a proof rule: base case $P(0)$, inductive step $P(n) \to P(\text{succ}\;n)$, conclude $\forall n.\, P(n)$. The shape of the rule is dictated by the BNF $\text{Nat} := 0 \mid \text{succ Nat}$.
+  \item ``$P$ is \emph{necessary} for $Q$'' means $Q \to P$; ``\emph{sufficient}'' means $P \to Q$. Memorize this; it's a common exam trap.
+\end{keytakeaway}
+
+\begin{summarybox}
+\textbf{What we built this module.} We've finally got a logic that can talk about data, not just booleans. Predicates let us say things like ``$n$ is even'' or ``$x < y$'' inside the logic, and quantifiers let us say ``for all $n$'' or ``for some $x$.'' The proof rules for $\forall$ and $\exists$ are the same introduction/elimination shape as the propositional rules, so the Module 3 toolkit still applies. And at the very end, we snuck in natural induction---which isn't just a proof technique, it's the induction principle that falls out of the BNF definition of $\mathbb{N}$. That same pattern will reappear for every recursive datatype we meet.
+
+\medskip
+\textbf{Looking ahead.} Modules 5 through 7 take this quantifier-and-predicate vocabulary and use it to write real, human-readable proofs: direct proof, counterexample, existence, proof by cases, proof by contradiction, proof by contrapositive. These are the five or six techniques that a mathematician or computer scientist reaches for daily. Module 8 comes back to induction in a bigger way, using it to prove facts about sequences and summations. Before Module 5, the intermezzi on ``More on Natural Induction'' (practice proofs) and ``Quantifiers as Games'' (a game-semantic reading of $\forall$/$\exists$) are both worth reading.
+\end{summarybox}
+
+\section{Exercises}
+
+Organized into \textbf{warm-up} (mechanical practice on quantifier manipulation), \textbf{standard} (typical assignment-style problems including negation and simple proofs), \textbf{challenge} (synthesis involving induction and more nuanced quantifier reasoning), and \textbf{connection} (programming and intermezzo pointers). Solutions are in the appendix.
+
+\subsection*{Warm-up}
+
+\textbf{Exercise 1.}\label{ex:m4:1} In the formula $\exists x.\; \forall y.\; P(x, y, z)$, identify which variables are free and which are bound. Explain how you determined the status of each variable. Then do the same for $\forall x.\; (P(x) \to \exists y.\; Q(x, y))$.
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:m4:2} Translate each of the following English statements into symbolic form, using the indicated predicates over the indicated domains:
+\begin{enumerate}[label=(\alph*)]
+  \item ``Every cat is either black or white.'' (Domain: $\text{Cats}$; predicates: $\text{Black}$, $\text{White}$.)
+  \item ``Some student in CS 250 has solved every homework problem.'' (Domains: $\text{Students}$, $\text{Problems}$; predicate: $\text{Solved}(s, p)$.)
+  \item ``No real number is larger than every integer.'' (Domains: $\mathbb{R}$, $\mathbb{Z}$.)
+  \item ``Every non-zero real number has a multiplicative inverse.'' (Domain: $\mathbb{R}$.)
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m4:3} For each predicate, write its truth set.
+\begin{enumerate}[label=(\alph*)]
+  \item $P(n) = $ ``$n$ is a positive divisor of $12$'' over $\mathbb{Z}^+$.
+  \item $P(x) = $ ``$x^2 \leq 9$'' over $\mathbb{Z}$.
+  \item $P(x) = $ ``$x < x + 1$'' over $\mathbb{Z}$.
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m4:4} For each pair, decide whether the first condition is \textbf{necessary}, \textbf{sufficient}, \textbf{both}, or \textbf{neither} for the second.
+\begin{enumerate}[label=(\alph*)]
+  \item Being divisible by $4$; being divisible by $2$.
+  \item Having a valid ticket; being allowed to board the plane.
+  \item Being an equilateral triangle; being a triangle.
+  \item Being a prime; being odd.
+\end{enumerate}
+
+\subsection*{Standard}
+
+\textbf{Exercise 5.}\label{ex:m4:5} Negate the following statement and simplify: ``For every student $s$ in CS 250, there exists a homework $h$ such that $s$ completed $h$ on time.'' Write the negation in both symbols and plain English.
+
+\bigskip
+\textbf{Exercise 6.}\label{ex:m4:6} Let $P(x, y)$ mean ``$x + y = 0$'' over $\mathbb{Z}$. Determine whether each of the following is true or false, and justify your answer:
+\begin{enumerate}[label=(\alph*)]
+  \item $\forall x.\; \exists y.\; P(x, y)$
+  \item $\exists y.\; \forall x.\; P(x, y)$
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 7.}\label{ex:m4:7} Negate and fully simplify: $\forall x : \mathbb{Z}.\; \exists y : \mathbb{Z}.\; \forall z : \mathbb{Z}.\; (P(x, y, z) \to Q(x, z))$. Your answer should push all negations to the innermost atomic predicates.
+
+\bigskip
+\textbf{Exercise 8.}\label{ex:m4:8} Prove the equivalence
+\[
+  \forall x.\; (P(x) \wedge Q(x)) \;\equiv\; (\forall x.\; P(x)) \wedge (\forall x.\; Q(x))
+\]
+by giving formal proofs in both directions. Then decide whether the analogous claim for $\vee$,
+\[
+  \forall x.\; (P(x) \vee Q(x)) \;\equiv\; (\forall x.\; P(x)) \vee (\forall x.\; Q(x)),
+\]
+is also an equivalence. If it is, prove both directions. If it isn't, prove one direction and give a counterexample to the other.
+
+\subsection*{Challenge}
+
+\textbf{Exercise 9.}\label{ex:m4:9} Prove that for all $n : \text{Nat}$, $n + 1 = \text{succ}\; n$, where $1 = \text{succ}\; 0$. This one is a bit of a trick: figure out whether you actually need induction here, or whether you can do it just by unfolding the definition of \texttt{+}. (Hint: think about which equation of \texttt{+} fires when the second argument is $\text{succ}\; 0$.)
+
+\bigskip
+\textbf{Exercise 10.}\label{ex:m4:10} Take the natural induction rule above and look at it side by side with the BNF $\text{Nat} := 0 \mid \text{succ Nat}$. Identify exactly which part of the rule comes from which case of the BNF. Then, by analogy, write down what the induction rule would look like for the type
+\[
+  \text{Counter} := \text{zero} \mid \text{tickA Counter} \mid \text{tickB Counter}
+\]
+You don't have to prove anything with it---just write down the rule.\footnote{If your rule has three premises, you're on the right track. If it has two, you forgot a case. If it has four, you've invented something interesting and we should talk.}
+
+\bigskip
+\textbf{Exercise 11.}\label{ex:m4:11} Define multiplication on $\text{Nat}$ recursively on the second argument:
+\begin{align*}
+  n \cdot 0 &= 0 \\
+  n \cdot (\text{succ}\; m) &= (n \cdot m) + n
+\end{align*}
+Prove by induction that $\forall n : \text{Nat}.\; 0 \cdot n = 0$. (This one \emph{does} need induction---notice that the definition's first equation gives you $n \cdot 0 = 0$ for free, but the claim $0 \cdot n$ has $0$ on the \emph{left}, which is the harder side. Compare this to the $0 + n = n$ proof in the module.)
+
+\bigskip
+\textbf{Exercise 12.}\label{ex:m4:12} Give a concrete domain $A$ and a concrete predicate $R$ on $A \times A$ for which $\forall x.\; \exists y.\; R(x, y)$ is true but $\exists y.\; \forall x.\; R(x, y)$ is false. Then explain in one or two sentences what intuition this example captures about the difference in quantifier order.
+
+\subsection*{Connection}
+
+\textbf{Exercise 13.}\label{ex:m4:13} (Programming.) Write a Python function \texttt{forall\_exists(P, A, B)} that takes a predicate \texttt{P} on two arguments and two finite iterables \texttt{A}, \texttt{B}, and returns \texttt{True} iff $\forall a \in A.\; \exists b \in B.\; P(a, b)$. Also write \texttt{exists\_forall(P, A, B)} that checks $\exists b \in B.\; \forall a \in A.\; P(a, b)$. Test both on $A = B = \{0, 1, 2, 3\}$ with $P(a, b) = (a + b = 3)$, and verify that on this input the first is true but the second is false. Why? (Which $b$ would work for \emph{every} $a$? Is there one?)
+
+\bigskip
+\textbf{Exercise 14.}\label{ex:m4:14} (Intermezzo pointer.) The ``Quantifiers as Games'' intermezzo introduces a game-semantic reading of $\forall$ and $\exists$: $\forall$ is a move by a ``universal'' player who tries to falsify the formula, and $\exists$ is a move by an ``existential'' player who tries to verify it. Using this reading, explain in a paragraph why the game for $\forall x.\;\exists y.\; y > x$ over $\mathbb{R}$ is a win for the existential player, but the game for $\exists y.\;\forall x.\; y > x$ is a loss.
 
 \end{document}

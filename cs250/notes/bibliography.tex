@@ -1,0 +1,112 @@
+\documentclass[11pt]{article}
+\input{cs250preamble}
+
+\title{CS 250 --- Further Reading}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+Throughout this book, most intermezzi ended with a ``Further reading'' section
+pointing at accessible next steps if the topic caught your interest. This
+appendix collects those entries in one place, organized by topic, for readers
+who want the whole reading list at a glance. Each entry is reproduced from the
+intermezzo where it originally appeared, so there is some overlap when a
+single source is relevant to multiple topics.
+
+A few of the entries below are genuinely foundational papers that everyone in
+computer science should read at some point; others are gentle on-ramps for
+specific subtopics. If you only have time for one or two, the entries marked
+\textbf{[start here]} are the ones to pick up first.
+
+\section*{Natural Deduction and Proof Theory}
+\emph{Related intermezzo: Inference Rules as Trees (Module~3).}
+
+\begin{itemize}
+  \item \textbf{[start here]} Frank Pfenning, \href{https://www.cs.cmu.edu/~fp/courses/15317-s23/lectures/02-natded.pdf}{\emph{Natural Deduction}} (lecture notes for CMU 15-317, ``Constructive Logic''). The single best gentle introduction to natural deduction in tree form, with exactly the discipline of introduction and elimination rules used in the intermezzo.
+  \item Jan von Plato, ``\href{https://projecteuclid.org/journals/bulletin-of-symbolic-logic/volume-18/issue-3/Gentzens-proof-systems-byproducts-in-a-work-of-genius/10.2178/bsl/1344861886.short}{Gentzen's Proof Systems: Byproducts in a Work of Genius},'' \emph{Bulletin of Symbolic Logic} \textbf{18}(3), 313--367 (2012). A historical and conceptual essay on how Gentzen actually invented natural deduction and the sequent calculus, written for a logic-curious but non-specialist audience.
+  \item Dag Prawitz, \emph{\href{https://store.doverpublications.com/0486446557.html}{Natural Deduction: A Proof-Theoretical Study}}, Almqvist \& Wiksell (1965); Dover reprint (2006). The first chapter is the canonical exposition of normalization---``every detour can be removed''---which is the proof-theory version of evaluating a program. Stop at the end of Chapter~I; later chapters are more technical.
+\end{itemize}
+
+\section*{Cantor, Infinity, and the Diagonal Argument}
+\emph{Related intermezzo: Cardinality and Function Spaces (Module~1).}
+
+\begin{itemize}
+  \item Robert Gray, ``Georg Cantor and Transcendental Numbers,'' \emph{American Mathematical Monthly} \textbf{101}(9), 819--832 (1994). A clean historical account of Cantor's \emph{original} 1874 uncountability argument (which was not the diagonal argument!) and how the diagonal version came later. Excellent for seeing how the ideas in the intermezzo actually developed.
+  \item \textbf{[start here]} Martin Davis, ``\href{https://archive.org/details/mathematicstoday00stee}{What is a Computation?}'' in L.~A.\ Steen (ed.), \emph{Mathematics Today: Twelve Informal Essays}, Springer (1978). Davis walks you from Cantor's diagonal argument straight to the unsolvability of the halting problem in a way that requires almost no prior CS background---perfect if you want to see the forward look from this chapter cashed out.
+  \item Raymond Smullyan, \emph{\href{https://academic.oup.com/book/54024}{Diagonalization and Self-Reference}}, Oxford Logic Guides 27, Oxford University Press (1994). A whole book---but the early chapters are gentle, and they show how Cantor, G\"odel, and Tarski are all variations on a single self-referential theme.
+\end{itemize}
+
+\section*{Curry--Howard and Proofs as Programs}
+\emph{Related intermezzi: Proofs Are Programs (Module~7), The Lambda Calculus (end of book).}
+
+\begin{itemize}
+  \item \textbf{[start here]} Philip Wadler, ``\href{https://homepages.inf.ed.ac.uk/wadler/papers/propositions-as-types/propositions-as-types.pdf}{Propositions as Types},'' \emph{Communications of the ACM} \textbf{58}(12), 75--84 (2015). \emph{The} accessible undergraduate-friendly tour of the Curry--Howard correspondence, with historical context, examples in modern languages, and Wadler's characteristic clarity. If you read only one paper from this list, read this one.
+  \item William A.\ Howard, ``\href{https://www.cs.cmu.edu/~crary/819-f09/Howard80.pdf}{The Formulae-as-Types Notion of Construction},'' in J.\ R.\ Hindley and J.\ P.\ Seldin (eds.), \emph{To H.\ B.\ Curry: Essays on Combinatory Logic, Lambda Calculus and Formalism}, Academic Press (1980); manuscript circulated 1969. The original short note that started everything. Only about a dozen pages, and the first half is genuinely readable once you have seen natural deduction.
+  \item Philip Wadler, ``\href{https://homepages.inf.ed.ac.uk/wadler/papers/frege/frege.pdf}{Proofs are Programs: 19th Century Logic and 21st Century Computing},'' \emph{Dr.\ Dobb's Journal} (2000). A shorter, more popular precursor to ``Propositions as Types,'' pitched at working programmers---good as a warm-up before tackling the CACM piece.
+\end{itemize}
+
+\section*{The Lambda Calculus}
+\emph{Related intermezzo: The Lambda Calculus (end of book).}
+
+\begin{itemize}
+  \item Henk Barendregt, ``\href{https://www.cambridge.org/core/journals/bulletin-of-symbolic-logic/article/abs/impact-of-the-lambda-calculus-in-logic-and-computer-science/7B63F923EC566E549B093911BFC7470E}{The Impact of the Lambda Calculus in Logic and Computer Science},'' \emph{Bulletin of Symbolic Logic} \textbf{3}(2), 181--215 (1997). The standard expository overview of why the lambda calculus matters across logic and computer science, written by the field's leading authority. The first half is fully undergraduate-accessible.
+  \item \textbf{[start here]} Peter Selinger, \emph{\href{https://arxiv.org/abs/0804.3434}{Lecture Notes on the Lambda Calculus}}, arXiv:0804.3434 (revised 2013). The cleanest free introduction I know of---covers Church encodings, beta reduction, the Church--Rosser theorem, and fixed-point combinators at exactly undergraduate pitch.
+  \item Felice Cardone and J.\ Roger Hindley, ``\href{http://www.di.unito.it/~felice/pdf/lambdacomb.pdf}{History of Lambda-calculus and Combinatory Logic},'' in D.\ Gabbay and J.\ Woods (eds.), \emph{Handbook of the History of Logic}, vol.~5, Elsevier (2009). A historical narrative of how Church, Curry, and Turing arrived at the lambda calculus and combinatory logic---gives the Church--Turing-thesis story in human terms.
+\end{itemize}
+
+\section*{The Algebra of Types}
+\emph{Related intermezzo: The Algebra of Types (end of book).}
+
+\begin{itemize}
+  \item \textbf{[start here]} Conor McBride, ``The Derivative of a Regular Type is its Type of One-Hole Contexts,'' unpublished manuscript (2001), available on the author's homepage at \texttt{strictlypositive.org}. A short, witty, surprisingly elementary derivation of why \emph{differentiating} an algebraic data type literally gives you its zipper. Connects high-school calculus to programming in a way undergraduates love.
+  \item Brent Yorgey, ``Species and Functors and Types, Oh My!'' \emph{Haskell Symposium 2010}. Written explicitly as an accessible bridge between Joyal's combinatorial species and the algebraic data types programmers already know. The most undergraduate-friendly entry point to species I know of.
+  \item Philippe Flajolet and Robert Sedgewick, \emph{\href{https://ac.cs.princeton.edu/home/}{Analytic Combinatorics}}, Cambridge University Press (2009), Chapter~I (``Symbolic Methods''). The full book PDF is freely available on Sedgewick's Princeton homepage. Chapter~I introduces the symbolic method---sums, products, sequences as type combinators with generating functions---at exactly the level a strong undergrad can handle.
+\end{itemize}
+
+\section*{Temporal Logic and Model Checking}
+\emph{Related intermezzo: Other Logics, Other Worlds (Module~7).}
+
+\begin{itemize}
+  \item \textbf{[start here]} Chris Newcombe, Tim Rabbat, Fan Zhang, Bogdan Munteanu, Marc Brooker, and Michael Deardeuff, ``How Amazon Web Services Uses Formal Methods,'' \emph{Communications of the ACM} \textbf{58}(4), 66--73 (2015). A wonderfully accessible report by practicing engineers on how AWS uses TLA+ to verify the correctness of distributed systems like S3 and DynamoDB. If you wonder why anyone outside academia cares about temporal logic, this is your answer.
+  \item Edmund M.\ Clarke, E.\ Allen Emerson, and Joseph Sifakis, ``Model Checking: Algorithmic Verification and Debugging,'' \emph{Communications of the ACM} \textbf{52}(11), 74--84 (2009). The Turing Award lecture: a retrospective on how model checking was developed and why it works. Written for a general CS audience.
+  \item Amir Pnueli, ``The Temporal Logic of Programs,'' \emph{18th Annual Symposium on Foundations of Computer Science} (FOCS), 46--57 (1977). The founding paper of program temporal logic. Sections 1--2 are historically essential and undergraduate-readable; later sections get more technical.
+\end{itemize}
+
+\section*{Equivalence, Sameness, and Structuralism}
+\emph{Related intermezzo: What Does It Mean for Things to Be ``The Same''? (Module~6).}
+
+\begin{itemize}
+  \item \textbf{[start here]} Barry Mazur, ``\href{https://people.math.osu.edu/cogdell.1/6112-Mazur-www.pdf}{When is one thing equal to some other thing?}'' in \emph{Proof and Other Dilemmas: Mathematics and Philosophy} (B.~Gold and R.~A.\ Simons, eds.), Mathematical Association of America (2008). The single best expository essay for undergraduates on equivalence, quotient, and ``sameness.'' Mazur writes beautifully and assumes almost nothing.
+  \item Steve Awodey, ``\href{https://www.andrew.cmu.edu/user/awodey/preprints/siu.pdf}{Structuralism, Invariance, and Univalence},'' \emph{Philosophia Mathematica} \textbf{22}(1), 1--11 (2014). A short, accessible philosophical essay on what it means for two mathematical structures to be ``the same'' and on why equivalence (rather than literal equality) is the right notion. The closing section connects to the modern Univalence axiom in homotopy type theory.
+  \item Paul Halmos, \emph{Naive Set Theory}, Springer (1960; reprint 1974), Sections 7--8. Not a paper, but Halmos's two-page treatment of equivalence relations and partitions is the canonical undergraduate reference and pairs nicely with the philosophical pieces above.
+\end{itemize}
+
+\section*{Game Semantics, Interactive Proofs, and Zero Knowledge}
+\emph{Related intermezzo: Quantifiers as Games (Module~4).}
+
+\begin{itemize}
+  \item Jaakko Hintikka, ``Language-Games for Quantifiers,'' \emph{American Philosophical Quarterly} Monograph Series no.~2 (1968), 46--72. Hintikka's own short and accessible exposition of how quantifiers are best read as a two-player game between a Verifier and a Falsifier---the philosophical source of the framework in the intermezzo.
+  \item Shafi Goldwasser, Silvio Micali, and Charles Rackoff, ``The Knowledge Complexity of Interactive Proof Systems,'' \emph{SIAM Journal on Computing} \textbf{18}(1), 186--208 (1989). The foundational paper on interactive proofs and zero-knowledge; widely available via Silvio Micali's MIT homepage and elsewhere. The first few sections, where they set up the Prover/Verifier game, are surprisingly accessible and put a precise mathematical frame around the picture sketched in the chapter.
+  \item \textbf{[start here]} Oded Goldreich, \emph{\href{https://www.wisdom.weizmann.ac.il/~oded/zk-tut02.html}{Zero-Knowledge: A Tutorial}}, available on the author's homepage at the Weizmann Institute. Written explicitly to be the most accessible on-ramp to zero-knowledge proofs for non-specialists. If interactive proofs caught your attention, this is where to go next.
+\end{itemize}
+
+\section*{Induction and the Peano Axioms}
+\emph{Related intermezzo: More on Natural Induction (Module~4).}
+
+\begin{itemize}
+  \item \textbf{[start here]} Leon Henkin, ``On Mathematical Induction,'' \emph{American Mathematical Monthly} \textbf{67}(4), 323--338 (1960). The classic expository article distinguishing the \emph{principle} of induction from the \emph{axiom}, and showing precisely which Peano axioms are needed to prove commutativity and associativity of addition---the same proofs the intermezzo walks through.
+  \item George P\'olya, \emph{\href{https://press.princeton.edu/books/paperback/9780691025094/mathematics-and-plausible-reasoning-volume-1}{Induction and Analogy in Mathematics}} (volume~I of \emph{Mathematics and Plausible Reasoning}), Princeton University Press (1954), particularly the chapter on mathematical induction. P\'olya's gentle, example-driven exposition is aimed at students discovering proof for the first time.
+  \item Edmund Landau, \emph{Foundations of Analysis}, Chelsea (1951; original German 1930), Chapter~1. Landau builds the natural numbers from the Peano axioms and proves commutativity and associativity of addition with full inductive rigor in about ten pages---you can literally check every step. Terse but transparent.
+\end{itemize}
+
+\section*{Modular Arithmetic and Finite Fields}
+\emph{Related module: Module~6.}
+
+\begin{itemize}
+  \item \emph{Wikipedia: \href{https://en.wikipedia.org/wiki/Finite_field_arithmetic}{Finite field arithmetic}}. Useful starting reference for how finite fields are actually computed with in software and hardware.
+  \item \emph{Wikipedia: \href{https://en.wikipedia.org/wiki/Finite_field\#Discrete_logarithm}{Finite field: Discrete logarithm}}. The discrete logarithm problem in a finite field is the hard problem underlying Diffie--Hellman key exchange and a surprising amount of modern cryptography.
+\end{itemize}
+
+\end{document}

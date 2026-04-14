@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Module 8: Sequences and Recursion}
 \author{}
@@ -28,6 +8,12 @@
 
 \begin{document}
 \maketitle
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Reading map.} This module covers \textbf{Epp §5.1--5.3}: sequences, mathematical induction, and applying induction to sum identities. \textbf{Prerequisites:} Module 4 (which introduced natural induction) and the ``More on Natural Induction'' intermezzo (which walked through several inductive proofs in detail). \textbf{Relevant intermezzi:} the natural-induction intermezzo between Modules 4 and 5 is a direct prerequisite; the type-algebra intermezzo (after Module 10) complements this module by showing another side of the ``data definitions $=$ induction principles'' story. \textbf{Practice from Epp:} §5.1 exercises on computing terms of sequences and translating between explicit and recursive definitions; §5.2 exercises on induction proofs of sum identities; §5.3 exercises on induction applied to closed-form computations.
+\end{minipage}}
+\end{center}
 
 \section{Definition by recursion}
 We've been building up our toolkit for a while now---logic, sets, functions, induction---and now we're going to put a lot of it together by talking about \emph{sequences}.
@@ -82,9 +68,6 @@ fib(n) = fib(n-1) + fib(n-2)   for n >= 2
 This should look very familiar! It's \emph{exactly} the same structure as writing a recursive function in Python or C. That's not a coincidence. As we discussed back in Module 4 when we introduced BNF syntax and inductive definitions, recursive definitions are really just another case of defining data inductively. The base case gives you the starting point and the recursive case tells you how to build new data from old data.
 
 In fact, remember how in Module 4 we defined the natural numbers as $\text{Nat} := 0 \mid \text{succ Nat}$? A recursively defined sequence is doing the same thing: defining $a_n$ by cases on whether $n$ is the base case or a successor.
-
-\bigskip
-\textbf{Exercise 1.} \label{ex:m8:1} Write a recursive definition for the sequence $a_n = 3n$ (i.e., give $a_0$ and a rule for $a_n$ in terms of $a_{n-1}$). Verify your definition by computing the first four terms and checking that they match $0, 3, 6, 9$.
 
 \subsection{Summation and product notation}
 There's an important piece of notation we need before we go further: \emph{summation notation}\index{summation notation}. You've probably seen the big sigma before:
@@ -181,9 +164,6 @@ And that last expression is exactly what $P(k+1)$ claims. We're done!
 
 See the pattern? You peel off the last term of the sum, apply the inductive hypothesis to the rest, and then do algebra to show you get the right answer. That ``peel off the last term'' move is the heart of every induction proof on sums.
 
-\bigskip
-\textbf{Exercise 2.} \label{ex:m8:2} Prove by induction: for all $n \geq 1$, $\displaystyle\sum_{i=1}^{n} (2i - 1) = n^2$. (This says the sum of the first $n$ odd numbers is $n^2$.) Follow the same template as the worked example above: state $P(n)$, check the base case, assume $P(k)$, and prove $P(k+1)$ by peeling off the last term.
-
 \subsection{Setting up: sum of squares}
 Here's another one that you'll see on the assignment. For all $n \geq 1$:
 \[
@@ -221,7 +201,91 @@ Another way to say this is: a recursive function computes a \emph{value} for eac
 
 This is why, back in Module 4, we introduced induction right alongside BNF definitions and recursive structure. They're not separate topics that happen to be in the same chapter---they're the same idea wearing different hats. And once you see that connection, both recursive programming and inductive proofs become a lot less mysterious. You just ask yourself: what's the base case, and how do I build the next one from the previous one?
 
+\section{Common mistakes}
+
+\begin{enumerate}
+  \item \textbf{Forgetting to state $P(n)$ explicitly.} A good induction proof starts by writing down exactly what the claim $P(n)$ is. Students sometimes jump straight to the base case without telling the reader what they're inducting over, which makes it impossible to check whether the inductive step is proving the right thing.
+  \item \textbf{Inductive step that doesn't use the inductive hypothesis.} If your inductive step from $P(k)$ to $P(k+1)$ never actually references $P(k)$, something is off. Either the claim can be proved directly without induction (in which case you should use a direct proof), or you've made an error and you're proving a weaker claim than you think.
+  \item \textbf{Wrong base case.} The base case has to match the lower bound of the claim. ``For all $n \geq 5$'' wants a base case at $n = 5$, not $n = 0$ and not $n = 1$. Students default to $n = 1$ and hope for the best, which gives vacuous base cases for claims that start higher up.
+  \item \textbf{Confusing the sum with the last term.} ``Peel off the last term'' means splitting $\sum_{i=1}^{k+1} a_i$ into $(\sum_{i=1}^{k} a_i) + a_{k+1}$. Students sometimes write the split as $a_k + a_{k+1}$---just the last two terms, omitting the rest of the sum. That's a very common error that usually shows up as the algebra ``not working out.''
+  \item \textbf{Indexing off by one.} Is the sum $\sum_{i=1}^{n}$ (starting at 1) or $\sum_{i=0}^{n}$ (starting at 0)? The two differ by whichever term you're including/excluding at the ends, and the closed form shifts accordingly. Always look at the bounds of summation carefully; an off-by-one there will propagate through the whole proof.
+  \item \textbf{Treating ``$\ldots$'' as a proof step.} In writing $1 + 2 + 3 + \cdots + n = \frac{n(n+1)}{2}$, the $\cdots$ is shorthand for ``and I promise the pattern continues,'' but it's not a proof. The induction \emph{is} the proof that the pattern really continues. Students sometimes try to do arithmetic ``inside'' the dots---for example, writing $1 + 2 + \cdots + k + (k+1) = 1 + 2 + \cdots + (k+1)$ and calling that a step---which is really just a tautology and contributes nothing. The meaningful step is always the one that applies the inductive hypothesis.
+\end{enumerate}
+
+\section{Summary and looking ahead}
+
+\begin{keytakeaway}
+  \item A \emph{sequence} is just a function from $\mathbb{N}$ (or a subset) to some set. You can define a sequence explicitly ($a_n = 2n+1$) or recursively ($a_0 = 1$, $a_n = a_{n-1} + 2$).
+  \item \emph{Summation notation} ($\sum$) and \emph{product notation} ($\prod$) are compact ways to write for-loops in mathematics.
+  \item An induction proof on a sum identity always follows the same template: state $P(n)$, check the base case, assume $P(k)$, and prove $P(k+1)$ by peeling off the last term and applying the IH.
+  \item \emph{Induction is recursion on proofs.} A recursive function computes a value; an inductive proof ``computes'' a proof. The base case of the code is the base case of the proof; the recursive call is the inductive hypothesis. This is not a metaphor.
+\end{keytakeaway}
+
+\begin{summarybox}
+\textbf{What we built this module.} We're now fluent with induction as a proof tool. The sum-formula exercises are finger exercises; the deeper point is that every recursive definition \emph{is} an induction principle in disguise, and every inductive proof \emph{is} a recursive function with ``proof'' as its return type. That's the unification we've been building toward since Module 4.
+
+\medskip
+\textbf{Looking ahead.} Module 9 generalizes ordinary induction to \emph{strong induction}, where the inductive hypothesis gives you $P(j)$ for \emph{all} $j \leq k$, not just $j = k$. This turns out to be the right tool for recurrences that reach back more than one step, divide-and-conquer algorithms, and (eventually in Module 10) structural induction on arbitrary recursive data types. Also in Module 9: the characteristic-equation method for solving linear recurrences in closed form, which is how we get the Fibonacci formula with $\varphi$ and $\sqrt{5}$.
+\end{summarybox}
+
+\section{Exercises}
+
+Organized into \textbf{warm-up} (computation with sequences and summation), \textbf{standard} (inductive proofs following the template), \textbf{challenge} (tighter arguments and inequalities), and \textbf{connection} (programming and forward pointers). Solutions are in the appendix.
+
+\subsection*{Warm-up}
+
+\textbf{Exercise 1.}\label{ex:m8:1} Write a recursive definition for the sequence $a_n = 3n$ (i.e., give $a_0$ and a rule for $a_n$ in terms of $a_{n-1}$). Verify your definition by computing the first four terms and checking that they match $0, 3, 6, 9$.
+
 \bigskip
-\textbf{Exercise 3.} \label{ex:m8:3} Write a recursive Python function that computes $\displaystyle\sum_{i=1}^{n} i^2$. Then compare its structure to the induction proof of the sum-of-squares formula from this module. Which part of your code corresponds to the base case? Which part corresponds to the inductive step? Where does the ``inductive hypothesis'' show up?
+\textbf{Exercise 2.}\label{ex:m8:2} Compute the following sums explicitly:
+\begin{enumerate}[label=(\alph*)]
+  \item $\displaystyle\sum_{i=1}^{5} (2i + 1)$
+  \item $\displaystyle\sum_{k=0}^{4} 2^k$
+  \item $\displaystyle\sum_{j=1}^{3} (-1)^{j+1} j^2$
+  \item $\displaystyle\prod_{i=1}^{4} i$ (yes, this is $4!$)
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m8:3} Translate between the two forms:
+\begin{enumerate}[label=(\alph*)]
+  \item The sequence $a_n$ is defined by $a_0 = 2$ and $a_n = a_{n-1} + 4$ for $n \geq 1$. Give an explicit formula for $a_n$.
+  \item The sequence $b_n = n^2 + 1$ is defined explicitly for $n \geq 0$. Give a recursive definition.
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m8:4} Compute the first five terms of the Fibonacci sequence (starting from $\text{fib}(0) = 0$) and verify by hand that $\text{fib}(5) = \text{fib}(4) + \text{fib}(3)$.
+
+\subsection*{Standard}
+
+\textbf{Exercise 5.}\label{ex:m8:5} Prove by induction: for all $n \geq 1$, $\displaystyle\sum_{i=1}^{n} (2i - 1) = n^2$. (This says the sum of the first $n$ odd numbers is $n^2$.) Follow the template: state $P(n)$, check the base case, assume $P(k)$, and prove $P(k+1)$ by peeling off the last term.
+
+\bigskip
+\textbf{Exercise 6.}\label{ex:m8:6} Prove by induction: for all $n \geq 1$, $\displaystyle\sum_{i=1}^{n} i^2 = \frac{n(n+1)(2n+1)}{6}$. Do the full algebra carefully---this is a drill-heavy exercise with hairier arithmetic than the $n$-th-triangular-number proof.
+
+\bigskip
+\textbf{Exercise 7.}\label{ex:m8:7} Prove by induction: for all $n \geq 0$, $\displaystyle\sum_{i=0}^{n} 2^i = 2^{n+1} - 1$. (This is the formula for a geometric series with ratio $2$.)
+
+\bigskip
+\textbf{Exercise 8.}\label{ex:m8:8} Prove by induction: for all $n \geq 1$, $\displaystyle\sum_{i=1}^{n} i^3 = \left(\frac{n(n+1)}{2}\right)^2$. This striking identity says that the sum of the first $n$ cubes equals the \emph{square} of the $n$-th triangular number---a surprise that's worth sitting with. (Hint: you already know the sum of the first $n$ integers; use that in your algebra.)
+
+\subsection*{Challenge}
+
+\textbf{Exercise 9.}\label{ex:m8:9} Prove by induction: for all $n \geq 1$, $\displaystyle\sum_{i=1}^{n} \frac{1}{i(i+1)} = \frac{n}{n+1}$. (Hint: in the inductive step, after you apply the IH, look for a common denominator. The algebra is surprisingly clean.)
+
+\bigskip
+\textbf{Exercise 10.}\label{ex:m8:10} Prove by induction: for all $n \geq 4$, $2^n < n!$. This is an \emph{inequality} rather than an equality, which means the inductive step needs different algebra than the sum proofs. (Hint: the base case is $n = 4$. In the inductive step, assume $2^k < k!$ for $k \geq 4$ and show $2^{k+1} < (k+1)!$. Notice that $2^{k+1} = 2 \cdot 2^k$ and $(k+1)! = (k+1) \cdot k!$, so the IH gives you a factor of $2$ on the left and a factor of $(k+1) \geq 5$ on the right.)
+
+\bigskip
+\textbf{Exercise 11.}\label{ex:m8:11} Define a sequence by $T_1 = 1$ and $T_n = T_{n-1} + n$ for $n \geq 2$. (These are the triangular numbers.) Prove by induction that $T_n = \frac{n(n+1)}{2}$. Compare your proof to the worked example in this module---the only difference should be the starting point and the naming.
+
+\subsection*{Connection}
+
+\textbf{Exercise 12.}\label{ex:m8:12} (Programming.) Write a recursive Python function \texttt{sum\_of\_squares(n)} that computes $\displaystyle\sum_{i=1}^{n} i^2$. Then compare its structure to the induction proof of the sum-of-squares formula (Exercise~6). Which part of your code corresponds to the base case? Which part corresponds to the inductive step? Where does the ``inductive hypothesis'' show up in the code?
+
+\bigskip
+\textbf{Exercise 13.}\label{ex:m8:13} (Programming.) Write both a recursive and an iterative Python function that computes the $n$-th Fibonacci number. Test that they agree on $n = 0, 1, 2, \ldots, 10$. Then time both versions on $n = 30$. Which is faster, and by how much? Why? (If you want, also write a memoized version and time that.)
+
+\bigskip
+\textbf{Exercise 14.}\label{ex:m8:14} (Intermezzo pointer.) The intermezzo on type algebra (after Module~10) explains that BNF-style recursive data definitions correspond to \emph{initial algebras} of functors, and that induction principles are \emph{unique-morphism} properties of these algebras. As a preview: the natural numbers $\text{Nat} := 0 \mid \text{succ Nat}$ have a single induction principle, and so does each list type, each tree type, etc. Without peeking ahead, speculate on why ``one induction principle per recursive type definition'' is such a clean correspondence. What does it suggest about how to define induction principles for new types you might encounter later?
 
 \end{document}

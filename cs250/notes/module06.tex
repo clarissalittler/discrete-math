@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Module 6: Modular Arithmetic and Proofs by Cases}
 \author{}
@@ -28,6 +8,12 @@
 
 \begin{document}
 \maketitle
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Reading map.} This module covers \textbf{Epp §4.4--4.5} (§4.5--4.6 in the 5th edition): divisibility, the quotient-remainder theorem, modular arithmetic, and proofs by cases. \textbf{Prerequisites:} Module 5 (direct proof and the group axioms). \textbf{Relevant intermezzi:} ``What Does It Mean for Things to Be `The Same'?''---the equivalence-relations intermezzo sits right after this module and uses modular congruence as its main example. \textbf{Practice from Epp:} §4.4 exercises on the quotient-remainder theorem and proofs by cases; §4.5 exercises on floor/ceiling identities and applications.
+\end{minipage}}
+\end{center}
 
 \section{The modulus operation}
 An operation that's important in both mathematics and computer science is the modulus\index{modulus} operator, sometimes called \texttt{mod} or \texttt{\%}. This is the operation that gives you the remainder after integer division.
@@ -86,9 +72,6 @@ There's a nice connection to the quotient-remainder theorem too. For positive in
 
 Fun fact: the floor function shows up all over computer science. Array indexing, hash functions, binary search---anywhere you need to convert a real-valued quantity into an integer index, you're probably using floor.
 
-\bigskip
-\textbf{Exercise 1.} \label{ex:m6:1} Compute $\lfloor -3.7 \rfloor$, $\lceil -3.7 \rceil$, $\lfloor 4 \rfloor$, and $\lceil 4 \rceil$. (Be careful with the negative value---remember that floor rounds \emph{down}, not toward zero.)
-
 \section{$\mathbb{Z}/n\mathbb{Z}$ is a group}
 In Module 5 we proved that $(\mathbb{Z}, +, 0)$ is a group. Now we'll see that modular arithmetic gives us \emph{finite} groups---same axioms, but with a finite set of residues instead of all the integers.
 
@@ -111,9 +94,6 @@ q (+) (n - q) = (q + n - q) % n
               = 0
 \end{lstlisting}
 
-\bigskip
-\textbf{Exercise 2.} \label{ex:m6:2} In $\mathbb{Z}/7\mathbb{Z}$, find the additive inverse of $3$. Verify your answer by checking that the sum of $3$ and your proposed inverse is $0$ under modular addition.
-
 \section{$\mathbb{Z}/p\mathbb{Z}$, where $p$ is prime}
 When the number you're taking the modulus by is prime, something \textbf{really} special happens. It isn't just a group under addition---if you exclude 0, the nonzero residues also form a group under multiplication. That is, $((\mathbb{Z}/p\mathbb{Z})^{\times}, \cdot, 1)$ satisfies exactly the same group axioms we checked for the integers in Module 5, just with a different set and a different operation.
 \begin{lstlisting}
@@ -131,14 +111,42 @@ Distributivity of multiplication over addition follows from distributivity in $\
 
 The importance of this is that it makes $\mathbb{Z}/p\mathbb{Z}$ a \emph{finite field}\index{finite field}: addition works on all residues, and multiplication works on the nonzero residues. This is actually really important in cryptography!
 
-\bigskip
-\textbf{Exercise 3.} \label{ex:m6:3} In $\mathbb{Z}/5\mathbb{Z}$, find the multiplicative inverse of $3$. Verify your answer by checking that $3 \cdot x \equiv 1 \pmod{5}$.
-
 For further reading on finite fields and their applications:
 
 \url{https://en.wikipedia.org/wiki/Finite_field_arithmetic}
 
 \url{https://en.wikipedia.org/wiki/Finite_field#Discrete_logarithm}
+
+\section{The Chinese Remainder Theorem}
+
+We'll close the modular-arithmetic toolkit with one more classical result. It's not strictly required for the assignment, but it's beautiful, it will come up later if you take cryptography or number theory, and it's genuinely useful.
+
+\begin{theorem}[Chinese Remainder Theorem, simple form]\index{Chinese remainder theorem}
+Let $m$ and $n$ be positive integers with $\gcd(m, n) = 1$ (i.e., $m$ and $n$ are \emph{coprime}). Then for any residues $a \in \mathbb{Z}/m\mathbb{Z}$ and $b \in \mathbb{Z}/n\mathbb{Z}$, there is an integer $x$ satisfying
+\[
+  x \equiv a \pmod m \quad \text{and} \quad x \equiv b \pmod n,
+\]
+and $x$ is uniquely determined modulo $mn$.
+\end{theorem}
+
+Informally: if you know what an unknown integer is modulo several coprime numbers, you can reconstruct it modulo their product. The name comes from an ancient Chinese puzzle: ``I have a collection of objects; if I count them in groups of 3, there are 2 left over; in groups of 5, there are 3 left over; in groups of 7, there are 2 left over. How many do I have?''
+
+Let's solve that exact puzzle as a worked example.
+
+\textbf{Claim.} Find $x$ with $x \equiv 2 \pmod 3$, $x \equiv 3 \pmod 5$, $x \equiv 2 \pmod 7$.
+
+\textbf{Worked solution.} One way to solve this is to just enumerate candidates satisfying the first two congruences and filter by the third. Start from $x \equiv 2 \pmod 3$: candidates are $2, 5, 8, 11, 14, 17, 20, 23, \ldots$. Of these, which are $\equiv 3 \pmod 5$? Check each one: $2 \bmod 5 = 2$, $5 \bmod 5 = 0$, $8 \bmod 5 = 3$. \checkmark So $8$ works for the first two. And $8 + 15k$ also works for all $k$ (since $15 = \text{lcm}(3, 5)$). The candidates for the first two constraints are $8, 23, 38, 53, 68, 83, \ldots$. Which are $\equiv 2 \pmod 7$? Try each: $8 \bmod 7 = 1$, $23 \bmod 7 = 2$. \checkmark So $x = 23$ satisfies all three constraints.
+
+By the CRT, the solution is unique modulo $3 \cdot 5 \cdot 7 = 105$. So the full set of integer solutions is $\{23, 128, 233, \ldots\}$ and $\{23 - 105, 23 - 210, \ldots\}$, i.e., $\{23 + 105k \mid k \in \mathbb{Z}\}$.
+
+The general recipe for two coprime moduli $m, n$ is:
+\begin{enumerate}
+  \item Use B\'ezout's identity to find integers $u, v$ with $um + vn = 1$.
+  \item Then $x = a \cdot vn + b \cdot um$ satisfies $x \equiv a \pmod m$ (because $vn \equiv 1 \pmod m$ by Bézout and $um \equiv 0 \pmod m$) and similarly $x \equiv b \pmod n$. \checkmark
+\end{enumerate}
+This recipe turns the search into a small amount of algebra, scaled up by however many moduli you're juggling.
+
+Why does this matter? A classical application: instead of doing arithmetic on a single very large modulus $N$, you can do arithmetic modulo each of its prime factors $p_1, p_2, \ldots$ separately, then use the CRT to glue the pieces back together. This is the basis of the RSA speedup used in real-world cryptography. Even if you never do cryptography, the pattern---``break a problem into pieces, solve each piece, combine''---is a recurring theme in computer science.
 
 \section{Proofs by cases and the connection to or-elimination}
 Proof by cases is $\lor$-elimination in disguise. If you have an exhaustive set of cases for the data of your problem---like a number is either 0 or non-zero, or a number is positive, zero, or negative, or a number is either odd or even, \&c.---then you can treat the disjunction of those cases as a tautology and apply $\lor$-elimination to it.
@@ -158,5 +166,103 @@ which is odd.
 which is odd.
 
 So in both cases we get something of the form $2m + 1$, which is odd. Since every integer is either even or odd, we're done. Notice how the quotient-remainder theorem is doing the heavy lifting here---it's the reason we know these two cases are \emph{exhaustive}. We don't have to worry about some integer that's neither even nor odd, because the theorem guarantees there isn't one.
+
+\section{Common mistakes}
+
+\begin{enumerate}
+  \item \textbf{Negative remainders.} In math, the quotient-remainder theorem forces $0 \leq r < d$, even when $n$ is negative. So for $n = -7$, $d = 3$, the decomposition is $-7 = 3 \cdot (-3) + 2$, with remainder $r = 2$. Students (and C programmers) often write $-7 = 3 \cdot (-2) + (-1)$, which gives a negative remainder and violates the theorem. Always round the quotient \emph{down} (toward $-\infty$), not toward zero.
+  \item \textbf{``Not every residue has a multiplicative inverse.''} In $\mathbb{Z}/n\mathbb{Z}$ for general $n$, only residues coprime to $n$ have multiplicative inverses. In particular, $2$ has no inverse in $\mathbb{Z}/6\mathbb{Z}$ (because $\gcd(2, 6) = 2 \neq 1$). Students try to invert and hit a wall; the fix is to check that the modulus is \emph{prime}, or at least that the residue is coprime to the modulus.
+  \item \textbf{Confusing $a \equiv b \pmod n$ with $a = b \bmod n$.} These look similar but mean different things. $a \equiv b \pmod n$ is a relation---it says $n$ divides $a - b$---and can hold between any two integers. $a = b \bmod n$ is an equation where the right side is an actual number in $\{0, 1, \ldots, n-1\}$. $15 \equiv 3 \pmod 4$ is true; $15 = 3 \bmod 4$ is also true; but $15 \equiv 7 \pmod 4$ is also true, and $15 = 7 \bmod 4$ is false.
+  \item \textbf{Forgetting one of the two cases in a parity argument.} A proof ``by cases on whether $n$ is even or odd'' has to handle both cases. Students sometimes dispatch the even case, write ``similarly for odd,'' and move on---but the odd case often has an off-by-one that the even case didn't. Write both cases out in full the first few times.
+  \item \textbf{Computing $\lfloor \cdot \rfloor$ on negative numbers the wrong way.} $\lfloor -3.7 \rfloor = -4$, not $-3$ (which is what you'd get by stripping off the fractional part). Floor rounds \emph{down} on the number line, and $-4$ is below $-3.7$ while $-3$ is above it.
+\end{enumerate}
+
+\section{Summary and looking ahead}
+
+\begin{keytakeaway}
+  \item The \emph{quotient-remainder theorem} guarantees that every integer $n$ decomposes uniquely as $n = dq + r$ with $0 \leq r < d$. This is what makes ``case on $n \bmod d$'' a valid proof technique.
+  \item $(\mathbb{Z}/n\mathbb{Z}, +, 0)$ is a group for every positive $n$. $((\mathbb{Z}/p\mathbb{Z})^{\times}, \cdot, 1)$ is a group iff $n$ is prime---then and only then does every nonzero residue have a multiplicative inverse.
+  \item The \emph{Chinese Remainder Theorem}: coprime moduli combine. Knowing $x \bmod m$ and $x \bmod n$ (with $\gcd(m,n) = 1$) determines $x$ uniquely modulo $mn$.
+  \item \emph{Floor} rounds down on the number line, \emph{ceiling} rounds up. For negative numbers this is \emph{not} the same as ``drop the fractional part.''
+  \item \emph{Proof by cases} on modular residues is just $\vee$-elimination where the disjunction $(n \bmod d = 0) \vee \cdots \vee (n \bmod d = d-1)$ is exhaustive by the quotient-remainder theorem.
+\end{keytakeaway}
+
+\begin{summarybox}
+\textbf{What we built this module.} We took integer arithmetic and discovered that it's wrapped around several group structures we already understood from Module 5---addition mod $n$ for any $n$, and multiplication mod $p$ for primes. The CRT gave us a first taste of ``modular reconstruction,'' which is the pattern behind fast big-integer arithmetic and RSA. Proof by cases became a concrete, practical technique rather than a formal rule.
+
+\medskip
+\textbf{Looking ahead.} Module 7 introduces the two indirect proof techniques---contradiction and contrapositive---plus the Euclidean algorithm (which computes multiplicative inverses in $\mathbb{Z}/p\mathbb{Z}$ via Bézout, closing the loop with what we did here) and Hoare logic for program correctness. Before you get there, the equivalence-relation intermezzo uses modular congruence as its central example, so it's a good partner to this module.
+\end{summarybox}
+
+\section{Exercises}
+
+Organized into \textbf{warm-up} (mechanical practice with the operations), \textbf{standard} (proofs using cases on parity or modular structure), \textbf{challenge} (CRT and uniqueness arguments), and \textbf{connection} (programming and forward pointers). Solutions are in the appendix.
+
+\subsection*{Warm-up}
+
+\textbf{Exercise 1.}\label{ex:m6:1} Compute $\lfloor -3.7 \rfloor$, $\lceil -3.7 \rceil$, $\lfloor 4 \rfloor$, and $\lceil 4 \rceil$. (Be careful with the negative value---remember that floor rounds \emph{down}, not toward zero.)
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:m6:2} In $\mathbb{Z}/7\mathbb{Z}$, find the additive inverse of $3$. Verify your answer by checking that the sum of $3$ and your proposed inverse is $0$ under modular addition.
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m6:3} In $\mathbb{Z}/5\mathbb{Z}$, find the multiplicative inverse of $3$. Verify your answer by checking that $3 \cdot x \equiv 1 \pmod 5$.
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m6:4} Apply the quotient-remainder theorem: for each pair $(n, d)$ below, find the unique $q$ and $r$ with $n = dq + r$ and $0 \leq r < d$.
+\begin{enumerate}[label=(\alph*)]
+  \item $(n, d) = (100, 7)$
+  \item $(n, d) = (-100, 7)$
+  \item $(n, d) = (23, 11)$
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:m6:5} Compute each of the following:
+\begin{enumerate}[label=(\alph*)]
+  \item $17 \bmod 6$
+  \item $(-17) \bmod 6$ (use the math convention, not the C convention)
+  \item $(5 + 4) \bmod 7$
+  \item $(5 \cdot 4) \bmod 7$
+\end{enumerate}
+
+\subsection*{Standard}
+
+\textbf{Exercise 6.}\label{ex:m6:6} Prove by cases that for every integer $n$, the product $n(n + 1)$ is even. (Case on whether $n$ is even or odd.)
+
+\bigskip
+\textbf{Exercise 7.}\label{ex:m6:7} Prove: for every integer $x$, $\lfloor x / 2 \rfloor + \lceil x / 2 \rceil = x$. (Hint: case on whether $x$ is even or odd.)
+
+\bigskip
+\textbf{Exercise 8.}\label{ex:m6:8} In $\mathbb{Z}/8\mathbb{Z}$, find the additive inverse of every element and present the answers as a table. Then check that each element paired with its inverse sums to $0$ under modular addition.
+
+\bigskip
+\textbf{Exercise 9.}\label{ex:m6:9} Build the complete multiplication table for $(\mathbb{Z}/7\mathbb{Z})^{\times}$ (the nonzero residues mod 7) and use it to read off the multiplicative inverse of each element. (You should get six inverses, one for each of $1, 2, 3, 4, 5, 6$.)
+
+\subsection*{Challenge}
+
+\textbf{Exercise 10.}\label{ex:m6:10} Use the Chinese Remainder Theorem recipe to find the smallest positive integer $x$ satisfying
+\[
+  x \equiv 1 \pmod 4, \qquad x \equiv 2 \pmod 9, \qquad x \equiv 3 \pmod{25}.
+\]
+(You can do this by enumeration, like the worked example in the module, or by applying the CRT recipe to the first two constraints, then the result to the third.)
+
+\bigskip
+\textbf{Exercise 11.}\label{ex:m6:11} Prove by cases that for every integer $n$, the product $n(n+1)(n+2)$ is divisible by $6$. (Hint: show it's divisible by $2$, then show it's divisible by $3$, using a case split on $n \bmod 3$ for the second part.)
+
+\bigskip
+\textbf{Exercise 12.}\label{ex:m6:12} Prove: in $\mathbb{Z}/p\mathbb{Z}$ with $p$ prime, if $x^2 \equiv 1 \pmod p$ then $x \equiv 1$ or $x \equiv p - 1 \pmod p$. (Hint: $x^2 - 1 = (x - 1)(x + 1)$, and in a finite field, $ab = 0$ forces $a = 0$ or $b = 0$.)
+
+\subsection*{Connection}
+
+\textbf{Exercise 13.}\label{ex:m6:13} (Programming.) Write a Python function \texttt{mod\_inverse(a, n)} that returns the multiplicative inverse of \texttt{a} modulo \texttt{n} by brute force---enumerate $0, 1, \ldots, n-1$ and return the first one that satisfies $a \cdot x \equiv 1 \pmod n$, or return \texttt{None} if no such $x$ exists. Test it:
+\begin{itemize}
+  \item On $a = 3$, $n = 7$ (should return $5$, since $3 \cdot 5 = 15 \equiv 1 \pmod 7$).
+  \item On $a = 2$, $n = 6$ (should return \texttt{None}---why?).
+  \item On every nonzero $a$ in $\mathbb{Z}/7\mathbb{Z}$ (should find an inverse for all of them).
+  \item On every nonzero $a$ in $\mathbb{Z}/8\mathbb{Z}$ (some will fail; which?).
+\end{itemize}
+
+\bigskip
+\textbf{Exercise 14.}\label{ex:m6:14} (Intermezzo pointer.) The intermezzo ``What Does It Mean for Things to Be `The Same'?'' (right after this module) uses modular congruence as its main example of an equivalence relation. Without looking ahead, convince yourself that $a \equiv b \pmod n$ (defined as ``$n$ divides $a - b$'') is reflexive, symmetric, and transitive on $\mathbb{Z}$. Write a short proof of each property.
 
 \end{document}

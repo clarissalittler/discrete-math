@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Intermezzo: Cardinality and Function Spaces}
 \author{}
@@ -58,6 +38,106 @@ A function $f : A \to B$ is a \emph{bijection}\index{bijection} if it is both in
 \end{definition}
 
 A bijection is a perfect pairing---every element of $A$ matches exactly one element of $B$, and every element of $B$ matches exactly one element of $A$. When a bijection $f : A \to B$ exists, we say $A$ and $B$ have the same cardinality, written $|A| = |B|$.
+
+\subsection*{A gallery of arrow diagrams}
+
+These definitions are easier to grasp with pictures. Think of $A$ as a set of dots on the left, $B$ as a set of dots on the right, and draw an arrow from each input $a \in A$ to its output $f(a) \in B$.
+
+\begin{center}
+\begin{tikzpicture}[>={Stealth[length=2mm]}, node distance=0.9cm]
+  % valid function
+  \begin{scope}
+    \node at (0.6, 2.2) {\textbf{Valid function}};
+    \node[circle, draw, minimum size=5mm] (a1) at (0, 1.4) {};
+    \node[circle, draw, minimum size=5mm] (a2) at (0, 0.6) {};
+    \node[circle, draw, minimum size=5mm] (a3) at (0, -0.2) {};
+    \node[circle, draw, minimum size=5mm] (b1) at (1.2, 1.6) {};
+    \node[circle, draw, minimum size=5mm] (b2) at (1.2, 0.8) {};
+    \node[circle, draw, minimum size=5mm] (b3) at (1.2, 0.0) {};
+    \node[circle, draw, minimum size=5mm] (b4) at (1.2, -0.8) {};
+    \draw[->] (a1) -- (b1);
+    \draw[->] (a2) -- (b2);
+    \draw[->] (a3) -- (b3);
+    \node at (-0.4, -1.3) {$A$};
+    \node at (1.6, -1.3) {$B$};
+  \end{scope}
+  % not a function
+  \begin{scope}[xshift=4.5cm]
+    \node at (0.6, 2.2) {\textbf{\emph{Not} a function}};
+    \node[circle, draw, minimum size=5mm] (c1) at (0, 1.4) {};
+    \node[circle, draw, minimum size=5mm] (c2) at (0, 0.6) {};
+    \node[circle, draw, minimum size=5mm] (c3) at (0, -0.2) {};
+    \node[circle, draw, minimum size=5mm] (d1) at (1.2, 1.6) {};
+    \node[circle, draw, minimum size=5mm] (d2) at (1.2, 0.8) {};
+    \node[circle, draw, minimum size=5mm] (d3) at (1.2, 0.0) {};
+    \node[circle, draw, minimum size=5mm] (d4) at (1.2, -0.8) {};
+    \draw[->] (c1) -- (d1);
+    \draw[->, red] (c2) -- (d2);
+    \draw[->, red] (c2) -- (d3);
+    \node at (-0.4, -1.3) {$A$};
+    \node at (1.6, -1.3) {$B$};
+    \node[text=red] at (0.6, -2.0) {\small (one input, two outputs)};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[>={Stealth[length=2mm]}, node distance=0.9cm]
+  % injection
+  \begin{scope}
+    \node at (0.6, 2.2) {\textbf{Injection}};
+    \node[circle, draw, minimum size=5mm] (a1) at (0, 1.4) {};
+    \node[circle, draw, minimum size=5mm] (a2) at (0, 0.6) {};
+    \node[circle, draw, minimum size=5mm] (a3) at (0, -0.2) {};
+    \node[circle, draw, minimum size=5mm] (b1) at (1.2, 1.6) {};
+    \node[circle, draw, minimum size=5mm] (b2) at (1.2, 0.8) {};
+    \node[circle, draw, minimum size=5mm] (b3) at (1.2, 0.0) {};
+    \node[circle, draw, minimum size=5mm] (b4) at (1.2, -0.8) {};
+    \draw[->] (a1) -- (b1);
+    \draw[->] (a2) -- (b2);
+    \draw[->] (a3) -- (b3);
+    \node at (-0.4, -1.3) {$A$};
+    \node at (1.6, -1.3) {$B$};
+    \node at (0.6, -2.0) {\small (distinct inputs $\mapsto$ distinct outputs)};
+  \end{scope}
+  % surjection
+  \begin{scope}[xshift=5.2cm]
+    \node at (0.6, 2.2) {\textbf{Surjection}};
+    \node[circle, draw, minimum size=5mm] (c1) at (0, 1.6) {};
+    \node[circle, draw, minimum size=5mm] (c2) at (0, 0.8) {};
+    \node[circle, draw, minimum size=5mm] (c3) at (0, 0.0) {};
+    \node[circle, draw, minimum size=5mm] (c4) at (0, -0.8) {};
+    \node[circle, draw, minimum size=5mm] (d1) at (1.2, 1.2) {};
+    \node[circle, draw, minimum size=5mm] (d2) at (1.2, 0.4) {};
+    \node[circle, draw, minimum size=5mm] (d3) at (1.2, -0.4) {};
+    \draw[->] (c1) -- (d1);
+    \draw[->] (c2) -- (d1);
+    \draw[->] (c3) -- (d2);
+    \draw[->] (c4) -- (d3);
+    \node at (-0.4, -1.3) {$A$};
+    \node at (1.6, -1.3) {$B$};
+    \node at (0.6, -2.0) {\small (every output is hit)};
+  \end{scope}
+  % bijection
+  \begin{scope}[xshift=10.4cm]
+    \node at (0.6, 2.2) {\textbf{Bijection}};
+    \node[circle, draw, minimum size=5mm] (e1) at (0, 1.2) {};
+    \node[circle, draw, minimum size=5mm] (e2) at (0, 0.4) {};
+    \node[circle, draw, minimum size=5mm] (e3) at (0, -0.4) {};
+    \node[circle, draw, minimum size=5mm] (f1) at (1.2, 1.2) {};
+    \node[circle, draw, minimum size=5mm] (f2) at (1.2, 0.4) {};
+    \node[circle, draw, minimum size=5mm] (f3) at (1.2, -0.4) {};
+    \draw[->] (e1) -- (f1);
+    \draw[->] (e2) -- (f2);
+    \draw[->] (e3) -- (f3);
+    \node at (-0.4, -1.3) {$A$};
+    \node at (1.6, -1.3) {$B$};
+    \node at (0.6, -2.0) {\small (perfect pairing)};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+
+The key visual distinction: an injection never has two arrows pointing at the same dot on the right, a surjection never leaves a dot on the right without an incoming arrow, and a bijection does both---each dot on each side has exactly one arrow touching it.
 
 For finite sets this lines up with our intuition: $\{a,b,c\}$ and $\{1,2,3\}$ have the same cardinality because we can pair them up (say $a \mapsto 1, b \mapsto 2, c \mapsto 3$). But the power of this definition is that it also works for infinite sets, where counting fails.
 

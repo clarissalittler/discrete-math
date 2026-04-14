@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Module 10: Structural Induction}
 \author{}
@@ -28,6 +8,12 @@
 
 \begin{document}
 \maketitle
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Reading map.} This module doesn't correspond directly to an Epp section---Epp's §5.3 covers the closely related topic of recursive definitions on the naturals, but the more general ``structural induction on arbitrary recursive data'' is a computer-science-flavored topic that most discrete-math texts don't emphasize. \textbf{Prerequisites:} Modules 4 (natural induction), 8 (induction is recursion), and 9 (strong induction, which generalizes to recursive data where subparts are smaller but not adjacent). \textbf{Relevant intermezzi:} ``The Algebra of Types'' (immediately after this module) explains why BNF definitions and induction principles line up perfectly---the pattern isn't a coincidence, it's a theorem about initial algebras. \textbf{Practice from Epp:} the exercises in §5.3 on recursive definitions are the closest match; beyond that, this module is the one where CS 250 most clearly points beyond the textbook.
+\end{minipage}}
+\end{center}
 
 \section{The pattern so far}
 We've arrived at the last module and I want to name something that's been hiding in plain sight all quarter. Let's take a quick tour of what we've done.
@@ -130,9 +116,6 @@ So appending \texttt{ys} onto an empty list just gives you \texttt{ys}, and appe
 which is $[1,2] \mathbin{++} [3] = [1,2,3]$, exactly what you'd expect.
 
 Notice how both of these functions follow the structure of the BNF. Two cases in the datatype, two cases in the function. This is the ``recursion is induction'' idea from Module 8 showing up again: the shape of your data determines the shape of your code.
-
-\bigskip
-\textbf{Exercise 1.} \label{ex:m10:1} Define a recursive function $\texttt{reverse}$ on lists, following the two cases of the BNF. (Hint: you will need to use \texttt{append} (\texttt{++}) in the recursive case.) Then compute $\texttt{reverse}(\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil}))))$ step by step, showing each unfolding of the definition.
 
 \subsection{Worked proof: length distributes over append}
 
@@ -267,6 +250,35 @@ edges(Node(left, right)) = 2 + edges(left) + edges(right)
 
 Why 2? Because each \texttt{Node} creates exactly two edges: one going down to its left child and one going down to its right child.\footnote{If you draw a binary tree on paper, every line you draw corresponds to one of these edges. A node with two children means two lines going down from that node.}
 
+Before we prove anything, let's look at a concrete binary tree so we have something to count. Here is $\texttt{Node}(\texttt{Node}(\texttt{Leaf}, \texttt{Leaf}), \texttt{Node}(\texttt{Leaf}, \texttt{Node}(\texttt{Leaf}, \texttt{Leaf})))$ drawn out:
+
+\begin{center}
+\begin{tikzpicture}[
+    level distance=0.9cm,
+    level 1/.style={sibling distance=3.2cm},
+    level 2/.style={sibling distance=1.6cm},
+    level 3/.style={sibling distance=1.0cm},
+    every node/.style={font=\small},
+    internal/.style={circle, draw, fill=blue!15, minimum size=5mm, inner sep=0pt},
+    leaf/.style={rectangle, draw, fill=gray!15, minimum size=4mm, inner sep=1pt}
+  ]
+  \node[internal] {}
+    child { node[internal] {}
+      child { node[leaf] {L} }
+      child { node[leaf] {L} }
+    }
+    child { node[internal] {}
+      child { node[leaf] {L} }
+      child { node[internal] {}
+        child { node[leaf] {L} }
+        child { node[leaf] {L} }
+      }
+    };
+\end{tikzpicture}
+\end{center}
+
+Count by hand: there are 4 internal nodes (the blue circles) and 5 leaves (the gray squares), and you can trace 8 edges going down to children ($2 \times 4$, one pair per internal node). That's the pattern we're about to prove in general. The shapes $L$ stand for \texttt{Leaf} and the unmarked circles are \texttt{Node} constructors.
+
 \subsection{Worked proof: counting edges in a binary tree}
 
 Now let's prove something about binary trees using structural induction. We'll show that:
@@ -305,9 +317,6 @@ Right side:
 They're equal! Both sides give us $2 + 2 \cdot \texttt{size(left)} + 2 \cdot \texttt{size(right)}$, so $P(\texttt{Node(left, right)})$ holds. By structural induction, $P(t)$ for all binary trees $t$. $\square$
 
 Notice how we used \textbf{both} inductive hypotheses in the inductive step---one for each subtree. That's the characteristic feature of tree induction: you get two IHs and you typically need both.
-
-\bigskip
-\textbf{Exercise 2.} \label{ex:m10:2} Define a function $\texttt{leaves}(t)$ that counts the number of leaves in a binary tree (a \texttt{Leaf} counts as 1, a \texttt{Node} counts the leaves in both subtrees). Then prove by structural induction: $\texttt{leaves}(t) = \texttt{size}(t) + 1$ for all binary trees $t$. (You will need both inductive hypotheses in the inductive step, just like in the edges proof above.)
 
 \section{The general recipe}
 
@@ -374,9 +383,6 @@ All cases handled. By structural induction, $\texttt{size}(f) \geq 0$ for every 
 
 The proof itself is almost trivially easy---and that's the point. What matters is the \emph{shape}: three base cases (matching the three non-recursive alternatives in the BNF), one inductive case with one IH (for ${\sim}$), and three inductive cases with two IHs each (for $\wedge$, $\vee$, $\to$). That shape was determined entirely by the BNF. We just followed the recipe.
 
-\bigskip
-\textbf{Exercise 3.} \label{ex:m10:3} Define a function $\texttt{vars}(f)$ that returns the number of variable occurrences in a propositional formula (following the BNF from Module~2). For instance, $\texttt{vars}(x \wedge y) = 2$ and $\texttt{vars}(x \wedge x) = 2$ (we're counting occurrences, not distinct variables). Then state---but you don't need to prove---what the structural induction principle would require you to show in order to prove some property $P(f)$ for all formulas $f$. How many base cases? How many inductive steps? How many IHs in each?
-
 \section{Wrapping up: the big picture}
 
 Let's take a step back and look at what we've actually built over this whole course. There's been a single thread running through every module, and now we can finally state it cleanly.
@@ -395,5 +401,112 @@ The specific data changes but the \emph{method} is always the same. Define induc
 If there's one thing I want you to take away from this course, it's this: when you encounter some new kind of structured data, the first question you should ask is ``what's the BNF?'' Once you have that, you know how to define functions on it (by recursion following the cases), and you know how to prove things about it (by induction following the cases). Everything else is details.
 
 This is the foundation for CS 251 and beyond---type theory, programming language theory, algorithm analysis, formal verification. The datatypes get bigger and the proofs get harder, but the recipe stays the same. That recipe will carry you further than you might expect.\footnote{Okay, I lied a little. In CS 251 you'll see datatypes where the recursion is more complicated---mutual recursion, nested datatypes, indexed families---and the induction principles get correspondingly fancier. But the core idea really is the same. Promise.}
+
+\section{Common mistakes}
+
+\begin{enumerate}
+  \item \textbf{Wrong number of inductive hypotheses.} The induction principle has exactly one IH per recursive sub-part in each recursive case. Students sometimes only use \emph{one} IH when proving a property of \texttt{Node(left, right)}---forgetting that they get \emph{both} $P(\texttt{left})$ and $P(\texttt{right})$. Conversely, students sometimes \emph{invent} IHs they don't have (e.g.\ claiming an IH for a parent tree when doing induction on a child). Always: IH count matches recursive-sub-part count in the BNF.
+  \item \textbf{Missing a BNF case.} A structural induction proof has to handle every alternative in the BNF. If your grammar has seven alternatives (like the BNF for propositional formulas) and your proof handles five of them, you've proved a weaker statement than you think. For long grammars, explicitly list the cases at the top of the proof and check them off as you go.
+  \item \textbf{Skipping the unfolding step.} The inductive step usually has the shape ``unfold the definition on the left, apply the IH, unfold the definition on the right, see they match.'' Students sometimes skip the unfolding and try to cite the IH directly on an expression where the IH doesn't actually apply---because the LHS expression has a $\texttt{Cons}$ or $\texttt{Node}$ wrapped around it and you have to \emph{unwrap} the definition first before the IH becomes applicable.
+  \item \textbf{Generalizing the wrong variable.} When proving ``for all \texttt{xs} and \texttt{ys}, $\ldots$'', you usually induct on one of them with the \emph{other} universally quantified inside the predicate $P(\texttt{xs})$. If you fix a particular \texttt{ys} and then try to induct on \texttt{xs}, you might find your proof goes through---but you've only proved the result for that particular \texttt{ys}. To prove it for all \texttt{ys}, the quantifier has to be \emph{inside} $P$.
+  \item \textbf{Proving a lemma you didn't state.} In the reverse-is-involution exercise (and others like it) you often need a side lemma---something like $\texttt{reverse}(xs \mathbin{++} ys) = \texttt{reverse}(ys) \mathbin{++} \texttt{reverse}(xs)$---before the main theorem can go through. Students sometimes use such a lemma mid-proof without proving it. If you need a lemma, prove it separately first (or note it and come back to it). Don't assume a useful-looking equation.
+  \item \textbf{Forgetting that \texttt{Leaf} is a tree.} Base cases sometimes get short-changed because they seem trivial. But a ``trivial'' base case is still a required case; write it down explicitly and verify. The one-line base case is sometimes where the \emph{whole argument} hinges---for example, in the leaves-vs-size proof, $\texttt{leaves}(\texttt{Leaf}) = 1$ but $\texttt{size}(\texttt{Leaf}) = 0$, and you need that $0 + 1$ relationship to see why the inductive hypothesis delivers the right answer.
+\end{enumerate}
+
+\section{Summary and looking ahead}
+
+\begin{keytakeaway}
+  \item \emph{Structural induction}: every BNF definition gives you an induction principle, one case per BNF alternative, with one IH per recursive sub-part in each case.
+  \item Natural induction is structural induction on $\text{Nat} := 0 \mid \text{succ Nat}$. List induction is structural induction on $\text{List} := \texttt{Nil} \mid \texttt{Cons}(A, \text{List})$. Tree induction gives you \emph{two} IHs (one per subtree). Propositional-formula induction gives you seven cases. Same recipe every time.
+  \item The shape of your data determines the shape of your code (recursive functions), which determines the shape of your proofs (induction principles). Recursion, induction, and case analysis are three views of a single pattern.
+  \item Serious structural induction proofs often involve \emph{lemma chains}: the main theorem depends on a helper lemma, which depends on a smaller helper, each proved by its own structural induction.
+\end{keytakeaway}
+
+\begin{summarybox}
+\textbf{What we built this module.} This is the capstone of the first term. The three-step pattern---(1) define your data inductively via BNF, (2) get an induction principle for free, (3) use it to prove things by case analysis---has been present from Module 2 (the BNF for propositional logic) through Module 4 (natural induction) to here. We've finally named it and seen it work on several concrete data types. This is the pattern that will carry you through CS 251 and beyond.
+
+\medskip
+\textbf{Looking ahead.} This is the end of the first-term notes. The intermezzi after this module (``The Algebra of Types,'' ``The Lambda Calculus'') round out the picture by showing that data types form a rich algebraic structure of their own and that there's a tiny universal programming language---$\lambda$-calculus---underneath everything we've been doing. In CS 251 you'll see mutual recursion, nested datatypes, indexed families, and eventually dependent types; the core recipe ``BNF gives you induction'' generalizes to all of it. And if you go further---into programming language theory, formal verification, or type theory---this module is the hinge on which the rest hangs.
+
+If there's one thing to internalize from the whole first term, it's this: when you encounter some new kind of structured data, the first question to ask is ``what's the BNF?'' The answer tells you how to define functions on it and how to prove things about it. Everything else is details.
+\end{summarybox}
+
+\section{Exercises}
+
+Organized into \textbf{warm-up} (mechanical practice with recursive definitions), \textbf{standard} (structural-induction proofs on lists and trees), \textbf{challenge} (deeper proofs, including the negation-free monotone result), and \textbf{connection} (programming and forward pointers). Solutions are in the appendix.
+
+\subsection*{Warm-up}
+
+\textbf{Exercise 1.}\label{ex:m10:1} Define a recursive function $\texttt{reverse}$ on lists, following the two cases of the BNF. (Hint: you will need to use \texttt{append} (\texttt{++}) in the recursive case.) Then compute $\texttt{reverse}(\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil}))))$ step by step, showing each unfolding of the definition.
+
+\bigskip
+\textbf{Exercise 2.}\label{ex:m10:2} Compute the following by hand, unfolding the definitions step by step:
+\begin{enumerate}[label=(\alph*)]
+  \item $\texttt{length}(\texttt{Cons}(a, \texttt{Cons}(b, \texttt{Nil})))$
+  \item $\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Nil})) \mathbin{++} \texttt{Cons}(3, \texttt{Nil})$
+  \item $\texttt{size}(\texttt{Node}(\texttt{Leaf}, \texttt{Node}(\texttt{Leaf}, \texttt{Leaf})))$
+  \item $\texttt{edges}(\texttt{Node}(\texttt{Leaf}, \texttt{Node}(\texttt{Leaf}, \texttt{Leaf})))$
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m10:3} For each of the following BNFs, state the shape of the structural induction principle: how many base cases and how many inductive steps, and how many IHs in each inductive step.
+\begin{enumerate}[label=(\alph*)]
+  \item $\texttt{Color} := \texttt{Red} \mid \texttt{Green} \mid \texttt{Blue}$
+  \item $\texttt{RoseTree} := \texttt{Leaf}(A) \mid \texttt{Branch}(\texttt{List RoseTree})$ (hmm, this one is tricky because the recursive case contains a list of subtrees, not a fixed number---answer informally)
+  \item $\texttt{Expr} := \texttt{Const}(\mathbb{Z}) \mid \texttt{Var}(\text{Name}) \mid \texttt{Add}(\texttt{Expr}, \texttt{Expr}) \mid \texttt{Mul}(\texttt{Expr}, \texttt{Expr}) \mid \texttt{Neg}(\texttt{Expr})$
+\end{enumerate}
+
+\subsection*{Standard}
+
+\textbf{Exercise 4.}\label{ex:m10:4} Define a function $\texttt{leaves}(t)$ that counts the number of leaves in a binary tree (a \texttt{Leaf} counts as 1, a \texttt{Node} counts the leaves in both subtrees). Then prove by structural induction: $\texttt{leaves}(t) = \texttt{size}(t) + 1$ for all binary trees $t$. (You will need both inductive hypotheses in the inductive step, just like in the edges proof above.)
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:m10:5} Define a function $\texttt{vars}(f)$ that returns the number of variable occurrences in a propositional formula (following the BNF from Module~2). For instance, $\texttt{vars}(x \wedge y) = 2$ and $\texttt{vars}(x \wedge x) = 2$ (we're counting occurrences, not distinct variables). Then prove by structural induction that for every formula $f$, $\texttt{vars}(f) \leq \texttt{size}(f) + 1$ (where $\texttt{size}$ is the connective-counting function defined in the module).
+
+\bigskip
+\textbf{Exercise 6.}\label{ex:m10:6} Prove by structural induction that append is associative on lists:
+\[
+  (xs \mathbin{++} ys) \mathbin{++} zs = xs \mathbin{++} (ys \mathbin{++} zs).
+\]
+Induct on $xs$, with $ys$ and $zs$ universally quantified inside the predicate.
+
+\bigskip
+\textbf{Exercise 7.}\label{ex:m10:7} Define $\texttt{map}(f, xs)$ recursively on lists: $\texttt{map}(f, \texttt{Nil}) = \texttt{Nil}$ and $\texttt{map}(f, \texttt{Cons}(x, xs')) = \texttt{Cons}(f(x), \texttt{map}(f, xs'))$. Prove by structural induction that $\texttt{length}(\texttt{map}(f, xs)) = \texttt{length}(xs)$ for every list $xs$.
+
+\subsection*{Challenge}
+
+\textbf{Exercise 8.}\label{ex:m10:8} Prove by structural induction that reverse is an involution:
+\[
+  \texttt{reverse}(\texttt{reverse}(xs)) = xs \quad \text{for every list } xs.
+\]
+You will need two helper lemmas:
+\begin{enumerate}
+  \item $xs \mathbin{++} \texttt{Nil} = xs$ for every $xs$. (Proof by induction on $xs$.)
+  \item $\texttt{reverse}(xs \mathbin{++} ys) = \texttt{reverse}(ys) \mathbin{++} \texttt{reverse}(xs)$. (Proof by induction on $xs$, using the first lemma in the base case.)
+\end{enumerate}
+Prove both helpers, then use them to prove the main result. This is a good example of how real structural induction proofs often involve a chain of lemmas.
+
+\bigskip
+\textbf{Exercise 9.}\label{ex:m10:9} (The plan's request: a real semantic property.) Say a propositional formula is \emph{negation-free} if it is built from $T$, $F$, variables, and the connectives $\wedge$, $\vee$ only (i.e., the BNF excludes $\lnot$ and $\to$). Say a boolean function $f$ is \emph{monotone in variable $x$} if flipping $x$ from $F$ to $T$ (with all other variables held fixed) never flips the output of $f$ from $T$ to $F$. Prove by structural induction on the negation-free BNF:
+\[
+  \text{Every negation-free formula is monotone in every variable.}
+\]
+Hint: you'll need the sub-lemma that $\wedge$ and $\vee$ preserve monotonicity---if two functions are monotone in $x$, so is their conjunction and their disjunction. You can also look back at Module~2 Exercise~10, where you proved that $\{\wedge, \vee\}$ is not functionally complete using exactly this monotonicity idea.
+
+\bigskip
+\textbf{Exercise 10.}\label{ex:m10:10} A binary tree is \emph{perfect} if every non-leaf node has two subtrees of the same height. Define $\texttt{height}(t)$ recursively: $\texttt{height}(\texttt{Leaf}) = 0$ and $\texttt{height}(\texttt{Node}(l, r)) = 1 + \max(\texttt{height}(l), \texttt{height}(r))$. Prove by structural induction: for every perfect binary tree $t$, $\texttt{leaves}(t) = 2^{\texttt{height}(t)}$. (Hint: the definition of ``perfect'' is itself inductive: \texttt{Leaf} is perfect, and $\texttt{Node}(l, r)$ is perfect if $l$ and $r$ are both perfect and have the same height. Induct on the structure of the perfect tree.)
+
+\subsection*{Connection}
+
+\textbf{Exercise 11.}\label{ex:m10:11} (Programming.) Implement \texttt{List} and \texttt{BinTree} as Python classes following the BNFs. Then implement \texttt{length}, \texttt{append}, \texttt{reverse}, \texttt{size}, \texttt{edges}, \texttt{leaves}, \texttt{height} as methods or free functions. Write unit tests that check the theorems proved in the module and exercises: for instance, verify that $\texttt{length}(xs \mathbin{++} ys) = \texttt{length}(xs) + \texttt{length}(ys)$ holds on a handful of random lists. Use Python's \texttt{random} and maybe \texttt{hypothesis} (if you want a proper property-based testing library) to stress-test your implementations.
+
+\bigskip
+\textbf{Exercise 12.}\label{ex:m10:12} (Intermezzo pointer.) The ``Algebra of Types'' intermezzo that follows this module explains that BNF definitions correspond to \emph{polynomial functors}, and that the associated induction principles are cases of a general categorical theorem. As a warm-up, count the ``shape'' of each of the following datatypes by writing down a polynomial-like expression. For example, $\texttt{List}\,A := \texttt{Nil} \mid \texttt{Cons}(A, \texttt{List}\,A)$ corresponds to $L = 1 + A \cdot L$ (where $1$ stands for the \texttt{Nil} case with no data and $A \cdot L$ stands for \texttt{Cons} with an $A$ and a sub-list). Do the same for:
+\begin{enumerate}[label=(\alph*)]
+  \item $\texttt{Nat} := 0 \mid \texttt{succ Nat}$
+  \item $\texttt{BinTree} := \texttt{Leaf} \mid \texttt{Node}(\texttt{BinTree}, \texttt{BinTree})$
+  \item $\texttt{Maybe}\,A := \texttt{Nothing} \mid \texttt{Just}(A)$ (not recursive!)
+\end{enumerate}
+Why do you think the intermezzo calls these ``polynomial'' functors?
 
 \end{document}

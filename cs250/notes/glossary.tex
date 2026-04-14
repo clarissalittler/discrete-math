@@ -1,0 +1,251 @@
+\documentclass[11pt]{article}
+\input{cs250preamble}
+
+\title{CS 250 --- Glossary}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+This glossary gives one-paragraph definitions of the main concepts introduced
+in the book. It complements the \emph{Notation Summary} appendix, which is a
+symbol reference rather than a concept reference. If you're looking up a
+symbol, check Notation first; if you're looking up a term, this is the right
+place. Entries are alphabetical.
+
+\section*{A}
+
+\textbf{Argument (in logic).} A sequence of premises followed by a conclusion. An argument is \emph{valid} if, whenever all the premises are simultaneously true, the conclusion is also true. Validity is about form, not content---a valid argument can have false premises and a false conclusion, as long as the inference itself is sound. Introduced in Module~3.
+
+\textbf{Assignment rule (Hoare logic).} The proof rule $\{P[x/e]\}\, x := e\, \{P\}$: to conclude $P$ holds after the assignment, you need $P$ with $e$ substituted for $x$ to hold before. Always applied backward from the postcondition. See Module~7.
+
+\textbf{Associativity.} A binary operation $*$ is associative if $(a * b) * c = a * (b * c)$ for all $a, b, c$. Addition, multiplication, and function composition are all associative. Subtraction is not. Appears first in Module~5 in the group axioms.
+
+\section*{B}
+
+\textbf{Backus-Naur Form (BNF).} A notation for defining the syntax of a language or a recursive data type. Each alternative on the right-hand side of $:=$ is a way to build an instance of the type; alternatives are separated by $\mid$. Every BNF definition yields an induction principle of the same shape. Introduced in Module~2, used throughout Modules 4, 8, 9, and 10.
+
+\textbf{Base case.} In an inductive proof, the non-recursive case that you verify by direct computation. For natural induction, the base case is $P(0)$; for list induction, it is $P(\texttt{Nil})$; in general, there is one base case for each non-recursive alternative in the BNF.
+
+\textbf{Bijection.} A function $f : A \to B$ that is both injective and surjective---a perfect pairing between $A$ and $B$. Equivalently, a function with an inverse. Bijections are the relation we use to say two sets have the same cardinality, finite or infinite (Cardinality intermezzo).
+
+\textbf{Biconditional ($\leftrightarrow$).} The logical connective ``if and only if.'' $p \leftrightarrow q$ is shorthand for $(p \to q) \wedge (q \to p)$ and is true exactly when $p$ and $q$ have the same truth value. See Module~2.
+
+\textbf{Bound variable.} A variable that is captured by a quantifier or a function parameter, local to the scope of that binder. Renaming a bound variable (to a fresh name) doesn't change the meaning of a formula. See Module~4.
+
+\section*{C}
+
+\textbf{Cardinality.} The ``size'' of a set. For finite sets, $|A|$ is the number of elements; for infinite sets, cardinality is defined up to bijection---two sets have the same cardinality iff there is a bijection between them. Countable vs.\ uncountable infinity is the cleanest example of different cardinalities. See Module~1 and the Cardinality intermezzo.
+
+\textbf{Cartesian product.} $A \times B = \{(a, b) \mid a \in A, b \in B\}$, the set of ordered pairs. Generalizes to $A \times B \times C$, etc. Used to define functions and relations (both are subsets of a Cartesian product). See Module~1.
+
+\textbf{Characteristic equation.} The quadratic $r^2 = Ar + B$ obtained by substituting $a_n = r^n$ into a second-order linear homogeneous recurrence $a_k = A a_{k-1} + B a_{k-2}$. Its roots determine the closed form. See Module~9.
+
+\textbf{Chinese Remainder Theorem (CRT).} If $m$ and $n$ are coprime, then knowing $x \bmod m$ and $x \bmod n$ uniquely determines $x$ modulo $mn$. Generalizes to any finite set of pairwise-coprime moduli. See Module~6.
+
+\textbf{Closure.} A set $S$ is closed under an operation $*$ if applying $*$ to elements of $S$ produces another element of $S$. The group axioms implicitly require closure (the operation has type $G \to G \to G$). See Module~5.
+
+\textbf{Conjunctive Normal Form (CNF).} A formula in propositional logic is in CNF when it is a conjunction of clauses, each of which is a disjunction of literals. Every formula has an equivalent CNF form. See Module~3. Contrast with \emph{disjunctive normal form}.
+
+\textbf{Contradiction.} A formula that is false under every assignment of truth values. The canonical example is $p \wedge \lnot p$. Proof by contradiction assumes $\lnot P$ and derives a contradiction to conclude $P$. See Modules~2, 3, and 7.
+
+\textbf{Contrapositive.} The contrapositive of $P \to Q$ is $\lnot Q \to \lnot P$. An implication and its contrapositive are logically equivalent (in classical logic). Proving the contrapositive of a claim is often cleaner than proving it directly. See Module~7.
+
+\textbf{Converse.} The converse of $P \to Q$ is $Q \to P$. An implication and its converse are \emph{not} logically equivalent in general. The \emph{converse error}---concluding $P$ from $P \to Q$ and $Q$---is one of the two classic fallacies. See Module~3.
+
+\textbf{Countable set.} A set that is either finite or can be put into bijection with $\mathbb{N}$. The integers and the rationals are countable; the real numbers are not. See the Cardinality intermezzo.
+
+\textbf{Counterexample.} A single concrete instance that falsifies a universal claim. To disprove ``for all $x$, $P(x)$,'' it suffices to exhibit one $x$ with $\lnot P(x)$. See Module~5.
+
+\section*{D}
+
+\textbf{De Morgan's laws.} $\lnot(p \wedge q) \equiv \lnot p \vee \lnot q$ and $\lnot(p \vee q) \equiv \lnot p \wedge \lnot q$. Generalized to quantifiers: $\lnot \forall x.\; P(x) \equiv \exists x.\; \lnot P(x)$ and $\lnot \exists x.\; P(x) \equiv \forall x.\; \lnot P(x)$. See Modules~2 and 4.
+
+\textbf{Disjunctive Normal Form (DNF).} A formula in propositional logic is in DNF when it is a disjunction of terms, each of which is a conjunction of literals. Every truth table can be mechanically converted to a DNF formula (one disjunct per T row). See Module~3. Contrast with \emph{conjunctive normal form}.
+
+\textbf{Disjoint sets.} Two sets $A$ and $B$ are disjoint if $A \cap B = \emptyset$---they share no elements. See Module~1.
+
+\textbf{Divisibility.} For integers $a$ and $d$ with $d \neq 0$, we say $d$ divides $a$ (written $d \mid a$) if $a = dk$ for some integer $k$. See Module~5.
+
+\textbf{Domain (of a function).} The set of inputs on which a function is defined. For $f : A \to B$, the domain is $A$. See Module~1.
+
+\section*{E}
+
+\textbf{Empty set.} The set with no elements, written $\emptyset$ or $\{\}$. It is a subset of every set. $|\emptyset| = 0$. See Module~1.
+
+\textbf{Equivalence relation.} A relation that is reflexive, symmetric, and transitive. Equality is the canonical example; modular congruence ($a \equiv b \pmod n$) is another. Equivalence relations partition their underlying set into equivalence classes. See Modules~1 and 6 and the Equivalence intermezzo.
+
+\textbf{Euclidean algorithm.} An algorithm for computing $\gcd(a, b)$ by repeatedly applying the identity $\gcd(a, b) = \gcd(b, a \bmod b)$ until the second argument reaches $0$. The \emph{extended} version also computes B\'ezout coefficients $x, y$ with $ax + by = \gcd(a, b)$. See Module~7.
+
+\textbf{Excluded middle.} The axiom $p \vee \lnot p$. Every formula is either true or false, full stop. Classical logic accepts it; constructive logic does not. Proof by contradiction and double-negation elimination both depend on it. See Modules~2, 3, and 7, and the Curry--Howard intermezzo.
+
+\textbf{Existential quantifier ($\exists$).} $\exists x : A.\; P(x)$ is true iff at least one element of $A$ satisfies $P$. Its introduction rule requires a concrete witness. See Module~4.
+
+\textbf{Extensional equality.} Two sets (or functions) are extensionally equal if they have the same elements (or produce the same outputs on all inputs). Contrasts with intensional equality, which cares about how objects are defined rather than what they contain. See Module~1.
+
+\section*{F}
+
+\textbf{Fallacy.} An argument form that looks plausible but is actually invalid. The two classics in propositional logic are the \emph{converse error} and the \emph{inverse error}. See Module~3.
+
+\textbf{Fibonacci sequence.} The sequence $F_0 = 0, F_1 = 1, F_n = F_{n-1} + F_{n-2}$. Its closed form, derived via the characteristic equation, involves the golden ratio $\varphi = (1 + \sqrt{5})/2$. See Module~9.
+
+\textbf{Finite field.} A field---a set with addition, subtraction, multiplication, and division (by nonzero elements)---with finitely many elements. $\mathbb{Z}/p\mathbb{Z}$ is a finite field iff $p$ is prime. See Module~6.
+
+\textbf{Floor and ceiling.} $\lfloor x \rfloor$ is the greatest integer $\leq x$ (rounding down). $\lceil x \rceil$ is the least integer $\geq x$ (rounding up). For negative numbers, floor is \emph{not} the same as truncating toward zero. See Module~6.
+
+\textbf{Free variable.} A variable that is not bound by any quantifier in its scope. A formula with free variables doesn't have a definite truth value until you specify what those variables refer to. See Module~4.
+
+\textbf{Function.} A total, single-valued assignment $f : A \to B$: every $a \in A$ has exactly one output $f(a) \in B$. Dropping totality gives a \emph{partial function}. See Module~1.
+
+\textbf{Functional completeness.} A set of boolean connectives is functionally complete if every boolean function can be expressed using only those connectives. $\{\wedge, \vee, \lnot\}$ is functionally complete; so is $\{\text{NAND}\}$; $\{\wedge, \vee\}$ alone is not (it only yields monotone functions). See Modules~2 and 3.
+
+\section*{G}
+
+\textbf{Greatest Common Divisor (GCD).} For integers $a, b$ not both zero, $\gcd(a, b)$ is the largest positive integer that divides both. Computed by the Euclidean algorithm. See Module~7.
+
+\textbf{Group.} A set $G$ with an associative binary operation $*$, an identity element $e$ (with $e * g = g * e = g$), and an inverse $g^{-1}$ for every element (with $g * g^{-1} = g^{-1} * g = e$). $(\mathbb{Z}, +, 0)$ and $(\mathbb{Q} \setminus \{0\}, \cdot, 1)$ are groups. See Module~5.
+
+\section*{H}
+
+\textbf{Hoare logic.} A formal logic for reasoning about imperative programs. Its basic statement is a triple $\{P\}\, c\, \{Q\}$: if $P$ holds before $c$ runs, then $Q$ holds after. Each language construct has its own inference rule. See Module~7.
+
+\textbf{Hoare triple.} A statement of the form $\{P\}\, c\, \{Q\}$ where $P$ (the \emph{precondition}) and $Q$ (the \emph{postcondition}) are logical formulas and $c$ is a program. See Module~7.
+
+\section*{I}
+
+\textbf{Identity element.} In a group (or any structure with a binary operation), an element $e$ satisfying $e * g = g * e = g$ for every $g$. Unique if it exists. See Module~5.
+
+\textbf{Implication ($\to$).} The logical connective $p \to q$, true except when $p$ is true and $q$ is false. Often read ``if $p$ then $q$.'' The rows where $p$ is false give \emph{vacuous truth}. See Module~2.
+
+\textbf{Induction, natural.} The proof principle: to prove $\forall n : \mathbb{N}.\; P(n)$, prove $P(0)$ and prove that $P(n)$ implies $P(\text{succ}\; n)$. Equivalent to the well-ordering principle. See Module~4 and Module~8.
+
+\textbf{Induction, strong.} A variant of natural induction where the inductive hypothesis gives you $P(j)$ for \emph{all} $j \leq k$, not just $j = k$. Logically equivalent to ordinary induction, but more convenient for recurrences that reach back more than one step. See Module~9.
+
+\textbf{Induction, structural.} The general form of induction for arbitrary recursive data types. Every BNF definition yields its own structural induction principle, with one case per alternative. See Module~10.
+
+\textbf{Inductive hypothesis (IH).} In an inductive proof, the assumption you get to make in the inductive step---$P(k)$ in ordinary induction, or $P(j)$ for all $j \leq k$ in strong induction, or $P$ applied to each recursive sub-part in structural induction.
+
+\textbf{Inference rule.} A schema of the form ``given these premises, conclude this conclusion.'' Written with the premises above a line and the conclusion below. The rules of a proof system. See Modules~3 and 4, and the Gentzen intermezzo.
+
+\textbf{Injection (injective function).} A function $f : A \to B$ such that $f(a_1) = f(a_2)$ implies $a_1 = a_2$---no two inputs share an output. See the Cardinality intermezzo.
+
+\textbf{Intersection ($\cap$).} $A \cap B = \{x \mid x \in A \wedge x \in B\}$, the set of elements in both $A$ and $B$. See Module~1.
+
+\textbf{Intensional equality.} Equality based on how an object is defined or constructed, not just what it contains. Contrasts with extensional equality. Two programs computing the same function are extensionally equal but may be intensionally different. See Module~1.
+
+\textbf{Inverse (of a group element).} The element $g^{-1}$ such that $g * g^{-1} = g^{-1} * g = e$. Unique if it exists. See Module~5.
+
+\textbf{Inverse error.} The fallacy of concluding $\lnot Q$ from $P \to Q$ and $\lnot P$. Not valid. See Module~3.
+
+\textbf{Irrational number.} A real number that is not rational (not expressible as $a/b$ for integers $a, b$). $\sqrt{2}$ is the classic example. See Module~7.
+
+\section*{L}
+
+\textbf{Literal.} In a propositional formula, either a variable or its negation. The building blocks of CNF and DNF clauses. See Module~3.
+
+\textbf{Logical equivalence.} Two formulas are logically equivalent (written $\equiv$) if they have the same truth table---or equivalently, if the biconditional between them is a tautology. See Module~2.
+
+\textbf{Loop invariant.} In a Hoare-logic proof of a while loop, a proposition that holds every time control reaches the top of the loop. The invariant, combined with the negation of the loop guard, must imply the desired postcondition. See Module~7.
+
+\section*{M}
+
+\textbf{Modular arithmetic.} Arithmetic in $\mathbb{Z}/n\mathbb{Z}$, the integers modulo $n$. Addition, subtraction, and multiplication all work on residues mod $n$; division works too if $n$ is prime. See Module~6.
+
+\textbf{Modus ponens.} The inference rule: from $p$ and $p \to q$, conclude $q$. The elimination rule for $\to$. See Module~3.
+
+\textbf{Modus tollens.} The inference rule: from $p \to q$ and $\lnot q$, conclude $\lnot p$. Derivable from modus ponens via the contrapositive. See Module~3.
+
+\textbf{Monotone function.} A boolean function $f$ is monotone if flipping any input from $F$ to $T$ never flips the output from $T$ to $F$. Every formula built from $\{\wedge, \vee\}$ alone is monotone; $\lnot$ is not. See Modules~2 and 10.
+
+\section*{N}
+
+\textbf{Natural deduction.} A style of proof system where each logical connective has introduction and elimination rules, and proofs are written as trees. The Gentzen intermezzo is all about this style.
+
+\textbf{Negation ($\lnot$).} The logical connective that flips true to false and vice versa. Also written $\sim$ in code-style notation. See Module~2.
+
+\textbf{Normal form.} A canonical way of writing a formula. CNF and DNF are normal forms for propositional logic. See Module~3.
+
+\section*{P}
+
+\textbf{Partial function.} A function-like assignment that may be undefined on some inputs. Every total function is a partial function; not vice versa. See Module~1.
+
+\textbf{Partition.} A decomposition of a set into disjoint non-empty subsets whose union is the whole set. Equivalence relations and partitions are in bijective correspondence. See the Equivalence intermezzo.
+
+\textbf{Power set.} For a set $A$, the power set $\mathcal{P}(A)$ is the set of all subsets of $A$. If $|A| = n$ then $|\mathcal{P}(A)| = 2^n$. See Module~1.
+
+\textbf{Precondition / postcondition.} The logical assertions before and after a program in a Hoare triple $\{P\}\, c\, \{Q\}$. $P$ is the precondition; $Q$ is the postcondition. See Module~7.
+
+\textbf{Predicate.} A function from a set to \{True, False\}, i.e., $P : A \to \{T, F\}$. Predicates are the building blocks of statements in first-order logic. See Module~4.
+
+\textbf{Propositional logic.} The logic of boolean variables and the connectives $\wedge, \vee, \lnot, \to$. The simplest nontrivial logic. See Module~2.
+
+\textbf{Proof by cases.} A proof technique where the situation is split into finitely many exhaustive, mutually exclusive cases, and each case is handled separately. Formally, $\vee$-elimination. See Modules~3 and 6.
+
+\textbf{Proof by contradiction.} A proof technique where you assume the negation of what you want to prove, derive a contradiction, and conclude the original claim. Requires excluded middle. See Modules~3 and 7.
+
+\textbf{Proof by contrapositive.} A proof technique where, to prove $P \to Q$, you instead prove $\lnot Q \to \lnot P$. Requires excluded middle (via the equivalence of an implication with its contrapositive). See Module~7.
+
+\textbf{Proof by exhaustion.} A proof technique where you enumerate every case in a finite domain and verify the claim on each one. A special case of proof by cases, but distinctive in practice. See Module~5.
+
+\textbf{Proof tree.} A visual representation of a natural-deduction proof, with the conclusion at the root and premises branching upward. See the Gentzen intermezzo.
+
+\section*{Q}
+
+\textbf{Quantifier.} $\forall$ (universal, ``for all'') and $\exists$ (existential, ``there exists'') are the two quantifiers in first-order logic. They bind variables over a specified domain. See Module~4.
+
+\textbf{Quotient-remainder theorem.} For any integer $n$ and positive integer $d$, there exist unique integers $q, r$ with $n = dq + r$ and $0 \leq r < d$. The foundation of modular arithmetic. See Module~6.
+
+\section*{R}
+
+\textbf{Rational number.} A real number expressible as $a/b$ for integers $a, b$ with $b \neq 0$. The set $\mathbb{Q}$ of rationals is countable. See Module~5.
+
+\textbf{Recurrence relation.} A recursive definition of a sequence: initial values plus a rule expressing each subsequent term in terms of earlier ones. See Module~9.
+
+\textbf{Reflexive relation.} A relation $R$ on $A$ is reflexive if $a \, R \, a$ for every $a \in A$. One of the three properties of an equivalence relation. See Module~1.
+
+\textbf{Relation.} A subset of $A \times B$. A relation between $A$ and $B$ records which pairs $(a, b)$ are ``related.'' Functions are a special case of relations. See Module~1.
+
+\textbf{Residue class.} The equivalence class of an integer under congruence mod $n$. The residue classes form the set $\mathbb{Z}/n\mathbb{Z}$. See Module~6 and the Equivalence intermezzo.
+
+\section*{S}
+
+\textbf{Sequence.} A function from $\mathbb{N}$ (or a subset) to some set. Can be defined explicitly or recursively. See Module~8.
+
+\textbf{Set.} An unordered, duplicate-free collection of elements. The primary data structure of discrete math. See Module~1.
+
+\textbf{Set-builder notation.} The notation $\{x \mid x \in S, P(x)\}$ for ``the set of all $x$ in $S$ such that $P(x)$.'' See Module~1.
+
+\textbf{Subset ($\subseteq$).} $A \subseteq B$ iff every element of $A$ is also an element of $B$. Equivalently, $\forall x.\; (x \in A \to x \in B)$. See Module~1.
+
+\textbf{Surjection (surjective function).} A function $f : A \to B$ such that every $b \in B$ has some $a \in A$ with $f(a) = b$. See the Cardinality intermezzo.
+
+\textbf{Symmetric relation.} A relation $R$ on $A$ is symmetric if $a \, R \, b$ implies $b \, R \, a$ for all $a, b$. See Module~1.
+
+\section*{T}
+
+\textbf{Tautology.} A formula that is true under every assignment of truth values. $p \vee \lnot p$ is the canonical example. See Module~2.
+
+\textbf{Transitive relation.} A relation $R$ on $A$ is transitive if $a \, R \, b$ and $b \, R \, c$ imply $a \, R \, c$, for all $a, b, c$. See Module~1.
+
+\textbf{Truth set.} For a predicate $P$ on a set $A$, the truth set is $\{x \in A \mid P(x)\}$, the set of elements on which $P$ is true. See Module~4.
+
+\textbf{Truth table.} A table listing the truth value of a formula for every assignment of truth values to its variables. The semantics of propositional logic, and a decision procedure for tautology-checking. See Module~2.
+
+\section*{U}
+
+\textbf{Union ($\cup$).} $A \cup B = \{x \mid x \in A \vee x \in B\}$, the set of elements in $A$ or $B$ (or both). See Module~1.
+
+\textbf{Universal quantifier ($\forall$).} $\forall x : A.\; P(x)$ is true iff every element of $A$ satisfies $P$. Its introduction rule requires generalizing over an arbitrary element. See Module~4.
+
+\textbf{Uncountable set.} A set that cannot be put into bijection with $\mathbb{N}$. The real numbers are uncountable, as proved by Cantor's diagonal argument. See the Cardinality intermezzo.
+
+\section*{V}
+
+\textbf{Vacuous truth.} The logical convention that $F \to q$ is true for every $q$. Follows from the definition of $\to$: the implication only promises something when its antecedent is true. See Module~2.
+
+\textbf{Valid argument.} An argument whose conclusion must be true whenever all its premises are true. See \emph{argument}.
+
+\textbf{Venn diagram.} A visual representation of set operations: each set is a circle, and you shade the region corresponding to the set you're describing. Not a rigorous proof tool, but useful for intuition. See Module~1.
+
+\end{document}

@@ -1,26 +1,6 @@
 \documentclass[11pt]{article}
 
-\usepackage[T1]{fontenc}
-\usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage{enumitem}
-\usepackage{hyperref}
-\usepackage{booktabs}
-\usepackage{listings}
-\usepackage{xcolor}
-
-\lstset{
-  basicstyle=\ttfamily\small,
-  frame=single,
-  breaklines=true,
-  columns=fullflexible,
-  mathescape=true
-}
-
-\theoremstyle{definition}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}[theorem]{Definition}
-\newtheorem{example}[theorem]{Example}
+\input{cs250preamble}
 
 \title{CS 250 --- Module 2: Propositional Logic}
 \author{}
@@ -28,6 +8,12 @@
 
 \begin{document}
 \maketitle
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Reading map.} This module covers \textbf{Epp §2.1--2.2}: logical form and logical equivalence. \textbf{Prerequisites:} Module 1 (sets, functions, truth as a boolean-valued assignment). \textbf{Relevant intermezzi:} the Gentzen/inference-tree intermezzo (optional, useful preview for Module 3). \textbf{Practice from Epp:} §2.1 exercises on building truth tables and classifying formulas as tautology / contradiction / contingent; §2.2 exercises on logical equivalences and De Morgan's laws.
+\end{minipage}}
+\end{center}
 
 \section{Logical formulas, formalized}
 With all our mathematical preliminaries out of the way, we're ready to start dealing with logic more formally. Early attempts at talking about logic were focused on rhetoric and how to make arguments in human language. They were still about reasoning but didn't treat it in the \emph{symbolic} way we do in modern times, where we turn logic into formulas and equations and symbols.
@@ -188,9 +174,6 @@ F & F & F & $F \to F \Longrightarrow T$ \\
 
 Whew! That was a lot, but hopefully you can see that, in principle, you could use truth tables to calculate the meaning of any formula as a function.
 
-\bigskip
-\textbf{Exercise 1.}\label{ex:m2:1} Build the truth table for $(p \to q) \wedge (q \to p)$. This combination will come up later when we define the biconditional ($\leftrightarrow$)---you'll see why.
-
 \section{Tautologies and equivalences}
 Having talked about our very first logic, which is usually called ``propositional logic'', we can start discussing some of its implications and structure.
 
@@ -286,9 +269,6 @@ F & F & T \\
 
 These are clearly the same!
 
-\bigskip
-\textbf{Exercise 2.}\label{ex:m2:2} Prove the second De Morgan's law $\lnot(p \vee q) \equiv (\lnot p) \wedge (\lnot q)$ by computing both truth tables.
-
 De Morgan's laws tell us how negation interacts with $\wedge$ and $\vee$: pushing $\lnot$ inside a conjunction or disjunction swaps one connective for the other.
 
 This raises a natural question: how few operations do you actually need? This is where we introduce the concept of ``functional completeness''\index{functional completeness}: how few operations do you need to recreate all the logical operations on booleans?
@@ -326,9 +306,6 @@ F & F & $T \vee F = T$ \\
 The truth tables match! Technically, we don't even need implication in this particular logic---though this equivalence is specific to classical propositional logic and does not hold in general if we have $\lnot$ and $\vee$.
 
 This means that just having $\vee$, $\wedge$, and $\lnot$ is ``functionally complete'' because it can describe all the operations of this logic.
-
-\bigskip
-\textbf{Exercise 3.}\label{ex:m2:3} Show that XOR ($p \oplus q$) can be expressed using only $\wedge$, $\vee$, and $\lnot$. Hint: compare truth tables.
 
 \section{Addendum: nand, xor, and how many binary operations are there?}
 There are some additional operations that you \emph{can} define that we haven't defined yet.
@@ -418,7 +395,150 @@ F & F & T \\
 
 Solving these little puzzles is the point of the homework this week.
 
+\section{From truth table back to formula: a worked example}
+
+Everything we've done so far goes in one direction: given a formula, compute its truth table. But in practice---especially when you're designing a digital circuit or implementing a controller that has to behave a certain way on every possible input---you often start with a truth table (a specification of what the output \emph{should} be) and need to work backward to a formula that realizes it.
+
+Here's the worked example. Suppose you want a formula $\varphi(p, q, r)$ that is true exactly on the following rows:
+
+\begin{center}
+\begin{tabular}{ccc|c}
+\toprule
+$p$ & $q$ & $r$ & $\varphi(p,q,r)$ \\
+\midrule
+T & T & T & T \\
+T & T & F & F \\
+T & F & T & T \\
+T & F & F & F \\
+F & T & T & F \\
+F & T & F & F \\
+F & F & T & T \\
+F & F & F & F \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\emph{Step 1.} Find every row where the output is T. Here there are three: $(T,T,T)$, $(T,F,T)$, and $(F,F,T)$.
+
+\emph{Step 2.} For each such row, write a conjunction (``and'') that is true exactly on that row and false on every other row. The trick is to use the variable if the row has T for it, and its negation if the row has F:
+\begin{itemize}
+  \item Row $(T, T, T)$: $p \wedge q \wedge r$
+  \item Row $(T, F, T)$: $p \wedge \lnot q \wedge r$
+  \item Row $(F, F, T)$: $\lnot p \wedge \lnot q \wedge r$
+\end{itemize}
+Each of these little formulas is true on exactly one row of the truth table---check one of them if you like.
+
+\emph{Step 3.} Take the \emph{disjunction} (``or'') of all those conjunctions:
+\[
+  \varphi(p, q, r) \;\equiv\; (p \wedge q \wedge r) \;\vee\; (p \wedge \lnot q \wedge r) \;\vee\; (\lnot p \wedge \lnot q \wedge r).
+\]
+This formula is true exactly when at least one of the three conjunctions is true, which is exactly on the three rows we wanted.
+
+The form we just built---``or of ands, with each and being a combination of variables and their negations''---has a name: \emph{disjunctive normal form}\index{disjunctive normal form (DNF)}, or DNF. Every truth table can be converted to a DNF formula by this recipe. So propositional logic can express any truth function: given any desired behavior as a truth table, the DNF recipe gives you a formula that realizes it. That's actually a small theorem---\emph{every} boolean function on $n$ inputs is expressible in propositional logic---and it is half of why $\{\wedge, \vee, \lnot\}$ is functionally complete. (The other half is that any formula you can write in propositional logic \emph{is} such a boolean function, which is just what the truth-table semantics says.)
+
+A side note: if you stare at the DNF formula for $\varphi$ above, you might notice that $r$ appears in every conjunction. That's no accident---looking at the original truth table, every T row has $r = T$. So we could have saved work by just writing $\varphi \equiv r \wedge \psi(p, q)$ for some simpler $\psi$. Simplifying a DNF formula is what a lot of digital-logic coursework is about, and it's the reason engineers care about tools like Karnaugh maps.
+
+\section{Common mistakes}
+
+Here are the mistakes students make most often on this module's material. Watch for them on the assignment.
+
+\begin{enumerate}
+  \item \textbf{Confusing implication with biconditional.} $p \to q$ is \emph{not} the same as $p \leftrightarrow q$. In particular, $p \to q$ is true when $p$ is false, regardless of what $q$ is; $p \leftrightarrow q$ is only true when $p$ and $q$ agree. If the English reads ``if and only if,'' you want $\leftrightarrow$; if the English reads ``if $\ldots$ then'' or ``$\ldots$ implies $\ldots$,'' you want $\to$.
+  \item \textbf{Vacuous truth feels wrong.} The rows where $p$ is false make $p \to q$ come out true, and students often want those rows to be ``false'' or ``undefined.'' They aren't. $F \to q$ is \emph{true} by definition, because from a false premise we never make a false promise. If you can't accept this at gut level yet, at least accept it at definition level, and move on.
+  \item \textbf{Operator precedence bugs.} Without parentheses, $\lnot p \wedge q$ means $(\lnot p) \wedge q$, \emph{not} $\lnot(p \wedge q)$. And $p \vee q \wedge r$ means $p \vee (q \wedge r)$, not $(p \vee q) \wedge r$. When in doubt, parenthesize explicitly; there's no points off for being unambiguous.
+  \item \textbf{Inclusive vs.\ exclusive or.} Logical $\vee$ is \emph{inclusive}: $T \vee T = T$. Everyday English ``or'' is often exclusive---``coffee or tea'' usually means one or the other, not both. When you're translating English into propositional logic, be deliberate: did the sentence mean $\vee$ or $\oplus$?
+  \item \textbf{Half-applied De Morgan.} Students often start pushing a negation inside and forget to flip the connective. $\lnot(p \wedge q)$ is $\lnot p \vee \lnot q$, \emph{not} $\lnot p \wedge \lnot q$. The connective flips: $\wedge \leftrightarrow \vee$.
+\end{enumerate}
+
+\section{Summary and looking ahead}
+
+\begin{keytakeaway}
+  \item \emph{Propositional logic} is defined by a BNF grammar over $T$, $F$, variables, $\wedge$, $\vee$, $\lnot$, $\to$. This is the first logic we define using the same ``syntax + semantics'' pattern we'll reuse for every logic that follows.
+  \item The \emph{semantics} is given by \emph{truth tables}---a formula is a boolean-valued function of its variables.
+  \item A \emph{tautology} is true under every assignment; a \emph{contradiction} is false under every assignment; everything else is \emph{contingent}. Two formulas are \emph{logically equivalent} iff they have the same truth table.
+  \item De Morgan's laws push $\lnot$ across $\wedge$ and $\vee$, flipping the connective. This is the prototype for the quantifier negation rules in Module 4 ($\lnot\forall = \exists\lnot$, $\lnot\exists = \forall\lnot$).
+  \item $\{\wedge, \vee, \lnot\}$ is \emph{functionally complete}---every boolean function can be written as a formula in these connectives. The DNF recipe (one conjunction per T row of the truth table) is the constructive proof.
+\end{keytakeaway}
+
+\begin{summarybox}
+\textbf{What we built this module.} We have a full description of a logic: a grammar for writing formulas, a semantics for evaluating them, and enough machinery to check whether two formulas say the same thing. The truth-table method gives us a decision procedure---a mechanical way to answer any question about propositional-logic semantics---which is a rare luxury that won't survive the jump to predicate logic in Module 4. DNF is the bridge to circuit design in Module 3.
+
+\medskip
+\textbf{Looking ahead.} Module 3 asks a deeper question: can we \emph{prove} tautologies without computing truth tables? The answer is yes---we build a \emph{proof system} with introduction and elimination rules for each connective, and show those rules are sound against the truth-table semantics. The Gentzen intermezzo after Module 3 rewrites the same rules in the tree-shaped notation used by logicians and programming-language theorists, which will feel familiar from the DNF construction here.
+\end{summarybox}
+
+\section{Exercises}
+
+These are organized into \textbf{warm-up} (mechanical practice on the definitions), \textbf{standard} (typical assignment-style problems), \textbf{challenge} (synthesis across the module), and \textbf{connection} (programming and intermezzo pointers). Solutions are in the appendix.
+
+\subsection*{Warm-up}
+
+\textbf{Exercise 1.}\label{ex:m2:1} Build the truth table for $(p \to q) \wedge (q \to p)$. This combination will come up later when we define the biconditional ($\leftrightarrow$)---you'll see why.
+
 \bigskip
-\textbf{Exercise 4.}\label{ex:m2:4} How many \emph{unary} boolean operations are there? List them all.
+\textbf{Exercise 2.}\label{ex:m2:2} Prove the second De Morgan's law $\lnot(p \vee q) \equiv (\lnot p) \wedge (\lnot q)$ by computing both truth tables.
+
+\bigskip
+\textbf{Exercise 3.}\label{ex:m2:3} How many \emph{unary} boolean operations are there? List them all as truth tables, and for each one, give a short English name or description.
+
+\bigskip
+\textbf{Exercise 4.}\label{ex:m2:4} Classify each of the following formulas as a \textbf{tautology}, a \textbf{contradiction}, or \textbf{contingent} (neither always true nor always false). Do it by computing the truth table.
+\begin{enumerate}[label=(\alph*)]
+  \item $p \vee \lnot p$
+  \item $p \wedge \lnot p$
+  \item $p \to (q \to p)$
+  \item $(p \to q) \to p$
+  \item $(p \wedge q) \to (p \vee q)$
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 5.}\label{ex:m2:5} For each of the following unparenthesized expressions, add parentheses to show how the precedence rules ($\lnot$ tighter than $\wedge$ tighter than $\vee$ tighter than $\to$) group them. Then evaluate the formula when $p = T$, $q = F$, $r = T$.
+\begin{enumerate}[label=(\alph*)]
+  \item $\lnot p \wedge q \vee r$
+  \item $p \to q \to r$ \quad (Hint: $\to$ is conventionally \emph{right-associative}, so this groups as $p \to (q \to r)$, not $(p \to q) \to r$. Check what difference it makes.)
+  \item $\lnot p \vee q \wedge \lnot r$
+\end{enumerate}
+
+\subsection*{Standard}
+
+\textbf{Exercise 6.}\label{ex:m2:6} Show that XOR ($p \oplus q$) can be expressed using only $\wedge$, $\vee$, and $\lnot$. Hint: compare truth tables and use the DNF recipe from the worked example.
+
+\bigskip
+\textbf{Exercise 7.}\label{ex:m2:7} Prove the equivalence $p \to (q \wedge r) \;\equiv\; (p \to q) \wedge (p \to r)$ by truth table. (This is sometimes called ``implication distributes over conjunction on the right.'' It means that to prove a conjunction from a premise, it suffices to prove each conjunct separately.)
+
+\bigskip
+\textbf{Exercise 8.}\label{ex:m2:8} Show how to build each of $\lnot$, $\wedge$, and $\vee$ using only the NAND operator. That is:
+\begin{enumerate}[label=(\alph*)]
+  \item Find a formula using only NAND (and the variable $p$) whose truth table matches $\lnot p$.
+  \item Find a formula using only NAND whose truth table matches $p \wedge q$. (Hint: NAND is ``not-and,'' so you can build AND by negating NAND, and you already know how to build NOT from NAND by part (a).)
+  \item Find a formula using only NAND whose truth table matches $p \vee q$. (Hint: De Morgan. $p \vee q \equiv \lnot(\lnot p \wedge \lnot q)$, and you can build all three ingredients from NAND.)
+\end{enumerate}
+This shows that NAND alone is functionally complete, which is why circuit designers love it: you can build an entire CPU out of NAND gates.
+
+\bigskip
+\textbf{Exercise 9.}\label{ex:m2:9} A three-input boolean function $f(x, y, z)$ outputs T on exactly the input rows $(T, F, F)$, $(F, T, F)$, and $(F, F, T)$ (the ``exactly-one'' function on three inputs). Use the DNF recipe from the worked example to write a propositional formula for $f$. Your formula should have three disjuncts, each with three literals.
+
+\subsection*{Challenge}
+
+\textbf{Exercise 10.}\label{ex:m2:10} Show that $\{\wedge, \vee\}$---conjunction and disjunction, without negation---is \emph{not} functionally complete. Hint: call a function $f$ \emph{monotone} if flipping any input from $F$ to $T$ never flips an output from $T$ to $F$. (a) Show by induction on the structure of formulas that any formula built from just $\wedge$ and $\vee$ represents a monotone function. (b) Exhibit a boolean function that is not monotone. (c) Conclude.
+
+\bigskip
+\textbf{Exercise 11.}\label{ex:m2:11} Prove: a formula $\varphi$ is a tautology if and only if $\lnot \varphi$ is a contradiction. (Do this both ways. Assume $\varphi$ is a tautology and show $\lnot \varphi$ is a contradiction; then assume $\lnot \varphi$ is a contradiction and show $\varphi$ is a tautology.) This is the definitional glue that lets proof by contradiction work---more on that in Module 7.
+
+\bigskip
+\textbf{Exercise 12.}\label{ex:m2:12} Of the 16 binary boolean operations:
+\begin{enumerate}[label=(\alph*)]
+  \item How many depend on \emph{neither} of their inputs (i.e., the output is constant regardless of the inputs)? List them.
+  \item How many depend on \emph{only one} of their inputs (so they ignore the other)? List them.
+  \item How many depend on \emph{both} inputs?
+\end{enumerate}
+(Your three counts should add up to 16.)
+
+\subsection*{Connection}
+
+\textbf{Exercise 13.}\label{ex:m2:13} (Programming.) Write a Python function \texttt{is\_tautology(f, n)} that takes a function \texttt{f} of $n$ boolean arguments and returns \texttt{True} if \texttt{f} is a tautology (i.e., returns \texttt{True} on every input) and \texttt{False} otherwise. Test it on \texttt{lambda p, q: (not p) or q} (which is logically equivalent to $p \to q$, so \emph{not} a tautology, only a contingent formula) and on \texttt{lambda p, q: p or (not p)} (which \emph{is} a tautology). Hint: use \texttt{itertools.product([False, True], repeat=n)} to enumerate all assignments.
+
+\bigskip
+\textbf{Exercise 14.}\label{ex:m2:14} (Intermezzo pointer.) The discussion in this module of why the law of excluded middle ($p \vee \lnot p$) is controversial points forward to the ``Proofs Are Programs'' intermezzo (Curry--Howard), which you can read after Module 7. As a preview: try to write a \emph{program} that, given a predicate $P$ on natural numbers, produces either a natural number that satisfies $P$ or a proof that no such number exists. What would the input and output types of that program have to be, and why is it not obvious how to implement it? (You don't need to write actual code---just think about the type signature.)
 
 \end{document}

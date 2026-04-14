@@ -1,0 +1,137 @@
+\documentclass[11pt]{article}
+\input{cs250preamble}
+
+\title{CS 250 --- Cumulative Review 3 (after Module 10)}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{The point of this review}
+
+This is the last review chapter of the first term, and its job is to tie the whole course together. At this point you've seen:
+\begin{itemize}
+  \item Sets, functions, relations, and the extensional view of equality (Module~1).
+  \item Propositional logic with a BNF syntax, truth-table semantics, and a natural-deduction proof system (Modules~2, 3).
+  \item Predicate logic with quantifiers and a first induction principle (Module~4).
+  \item The practice of informal proof---direct, counterexample, existence, cases, contradiction, contrapositive---with a side trip into groups and modular arithmetic (Modules~5, 6, 7).
+  \item Induction on $\mathbb{N}$, summation identities, strong induction, recurrence solving (Modules~8, 9).
+  \item Structural induction on arbitrary recursive data types (Module~10).
+\end{itemize}
+That is a lot of material. But it all rests on a single pattern, which is the theme we named explicitly in Module~10 and have been building towards since Module~2: \emph{define your data with a BNF grammar; derive an induction principle that mirrors the BNF; use it to prove theorems by case-and-recursion analysis.} Everything else in the course is a specialization or a consequence of that pattern.
+
+In this review, we pick a capstone theorem that touches every major thread from the term and walk through its proof end to end, stopping to point at which module every step comes from. The theorem is non-trivial but still fits on a couple of pages. Let's go.
+
+\section*{The capstone theorem}
+
+Recall from Module~2 the BNF for propositional logic formulas:
+\[
+  L := T \mid F \mid x \mid \lnot L \mid L \wedge L \mid L \vee L \mid L \to L.
+\]
+We'll prove the following fact:
+
+\begin{theorem}[DNF exists]
+For every propositional formula $f$ over the variables $x_1, \ldots, x_n$, there exists a logically equivalent formula $f'$ in disjunctive normal form (i.e., $f'$ is a disjunction of conjunctions of literals).
+\end{theorem}
+
+In English: every propositional formula can be rewritten as DNF. This is really a theorem about \emph{universality}: propositional logic is rich enough that every truth function on $n$ inputs has a DNF representation. It's also, in disguise, a statement about functional completeness: it says $\{\wedge, \vee, \lnot\}$ is functionally complete, which we hinted at in Module~2 but only proved for the case of finite truth tables in Module~3.
+
+We'll prove it by \emph{structural induction} on the BNF. That means handling one case per alternative---seven cases---and in each case, assuming we already have DNF representations of the sub-formulas (the inductive hypotheses) and constructing a DNF representation of the whole formula.
+
+\section*{The proof}
+
+Fix a set of variables $\{x_1, \ldots, x_n\}$. We prove by structural induction on $f$ that there exists a DNF formula $f'$ with $f \equiv f'$.
+
+\paragraph{Base case 1: $f = T$.} The constant $T$ is already in DNF: it's a ``disjunction of one term, the empty conjunction.'' Or, if you want to avoid the empty conjunction, note that $T \equiv x_1 \vee \lnot x_1$, which is a disjunction of two single-literal conjunctions, hence in DNF. Either way, a DNF equivalent exists.
+
+\paragraph{Base case 2: $f = F$.} The constant $F$ is the ``empty disjunction,'' which is trivially in DNF. If you'd rather avoid empty disjunctions, $F \equiv x_1 \wedge \lnot x_1$ is a single single-literal-times-literal conjunction, which counts as a (one-disjunct) DNF.
+
+\paragraph{Base case 3: $f = x_i$.} A single variable is a literal, hence a one-literal conjunction, hence a one-disjunct DNF. Done.
+
+\paragraph{Inductive case: $f = \lnot g$.} Inductive hypothesis (IH): there exists a DNF formula $g'$ with $g \equiv g'$. By IH, $g'$ has the form
+\[
+  g' = C_1 \vee C_2 \vee \cdots \vee C_k,
+\]
+where each $C_i$ is a conjunction of literals. Then $\lnot g \equiv \lnot g'$, and by De Morgan's laws (Module~2),
+\[
+  \lnot (C_1 \vee \cdots \vee C_k) \equiv \lnot C_1 \wedge \lnot C_2 \wedge \cdots \wedge \lnot C_k.
+\]
+Each $\lnot C_i$ is a disjunction of literals (by another application of De Morgan, pushing the $\lnot$ inside each conjunction and flipping each literal). So we have transformed $\lnot g$ into a \emph{conjunctive} normal form (CNF) formula. To convert CNF to DNF, we \emph{distribute}: $A \wedge (B \vee C) \equiv (A \wedge B) \vee (A \wedge C)$, and iterating gives us
+\[
+  (D_{1,1} \vee D_{1,2}) \wedge \cdots \wedge (D_{k,1} \vee \cdots) \;\equiv\; \bigvee_{(\text{choices})} (\text{AND of one } D_{i,?} \text{ per clause}),
+\]
+which is a disjunction of conjunctions of literals---that is, DNF. So $\lnot g$ has a DNF equivalent.
+
+\paragraph{Inductive case: $f = g \wedge h$.} IHs: $g \equiv g'$ and $h \equiv h'$, both in DNF. Write
+\[
+  g' = G_1 \vee \cdots \vee G_a, \qquad h' = H_1 \vee \cdots \vee H_b.
+\]
+By distributivity of $\wedge$ over $\vee$,
+\[
+  g' \wedge h' \;\equiv\; \bigvee_{i=1}^{a} \bigvee_{j=1}^{b} (G_i \wedge H_j).
+\]
+Each $G_i \wedge H_j$ is a conjunction of literals (being a conjunction of two conjunctions of literals), so the whole expression is a disjunction of conjunctions of literals---DNF. Done.
+
+\paragraph{Inductive case: $f = g \vee h$.} IHs: $g \equiv g'$ and $h \equiv h'$, both in DNF. Then $g' \vee h'$ is already in DNF: concatenate the two lists of disjuncts, and you have a single disjunction of conjunctions of literals.
+
+\paragraph{Inductive case: $f = g \to h$.} IHs as before. First rewrite using the equivalence $g \to h \equiv \lnot g \vee h$ (proved in Module~2). Now apply the $\lnot g$ case above (which gives a DNF for $\lnot g$) and the $g \vee h$ case (which combines two DNFs into a DNF), and we're done.
+
+All seven BNF cases handled. By structural induction (Module~10), every propositional formula has a DNF equivalent. \hfill$\square$
+
+\section*{Tracing the toolkit}
+
+Let's trace which modules contributed what:
+
+\begin{itemize}
+  \item \textbf{Module 1} (sets, proof writing): ambient vocabulary (``let $f$ be a formula,'' ``by definition of DNF''), the proof style, and the extensional reading of logical equivalence (``same truth table'').
+  \item \textbf{Module 2} (propositional logic): the BNF grammar we're inducting on, the truth-table semantics that underpins $\equiv$, De Morgan's laws, the definition of DNF, and the crucial equivalence $g \to h \equiv \lnot g \vee h$.
+  \item \textbf{Module 3} (proof systems): the background justification for distributivity and De Morgan---both are tautologies that can be derived in the formal proof system. We used them as black boxes here, but each use is a fully formalizable derivation.
+  \item \textbf{Module 4} (predicate logic and induction): the statement ``for every formula $f$, there exists a DNF equivalent $f'$'' is a $\forall\exists$ statement. Every step of the proof is, implicitly, an application of $\forall$-introduction (``let $f$ be arbitrary'') and $\exists$-introduction (``construct $f'$'').
+  \item \textbf{Module 5} (direct proof, constructive existence): the proof is \emph{constructive}---we don't just claim that $f'$ exists, we describe how to build it from $f$. That means the proof is implicitly an algorithm: ``to convert a formula to DNF, recurse on its structure, applying distributivity and De Morgan in each case.'' This is the Curry--Howard payoff: the proof \emph{is} a program.
+  \item \textbf{Module 6} (proof by cases): the seven-case structure of the structural induction is a multi-way case analysis on the BNF alternatives. This generalizes the parity and mod-3 case splits from Module~6 to a case split on ``which BNF alternative built this formula.''
+  \item \textbf{Module 7} (indirect proof, Hoare logic): not directly used, but the habit of ``formalize the algorithm, verify it step by step'' comes from here. If you wanted to, you could turn our DNF-conversion proof into a Hoare-logic verification of an actual DNF-conversion program.
+  \item \textbf{Module 8} (induction is recursion): this is the hinge. The seven BNF cases exactly match the seven cases of a recursive \texttt{toDNF} function, and the inductive hypotheses are exactly the recursive calls. Reading the proof as code, it says: ``recursively convert the subformulas, then use distributivity to combine the results.''
+  \item \textbf{Module 9} (strong induction): not strictly needed here (ordinary structural induction works because sub-formulas are strictly smaller than the whole formula), but the intuition ``recurse on anything smaller'' that comes from strong induction is exactly what's happening when we apply the IH to a sub-formula.
+  \item \textbf{Module 10} (structural induction): the ambient proof technique. One case per BNF alternative, one IH per recursive sub-part in each case---the seven-case shape was dictated by the BNF of propositional logic, which we wrote down in Module~2 and have been carrying around ever since.
+\end{itemize}
+
+Every single module shows up. That's the point. \emph{The course's threads converge.}
+
+\section*{The meta-theorem}
+
+Here's the thing worth pausing on. The proof we just did isn't only about propositional logic; its shape generalizes. For \emph{any} recursive data type---lists, trees, abstract syntax trees, whatever---the same proof template works:
+
+\begin{center}
+\fbox{\begin{minipage}{0.85\textwidth}
+\textbf{The structural-induction recipe.} To prove that every value of type $T$ has property $P$:
+\begin{enumerate}
+  \item Write down the BNF for $T$.
+  \item For each non-recursive case, prove $P$ directly by computation.
+  \item For each recursive case, assume $P$ on all recursive sub-parts (these are the IHs), then prove $P$ on the whole.
+\end{enumerate}
+The number of IHs in each recursive case matches the number of recursive sub-parts in the BNF.
+\end{minipage}}
+\end{center}
+
+That's the whole technique. You now know how to prove theorems about propositional formulas, natural numbers, lists, binary trees, arithmetic expressions, XML trees, programming-language syntax, and any other recursive data type you might meet in CS 251 and beyond. The data types get bigger, the cases get more numerous, but the recipe is always the same.
+
+\section*{What you take away from the first term}
+
+If you internalize just three things from this course, these are the three:
+
+\begin{enumerate}
+  \item \textbf{Proofs are essays.} A proof is a piece of writing that explains, step by step, why a claim is true. State the goal; introduce variables; justify every step; end with a clear conclusion. The Module~1 proof-writing advice is the single most re-read-able part of the book.
+
+  \item \textbf{The same fact wears many hats.} Truth tables, formal derivations, set identities, and semantic arguments can all prove the same propositional-logic fact. Direct proof, contrapositive, and contradiction can all prove the same implication. Ordinary induction, strong induction, and structural induction are all special cases of the same recursive pattern. When you get stuck, change your hat.
+
+  \item \textbf{BNF gives you induction.} When you meet a new kind of structured data, the first question is ``what's the BNF?'' The answer tells you how to define functions on it and how to prove theorems about it. Everything else is just turning the crank.
+\end{enumerate}
+
+\section*{Where you're going}
+
+This is the last page of the first-term notes. CS~251 takes the tools built here and applies them to \emph{computation itself}: automata, formal languages, Turing machines, the halting problem, NP-completeness, and eventually the limits of what computers can do. The three takeaways above will carry you through every one of those topics. If you remember them, you'll be fine.
+
+Thanks for reading. Now go try Module~10 Exercise~8 (the reverse-is-an-involution one, with its chain of helper lemmas) if you haven't yet. It's the most satisfying proof in the whole book, and you now have every tool you need to do it.
+
+\end{document}
