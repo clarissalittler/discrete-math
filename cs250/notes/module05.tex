@@ -219,6 +219,43 @@ and thus $e = e'$. \hfill $\square$
 
 This result tells us something important: the identity element of a group isn't just convenient notation---it's \emph{forced}. Any element that behaves like an identity must be the same as the one we started with. This kind of uniqueness result is typical in algebra: the axioms pin things down more tightly than you might expect.
 
+We've now seen what the group axioms force \emph{inside} a single group. The next move is to look \emph{between} groups---and that is where the subject really opens up.
+
+\section{Maps between groups: homomorphisms}
+
+Each group we've seen so far---$(\mathbb{Z}, +, 0)$, $(\mathbb{Q} \setminus \{0\}, \cdot, 1)$ in the exercises---is interesting on its own. But a huge part of what algebra is \emph{about} is relating one group to another: finding functions between them that respect the group structure. These are called \emph{homomorphisms}, and they are the right notion of ``map'' once you're doing algebra.
+
+\begin{definition}[Group homomorphism]
+Let $(G, *_G, e_G)$ and $(H, *_H, e_H)$ be groups. A function $\varphi : G \to H$ is a \emph{homomorphism}\index{homomorphism} if it respects the group operation: for all $a, b \in G$,
+\[
+  \varphi(a *_G b) \;=\; \varphi(a) *_H \varphi(b).
+\]
+\end{definition}
+
+It's a short exercise (and worth doing) to show that a homomorphism automatically sends the identity to the identity, $\varphi(e_G) = e_H$, and sends inverses to inverses, $\varphi(g^{-1}) = \varphi(g)^{-1}$. Both facts fall straight out of the one equation in the definition.
+
+\begin{example}[Reduction mod $k$]
+For any positive integer $k$, the function $\varphi : \mathbb{Z} \to \mathbb{Z}/k\mathbb{Z}$ defined by $\varphi(n) = n \bmod k$ is a homomorphism from $(\mathbb{Z}, +, 0)$ to $(\mathbb{Z}/k\mathbb{Z}, +, 0)$. The content of this claim is exactly that
+\[
+  (a + b) \bmod k \;=\; \bigl((a \bmod k) + (b \bmod k)\bigr) \bmod k,
+\]
+which is the fact that ``addition plays nicely with remainders.'' You'll prove this in Module~6.
+\end{example}
+
+Once we have homomorphisms, the right notion of ``same'' for groups is also clear: two groups are the ``same'' when there is a homomorphism between them that can be undone.
+
+\begin{definition}[Isomorphism]
+A group homomorphism $\varphi : G \to H$ is an \emph{isomorphism}\index{isomorphism!of groups} if it is a bijection. Two groups are \emph{isomorphic}, written $G \cong H$, if there is an isomorphism between them.
+\end{definition}
+
+Isomorphic groups are interchangeable for every algebraic purpose: any statement that's true of one, phrased in the language of groups, is true of the other. This is our first concrete instance of a general phenomenon---the intermezzo ``What Does It Mean for Things to Be `The Same'?'' is the essay on exactly this point---but you've already seen the pattern once before: extensional equality of sets (Module~1) is the analogous ``right notion of sameness'' for sets.
+
+\subsection*{The archetypal group: self-bijections}
+
+Here is a forward pointer worth noting. Let $A$ be any set, and let $\mathrm{Sym}(A)$ be the set of bijections $A \to A$. With function composition as the operation and the identity function $\mathrm{id}_A$ as the unit, $\mathrm{Sym}(A)$ is a group. Composition of functions is associative; $\mathrm{id}_A$ is a two-sided identity; and every bijection has an inverse which is again a bijection. (Each of these is an easy check against the definitions from Module~1.)
+
+This is the group you should keep in mind when you want a test example. Every group you meet in this course is, in some sense, a group of ``symmetries'' of something---and the prototype of ``symmetry'' is exactly ``bijection from a thing to itself.''
+
 \section{Proof by exhaustion}
 
 There's one more direct-proof technique that deserves a name because it comes up constantly, especially in computer science: \emph{proof by exhaustion}\index{proof!by exhaustion}.
@@ -262,11 +299,12 @@ A few cautions:
 \section{Summary and looking ahead}
 
 \begin{keytakeaway}
-  \item \emph{Direct proof} is the default: assume the hypothesis, unpack the definitions, do the algebra, repack the conclusion. Most proofs follow this shape.
+  \item A \emph{direct proof} assumes the hypothesis, unpacks the definitions, does the algebra, and repacks the conclusion. Most proofs follow this shape.
   \item A \emph{counterexample} is the universal disprover: one concrete instance is enough to kill a universal claim.
   \item A \emph{constructive existence proof} exhibits a specific witness and verifies the predicate on it. Constructive proofs correspond to programs that compute the witness.
   \item \emph{Proof by exhaustion} handles finite case splits mechanically: list every case, check each one, conclude. It's a special case of $\vee$-elimination.
   \item A \emph{group} is a set with an associative operation, an identity, and inverses for every element. The axioms pin down a lot of structure---identity is unique, inverses are unique, $(g^{-1})^{-1} = g$.
+  \item A \emph{homomorphism} $\varphi : G \to H$ is a function respecting the group operation: $\varphi(a *_G b) = \varphi(a) *_H \varphi(b)$. A bijective homomorphism is an \emph{isomorphism}; isomorphic groups are ``algebraically the same.''
 \end{keytakeaway}
 
 \begin{summarybox}
@@ -326,6 +364,14 @@ What proof-technique error does this commit?
 \subsection*{Connection}
 
 \textbf{Exercise 13.}\label{ex:m5:13} (Programming.) For small $n$, the set $\mathbb{Z}/n\mathbb{Z} = \{0, 1, \ldots, n-1\}$ with addition modulo $n$ and identity $0$ is a group. Write a Python function \texttt{is\_group(carrier, op, identity)} that takes a finite list \texttt{carrier}, a binary operation \texttt{op} (as a callable), and an \texttt{identity} element, and checks---by exhaustive brute force---whether the three data form a group. The function should check associativity, the identity axioms, and the existence of inverses. Test it on $\mathbb{Z}/5\mathbb{Z}$ under addition (should return \texttt{True}) and on $\mathbb{Z}/5\mathbb{Z}$ under multiplication with identity $1$ (should return \texttt{False}---why?). This is proof by exhaustion, but automated.
+
+\bigskip
+\textbf{Exercise 13b.}\label{ex:m5:13b} (Homomorphisms compose.) Let $\varphi : G \to H$ and $\psi : H \to K$ be group homomorphisms.
+\begin{enumerate}[label=(\alph*)]
+  \item Show that the identity function $\mathrm{id}_G : G \to G$ is a homomorphism from $G$ to itself.
+  \item Show that the composition $\psi \circ \varphi : G \to K$ is a homomorphism.
+  \item Conclude (informally, no proof required) that if $G \cong H$ and $H \cong K$ then $G \cong K$, so ``being isomorphic'' is a transitive relation on groups.
+\end{enumerate}
 
 \bigskip
 \textbf{Exercise 14.}\label{ex:m5:14} (Intermezzo pointer.) The intermezzo ``What Does It Mean for Things to Be `The Same'?'' (placed after Module~6) introduces equivalence relations---the abstract machinery for saying when two mathematical objects should be treated as the same. As a preview: given a group $(G, *, e)$ and a subgroup $H \subseteq G$ (closed under $*$, containing $e$, closed under inverses), define the relation $a \sim b$ iff $a^{-1} * b \in H$. Argue informally that this relation is reflexive, symmetric, and transitive---i.e., it's an equivalence relation on $G$. You do not need a fully rigorous proof; just check each property by invoking the group axioms.

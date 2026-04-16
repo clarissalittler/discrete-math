@@ -295,7 +295,7 @@ Sanity check: $a_2 = 4 \cdot 4 - 4 \cdot 1 = 12$, and $(1 + 2) \cdot 2^2 = 3 \cd
 \section{Summary and looking ahead}
 
 \begin{keytakeaway}
-  \item \emph{Strong induction}: instead of assuming only $P(k)$, you get to assume $P(j)$ for \emph{all} $j \leq k$. Logically equivalent to ordinary induction, but often much more convenient. Needed whenever the recurrence reaches back more than one step, or when you don't know in advance how far back the dependency goes (as in divide-and-conquer).
+  \item \emph{Strong induction} gives you $P(j)$ for \emph{all} $j \leq k$ as the inductive hypothesis, not just $P(k)$. Logically equivalent to ordinary induction, but often much more convenient. Needed whenever the recurrence reaches back more than one step, or when you don't know in advance how far back the dependency goes (as in divide-and-conquer).
   \item Strong induction typically needs \emph{multiple base cases}: one per initial condition, or enough cases to cover the reach-back of the recurrence.
   \item \emph{Iteration} (unrolling) is a way to guess a closed form: substitute the recurrence into itself repeatedly, look for a pattern, then verify the pattern by induction.
   \item The \emph{characteristic-equation method} solves second-order linear homogeneous recurrences with constant coefficients. Substitute $a_n = r^n$, divide out, solve a quadratic. Distinct roots give $\alpha r_1^n + \beta r_2^n$; repeated roots give $\alpha r^n + \beta n r^n$.

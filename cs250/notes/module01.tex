@@ -280,7 +280,7 @@ The alternative is \emph{intensional} equality\index{intensional equality}, wher
 
 This is exactly the question with programs: two programs that produce the same output for every input are extensionally equal. But they might use completely different algorithms, have different performance characteristics, different memory usage. Are they ``the same program''? An extensionalist says yes; an intensionalist says no.
 
-For sets, we're choosing the extensional view in this course---two sets with the same elements are the same set, period. But be aware that this is a choice, and in some areas of computer science and mathematics (particularly type theory and constructive mathematics), intensional equality is the default. The difference becomes important when you care not just about \emph{what} something computes but \emph{how} it computes it.
+For sets, we're choosing the extensional view in this course---two sets with the same elements are the same set, period. But be aware that this is a choice, and in some areas of computer science and mathematics (particularly type theory and constructive mathematics), intensional equality is the default. The difference becomes important when you care not just about \emph{what} something computes but \emph{how} it computes it. We'll come back to this question---what \emph{should} count as ``the same''?---in the intermezzo ``What Does It Mean for Things to Be `The Same'?'' after Module~6.
 
 One more consequence of extensional equality that's worth making explicit: \emph{duplicates don't count}. The set $\{2, 2, 2, 2\}$ is the same as the set $\{2\}$ because they have the exact same elements---the number 2 and nothing else. Writing 2 four times doesn't somehow put four copies of it in the set. Sets don't work like arrays.
 
@@ -331,6 +331,49 @@ Epp defines a function as a subset of $A \times B$. This is related, but in gene
 
 It's important to note that functions in mathematics include both things we know how to calculate, like $f(x) = x +1$, and things we don't. For example, consider a function that maps each C program implementing a function from integers to integers to the smallest input that doesn't cause it to go into an infinite loop, if one exists. That's a weird partial function, but it's a well-defined assignment, and it's definitely not something you can calculate.
 
+\subsection*{Composing functions}
+
+Functions are more useful once we can chain them together. If $f$ takes us from $A$ to $B$ and $g$ takes us from $B$ to $C$, there is an obvious combined function that takes us from $A$ all the way to $C$: apply $f$, then apply $g$.
+
+\begin{definition}[Composition]
+Given functions $f : A \to B$ and $g : B \to C$, their \emph{composition}\index{composition of functions} is the function $g \circ f : A \to C$ defined by
+\[
+  (g \circ f)(a) \;=\; g(f(a))
+\]
+for every $a \in A$.
+\end{definition}
+
+Read $g \circ f$ as ``$g$ after $f$.'' The order is backwards from how you say it in English (``first $f$, then $g$'') but it matches the order you'd evaluate it in: to compute $(g \circ f)(a)$ you write down $g(f(a))$, and now the $f$ is closer to the $a$, which is closer to where the computation starts.
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.4cm, >=Stealth]
+  \node (A) {$A$};
+  \node (B) [right of=A] {$B$};
+  \node (C) [right of=B] {$C$};
+  \draw[->] (A) -- node[above] {$f$} (B);
+  \draw[->] (B) -- node[above] {$g$} (C);
+  \draw[->, bend right=35] (A) to node[below] {$g \circ f$} (C);
+\end{tikzpicture}
+\end{center}
+
+For every set $A$ there is a trivial-looking function we'll use constantly: the \emph{identity function}\index{identity function} $\mathrm{id}_A : A \to A$, defined by $\mathrm{id}_A(a) = a$. It does nothing to its input. The reason it earns a name is that it is the neutral element for $\circ$:
+
+\begin{itemize}
+  \item \textbf{Left identity:} $\mathrm{id}_B \circ f = f$ for every $f : A \to B$.
+  \item \textbf{Right identity:} $f \circ \mathrm{id}_A = f$ for every $f : A \to B$.
+  \item \textbf{Associativity:} $(h \circ g) \circ f = h \circ (g \circ f)$ whenever the types line up.
+\end{itemize}
+
+Each of these is checked the same way: apply both sides to an arbitrary input $a$ and observe you get the same output. For the associativity law, for instance, both sides send $a$ to $h(g(f(a)))$.
+
+In Python, $\circ$ is a one-liner:
+\begin{lstlisting}
+def compose(g, f):
+    return lambda x: g(f(x))
+\end{lstlisting}
+
+This little operation will reappear in surprising places as the course goes on. It is the way transitive implications chain in Module~3 (from $A \Rightarrow B$ and $B \Rightarrow C$ you get $A \Rightarrow C$), it is what makes the invertible functions on a set into a group in Module~5, and it shows up as a proof-combining rule in the Curry--Howard intermezzo. Whenever you see ``do this, then do that, and the types line up,'' $\circ$ is hiding in the background.
+
 \begin{definition}[Relation]
 A \emph{relation}\index{relation} between sets $A$ and $B$ is a subset of $A \times B$ --- a collection of pairs $(a, b)$ recording which elements of $A$ are related to which elements of $B$. Unlike a function, a relation allows an element of $A$ to be related to zero, one, or many elements of $B$.
 \end{definition}
@@ -361,78 +404,20 @@ Equality is the canonical equivalence relation---it's reflexive ($a = a$), symme
 
 Which properties do our other examples satisfy? ``Less than'' on the integers is transitive ($a < b$ and $b < c$ implies $a < c$) but not reflexive ($3 \not< 3$) and not symmetric ($3 < 5$ but $5 \not< 3$). The subset relation $\subseteq$ is reflexive ($A \subseteq A$) and transitive but not symmetric ($\{1\} \subseteq \{1,2\}$ but $\{1,2\} \not\subseteq \{1\}$).
 
-\section{How to write a proof}
-
-You now have enough vocabulary---sets, functions, relations---to start writing proofs about them. But when you sit down to actually write one, it can be hard to know where to begin. This section gives practical advice about formatting and structure. We're not learning proof \emph{techniques} yet (that starts in Module 3); we're just learning how to put words on the page.
-
-\subsection*{A proof is a piece of writing}
-
-A proof is not a calculation, a formula, or a wall of symbols. It is a short essay that explains, step by step, \emph{why} something is true. Each sentence should either state a fact, introduce a definition, or draw a conclusion from what came before. If you can't explain a step in words, you probably don't understand it yet.
-
-Here are the ground rules:
-\begin{enumerate}
-  \item \textbf{State what you are proving.} Open with something like ``We prove that \ldots'' or ``We want to show that \ldots''. Don't make the reader guess your goal.
-  \item \textbf{Introduce variables before you use them.} If your proof involves a number, a set, or a function, give it a name and say where it comes from. ``Let $n$ be a positive integer'' or ``Consider an arbitrary $x \in \mathbb{R}$'' or ``Define $f : A \to B$ by $f(x) = x^2$.''
-  \item \textbf{Write in complete sentences.} Mathematical symbols are parts of sentences, not replacements for them. Don't write a bare chain of equations with no words connecting them.
-  \item \textbf{Justify each step.} After every claim, the reader should be able to see \emph{why} it follows---from a definition, from a previous step, or from a well-known fact.
-  \item \textbf{End with a clear conclusion.} Finish with ``Therefore \ldots'' or ``This completes the proof.'' The reader should know when you're done and what you've established.
-\end{enumerate}
-
-\subsection*{When the problem has cases}
-
-Many proofs, including ones you'll see on this week's assignment, naturally split into cases. For instance, you might need to show something holds ``for all positive integers $A$,'' but the argument is different depending on whether $A$ is even or odd. In that situation:
-
-\begin{itemize}
-  \item State explicitly that you are splitting into cases and say what they are: ``We consider two cases: $A$ is even, and $A$ is odd.''
-  \item Handle each case separately. Label them clearly (``\textbf{Case 1:} $A$ is even.'') and give a self-contained argument for each one.
-  \item After the cases, tie them together: ``Since every positive integer is either even or odd, these two cases are exhaustive, and the proof is complete.''
-\end{itemize}
-
-The key requirement is that your cases \emph{cover all the possibilities}. If there's a scenario you didn't address, your proof has a gap.
-
-\subsection*{Using definitions}
-
-When a proof asks whether something is or isn't a function, or whether a relation has a particular property, \emph{go back to the definition}. This is the single most important habit in proof-writing.
-
-For example, if you need to show that a certain relation is a function, you should explicitly invoke the definition: a function $f : A \to B$ assigns every element of $A$ to \emph{exactly one} element of $B$. So you need to show two things: (1) for every input there is at least one output, and (2) for every input there is at most one output. Conversely, to show something is \emph{not} a function, it suffices to find a single input that has zero outputs or more than one.
-
-Don't skip this step. Even if the answer feels obvious, the proof isn't complete until you've connected your argument to the actual definitions.
-
-\subsection*{An example: good vs.\ bad}
-
-Suppose we want to prove that the relation $y^2 = x$ on the reals is not a function (with $x$ as input and $y$ as output).
-
-\medskip
-\noindent\textbf{Bad version:}
-\begin{quote}
-$y^2 = x$ is not a function because $x = 4$ gives $y = 2$ and $y = -2$.
-\end{quote}
-
-This has the right idea but it doesn't explain \emph{why} having two values of $y$ is a problem. The reader is left to fill in the reasoning.
-
-\medskip
-\noindent\textbf{Good version:}
-\begin{quote}
-We show that the relation $y^2 = x$ on $\mathbb{R}$ is not a function from $x$ to $y$. By definition, a function must assign each input $x$ to exactly one output $y$. Consider $x = 4$. Then $y^2 = 4$, which has two real solutions: $y = 2$ and $y = -2$. Since the input $x = 4$ corresponds to two different outputs, the relation violates the uniqueness requirement and is therefore not a function.
-\end{quote}
-
-Notice what the good version does: it states the goal, invokes the definition, gives the specific example, and explicitly connects the example back to the definition to reach the conclusion. Every step is justified. That's all a proof needs to be.
-
 \section{Summary and looking ahead}
 
 \begin{keytakeaway}
   \item A \emph{set} is an unordered, duplicate-free collection of elements; equality is \emph{extensional} (two sets are equal when they have the same elements).
   \item Standard set operations: union $\cup$, intersection $\cap$, difference $\setminus$, complement $\overline{\cdot}$, Cartesian product $\times$, power set $\mathcal{P}$. The power set of an $n$-element set has $2^n$ elements.
-  \item A \emph{function} $f : A \to B$ is a total, single-valued assignment from $A$ to $B$. Dropping totality gives a \emph{partial function}.
+  \item A \emph{function} $f : A \to B$ is a total, single-valued assignment from $A$ to $B$. Dropping totality gives a \emph{partial function}. Functions \emph{compose}: given $f : A \to B$ and $g : B \to C$ there is $g \circ f : A \to C$, with the identity function $\mathrm{id}$ as a two-sided unit.
   \item A \emph{relation} between $A$ and $B$ is any subset of $A \times B$. Relations on a single set can be \emph{reflexive}, \emph{symmetric}, or \emph{transitive}; a relation with all three properties is an \emph{equivalence relation}.
-  \item A proof is a short essay, not a column of symbols. State the goal, introduce variables, justify every step, end with a clear conclusion. When in doubt, \emph{go back to the definition}.
 \end{keytakeaway}
 
 \begin{summarybox}
-\textbf{What we built this module.} We laid the vocabulary groundwork for the rest of the course. Sets and functions are the universe inside which we'll do everything else; the definitions of reflexive, symmetric, and transitive relations are the pattern we'll meet over and over (equivalence relations in Module 6, modular congruence, the $\leq$ ordering, the Curry--Howard correspondence in the intermezzo). The proof-writing advice at the end is a preview of the habit you'll practice all term: every step in a proof should be something you can explain in a sentence, grounded in a definition.
+\textbf{What we built this module.} We laid the vocabulary groundwork for the rest of the course. Sets and functions are the universe inside which we'll do everything else; the definitions of reflexive, symmetric, and transitive relations are the pattern we'll meet over and over (equivalence relations in Module 6, modular congruence, the $\leq$ ordering, the Curry--Howard correspondence in the intermezzo).
 
 \medskip
-\textbf{Looking ahead.} Module 2 starts the formal logic thread: we'll define propositional logic with a BNF grammar and give its truth-table semantics. That logic has just two values---true and false---so we can check everything exhaustively, which makes it a clean place to build habits before we add quantifiers (Module 4) and proofs-on-infinite-data (Module 8). Along the way, the intermezzo after this module (``Cardinality and Function Spaces'') uses the set and function vocabulary from here to show that some infinities are bigger than others---a real surprise that's worth the detour.
+\textbf{Looking ahead.} The short chapter that immediately follows, ``How to Write a Proof,'' collects practical advice on the prose style every proof in the book expects. Re-read it as you do the exercises below. Module~2 then starts the formal logic thread: we'll define propositional logic with a BNF grammar and give its truth-table semantics. That logic has just two values---true and false---so we can check everything exhaustively, which makes it a clean place to build habits before we add quantifiers (Module~4) and proofs-on-infinite-data (Module~8). Along the way, the intermezzo after this module (``Cardinality and Function Spaces'') uses the set and function vocabulary from here to show that some infinities are bigger than others---a real surprise that's worth the detour.
 \end{summarybox}
 
 \section{Exercises}
@@ -478,10 +463,13 @@ The exercises below are organized into four tiers. The \textbf{warm-ups} are sho
 \end{enumerate}
 
 \bigskip
-\textbf{Exercise 8.}\label{ex:m1:8} Prove the distributive law $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ by showing both containments. That is, show $A \cap (B \cup C) \subseteq (A \cap B) \cup (A \cap C)$ and vice versa, each by picking an arbitrary element of the left-hand side and arguing that it must be in the right-hand side. Use the ``state goal, introduce variable, justify every step'' advice from the proof-writing section.
+\textbf{Exercise 8.}\label{ex:m1:8} Prove the distributive law $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ by showing both containments. That is, show $A \cap (B \cup C) \subseteq (A \cap B) \cup (A \cap C)$ and vice versa, each by picking an arbitrary element of the left-hand side and arguing that it must be in the right-hand side. Use the ``state goal, introduce variable, justify every step'' advice from the ``How to Write a Proof'' chapter.
 
 \bigskip
 \textbf{Exercise 9.}\label{ex:m1:9} Prove or disprove: for all sets $A$ and $B$, if $A \subseteq B$ then $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. (Reminder: to prove an implication about sets, start by assuming the hypothesis and by picking an arbitrary element of the set whose containment you want to show.)
+
+\bigskip
+\textbf{Exercise 9b.}\label{ex:m1:9b} (Composition.) Let $f : \mathbb{Z} \to \mathbb{Z}$ send $n \mapsto n+1$ and let $g : \mathbb{Z} \to \mathbb{Z}$ send $n \mapsto 2n$. Compute $g \circ f$ and $f \circ g$ as closed-form expressions, and confirm that they are \emph{not} the same function. Then verify, for an arbitrary $n$, the associativity law $((f \circ f) \circ g)(n) = (f \circ (f \circ g))(n)$.
 
 \subsection*{Challenge}
 
@@ -505,6 +493,6 @@ Give a plain-English argument (``every element of $A \cup B$ is counted \ldots''
 \textbf{Exercise 14.}\label{ex:m1:14} (Intermezzo pointer.) The intermezzo after this module, ``Cardinality and Function Spaces,'' is about counting functions between finite sets. As a warm-up for it: how many functions are there from $\{a, b, c\}$ to $\{0, 1\}$? List them all as tables. Can you see why the answer is $2^3$ and not $3^2$? (Which set plays the role of ``exponent''?)
 
 \bigskip
-This has been a foundational week: sets, tuples, functions, relations, and some practical advice about proof-writing are the vocabulary we'll use for the rest of the course. In the next module we start doing \emph{logic}.
+This has been a foundational week: sets, tuples, functions, relations, and (in the short chapter that follows) the prose style expected of every proof in the book. Those are the vocabulary we'll use for the rest of the course. In the next module we start doing \emph{logic}.
 
 \end{document}

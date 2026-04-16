@@ -92,10 +92,10 @@ So you can think of $\forall$ as asking ``is the truth set everything?'' and $\e
 This is \emph{crucial} and it comes up constantly---in proofs, in writing specifications, in checking whether your code is correct, \&c. You need to be able to negate statements that have quantifiers in them.
 
 The good news is that the rules are really clean and they're basically just De Morgan's laws but for quantifiers instead of $\wedge$ and $\vee$:
-\begin{lstlisting}
-$\neg$($\forall$ x : A. P(x))  $\equiv$  $\exists$ x : A. $\neg$P(x)
-$\neg$($\exists$ x : A. P(x))  $\equiv$  $\forall$ x : A. $\neg$P(x)
-\end{lstlisting}
+\begin{align*}
+  \lnot\bigl(\forall x : A.\; P(x)\bigr) &\;\equiv\; \exists x : A.\; \lnot P(x), \\
+  \lnot\bigl(\exists x : A.\; P(x)\bigr) &\;\equiv\; \forall x : A.\; \lnot P(x).
+\end{align*}
 
 Why do these make sense? Let's think about it. ``It's \emph{not} the case that everything satisfies $P$'' means ``there's something that \emph{doesn't} satisfy $P$.'' And ``it's \emph{not} the case that something satisfies $P$'' means ``\emph{nothing} satisfies $P$,'' which is the same as saying everything fails to satisfy $P$.
 
@@ -168,67 +168,66 @@ Proofs in this logic are going to be really similar to proofs in propositional l
 We'll start with the easiest, which is the rule for equality.
 
 \noindent\textbf{Reflexivity:}
-\begin{lstlisting}
-assumes x : A
--------------
-shows x = x
-\end{lstlisting}
-
-which is just that you're always allowed to conclude that a thing is equal to itself, unsurprisingly! If you're also playing the natural number game or if you ever try other interactive theorem provers you probably will see this rule called ``reflexivity'', or ``rfl''/``refl'' for short.
+\[
+  \begin{array}{rl}
+    \text{assumes} & x : A \\
+    \hline
+    \text{shows} & x = x
+  \end{array}
+\]
+which is just that you're always allowed to conclude that a thing is equal to itself, unsurprisingly! If you're also playing the natural number game or if you ever try other interactive theorem provers you probably will see this rule called ``reflexivity,'' or ``rfl''/``refl'' for short.
 
 Next we present the rules for $\forall$. We start with elimination because it is the simpler of the two.
 
 \noindent\textbf{Elimination:}
-\begin{lstlisting}
-assumes $\forall$ x : A. P(x)
-        a : A
---------------------------
-shows P(a)
-\end{lstlisting}
+\[
+  \begin{array}{rl}
+    \text{assumes} & \forall x : A.\; P(x) \\
+                   & a : A \\
+    \hline
+    \text{shows} & P(a)
+  \end{array}
+\]
 This says that if $P$ is true of all elements of $A$ and $a$ is an element of $A$, then $P(a)$ holds. It's a lot like applying a function, isn't it?
 
 \noindent\textbf{Introduction:}
 The introduction rule is going to look a little like the introduction rule for implication.
-\begin{lstlisting}
-assumes
-  proof of:
-    assumes a : A
-    -------------
-    shows P(a)
------------------
-shows $\forall$ x : A. P(x)
-\end{lstlisting}
+\[
+  \begin{array}{rl}
+    \text{assumes} & \text{a proof of: assuming $a : A$, shows $P(a)$} \\
+    \hline
+    \text{shows} & \forall x : A.\; P(x)
+  \end{array}
+\]
 Side condition: the variable $a$ must really be \emph{arbitrary}. In practice that means $a$ should be fresh for the subproof and should not appear free in any undischarged assumption that the subproof depends on. Otherwise you'd be proving $P(a)$ for some \emph{special} $a$ and then incorrectly generalizing to all elements of $A$.
 
-What we're doing is taking evidence that given an \emph{arbitrary} element of $A$ we can always show that $P(a)$ is true and internalizing that into the $\forall$, the same way that we internalize the ability to prove $Q$ assuming $P$ into \texttt{P -> Q}.
+What we're doing is taking evidence that given an \emph{arbitrary} element of $A$ we can always show that $P(a)$ is true and internalizing that into the $\forall$, the same way that we internalize the ability to prove $Q$ assuming $P$ into $P \to Q$.
 
 The rules for $\exists$ are the mirror image of $\forall$'s.
 
 \noindent\textbf{Elimination:}
-\begin{lstlisting}
-assumes
-  $\exists$ x : A. P(x)
-  subproof:
-     assumes c : A
-             P(c)
-     -------------
-     shows Q
-------------------
-shows Q
-\end{lstlisting}
+\[
+  \begin{array}{rl}
+    \text{assumes} & \exists x : A.\; P(x) \\
+                   & \text{a subproof: assuming $c : A$ and $P(c)$, shows $Q$} \\
+    \hline
+    \text{shows} & Q
+  \end{array}
+\]
 
 Side condition: the witness variable $c$ must be \emph{fresh}. In particular, it must not appear free in $Q$ or in any undischarged assumption outside the subproof. Otherwise the particular name chosen for the witness could leak out into the conclusion, which would make the rule unsound.
 
 This rule says: if you know something satisfying $P$ exists, and you can show that $Q$ follows from having \emph{any} element $c$ satisfying $P(c)$---without relying on which specific $c$ it is---then you can conclude $Q$. Think of it as opening a box: you know something is inside, you don't know exactly what, but you show that no matter what it turns out to be, the conclusion holds. This is why the subproof introduces a \emph{fresh} variable $c$---it represents an arbitrary witness, not a specific one.
 
 \noindent\textbf{Introduction:}
-\begin{lstlisting}
-assumes
-  c : A
-  P(c)
-------------------------
-shows $\exists$ x : A. P(x)
-\end{lstlisting}
+\[
+  \begin{array}{rl}
+    \text{assumes} & c : A \\
+                   & P(c) \\
+    \hline
+    \text{shows} & \exists x : A.\; P(x)
+  \end{array}
+\]
 
 \section{Induction, round 1}
 Here we're going to introduce the concept of the natural numbers and also the idea of natural induction. Why? We've shown how to prove things about predicates in general, but if I were to just \emph{hand} you a predicate on a set it's not like you'd know how to actually do anything with it. You don't have any handles, so to speak, for how to start your proof other than brute forcing the set-based semantics. But as we've discussed a couple of times now this won't work for infinite sets where you'd need to check the formula against potentially infinite values.
@@ -251,16 +250,15 @@ That's what induction buys us.
 
 Now if you're playing the natural number game you'll have already seen what the induction rule based on this definition is but let's spell it out:
 
-natural induction
-\begin{lstlisting}
- assumes P(0)
-         subproof:
-           assumes P(n)
-           ------------
-           shows P(succ n)
---------------------------
-shows $\forall$ n : Nat. P(n)
-\end{lstlisting}
+Natural induction:
+\[
+  \begin{array}{rl}
+    \text{assumes} & P(0) \\
+                   & \text{a subproof: assuming $P(n)$, shows $P(\text{succ } n)$} \\
+    \hline
+    \text{shows} & \forall n : \text{Nat}.\; P(n)
+  \end{array}
+\]
 
 What this is saying is that if you can show that P is true on 0 and if you can show that with evidence that $P(n)$ is true you can prove $P(\text{succ}\; n)$, then you can prove that P is true on all natural numbers.
 

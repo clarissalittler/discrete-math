@@ -131,6 +131,24 @@ We won't push this further here, but the point is: these aren't parlor tricks. T
 
 What we're seeing is a remarkable convergence: the sets intermezzo (cardinality of function spaces), Module 9 (geometric series), and Module 10 (BNF definitions of data types) are all aspects of a single algebraic framework. Types are numbers, data definitions are polynomial equations, and the power series you learned in Module 9 enumerate the shapes of data structures.
 
+\section{Aside: type constructors come with maps}
+
+Notice what \texttt{List}, \texttt{Tree}, and \texttt{Maybe} actually \emph{are}. None of them is a type on its own. Each is a construction that \emph{eats} a type $A$ and produces a new type: \texttt{List A}, \texttt{Tree A}, \texttt{Maybe A}. You could call them ``type-level functions''---and that is exactly how they behave.
+
+Type-level functions of this kind always come bundled with a companion data-level operation. Suppose someone hands you a function $f : A \to B$ and a list \texttt{xs : List A}. There is an obvious thing you can do: produce a new list of \texttt{B}'s by applying $f$ to every element. That's \texttt{map~f~xs}. And \texttt{map} has the type
+\[
+  \texttt{map} : (A \to B) \to \texttt{List}\,A \to \texttt{List}\,B.
+\]
+\texttt{Tree} has the analogous \texttt{map}: given $f : A \to B$ and a tree of \texttt{A}'s, replace every label with $f$ applied to it. \texttt{Maybe} has one too: \texttt{map f Nothing = Nothing}, \texttt{map f (Just a) = Just (f a)}. Every reasonable type constructor you have met---and a few you haven't---comes with its own \texttt{map}.
+
+These \texttt{map}s all satisfy two laws, which are easy enough to check on each example that we won't do it here:
+\begin{itemize}
+  \item \textbf{Identity law:} \texttt{map id xs = xs}. Mapping the identity function changes nothing.
+  \item \textbf{Composition law:} \texttt{map (g . f) xs = map g (map f xs)}. Mapping a composition is the composition of two maps.
+\end{itemize}
+
+The combined gadget---a type constructor $F$ together with a \texttt{map} obeying these two laws---has a name: $F$ is called a \emph{functor}\index{functor}. You will meet functors formally in later coursework in category theory and in languages like Haskell, where they are a foundational abstraction. For now the only thing to notice is that you have been using them for the entire course; most of what we've called a ``data structure'' is a functor in disguise.
+
 \section{The Curry--Howard connection}
 
 There's one more layer. In the Curry--Howard intermezzo we learned that types correspond to propositions: a type is ``true'' if it's inhabited (has at least one value) and ``false'' if it's empty. Under this correspondence:
@@ -162,6 +180,61 @@ Three parallel worlds---arithmetic, type theory, and logic---and they're all obe
 
 That structure has a name, by the way. It's called a \emph{rig}\index{rig} (a ``ring without negation''---because you can't subtract types or negate propositions in general). But you don't need to know the name to appreciate the fact: the math you already know, from all across this course, fits together like a puzzle. Cardinality is counting. Types are numbers. BNF definitions are polynomial equations. Proofs are programs. And the geometric series from Module 9 secretly counts the shapes of lists.
 
+\section{The shape of definitions}
+
+There is a second pattern running through everything we've done in this intermezzo, and it's worth unearthing before we stop. When we introduced the product type $A \times B$, we didn't really \emph{define} it by saying ``a value of $A \times B$ is a pair of this particular form.'' What we did---whether we realized it or not---was describe $A \times B$ by saying what you can \emph{do} with it:
+
+\begin{itemize}
+  \item Given a value of $A \times B$, you can extract an $A$ (the first projection, \texttt{fst}).
+  \item Given a value of $A \times B$, you can extract a $B$ (the second projection, \texttt{snd}).
+  \item If you have a way of building an $A$ from some $X$ and a way of building a $B$ from the same $X$, you have a unique way of building an $A \times B$ from $X$.
+\end{itemize}
+
+The third bullet is worth staring at. It says: to give a function $X \to A \times B$ is the same thing as to give a pair of functions, $X \to A$ and $X \to B$. Pictorially:
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.2cm, >=Stealth]
+  \node (X) {$X$};
+  \node (AB) [below of=X] {$A \times B$};
+  \node (A) [below left of=AB, node distance=2.4cm] {$A$};
+  \node (B) [below right of=AB, node distance=2.4cm] {$B$};
+  \draw[->, dashed] (X) -- node[right] {$\exists !\,h$} (AB);
+  \draw[->] (AB) -- node[above left] {$\mathrm{fst}$} (A);
+  \draw[->] (AB) -- node[above right] {$\mathrm{snd}$} (B);
+  \draw[->, bend right=20] (X) to node[left] {$f$} (A);
+  \draw[->, bend left=20] (X) to node[right] {$g$} (B);
+\end{tikzpicture}
+\end{center}
+
+The dashed arrow is the unique $h : X \to A \times B$ determined by $f$ and $g$---namely $h(x) = (f(x), g(x))$. The picture is a promise: whatever $X$ and whatever $f, g$ you give me, the pair $(f, g)$ collapses into a \emph{single} arrow into $A \times B$, and the way you get $f$ and $g$ back is by following $\mathrm{fst}$ and $\mathrm{snd}$ out of $A \times B$. That promise is the whole content of what $A \times B$ ``is.''
+
+This is a funny kind of definition. We did not list the elements of $A \times B$. We did not give a construction. We described $A \times B$ by saying, essentially, ``it is the type such that mapping out of any $X$ into it is the same as a pair of maps into its pieces.'' And here is the payoff: that description pins $A \times B$ down \emph{up to isomorphism}, which is exactly how much precision a working mathematician ever wants.
+
+The same trick works for every type-former we've talked about:
+\begin{itemize}
+  \item A function out of $A + B$ is a pair of functions, one from $A$ and one from $B$. This is or-elimination (Section~2); it's also the mirror-image of the product story, with arrows reversed.
+  \item A function into $A \to B$ from $X$ is the same as a function from $X \times A$ to $B$. (``Curry'' it.) The type $A \to B$ is pinned down by what you can do \emph{out of the variable} into it.
+  \item The unit type $1$ is the type such that for every $X$ there is exactly one function $X \to 1$. The empty type $0$ is the type such that for every $X$ there is exactly one function $0 \to X$. Those are the shortest definitions of these types in all of mathematics, and they are correct.
+\end{itemize}
+
+\begin{center}
+\begin{tikzpicture}[node distance=2.2cm, >=Stealth]
+  \node (A) {$A$};
+  \node (B) [right of=A, node distance=2.4cm] {$B$};
+  \node (AB) [below right of=A, node distance=2.2cm] {$A + B$};
+  \node (X) [below of=AB, node distance=1.8cm] {$X$};
+  \draw[->] (A) -- node[below left] {$\mathrm{inl}$} (AB);
+  \draw[->] (B) -- node[below right] {$\mathrm{inr}$} (AB);
+  \draw[->, bend right=20] (A) to node[left] {$f$} (X);
+  \draw[->, bend left=20] (B) to node[right] {$g$} (X);
+  \draw[->, dashed] (AB) -- node[right] {$\exists !\,h$} (X);
+\end{tikzpicture}
+\end{center}
+
+This mode of definition---``specify the object by what arrows into or out of it are the same as''---is called a \emph{universal property}\index{universal property}. Each of the identities we proved in Section~2 ($A \times 1 \cong A$, $A + 0 \cong A$, distributivity, currying, exponent-of-a-product) is really a statement that two universal properties land in the same place.
+
+We have spent this intermezzo calling the resulting structure an ``algebra.'' It has a second name, the one it gets when one takes this universal-property perspective seriously: \emph{category theory}\index{category theory} is the mathematics of these patterns, and products, sums, unit, and empty are its simplest examples. You are already doing category theory. You just aren't using the vocabulary yet. CS~251 and any abstract-algebra course you take in the future will pick this thread back up.
+
 \section{Exercises}
 
 \bigskip
@@ -186,6 +259,14 @@ that is, ``either a single $A$, or an $A$ followed by a non-empty list of $A$.''
   \item What is $|\texttt{Maybe } A|$ in terms of $|A|$?
   \item What is $|\texttt{Maybe (Maybe } A\texttt{)}|$ in terms of $|A|$?
   \item Express \texttt{Maybe (Maybe A)} as an algebraic expression and simplify. Why does the answer match the cardinality formula in (b)?
+\end{enumerate}
+
+\bigskip
+\textbf{Exercise 5b.}\label{ex:ta:5b} (Functor laws for lists.) In Python, implement \texttt{list\_map(f, xs)} that returns a new list obtained by applying \texttt{f} to every element of \texttt{xs}. Do not use the built-in \texttt{map}; write the recursion or the list comprehension yourself.
+\begin{enumerate}[label=(\alph*)]
+  \item Verify informally, by running on a sample list, that \texttt{list\_map(lambda x: x, xs) == xs} (the identity law).
+  \item Verify that \texttt{list\_map(lambda x: g(f(x)), xs) == list\_map(g, list\_map(f, xs))} (the composition law) for concrete \texttt{f} and \texttt{g} of your choosing.
+  \item Explain, in one sentence, why the composition law is not a mere convenience: what would go wrong computationally or conceptually if it failed?
 \end{enumerate}
 
 \bigskip

@@ -420,6 +420,8 @@ This is the foundation for CS 251 and beyond---type theory, programming language
   \item Natural induction is structural induction on $\text{Nat} := 0 \mid \text{succ Nat}$. List induction is structural induction on $\text{List} := \texttt{Nil} \mid \texttt{Cons}(A, \text{List})$. Tree induction gives you \emph{two} IHs (one per subtree). Propositional-formula induction gives you seven cases. Same recipe every time.
   \item The shape of your data determines the shape of your code (recursive functions), which determines the shape of your proofs (induction principles). Recursion, induction, and case analysis are three views of a single pattern.
   \item Serious structural induction proofs often involve \emph{lemma chains}: the main theorem depends on a helper lemma, which depends on a smaller helper, each proved by its own structural induction.
+  \item Once you can name the shape of a data type, you can also name the ``right notion of sameness'' for values of that type by abstracting over some of the structure---lists up to reordering become multisets, binary trees up to relabeling become shapes, formulas up to logical equivalence become Boolean functions.
+  \item That is the same move we already saw for sets (extensional equality, Module~1), formulas (logical equivalence, Module~2), and groups (isomorphism, Module~5). The intermezzo after Module~6 is the essay on the pattern.
 \end{keytakeaway}
 
 \begin{summarybox}

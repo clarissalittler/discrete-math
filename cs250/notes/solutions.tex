@@ -14,7 +14,7 @@
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 Let $A = \{1,2,3,4\}$ and $B = \{3,4,5,6\}$.
 \begin{align*}
   A \cap B &= \{3, 4\}, \\
@@ -24,13 +24,13 @@ Let $A = \{1,2,3,4\}$ and $B = \{3,4,5,6\}$.
 \end{align*}
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 The set $\{1,\;\{1\},\;\{1,\{1\}\}\}$ has three distinct elements: $1$,
 $\{1\}$, and $\{1,\{1\}\}$.  Therefore
 $|\{1,\;\{1\},\;\{1,\{1\}\}\}| = 3$.
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 For the first set, we want natural numbers $n$ with $n^2 < 20$. Checking
 small values: $0^2 = 0$, $1^2 = 1$, $2^2 = 4$, $3^2 = 9$, $4^2 = 16$ all
 satisfy the condition, while $5^2 = 25$ does not. So
@@ -41,7 +41,7 @@ $3$ is excluded but $-3$ is included, so we get
 $\{n \mid n \in \mathbb{Z},\; -3 \leq n < 3\} = \{-3, -2, -1, 0, 1, 2\}$.
 
 \medskip
-\textbf{Exercise 4.}
+\textbf{Exercise~4.}
 Let $S = \{1, 2, \{1\}, \{1, 2\}\}$.
 \begin{enumerate}[label=(\alph*)]
   \item $1 \in S$: \textbf{true}. $1$ is literally one of the four listed elements.
@@ -55,7 +55,7 @@ Let $S = \{1, 2, \{1\}, \{1, 2\}\}$.
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 5.}
+\textbf{Exercise~5.}
 \[
   \mathcal{P}(\{a,b,c\}) = \bigl\{\emptyset,\; \{a\},\; \{b\},\; \{c\},\; \{a,b\},\; \{a,c\},\; \{b,c\},\; \{a,b,c\}\bigr\}.
 \]
@@ -67,7 +67,7 @@ which has $2 \times 3 = 6$ elements.
 
 \subsection*{Standard}
 
-\textbf{Exercise 6.}
+\textbf{Exercise~6.}
 \begin{enumerate}[label=(\alph*)]
   \item $a\,R\,b$ iff $a + b$ is even.
     \begin{itemize}
@@ -100,7 +100,7 @@ which has $2 \times 3 = 6$ elements.
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 7.}
+\textbf{Exercise~7.}
 \begin{enumerate}[label=(\alph*)]
   \item $f(x) = 1/x$. \emph{Not a function} on $\mathbb{R}$: totality fails at $x = 0$, where the assignment gives no output. (It \emph{is} a function on $\mathbb{R} \setminus \{0\}$, so if the domain were restricted it would work.)
   \item $f(x) = \sqrt{x}$, non-negative branch. \emph{Not a function} on $\mathbb{R}$: totality fails for negative $x$ because $\sqrt{x}$ is not a real number when $x < 0$. (It \emph{is} a function on $\{x \in \mathbb{R} \mid x \geq 0\}$.)
@@ -109,7 +109,7 @@ which has $2 \times 3 = 6$ elements.
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 8.}
+\textbf{Exercise~8.}
 We prove $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ by showing each side is a subset of the other.
 
 \emph{($\subseteq$).}
@@ -121,16 +121,36 @@ Let $x \in (A \cap B) \cup (A \cap C)$. Then either $x \in A \cap B$ or $x \in A
 Since each side is contained in the other, they are equal. \qed
 
 \medskip
-\textbf{Exercise 9.}
+\textbf{Exercise~9.}
 \emph{Claim:} If $A \subseteq B$ then $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. \emph{True.}
 
 \emph{Proof.} Assume $A \subseteq B$. To show $\mathcal{P}(A) \subseteq \mathcal{P}(B)$, let $S$ be an arbitrary element of $\mathcal{P}(A)$. By definition of power set, this means $S \subseteq A$. So every element of $S$ is in $A$, and therefore---since $A \subseteq B$---every element of $S$ is in $B$. That is, $S \subseteq B$, which means $S \in \mathcal{P}(B)$. Since $S$ was arbitrary, $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. \qed
 
 The key move here is the ``two-level'' reasoning: to argue about subsets of power sets, you have to peel off one layer (the outer $\subseteq$) and then use another layer (the inner $\subseteq$).
 
+\medskip
+\textbf{Exercise~9b.}
+With $f(n) = n+1$ and $g(n) = 2n$:
+\[
+  (g \circ f)(n) = g(f(n)) = g(n+1) = 2(n+1) = 2n + 2,
+\]
+\[
+  (f \circ g)(n) = f(g(n)) = f(2n) = 2n + 1.
+\]
+These are not the same function---for example, at $n = 0$ the first gives $2$ and the second gives $1$. In particular, composition is \emph{not} commutative in general.
+
+For associativity, applying both sides to $n$:
+\[
+  ((f \circ f) \circ g)(n) = (f \circ f)(g(n)) = f(f(2n)) = f(2n+1) = 2n + 2,
+\]
+\[
+  (f \circ (f \circ g))(n) = f((f \circ g)(n)) = f(2n+1) = 2n + 2.
+\]
+Both sides send $n$ to $2n+2$, confirming associativity at this $n$. Since $n$ was arbitrary, the two compositions agree as functions.
+
 \subsection*{Challenge}
 
-\textbf{Exercise 10.}
+\textbf{Exercise~10.}
 We argue by counting. Every element of $A \cup B$ falls into exactly one of three categories:
 \begin{itemize}
   \item elements of $A$ that are not in $B$ (there are $|A \setminus B|$ of them),
@@ -154,7 +174,7 @@ as required. \qed
 The moral: $|A| + |B|$ overcounts the elements that are in both sets, and inclusion--exclusion corrects for the overcounting.
 
 \medskip
-\textbf{Exercise 11.}
+\textbf{Exercise~11.}
 A relation on $A$ is a subset of $A \times A$. If $|A| = n$, then $|A \times A| = n^2$, so
 \[
   \text{number of relations on } A = |\mathcal{P}(A \times A)| = 2^{n^2}.
@@ -166,7 +186,7 @@ For reflexive relations: a reflexive relation must contain every pair $(a, a)$ f
 For example, with $n = 2$: $2^4 = 16$ relations total, and $2^{4-2} = 2^2 = 4$ reflexive ones.
 
 \medskip
-\textbf{Exercise 12.}
+\textbf{Exercise~12.}
 The flaw is the phrase ``if $a\, R\, b$''---the argument assumes that \emph{every} $a$ has \emph{some} $b$ with $a\, R\, b$. That's an extra assumption; the definition of reflexive doesn't get a free ride on it. If there's an element $a \in A$ that is not related to anything at all, the argument never gets started for $a$, and we have no obligation to conclude $a\, R\, a$.
 
 Concrete counterexample on $A = \{1, 2, 3\}$: take $R = \{(1, 2), (2, 1), (1, 1), (2, 2)\}$. This is symmetric (the pairs $(1,2)$ and $(2,1)$ are both in $R$) and transitive (check each chain: from $(1,2)$ and $(2,1)$ we get $(1,1)$, which is in $R$; from $(2,1)$ and $(1,2)$ we get $(2,2)$, in $R$; the diagonal pairs chain trivially). But $R$ is \emph{not} reflexive: $(3, 3) \notin R$. The element $3$ is not related to anything, so the bad argument never reaches it.
@@ -175,7 +195,7 @@ The additional assumption needed to save the argument is what's sometimes called
 
 \subsection*{Connection}
 
-\textbf{Exercise 13.}
+\textbf{Exercise~13.}
 \begin{lstlisting}[language=Python]
 def cartesian(xs, ys):
     result = []
@@ -191,7 +211,7 @@ print(cartesian([1, 2], ['a', 'b', 'c']))
 The output matches the six pairs from Exercise~5. The nested loop visits each $(x, y)$ combination exactly once, so it does $m \cdot n$ appends and (if you're counting inner loop iterations as ``comparisons'') $m \cdot n$ work total. This is the computational content of $|A \times B| = |A| \cdot |B|$.
 
 \medskip
-\textbf{Exercise 14.}
+\textbf{Exercise~14.}
 There are $2^3 = 8$ functions from $\{a, b, c\}$ to $\{0, 1\}$. Each function is determined by its three outputs, and each output is one of two choices, giving $2 \times 2 \times 2 = 8$ total:
 \begin{center}
 \begin{tabular}{c|ccc}
@@ -214,14 +234,14 @@ The answer is $2^3$ and not $3^2$ because the \emph{codomain} (here $\{0,1\}$, o
 %% ---------- Intermezzo ----------
 \section*{Intermezzo: Cardinality and Function Spaces}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 \[
   \mathcal{P}(\{1,2,3\}) = \bigl\{\emptyset,\;\{1\},\;\{2\},\;\{3\},\;\{1,2\},\;\{1,3\},\;\{2,3\},\;\{1,2,3\}\bigr\}.
 \]
 That is $2^3 = 8$ elements.
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 There are $2^3 = 8$ functions from $\{a,b,c\}$ to $\{0,1\}$.  Each function
 is the characteristic function of a subset of $\{a,b,c\}$:
 
@@ -243,7 +263,7 @@ $\{a,b,c\}$     & 1 & 1 & 1 \\
 \end{center}
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 \begin{proof}
 Define $f : \mathbb{N} \to E$ by $f(n) = 2n$, where
 $E = \{0, 2, 4, 6, \ldots\}$.
@@ -257,12 +277,128 @@ Since $f$ is both injective and surjective, it is a bijection, proving that
 the even natural numbers are countably infinite.
 \end{proof}
 
+\medskip
+\textbf{Exercise~4.}
+One clean bijection is $f : (0, 1) \to \mathbb{R}$ defined by
+\[
+  f(x) = \tan\!\left(\pi x - \tfrac{\pi}{2}\right).
+\]
+The argument $\pi x - \pi/2$ is a linear map sending $(0, 1)$ to the open
+interval $(-\pi/2,\, \pi/2)$, on which $\tan$ is a strictly increasing
+bijection onto $\mathbb{R}$ (it goes from $-\infty$ to $+\infty$ and is
+continuous with nonzero derivative). The composition of two bijections is
+a bijection, so $f$ is bijective.
+
+\emph{Injective:} if $f(x) = f(y)$, then the monotonicity of both
+$x \mapsto \pi x - \pi/2$ and $\tan$ on $(-\pi/2, \pi/2)$ forces $x = y$.
+
+\emph{Surjective:} for any $r \in \mathbb{R}$, the value
+$x = \frac{1}{\pi}\!\left(\arctan r + \frac{\pi}{2}\right)$ lies in
+$(0, 1)$ and satisfies $f(x) = r$.
+
+(An equivalent rational-function witness is $g(x) = \frac{1}{x} -
+\frac{1}{1 - x}$ on $(0, 1)$. As $x \to 0^+$ we have $1/x \to +\infty$
+and $1/(1-x) \to 1$, so $g(x) \to +\infty$; as $x \to 1^-$ we have
+$1/x \to 1$ and $1/(1-x) \to +\infty$, so $g(x) \to -\infty$. A short
+derivative check shows $g$ is strictly decreasing on $(0, 1)$, hence a
+continuous strictly-monotone bijection onto $\mathbb{R}$.)
+
+The takeaway is that ``size'' for infinite sets is not about how much
+room they appear to take up in the real line: the tiny interval
+$(0, 1)$ has exactly as many points as the whole line.
+
+\medskip
+\textbf{Exercise~5.}
+Suppose, for contradiction, that there is a surjection
+$f : A \to \mathcal{P}(A)$.  Define
+\[
+  D = \{a \in A \mid a \notin f(a)\}.
+\]
+$D$ is a subset of $A$, so $D \in \mathcal{P}(A)$.  Because $f$ is
+surjective, some $d \in A$ satisfies $f(d) = D$.  Now ask the fatal
+question: is $d \in D$?
+
+\emph{Case 1: $d \in D$.}  By the definition of $D$, membership in $D$
+means $d \notin f(d) = D$.  So $d \notin D$, contradicting our case
+assumption.
+
+\emph{Case 2: $d \notin D$.}  Then $d \notin f(d)$, which is exactly
+the condition for membership in $D$.  So $d \in D$, again a
+contradiction.
+
+Either way we get a contradiction, so no such surjection $f$ exists.
+Since the identity $A \to A$ composed with the obvious injection
+$a \mapsto \{a\}$ embeds $A$ into $\mathcal{P}(A)$ (so
+$|A| \leq |\mathcal{P}(A)|$) while no surjection goes the other way,
+we have $|\mathcal{P}(A)| > |A|$ strictly.  \qed
+
+The same diagonal structure as Cantor's real-numbers proof is visible
+here: $D$ is the set that \emph{disagrees} with each candidate $f(a)$
+on the single question ``is $a$ in you?''---so it cannot equal any
+$f(a)$, no matter which $a$ we pick.
+
+\medskip
+\textbf{Exercise~6.}
+Fix $n \in \mathbb{N}$ and consider how $g$ and $f_n$ compare at the
+input $n$:
+\[
+  g(n) = f_n(n) + 1 \;\neq\; f_n(n).
+\]
+Two functions $\mathbb{N} \to \mathbb{N}$ are equal iff they agree on
+\emph{every} input.  Since $g$ and $f_n$ disagree at the input $n$,
+$g \neq f_n$ as functions.  This holds for every $n$, so $g$ is not
+anywhere in the list $f_0, f_1, f_2, \ldots$.
+
+Consequently, any countable list of functions $\mathbb{N} \to
+\mathbb{N}$ is missing at least one function (namely the $g$ built from
+it).  So the set of all functions $\mathbb{N} \to \mathbb{N}$ is not
+countable.
+
+This is the same diagonal move as in Cantor's theorem: to beat a
+proposed enumeration, construct an object that differs from the $n$th
+entry in the $n$th slot.  The same trick drives the proof that the
+halting problem is undecidable: one builds a program that does the
+\emph{opposite} of what the $n$th program does on input $n$, and that
+program is guaranteed not to appear in any enumeration of ``always
+halting'' programs.
+
+\medskip
+\textbf{Exercise~7.}
+We list the eight functions from $\{0, 1, 2\}$ to $\{a, b\}$, one per row,
+together with the subset of $\{0, 1, 2\}$ whose characteristic function
+maps to $a$-versus-$b$ in the same pattern (if we treat $a$ as ``in the
+subset'' and $b$ as ``out''):
+
+\begin{center}
+\begin{tabular}{l|ccc|l}
+\toprule
+Function & $f(0)$ & $f(1)$ & $f(2)$ & Subset \\
+\midrule
+$f_1$ & $b$ & $b$ & $b$ & $\emptyset$ \\
+$f_2$ & $a$ & $b$ & $b$ & $\{0\}$ \\
+$f_3$ & $b$ & $a$ & $b$ & $\{1\}$ \\
+$f_4$ & $b$ & $b$ & $a$ & $\{2\}$ \\
+$f_5$ & $a$ & $a$ & $b$ & $\{0, 1\}$ \\
+$f_6$ & $a$ & $b$ & $a$ & $\{0, 2\}$ \\
+$f_7$ & $b$ & $a$ & $a$ & $\{1, 2\}$ \\
+$f_8$ & $a$ & $a$ & $a$ & $\{0, 1, 2\}$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+There are exactly $2^3 = 8$ rows.  The eight rows cover every possible
+assignment of an output in $\{a, b\}$ to each of the three inputs---
+$2$ choices per input and $3$ independent inputs gives $2 \cdot 2
+\cdot 2 = 8$ functions.  Each row corresponds to a distinct subset of
+$\{0, 1, 2\}$, and the map ``function $\mapsto$ subset'' is a
+bijection---which is exactly the statement that $\mathcal{P}(\{0, 1, 2\})
+\cong \{a, b\}^{\{0, 1, 2\}}$.
+
 %% ---------- Module 2 ----------
 \section*{Module 2}
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 Truth table for $(p \to q) \wedge (q \to p)$:
 
 \begin{center}
@@ -281,7 +417,7 @@ This matches the biconditional $p \leftrightarrow q$, which is true exactly
 when $p$ and $q$ have the same truth value.
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 Truth table for $\lnot(p \vee q)$:
 
 \begin{center}
@@ -316,7 +452,7 @@ The output columns are identical, confirming De Morgan's law
 $\lnot(p \vee q) \equiv (\lnot p) \wedge (\lnot q)$.
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 A unary boolean operation takes one boolean input (2 possible values) and
 produces one boolean output.  The number of such operations is $2^2 = 4$.
 They are:
@@ -328,7 +464,7 @@ They are:
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 4.}
+\textbf{Exercise~4.}
 Build each truth table and read off the pattern:
 \begin{enumerate}[label=(\alph*)]
   \item $p \vee \lnot p$ is $T$ on both rows, so it's a \textbf{tautology} (this is the law of excluded middle).
@@ -339,7 +475,7 @@ Build each truth table and read off the pattern:
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 5.}
+\textbf{Exercise~5.}
 \begin{enumerate}[label=(\alph*)]
   \item $\lnot p \wedge q \vee r$ groups as $((\lnot p) \wedge q) \vee r$. At $p = T, q = F, r = T$: $((F) \wedge F) \vee T = F \vee T = T$.
   \item $p \to q \to r$ groups (right-associatively) as $p \to (q \to r)$. At $p = T, q = F, r = T$: $q \to r = F \to T = T$, then $p \to T = T$. If you grouped it left-associatively instead as $(p \to q) \to r$, you would get $(T \to F) \to T = F \to T = T$---same answer in this row by coincidence, but they differ in general. Try $p = F, q = T, r = F$ to see the split: right-assoc gives $F \to (T \to F) = F \to F = T$; left-assoc gives $(F \to T) \to F = T \to F = F$.
@@ -348,7 +484,7 @@ Build each truth table and read off the pattern:
 
 \subsection*{Standard}
 
-\textbf{Exercise 6.}
+\textbf{Exercise~6.}
 We claim $p \oplus q \equiv (p \wedge \lnot q) \vee (\lnot p \wedge q)$.
 Truth table:
 
@@ -369,7 +505,7 @@ F & F & F & F & F \\
 This matches the XOR truth table (true when exactly one of $p$, $q$ is true). This is exactly what the DNF recipe would produce: the truth table has two T rows, namely $(T,F)$ and $(F,T)$, and those are the two disjuncts.
 
 \medskip
-\textbf{Exercise 7.}
+\textbf{Exercise~7.}
 We build one combined truth table and read off both sides:
 \begin{center}
 \begin{tabular}{ccc|c|c|c|c|c}
@@ -390,7 +526,7 @@ F & F & F & F & T & T & T & T \\
 Columns 5 and 8 agree on every row, so $p \to (q \wedge r) \equiv (p \to q) \wedge (p \to r)$. \qed
 
 \medskip
-\textbf{Exercise 8.}
+\textbf{Exercise~8.}
 Let $p \mid q$ denote NAND ($\lnot(p \wedge q)$).
 \begin{enumerate}[label=(\alph*)]
   \item \emph{NOT from NAND:} $\lnot p \equiv p \mid p$. Check: $p \mid p = \lnot(p \wedge p) = \lnot p$. \checkmark
@@ -407,7 +543,7 @@ Let $p \mid q$ denote NAND ($\lnot(p \wedge q)$).
 Since NAND can build $\lnot$, $\wedge$, and $\vee$, and those three together are functionally complete, so is NAND alone.
 
 \medskip
-\textbf{Exercise 9.}
+\textbf{Exercise~9.}
 The three T rows are $(T,F,F)$, $(F,T,F)$, $(F,F,T)$. The DNF recipe gives one conjunct per T row, using the variable if the row has T and its negation if the row has F:
 \[
   f(x, y, z) \;\equiv\; (x \wedge \lnot y \wedge \lnot z) \;\vee\; (\lnot x \wedge y \wedge \lnot z) \;\vee\; (\lnot x \wedge \lnot y \wedge z).
@@ -416,7 +552,7 @@ You can verify this by plugging in $(T,F,F)$: $T \wedge T \wedge T = T$ in the f
 
 \subsection*{Challenge}
 
-\textbf{Exercise 10.}
+\textbf{Exercise~10.}
 We show $\{\wedge, \vee\}$ is not functionally complete by exhibiting a function that cannot be expressed.
 
 \emph{(a) Monotonicity is preserved by $\wedge$ and $\vee$.} Call a function $f : \{T, F\}^n \to \{T, F\}$ \emph{monotone} if whenever $\vec{x} \leq \vec{y}$ coordinate-wise (with $F \leq T$), we have $f(\vec{x}) \leq f(\vec{y})$---flipping an input from $F$ to $T$ cannot flip the output from $T$ to $F$. By induction on the structure of formulas using only $\wedge$ and $\vee$:
@@ -431,7 +567,7 @@ So every formula built from $\wedge$, $\vee$, and variables represents a monoton
 \emph{(c) Conclusion.} If $\{\wedge, \vee\}$ were functionally complete, we could write a formula for $\lnot$ using only $\wedge$ and $\vee$, hence (by (a)) $\lnot$ would be monotone. But (b) says it's not. Contradiction, so $\{\wedge, \vee\}$ is not functionally complete.
 
 \medskip
-\textbf{Exercise 11.}
+\textbf{Exercise~11.}
 \emph{($\Rightarrow$).} Suppose $\varphi$ is a tautology. Then for every truth assignment, $\varphi$ evaluates to $T$. So $\lnot \varphi$ evaluates to $F$ on every assignment, which is exactly the definition of a contradiction.
 
 \emph{($\Leftarrow$).} Suppose $\lnot \varphi$ is a contradiction. Then for every truth assignment, $\lnot \varphi$ evaluates to $F$, so $\varphi$ evaluates to $T$ on every assignment, so $\varphi$ is a tautology.
@@ -439,7 +575,7 @@ So every formula built from $\wedge$, $\vee$, and variables represents a monoton
 The two directions are basically the same observation run both ways, which is typical of ``iff'' proofs where negation is involved.
 
 \medskip
-\textbf{Exercise 12.}
+\textbf{Exercise~12.}
 \begin{enumerate}[label=(\alph*)]
   \item \textbf{Constants:} There are exactly 2 constant binary functions---the one that always outputs $T$ and the one that always outputs $F$.
   \item \textbf{Depending on only one input:} Such a function $f(x, y)$ ignores one of its two arguments. If it ignores $y$, it behaves like a unary function of $x$; the non-constant unary functions are identity and negation, giving 2 options. Similarly, if it ignores $x$, we get the identity and negation of $y$. That's $2 + 2 = 4$ functions that depend on exactly one argument.
@@ -449,7 +585,7 @@ Sanity check: the ten that depend on both include the familiar $\wedge$, $\vee$,
 
 \subsection*{Connection}
 
-\textbf{Exercise 13.}
+\textbf{Exercise~13.}
 \begin{lstlisting}[language=Python]
 from itertools import product
 
@@ -469,7 +605,7 @@ print(is_tautology(lambda p, q: p or (not p), 2))   # True
 The key insight is that truth-table semantics gives us a decision procedure: to check if a propositional formula is a tautology, we can just evaluate it on all $2^n$ assignments. This works because there are only finitely many assignments. It blows up exponentially with $n$, of course, and one of the most famous open problems in computer science---P vs.\ NP---asks whether we can do fundamentally better than this brute-force check in the general case.
 
 \medskip
-\textbf{Exercise 14.}
+\textbf{Exercise~14.}
 The program would have a type signature something like
 \[
   \text{find\_or\_refute} : (P : \mathbb{N} \to \text{Bool}) \to (\exists n.\; P(n) = T) \;+\; (\forall n.\; P(n) = F)
@@ -481,7 +617,7 @@ where $+$ is a disjoint union (``either an example or a proof of no example''). 
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 Truth table for $p \wedge q \to q$:
 
 \begin{center}
@@ -500,7 +636,7 @@ F & F & F & T \\
 Every row evaluates to T, so $p \wedge q \to q$ is a tautology.
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 \begin{enumerate}[label=(\alph*)]
   \item $p \to q$ and $\lnot p \vee q$. Both columns are $T, F, T, T$ across the four rows, so they \textbf{are equivalent}. (This is the equivalence the module noted when discussing functional completeness.)
   \item $p \to q$ and $q \to p$. At $(p=T, q=F)$: $p \to q = F$ but $q \to p = T$. \textbf{Not equivalent.}
@@ -508,7 +644,7 @@ Every row evaluates to T, so $p \wedge q \to q$ is a tautology.
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 \begin{enumerate}[label=(\alph*)]
   \item \textbf{Modus ponens.} From $p$ and $p \to q$, conclude $q$. Valid.
   \item \textbf{Modus tollens.} From $p \to q$ and $\lnot q$, conclude $\lnot p$. Valid.
@@ -517,7 +653,7 @@ Every row evaluates to T, so $p \wedge q \to q$ is a tautology.
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 4.}
+\textbf{Exercise~4.}
 Start with $\lnot(p \wedge q) \vee r$. Apply De Morgan to the first disjunct:
 \[
   \lnot(p \wedge q) \vee r \;\equiv\; (\lnot p \vee \lnot q) \vee r \;\equiv\; \lnot p \vee \lnot q \vee r.
@@ -525,7 +661,7 @@ Start with $\lnot(p \wedge q) \vee r$. Apply De Morgan to the first disjunct:
 The right side is a single disjunction of literals, which is a conjunction of one clause---so it is trivially in CNF: a single clause $(\lnot p \vee \lnot q \vee r)$. That's the CNF.
 
 \medskip
-\textbf{Exercise 5.}
+\textbf{Exercise~5.}
 For DNF we need a disjunction of conjunctions of literals. Starting again from $\lnot(p \wedge q) \vee r$, apply De Morgan and then rewrite:
 \[
   \lnot(p \wedge q) \vee r \;\equiv\; \lnot p \vee \lnot q \vee r.
@@ -536,7 +672,7 @@ In this particular example the CNF and DNF look syntactically identical, which c
 
 \subsection*{Standard}
 
-\textbf{Exercise 6.}
+\textbf{Exercise~6.}
 Premises: $p \to q$, $r \to \lnot q$, $r$. Conclusion: $\lnot p$.
 
 From $r$ (premise 3) and $r \to \lnot q$ (premise 2), by modus ponens we
@@ -548,7 +684,7 @@ truth table and verify that in every critical row---where all three premises
 are true---the conclusion $\lnot p$ is also true.)
 
 \medskip
-\textbf{Exercise 7.}
+\textbf{Exercise~7.}
 The rows with output 1 are $(P,Q,R) = (1,0,1)$ and $(P,Q,R) = (0,1,1)$.
 The DNF expression is:
 \[
@@ -561,37 +697,40 @@ AND gate takes $\lnot P$ (via a NOT gate on $P$), $Q$, and $R$. The outputs
 of both AND gates feed into a single OR gate, which produces the final output.
 
 \medskip
-\textbf{Exercise 8.}
-\begin{lstlisting}
-Theorem: Assuming p -> q and p -> r, show p -> (q ^ r).
-Proof:
-(1) p -> q, by assumption
-(2) p -> r, by assumption
-(3) subproof: assuming p, show (q ^ r)
-      (3a) p, by assumption
-      (3b) q, by modus ponens on (3a) and (1)
-      (3c) r, by modus ponens on (3a) and (2)
-      (3d) q ^ r, by ^-introduction on (3b) and (3c)
-    show q ^ r
-(4) p -> (q ^ r), by ->-introduction on (3)
-\end{lstlisting}
-The subproof is what $\to$-introduction needs: you assume $p$ inside a contained block, derive the goal $q \wedge r$, and then discharge the assumption by wrapping the whole thing in $p \to$.
+\textbf{Exercise~8.}
+\noindent\textbf{Theorem.} Assuming $p \to q$ and $p \to r$, show $p \to (q \wedge r)$.
+
+\noindent\textbf{Proof.}
+\begin{enumerate}
+  \item $p \to q$ \hfill (assumption)
+  \item $p \to r$ \hfill (assumption)
+  \item Subproof: assuming $p$, show $q \wedge r$:
+    \begin{enumerate}[label=(3\alph*)]
+      \item $p$ \hfill (assumption)
+      \item $q$ \hfill (modus ponens on (3a) and (1))
+      \item $r$ \hfill (modus ponens on (3a) and (2))
+      \item $q \wedge r$ \hfill ($\wedge$-introduction on (3b) and (3c))
+    \end{enumerate}
+  \item $p \to (q \wedge r)$ \hfill ($\to$-introduction on (3))
+\end{enumerate}
+\noindent The subproof is what $\to$-introduction needs: you assume $p$ inside a contained block, derive the goal $q \wedge r$, and then discharge the assumption by wrapping the whole thing in $p \to$.
 
 \medskip
-\textbf{Exercise 9.}
-\begin{lstlisting}
-Theorem: From p v q, ~p, q -> r, show r.
-Proof:
-(1) p v q, by assumption
-(2) ~p, by assumption
-(3) q -> r, by assumption
-(4) q, by disjunctive syllogism on (1) and (2)
-(5) r, by modus ponens on (4) and (3)
-\end{lstlisting}
+\textbf{Exercise~9.}
+\noindent\textbf{Theorem.} From $p \vee q$, $\lnot p$, $q \to r$, show $r$.
+
+\noindent\textbf{Proof.}
+\begin{enumerate}
+  \item $p \vee q$ \hfill (assumption)
+  \item $\lnot p$ \hfill (assumption)
+  \item $q \to r$ \hfill (assumption)
+  \item $q$ \hfill (disjunctive syllogism on (1) and (2))
+  \item $r$ \hfill (modus ponens on (4) and (3))
+\end{enumerate}
 
 \subsection*{Challenge}
 
-\textbf{Exercise 10.}
+\textbf{Exercise~10.}
 The ``proof'' only checks the rows of the truth table where $p$ and $q$
 have the same truth value (both T or both F). In those rows, $p \to q$
 and $q \to p$ do happen to agree. But the proof ignores the two rows
@@ -606,43 +745,50 @@ proof conveniently skipped exactly the cases that would reveal the
 formulas are different.
 
 \medskip
-\textbf{Exercise 11.}
+\textbf{Exercise~11.}
 \emph{(a) Excluded middle $\Rightarrow$ double-negation elimination.}
 Goal: assuming $p \vee \lnot p$ is available, derive $\lnot\lnot p \to p$.
-\begin{lstlisting}
-(1) p v ~p, by excluded middle
-(2) subproof: assuming ~~p, show p
-      (2a) ~~p, by assumption
-      (2b) subproof (case p of (1)): assuming p, show p
-             shows p, by proof-by-assumption
-      (2c) subproof (case ~p of (1)): assuming ~p, show p
-             (i) ~p, by assumption
-             (ii) F, by ~-elimination (or contradiction) on (2a) and (i)
-             shows p, by F-elimination
-      shows p, by v-elimination on (1), (2b), (2c)
-(3) ~~p -> p, by ->-introduction on (2)
-\end{lstlisting}
+\begin{enumerate}
+  \item $p \vee \lnot p$ \hfill (excluded middle)
+  \item Subproof: assuming $\lnot\lnot p$, show $p$:
+    \begin{enumerate}[label=(2\alph*)]
+      \item $\lnot\lnot p$ \hfill (assumption)
+      \item Subproof (case $p$ of (1)): assuming $p$, $p$ follows by proof-by-assumption.
+      \item Subproof (case $\lnot p$ of (1)): assuming $\lnot p$,
+        \begin{enumerate}[label=(\roman*)]
+          \item $\lnot p$ \hfill (assumption)
+          \item $\bot$ \hfill ($\lnot$-elimination on (2a) and (i))
+        \end{enumerate}
+        gives $p$ by $\bot$-elimination.
+    \end{enumerate}
+    Shows $p$, by $\vee$-elimination on (1), (2b), (2c).
+  \item $\lnot\lnot p \to p$ \hfill ($\to$-introduction on (2))
+\end{enumerate}
 
 \emph{(b) Double-negation elimination $\Rightarrow$ excluded middle.}
 Goal: assuming $\lnot\lnot q \to q$ is available for every $q$, derive $p \vee \lnot p$ for arbitrary $p$. The standard move is to prove $\lnot\lnot(p \vee \lnot p)$ constructively, then apply double-negation elimination with $q := (p \vee \lnot p)$.
-\begin{lstlisting}
-(1) subproof: assuming ~(p v ~p), derive F
-      (1a) ~(p v ~p), by assumption
-      (1b) subproof: assuming p, derive F
-             (i) p, by assumption
-             (ii) p v ~p, by v-introduction (left)
-             shows F, by ~-elimination on (1a) and (ii)
-      (1c) ~p, by ~-introduction on (1b)
-      (1d) p v ~p, by v-introduction (right) on (1c)
-      shows F, by ~-elimination on (1a) and (1d)
-(2) ~~(p v ~p), by ~-introduction on (1)
-(3) ~~(p v ~p) -> (p v ~p), from the assumed double-negation elimination rule
-(4) p v ~p, by modus ponens on (2) and (3)
-\end{lstlisting}
+\begin{enumerate}
+  \item Subproof: assuming $\lnot(p \vee \lnot p)$, derive $\bot$:
+    \begin{enumerate}[label=(1\alph*)]
+      \item $\lnot(p \vee \lnot p)$ \hfill (assumption)
+      \item Subproof: assuming $p$, derive $\bot$:
+        \begin{enumerate}[label=(\roman*)]
+          \item $p$ \hfill (assumption)
+          \item $p \vee \lnot p$ \hfill ($\vee$-introduction, left)
+        \end{enumerate}
+        gives $\bot$ by $\lnot$-elimination on (1a) and (ii).
+      \item $\lnot p$ \hfill ($\lnot$-introduction on (1b))
+      \item $p \vee \lnot p$ \hfill ($\vee$-introduction, right, on (1c))
+    \end{enumerate}
+    Shows $\bot$, by $\lnot$-elimination on (1a) and (1d).
+  \item $\lnot\lnot(p \vee \lnot p)$ \hfill ($\lnot$-introduction on (1))
+  \item $\lnot\lnot(p \vee \lnot p) \to (p \vee \lnot p)$ \hfill (assumed DNE rule)
+  \item $p \vee \lnot p$ \hfill (modus ponens on (2) and (3))
+\end{enumerate}
 So the two rules are interderivable. Adding either one to constructive logic gives you the same classical logic.
 
 \medskip
-\textbf{Exercise 12.}
+\textbf{Exercise~12.}
 By the DNF recipe from the module, you get one disjunct for every row of the truth table where the output is $T$. There are $2^n$ rows total. So the number of disjuncts is exactly the number of $T$-rows, which is between $0$ and $2^n$.
 \begin{itemize}
   \item \emph{Zero disjuncts} happens when the formula is a contradiction---every row outputs $F$. You get the empty disjunction, which by convention is $F$.
@@ -652,7 +798,7 @@ In between, you get contingent formulas with anywhere from $1$ to $2^n - 1$ disj
 
 \subsection*{Connection}
 
-\textbf{Exercise 13.}
+\textbf{Exercise~13.}
 \begin{lstlisting}[language=Python]
 from itertools import product
 
@@ -682,28 +828,216 @@ print(dnf(exactly_one, 3))
 The output is a complete DNF formula derived mechanically from the truth table---exactly the recipe the module describes.
 
 \medskip
-\textbf{Exercise 14.}
-A proof tree for the theorem from Exercise~8 looks like this (schematically):
+\textbf{Exercise~14.}
+A proof tree for the theorem from Exercise~8 (assuming $p \to q$ and $p \to r$, show $p \to (q \wedge r)$) looks like this:
+
+\begin{center}
+\begin{prooftree}
+\AxiomC{$[p]^{(1)}$}
+\AxiomC{$p \to q$}
+\RightLabel{$\to$E}
+\BinaryInfC{$q$}
+\AxiomC{$[p]^{(1)}$}
+\AxiomC{$p \to r$}
+\RightLabel{$\to$E}
+\BinaryInfC{$r$}
+\RightLabel{$\wedge$I}
+\BinaryInfC{$q \wedge r$}
+\RightLabel{$\to$I, discharging $(1)$}
+\UnaryInfC{$p \to (q \wedge r)$}
+\end{prooftree}
+\end{center}
+
+The key correspondence is: the numbered subproof in Exercise~8 becomes the \emph{discharged assumption} $[p]$ at the leaves of the tree, and the outer proof becomes the tree rooted at $p \to (q \wedge r)$. Every application of $\to$-introduction corresponds to discharging an assumption in the tree, which in the linear-proof notation corresponded to closing a subproof. The Gentzen intermezzo makes this correspondence precise and shows why proof trees are often clearer than linear proofs once the proofs get long.
+
+%% ---------- Intermezzo: Inference Rules as Trees ----------
+\section*{Intermezzo: Inference Rules as Trees}
+
+\textbf{Exercise~1.}
+Goal: $A \wedge (B \wedge C) \to (A \wedge B) \wedge C$.  The only
+undischarged assumption is $[A \wedge (B \wedge C)]$, which gets
+discharged by the final $\to$I.  Read the tree bottom-up: to get
+$(A \wedge B) \wedge C$ we need $A \wedge B$ and $C$; to get
+$A \wedge B$ we need $A$ and $B$; each leaf $[A \wedge (B \wedge C)]$ is
+projected appropriately.
+
+\begin{center}
+\begin{prooftree}
+\AxiomC{$[A \wedge (B \wedge C)]$}
+\RightLabel{$\wedge$E$_1$}
+\UnaryInfC{$A$}
+\AxiomC{$[A \wedge (B \wedge C)]$}
+\RightLabel{$\wedge$E$_2$}
+\UnaryInfC{$B \wedge C$}
+\RightLabel{$\wedge$E$_1$}
+\UnaryInfC{$B$}
+\RightLabel{$\wedge$I}
+\BinaryInfC{$A \wedge B$}
+\AxiomC{$[A \wedge (B \wedge C)]$}
+\RightLabel{$\wedge$E$_2$}
+\UnaryInfC{$B \wedge C$}
+\RightLabel{$\wedge$E$_2$}
+\UnaryInfC{$C$}
+\RightLabel{$\wedge$I}
+\BinaryInfC{$(A \wedge B) \wedge C$}
+\RightLabel{$\to$I}
+\UnaryInfC{$A \wedge (B \wedge C) \to (A \wedge B) \wedge C$}
+\end{prooftree}
+\end{center}
+
+All three occurrences of $[A \wedge (B \wedge C)]$ at the leaves refer
+to the \emph{same} discharged assumption---the bracketed formula
+becomes available everywhere in the subtree above the final $\to$I
+and is closed off by that rule.
+
+\medskip
+\textbf{Exercise~2.}
+Goal: $(A \to B) \to ((B \to C) \to (A \to C))$.  There are three
+$\to$I steps stacked at the bottom of the tree, discharging the
+assumptions $[A]$, $[B \to C]$, and $[A \to B]$ in that order (innermost
+first).
+
+\begin{center}
+\begin{prooftree}
+\AxiomC{$[A]$}
+\AxiomC{$[A \to B]$}
+\RightLabel{$\to$E}
+\BinaryInfC{$B$}
+\AxiomC{$[B \to C]$}
+\RightLabel{$\to$E}
+\BinaryInfC{$C$}
+\RightLabel{$\to$I}
+\UnaryInfC{$A \to C$}
+\RightLabel{$\to$I}
+\UnaryInfC{$(B \to C) \to (A \to C)$}
+\RightLabel{$\to$I}
+\UnaryInfC{$(A \to B) \to ((B \to C) \to (A \to C))$}
+\end{prooftree}
+\end{center}
+
+The innermost $\to$I discharges $[A]$, leaving $[A \to B]$ and
+$[B \to C]$ still open.  The next discharges $[B \to C]$, and the
+outermost discharges $[A \to B]$.  Each assumption gets closed by
+exactly one $\to$I, and the order matches the nesting of the
+implications in the goal.
+
+\medskip
+\textbf{Exercise~3.}
+Goal: $(p \to q) \to (\lnot q \to \lnot p)$.  Treat $\lnot p$ as
+$p \to \bot$ and $\lnot q$ as $q \to \bot$.  The tree then uses three
+$\to$I steps in total: one to build $\lnot p$ (a.k.a.\ $p \to \bot$),
+one to build $\lnot q \to \lnot p$, and one to build the outer
+implication.
+
+\begin{center}
+\begin{prooftree}
+\AxiomC{$[p]$}
+\AxiomC{$[p \to q]$}
+\RightLabel{$\to$E}
+\BinaryInfC{$q$}
+\AxiomC{$[\lnot q]$}
+\RightLabel{$\to$E}
+\BinaryInfC{$\bot$}
+\RightLabel{$\lnot$I (discharging $[p]$)}
+\UnaryInfC{$\lnot p$}
+\RightLabel{$\to$I (discharging $[\lnot q]$)}
+\UnaryInfC{$\lnot q \to \lnot p$}
+\RightLabel{$\to$I (discharging $[p \to q]$)}
+\UnaryInfC{$(p \to q) \to (\lnot q \to \lnot p)$}
+\end{prooftree}
+\end{center}
+
+The three discharged assumptions are $[p]$, $[\lnot q]$, and
+$[p \to q]$, closed in that order.  The middle step applies what is
+formally $\to$E between $q$ and $\lnot q$ (using the reading
+$\lnot q = q \to \bot$); the rule it realises is ``negation
+elimination,'' i.e., from $q$ and $\lnot q$ derive $\bot$.
+
+\medskip
+\textbf{Exercise~4.}
+Goal: $p \vee p \to p$.  We assume $[p \vee p]$ at the top.  For
+$\vee$E we need an arrow $p \to p$ for each branch---and both branches
+are $p$, so both arrows are the same trivial $\to$I on a one-line
+subderivation.
+
+\begin{center}
+\begin{prooftree}
+\AxiomC{$[p \vee p]$}
+\AxiomC{$[p]^{1}$}
+\RightLabel{$\to$I$^{1}$}
+\UnaryInfC{$p \to p$}
+\AxiomC{$[p]^{2}$}
+\RightLabel{$\to$I$^{2}$}
+\UnaryInfC{$p \to p$}
+\RightLabel{$\vee$E}
+\TrinaryInfC{$p$}
+\RightLabel{$\to$I}
+\UnaryInfC{$p \vee p \to p$}
+\end{prooftree}
+\end{center}
+
+The superscripts $1, 2$ distinguish the two independent $[p]$
+assumptions that each trivial branch discharges; the final $\to$I
+discharges the outer $[p \vee p]$.  The whole proof amounts to saying
+``from $p$ or $p$, either way you get $p$.''  As a program under
+Curry--Howard, this is exactly \texttt{either(id, id)}---pattern match
+on the tagged union and apply the identity in both cases.
+
+\medskip
+\textbf{Exercise~5.}
+Take Exercise~8 from Module~3: ``assuming $p \to q$ and $p \to r$,
+show $p \to (q \wedge r)$.''  In lstlisting format, the proof was a
+subproof assuming $p$, deriving $q$ by modus ponens with $p \to q$,
+deriving $r$ by modus ponens with $p \to r$, combining them by
+$\wedge$I, and then $\to$I to discharge.  The Gentzen tree is:
+
+\begin{center}
+\begin{prooftree}
+\AxiomC{$[p]$}
+\AxiomC{$p \to q$}
+\RightLabel{$\to$E}
+\BinaryInfC{$q$}
+\AxiomC{$[p]$}
+\AxiomC{$p \to r$}
+\RightLabel{$\to$E}
+\BinaryInfC{$r$}
+\RightLabel{$\wedge$I}
+\BinaryInfC{$q \wedge r$}
+\RightLabel{$\to$I}
+\UnaryInfC{$p \to (q \wedge r)$}
+\end{prooftree}
+\end{center}
+
+The two occurrences of $[p]$ are the \emph{same} discharged
+assumption---the tree is a directed acyclic graph, not strictly a tree,
+in that one leaf can be referenced more than once.  The assumptions
+$p \to q$ and $p \to r$ sit as undischarged leaves (they are premises,
+not local assumptions).
+
+Translating back to lstlisting, the tree becomes:
 \begin{lstlisting}
-         [p]^(1)                       [p]^(1)
-         p -> q                         p -> q                  [p]^(1)
-         ------- ->E                    ------- ->E              p -> r
-              q                              (unused wire)      ------- ->E
-                                                                    r
-              q                                                     r
-              ------------------------------------------------------
-                                         q ^ r                                ^I
-              ------------------------------------------------------
-                                      p -> (q ^ r)                            ->I, discharging (1)
+(a) p -> q, by assumption
+(b) p -> r, by assumption
+(c) subproof: assuming p, show q ^ r
+      (i)  p, by assumption
+      (ii) q, by modus ponens on (i) and (a)
+      (iii) r, by modus ponens on (i) and (b)
+      shows q ^ r, by ^-introduction on (ii) and (iii)
+shows p -> (q ^ r), by ->-introduction on (c)
 \end{lstlisting}
-(That ASCII rendering is crude---draw it on paper to see the structure clearly.) The key correspondence is: the numbered subproof in Exercise~8 becomes the \emph{discharged assumption} $[p]$ at the leaves of the tree, and the outer proof becomes the tree rooted at $p \to (q \wedge r)$. Every application of $\to$-introduction corresponds to discharging an assumption in the tree, which in the linear-proof notation corresponded to closing a subproof. The Gentzen intermezzo makes this correspondence precise and shows why proof trees are often clearer than linear proofs once the proofs get long.
+
+The two formats are interchangeable, but the tree makes the dependency
+structure between steps more visible: you can literally see that both
+$q$ and $r$ trace back to the same leaf $[p]$, whereas the lstlisting
+names a fresh label $p$ inside the subproof and trusts the reader to
+track the dependency by name.
 
 %% ---------- Module 4 ----------
 \section*{Module 4}
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 In the formula $\exists x.\;\forall y.\;P(x, y, z)$:
 \begin{itemize}
   \item $x$ is \textbf{bound} by $\exists$.
@@ -719,7 +1053,7 @@ In the formula $\forall x.\;(P(x) \to \exists y.\;Q(x, y))$:
 \end{itemize}
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 \begin{enumerate}[label=(\alph*)]
   \item $\forall c : \text{Cats}.\;(\text{Black}(c) \vee \text{White}(c))$.
   \item $\exists s : \text{Students}.\;\forall p : \text{Problems}.\;\text{Solved}(s, p)$. (Note the $\forall$ is \emph{inside} the $\exists$---there must be a \emph{single} student who solved \emph{all} problems.)
@@ -728,7 +1062,7 @@ In the formula $\forall x.\;(P(x) \to \exists y.\;Q(x, y))$:
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 \begin{enumerate}[label=(\alph*)]
   \item Positive divisors of $12$ in $\mathbb{Z}^+$: $\{1, 2, 3, 4, 6, 12\}$.
   \item Integers with $x^2 \leq 9$: we need $-3 \leq x \leq 3$, so $\{-3, -2, -1, 0, 1, 2, 3\}$.
@@ -736,7 +1070,7 @@ In the formula $\forall x.\;(P(x) \to \exists y.\;Q(x, y))$:
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 4.}
+\textbf{Exercise~4.}
 \begin{enumerate}[label=(\alph*)]
   \item Divisible by 4 / divisible by 2. If $n$ is divisible by $4$ then $n = 4k = 2(2k)$, so $n$ is divisible by $2$; that makes divisibility by 4 \textbf{sufficient} for divisibility by 2. The reverse fails ($2$ is divisible by $2$ but not $4$), so divisibility by 4 is not necessary. \textbf{Sufficient but not necessary.}
   \item Valid ticket / boarding. You need a valid ticket to board (necessary), but having a ticket alone doesn't guarantee boarding---you also need to clear security, be at the gate on time, etc. \textbf{Necessary but not sufficient.}
@@ -746,7 +1080,7 @@ In the formula $\forall x.\;(P(x) \to \exists y.\;Q(x, y))$:
 
 \subsection*{Standard}
 
-\textbf{Exercise 5.}
+\textbf{Exercise~5.}
 Original statement in symbols:
 \[
   \forall s : \text{CS250}.\;\exists h : \text{HW}.\;\text{OnTime}(s, h).
@@ -759,7 +1093,7 @@ In English: ``There is a student in CS 250 who did not complete any homework
 on time.''
 
 \medskip
-\textbf{Exercise 6.}
+\textbf{Exercise~6.}
 Let $P(x,y)$ mean ``$x + y = 0$'' over $\mathbb{Z}$.
 \begin{enumerate}[label=(\alph*)]
   \item $\forall x.\;\exists y.\;P(x,y)$.
@@ -773,7 +1107,7 @@ Let $P(x,y)$ mean ``$x + y = 0$'' over $\mathbb{Z}$.
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 7.}
+\textbf{Exercise~7.}
 Starting from $\forall x.\;\exists y.\;\forall z.\;(P(x,y,z) \to Q(x,z))$, push the negation step by step:
 \begin{align*}
 \lnot(\forall x.\;\exists y.\;\forall z.\;(P \to Q))
@@ -788,7 +1122,7 @@ using $\lnot(P \to Q) \equiv P \wedge \lnot Q$ at the last step. So:
 \]
 
 \medskip
-\textbf{Exercise 8.}
+\textbf{Exercise~8.}
 \emph{For $\wedge$:} the equivalence $\forall x.\;(P(x) \wedge Q(x)) \equiv (\forall x.\; P(x)) \wedge (\forall x.\; Q(x))$ holds. Both directions:
 
 \emph{($\Rightarrow$).} Assume $\forall x.\;(P(x) \wedge Q(x))$. Take arbitrary $a$ in the domain. By $\forall$-elimination, $P(a) \wedge Q(a)$. By $\wedge$-elimination, $P(a)$. Since $a$ was arbitrary, $\forall x.\;P(x)$. By the same argument, $\forall x.\;Q(x)$. Hence $(\forall x.\;P(x)) \wedge (\forall x.\;Q(x))$.
@@ -801,7 +1135,7 @@ But the other direction fails. Counterexample: let the domain be $\mathbb{Z}$, l
 
 \subsection*{Challenge}
 
-\textbf{Exercise 9.}
+\textbf{Exercise~9.}
 We want to show $n + 1 = \text{succ}\; n$, where $1 = \text{succ}\; 0$. No induction needed---just unfold:
 \begin{align*}
   n + 1 &= n + \text{succ}\; 0 \\
@@ -811,7 +1145,7 @@ We want to show $n + 1 = \text{succ}\; n$, where $1 = \text{succ}\; 0$. No induc
 This is pure definitional unfolding. The trick the hint was pointing at: when the second argument is $\text{succ}\; 0$, the second equation of $+$ fires, reducing to $\text{succ}\;(n + 0)$, and then the \emph{first} equation of $+$ (which handles $+ 0$) finishes the job. No induction required because the argument we're unfolding has already been built out of the two definition cases.
 
 \medskip
-\textbf{Exercise 10.}
+\textbf{Exercise~10.}
 The BNF $\text{Nat} := 0 \mid \text{succ Nat}$ has two cases, and the induction rule correspondingly has two premises:
 \begin{itemize}
   \item The premise $P(0)$ comes from the \emph{base} case of the BNF.
@@ -834,7 +1168,7 @@ shows $\forall$ c : Counter. P(c)
 One premise per constructor; an IH for each recursive Counter occurrence.
 
 \medskip
-\textbf{Exercise 11.}
+\textbf{Exercise~11.}
 We prove $\forall n : \text{Nat}.\; 0 \cdot n = 0$ by induction on $n$.
 
 \emph{Base case ($n = 0$).} $0 \cdot 0 = 0$ by the first equation of $\cdot$. \checkmark
@@ -850,7 +1184,7 @@ By the induction principle, $\forall n : \text{Nat}.\; 0 \cdot n = 0$. \hfill$\s
 Notice how the proof needs the IH at line 2---without it we'd be stuck with an unsimplified $(0 \cdot n') + 0$ and no way to continue. This is exactly the kind of case Common Mistakes \#5 warns against: if you find yourself writing an inductive step that never touches the IH, something's wrong.
 
 \medskip
-\textbf{Exercise 12.}
+\textbf{Exercise~12.}
 Take $A = \mathbb{N}$ and let $R(x, y)$ be ``$y > x$.''
 
 Then $\forall x.\; \exists y.\; R(x, y)$ is true: for any natural $x$, choose $y = x + 1$, and $x + 1 > x$.
@@ -861,7 +1195,7 @@ The intuition: in the $\forall\exists$ form, the witness $y$ is allowed to \emph
 
 \subsection*{Connection}
 
-\textbf{Exercise 13.}
+\textbf{Exercise~13.}
 \begin{lstlisting}[language=Python]
 def forall_exists(P, A, B):
     return all(any(P(a, b) for b in B) for a in A)
@@ -884,17 +1218,185 @@ Why it splits:
 The whole point: in $\forall\exists$, the witness can depend on the input; in $\exists\forall$, it has to be uniform.
 
 \medskip
-\textbf{Exercise 14.}
+\textbf{Exercise~14.}
 The game for $\forall x.\;\exists y.\; y > x$ over $\mathbb{R}$: the universal player (``Challenger'') picks an $x$, then the existential player (``Prover'') picks a $y$ and wins if $y > x$. Prover's winning strategy is trivial: whatever $x$ Challenger picks, Prover responds with $y = x + 1$. Since Prover gets to see $x$ before choosing $y$, and since there's always something bigger than any given real, Prover always wins.
 
 The game for $\exists y.\;\forall x.\; y > x$: here the order is reversed. Prover picks $y$ \emph{first}, then Challenger sees $y$ and picks any $x$ they like. Prover wins if $y > x$. But Challenger can always pick $x = y + 1$ (or $y$ itself, or anything at least as large), which falsifies $y > x$. Prover has no winning move, because no real number is bigger than every other. Prover always loses.
 
 The difference: in the first game, Prover benefits from \emph{seeing the opponent's move} before committing. In the second, Prover must commit \emph{first} to a uniform answer that will work against every possible challenge. The same predicate, the same domain---only the order of commitment changes---and that's enough to flip the outcome.
 
+%% ---------- Intermezzo: More on Natural Induction ----------
+\section*{Intermezzo: More on Natural Induction}
+
+\textbf{Exercise~1.}
+\textbf{Theorem:} $\forall m.\; 0 \cdot m = 0$.
+
+\textbf{Proof} by induction on $m$.
+
+\textbf{Case $m = 0$:} Need to prove $0 \cdot 0 = 0$, which is immediate
+from the first equation of multiplication.
+
+\textbf{Case $m = \text{succ}\; m'$:}
+
+Assuming $0 \cdot m' = 0$.
+
+Shows $0 \cdot (\text{succ}\; m') = 0$.
+
+\begin{align*}
+0 \cdot (\text{succ}\; m')
+  &= 0 + (0 \cdot m') && \text{by the definition of multiplication} \\
+  &= 0 + 0            && \text{by the induction hypothesis} \\
+  &= 0                && \text{by the definition of addition}
+\end{align*}
+
+QED
+
+\medskip
+\textbf{Exercise~2.}
+\textbf{Theorem:} $\forall m.\; 1 \cdot m = m$, where $1 = \text{succ}\; 0$.
+
+\textbf{Proof} by induction on $m$.
+
+\textbf{Case $m = 0$:} Need to prove $1 \cdot 0 = 0$, which is immediate
+from the first equation of multiplication.
+
+\textbf{Case $m = \text{succ}\; m'$:}
+
+Assuming $1 \cdot m' = m'$.
+
+Shows $1 \cdot (\text{succ}\; m') = \text{succ}\; m'$.
+
+\begin{align*}
+1 \cdot (\text{succ}\; m')
+  &= 1 + (1 \cdot m')      && \text{by the definition of multiplication} \\
+  &= 1 + m'                && \text{by the induction hypothesis} \\
+  &= (\text{succ}\; 0) + m'                                               \\
+  &= \text{succ}\;(0 + m') && \text{by the succ-shift lemma in Section 2} \\
+  &= \text{succ}\; m'      && \text{by the left-identity lemma in Section 1}
+\end{align*}
+
+QED
+
+Notice that the final two steps together depend on the prior theorems
+in the chapter: the succ-shift lemma (Section 2) lets us move
+$\text{succ}$ past addition, and the left-identity lemma (Section 1)
+collapses $0 + m'$ to $m'$.
+
+\medskip
+\textbf{Exercise~3.}
+\textbf{Theorem:} $\forall n.\; \exists k.\; n + n = k + k$.
+
+The witness for the existential is, naturally, $n$ itself: taking
+$k = n$ makes the required equation $n + n = n + n$, which is true by
+reflexivity.  So there is in fact a one-line proof:
+\[
+  \exists k.\; n + n = k + k \qquad \text{by the witness } k = n
+  \text{ and reflexivity}.
+\]
+
+But the problem asks for an inductive proof, and writing it out
+usefully exercises the addition lemmas.
+
+\textbf{Proof} by induction on $n$.
+
+\textbf{Case $n = 0$:} Need to produce $k$ with $0 + 0 = k + k$.  Take
+$k = 0$; then $0 + 0 = 0 + 0$ by reflexivity.
+
+\textbf{Case $n = \text{succ}\; n'$:}
+
+Assuming $\exists k.\; n' + n' = k + k$---say $n' + n' = k_0 + k_0$ for
+some $k_0$.
+
+Shows $\exists k'.\; (\text{succ}\; n') + (\text{succ}\; n') = k' + k'$.
+
+We claim $k' = \text{succ}\; n'$ works.  Compute:
+\begin{align*}
+(\text{succ}\; n') + (\text{succ}\; n')
+  &= \text{succ}\;((\text{succ}\; n') + n')
+    && \text{by the definition of addition} \\
+  &= \text{succ}\;(\text{succ}\;(n' + n'))
+    && \text{by the succ-shift lemma in Section 2}
+\end{align*}
+On the other hand
+\[
+  (\text{succ}\; n') + (\text{succ}\; n')
+    = (\text{succ}\; n') + (\text{succ}\; n')
+\]
+by reflexivity, so taking $k' = \text{succ}\; n'$ gives
+$(\text{succ}\; n') + (\text{succ}\; n') = k' + k'$.
+
+QED
+
+The trivial witness argument (``take $k = n$'') is enough here, but
+the inductive elaboration exposes the succ-shift lemma as the workhorse
+that keeps the algebra honest as $n$ grows by one.
+
+\medskip
+\textbf{Exercise~4.}
+\textbf{Theorem:} $\forall n.\; \text{pred}\;(\text{succ}\; n) = n$.
+
+\textbf{Proof.}  Immediate from the second equation of $\text{pred}$:
+$\text{pred}\;(\text{succ}\; n) = n$ by definition.  No induction is
+required, because the left-hand side already has the shape
+$\text{pred}\;(\text{succ}\; \cdot)$, which the definition handles
+directly.  \emph{(If one insists on writing it as an induction on $n$,
+both the base and the step case close by the same definitional
+unfolding.)}
+
+QED
+
+\textbf{Why $\forall n.\; \text{succ}\;(\text{pred}\; n) = n$ is not
+provable.}  The statement fails at $n = 0$: by the first equation of
+$\text{pred}$, $\text{pred}\; 0 = 0$, so
+$\text{succ}\;(\text{pred}\; 0) = \text{succ}\; 0 = 1 \neq 0$.  So even
+the base case of any induction blows up---zero's predecessor is
+defined to be zero, and adding $\text{succ}$ back cannot recover the
+original.
+
+\medskip
+\textbf{Exercise~5.}
+\emph{Proof of $0 + m = m$ (Section 1).}  The base case
+($0 + 0 = 0$) is pure unfolding of the first equation of addition.
+The inductive step does one unfolding ($0 + \text{succ}\; m' =
+\text{succ}\;(0 + m')$ by the second equation of addition) and
+\emph{uses the induction hypothesis} to replace $0 + m'$ with $m'$.
+The induction hypothesis is the only step in the whole proof that
+``does work''---everything else is definitional.
+
+\emph{Proof of $\text{succ}\; n + m = \text{succ}\;(n + m)$
+(Section 2).}  Same shape: the base case is pure unfolding, and the
+inductive step does two unfoldings (one on each side) and applies the
+induction hypothesis to align them.  Again, the induction hypothesis
+is the only step that cannot be replaced by an unfolding.
+
+\emph{Proof of associativity (Section 3).}  Here the base case already
+uses a prior theorem (left-identity of $0$); the inductive step uses
+both the succ-shift lemma from Section 2 and the induction hypothesis.
+Two lemmas and one IH do all the work.
+
+\emph{Proof of commutativity (Section 4).}  The base case invokes
+left- and right-identity of $0$.  The inductive step uses the
+succ-shift lemma and the induction hypothesis.  As in the associativity
+proof, the lemmas proved earlier in the chapter are doing the heavy
+lifting.
+
+\emph{Why definitional unfolding alone cannot finish any of these
+theorems.}  Each theorem makes a claim about $0 + m$, $\text{succ}\; n
++ m$, or $n + m$ where the \emph{first} argument is either zero, a
+successor, or a variable.  Addition is defined by recursion on the
+\emph{second} argument.  So definitional unfolding can only peel
+$\text{succ}$ off the second argument; the first argument stays
+opaque.  To prove a statement about the first argument, we must use
+induction on something---either the second argument (which exposes
+the recursive structure of $+$) or the first argument (which requires
+a lemma like succ-shift to translate between the two).  There is no
+way around this because the theorems describe behaviour that the
+definition hides.
+
 %% ---------- Intermezzo: Quantifiers as Games ----------
 \section*{Intermezzo: Quantifiers as Games}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 The game has three rounds, corresponding to the three quantifiers
 $\forall\,\epsilon$, $\exists\,\delta$, $\forall\,x$:
 
@@ -919,7 +1421,7 @@ on $\epsilon$---is precisely what it means for $f(x) = x^2$ to be
 continuous at $x = 3$.
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 Prover moves first (this is the $\exists x$) and picks $x = 0$.
 Then Challenger picks any $y$ they like (this is the $\forall y$).
 Prover wins if $x + y = y$, which becomes $0 + y = y$---true for every
@@ -927,12 +1429,126 @@ $y$.  So no matter what Challenger picks, Prover wins.
 
 The winning move is $x = 0$ because $0$ is the additive identity.
 
+\medskip
+\textbf{Exercise~3.}
+The game for $\forall x \in \mathbb{N}.\; \exists y \in \mathbb{N}.\; y > x$ has Challenger go first (picking $x$), then Prover (picking $y$). Prover wins if $y > x$.
+
+Prover's winning strategy is the function $f(x) = x + 1$. Whatever $x$ Challenger throws, Prover responds with $x + 1$, and $x + 1 > x$ holds for every natural number. Since Prover moves second, the response is allowed to depend on $x$---which is exactly what makes $f$ a strategy rather than a constant.
+
+\medskip
+\textbf{Exercise~4.}
+The game for $\exists y \in \mathbb{N}.\; \forall x \in \mathbb{N}.\; y > x$ reverses the order: Prover commits to $y$ first, then Challenger picks $x$.
+
+Prover cannot win. Whatever $y$ Prover commits to, Challenger responds with $x = y$ (or $y + 1$, or any larger value), making $y > x$ false. Because Prover has to move first, there is no way to use information about Challenger's upcoming move---so no single fixed $y$ can be larger than \emph{every} natural number.
+
+In the game-theoretic terms of the chapter: Prover needs a
+\emph{constant} $y$ that beats every possible $x$, not a
+\emph{strategy}.  A constant does not get to depend on Challenger's
+choice.  No fixed natural number is larger than every natural number
+(take the number itself as a counter-choice), so no constant works.
+This is the same argument that made $\exists y.\; \forall x.\; y > x$
+false over $\mathbb{R}$---only now it's over $\mathbb{N}$, and the
+verdict is unchanged.
+
+\medskip
+\textbf{Exercise~5.}
+The game for $\forall n \in \mathbb{N}.\; \forall m \in \mathbb{N}.\;
+n + m = m + n$:
+
+\begin{enumerate}
+  \item \textbf{Round 1} (Challenger's move, $\forall\, n$): Challenger
+        picks any natural number $n$.
+  \item \textbf{Round 2} (Challenger's move, $\forall\, m$): Challenger
+        picks any natural number $m$.
+  \item Prover must demonstrate that $n + m = m + n$ for the specific
+        $n, m$ that Challenger chose.
+\end{enumerate}
+
+Both quantifiers are universal, so Prover never gets to choose
+anything: Challenger controls every move.  Prover's ``strategy'' is
+therefore an answer to the question ``given $n$ and $m$, why is
+$n + m = m + n$?''
+
+The game is trivial in the sense that no strategy is needed---but
+only because the underlying arithmetic fact ($n + m = m + n$) is
+\emph{already true} for every $(n, m)$.  Prover doesn't have to
+\emph{do} anything in the game; Prover just has to \emph{be right}.
+And Prover is right precisely because commutativity of addition has
+been proved (by induction, in the chapter).
+
+What infinitely many challenges confirm is that infinitely many
+instances of the theorem all hold.  Had we phrased the theorem
+incorrectly (say $n + m = m - n$), any single challenge that evaluated
+the two sides to different numbers would be enough for Challenger to
+win.  A winning strategy for Prover in a $\forall\forall$ game is
+exactly a proof of the inner statement that works for all inputs.
+
+\medskip
+\textbf{Exercise~6.}
+In the game for $\forall x.\; \exists y.\; R(x, y)$, Challenger picks
+$x$ and Prover responds with some $y$.  Prover's winning strategy is
+a rule that specifies, for each possible $x$, which $y$ to play.
+That rule is a \emph{function} $f : \text{dom}(x) \to \text{dom}(y)$.
+Packaging all of Prover's responses into a single object gives
+exactly such an $f$.
+
+The Skolem form $\exists f.\; \forall x.\; R(x, f(x))$ says: there
+exists a function $f$ such that, for every $x$, $R(x, f(x))$ holds.
+That is word-for-word the statement ``Prover has a winning strategy.''
+The outer existential ``$\exists f$'' existentially quantifies over
+Prover's strategy; the inner $\forall x.\; R(x, f(x))$ says the
+strategy beats every Challenger move $x$.
+
+So the Skolem transformation is the proof-theoretic shadow of the
+game-theoretic fact: winning strategies for $\forall x.\; \exists y$
+\emph{are} functions $x \mapsto y$.  Witness-producing existentials
+become witness-producing functions, and the ``function'' is exactly
+Prover's strategy.
+
+\medskip
+\textbf{Exercise~7.}
+\emph{Finite universe.}  The game for $\forall x.\; (P(x) \vee
+\lnot P(x))$ over $\{a_1, \ldots, a_n\}$:
+
+\begin{enumerate}
+  \item Challenger picks $a_i$ from the finite universe.
+  \item Prover plays the $\vee$ game for $P(a_i) \vee \lnot P(a_i)$:
+        Prover chooses one disjunct and must win that sub-game.
+\end{enumerate}
+
+If Prover can decide, for each $a_i$, whether $P(a_i)$ holds, then
+Prover's strategy is: for each $a_i$ Challenger might pick, pre-compute
+whether $P(a_i)$ is true or false, and play the corresponding disjunct.
+There are only finitely many $a_i$'s, so a lookup table of $n$ bits
+encodes the winning strategy.  Prover always wins.
+
+\emph{Infinite universe with an undecidable predicate.}  Now let the
+universe be $\mathbb{N}$ and $P(e)$ be ``$e$ codes a Turing machine
+that halts on every input.''  The game asks Prover to decide, for an
+arbitrary $e$ given by Challenger, whether $P(e)$ or $\lnot P(e)$.
+Because totality of Turing machines is undecidable (a standard result
+from computability theory), no algorithm can produce the right answer
+for every $e$.  Prover has no computable strategy.
+
+\emph{Connection to constructive versus classical logic.}  A
+constructive proof of $\forall x.\; (P(x) \vee \lnot P(x))$ would
+have to come with, for each $x$, a decision procedure producing one
+of the two disjuncts.  For decidable $P$ (finite cases, or checkable
+inequalities), such a procedure exists and the formula is
+constructively valid.  For undecidable $P$, no such procedure exists,
+and the formula is not constructively provable---even though in
+classical logic it is a tautology (excluded middle $p \vee \lnot p$
+applied to $P(x)$).  Classical logic lets Prover win by saying ``one
+of the two disjuncts must be true,'' without committing to which;
+constructive logic requires Prover to actually play one of them, and
+the game can only be won when Prover can compute the answer.
+
 %% ---------- Module 5 ----------
 \section*{Module 5}
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 \begin{proof}
 Let $r_1$ and $r_2$ be rational numbers. By definition there exist integers
 $a_1, b_1, a_2, b_2$ with $b_1 \neq 0$ and $b_2 \neq 0$ such that
@@ -946,7 +1562,7 @@ $r_1 \cdot r_2$ is rational.
 \end{proof}
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 The claim ``for every integer $n$, $n^2 > n$'' is \textbf{false}.
 
 Counterexample: $n = 0$. Then $n^2 = 0$ and $n = 0$, so $n^2 = n$, not
@@ -955,7 +1571,7 @@ $n^2 > n$.
 (Another counterexample: $n = 1$, since $1^2 = 1$.)
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 Let $n$ be an arbitrary integer. The three consecutive integers starting at $n$ are $n$, $n + 1$, and $n + 2$. Their sum is
 \[
   n + (n+1) + (n+2) = 3n + 3 = 3(n + 1).
@@ -963,7 +1579,7 @@ Let $n$ be an arbitrary integer. The three consecutive integers starting at $n$ 
 Since $n + 1$ is an integer, $3n + 3 = 3k$ where $k = n + 1$, so the sum is divisible by $3$ by definition. \hfill$\square$
 
 \medskip
-\textbf{Exercise 4.}
+\textbf{Exercise~4.}
 Let $a, b, c$ be integers with $a \neq 0$, $a \mid b$, and $a \mid c$. By definition, there exist integers $j$ and $k$ such that $b = aj$ and $c = ak$. Then
 \[
   b + c = aj + ak = a(j + k).
@@ -971,12 +1587,12 @@ Let $a, b, c$ be integers with $a \neq 0$, $a \mid b$, and $a \mid c$. By defini
 Since $j + k$ is an integer, $b + c = am$ where $m = j + k$, so $a \mid (b + c)$. \hfill$\square$
 
 \medskip
-\textbf{Exercise 5.}
+\textbf{Exercise~5.}
 Counterexample: $2$ is prime (its only positive divisors are $1$ and $2$), but $2$ is even. So the claim ``every prime is odd'' is false.
 
 \subsection*{Standard}
 
-\textbf{Exercise 6.}
+\textbf{Exercise~6.}
 $(\mathbb{Z}, -, 0)$ is \textbf{not} a group. Associativity fails:
 $(a - b) - c \neq a - (b - c)$ in general.
 
@@ -991,7 +1607,7 @@ is not a group.
 (Left-identity also fails: $0 - n = -n$, not $n$. Any one axiom failing is enough to disqualify.)
 
 \medskip
-\textbf{Exercise 7.}
+\textbf{Exercise~7.}
 The ``proof'' that every integer is even begins by writing ``Suppose
 $n = 2k$ for some integer $k$''---but $n = 2k$ is exactly the
 conclusion that $n$ is even. The proof assumes what it is trying to
@@ -1005,7 +1621,7 @@ claim itself is false, and the ``proof'' hides this by assuming the
 conclusion as its starting point.
 
 \medskip
-\textbf{Exercise 8.}
+\textbf{Exercise~8.}
 We verify the four group axioms for $(\mathbb{Q} \setminus \{0\}, \cdot, 1)$.
 
 \emph{Closure (needed first, since the definition says $*$ goes $G \to G \to G$):} If $a/b$ and $c/d$ are nonzero rationals, their product is $(ac)/(bd)$, which is nonzero (since $a, c \neq 0$ means $ac \neq 0$). So $\mathbb{Q} \setminus \{0\}$ is closed under multiplication.
@@ -1025,14 +1641,14 @@ and similarly $r^{-1} \cdot r = 1$. So every element has a two-sided inverse.
 All four axioms hold, so $(\mathbb{Q} \setminus \{0\}, \cdot, 1)$ is a group. \hfill$\square$
 
 \medskip
-\textbf{Exercise 9.}
+\textbf{Exercise~9.}
 $(\mathbb{N}, +, 0)$ is \textbf{not} a group. The inverse axiom fails: the element $1 \in \mathbb{N}$ has no inverse. We would need some $m \in \mathbb{N}$ with $1 + m = 0$, but the natural numbers start at $0$, so $1 + m \geq 1 > 0$ for every $m \in \mathbb{N}$. No such $m$ exists.
 
 (Associativity, closure, and identity all hold for $(\mathbb{N}, +, 0)$, but inverses are the stumbling block---which is exactly why the integers $\mathbb{Z}$ exist: you get them by ``freely adjoining inverses'' to $\mathbb{N}$.)
 
 \subsection*{Challenge}
 
-\textbf{Exercise 10.}
+\textbf{Exercise~10.}
 Let $h, h'$ both be inverses of $g$, so $h * g = g * h = e$ and $h' * g = g * h' = e$.
 
 Consider the expression $h * g * h'$. We evaluate it two ways using associativity:
@@ -1045,7 +1661,7 @@ Both equal $h * g * h'$, so $h = h'$. \hfill$\square$
 This is structurally the same trick as the uniqueness-of-identity proof in the module: squeeze a carefully chosen expression between two identities.
 
 \medskip
-\textbf{Exercise 11.}
+\textbf{Exercise~11.}
 There are four unary boolean functions: identity, negation, constant true, and constant false (Module 2 Exercise 3). We exhibit a formula for each using only $\lnot$ and $\vee$ applied to the variable $p$.
 \begin{itemize}
   \item \textbf{Identity} ($p \mapsto p$): just the formula $p$.
@@ -1056,7 +1672,7 @@ There are four unary boolean functions: identity, negation, constant true, and c
 Each of the four unary functions has a formula in $\{\lnot, \vee\}$, so by exhaustion all unary functions are expressible.
 
 \medskip
-\textbf{Exercise 12.}
+\textbf{Exercise~12.}
 Let $(G, *, e)$ be a group and let $g \in G$. By the inverse axiom, there is an element $g^{-1}$ satisfying
 \[
   g^{-1} * g = e \quad \text{and} \quad g * g^{-1} = e.
@@ -1072,7 +1688,7 @@ From the second defining equation of $g$'s inverse, $g * g^{-1} = e$, so $g$ is 
 
 \subsection*{Connection}
 
-\textbf{Exercise 13.}
+\textbf{Exercise~13.}
 \begin{lstlisting}[language=Python]
 def is_group(carrier, op, identity):
     # Closure
@@ -1105,7 +1721,23 @@ print(is_group(Z5, lambda x, y: (x * y) % 5, 1))  # False: 0 has no inverse
 Why the multiplication version fails: the element $0$ has no multiplicative inverse in $\mathbb{Z}/5\mathbb{Z}$ because $0 \cdot x \equiv 0 \not\equiv 1 \pmod 5$ for every $x$. If you remove $0$ and try $(\mathbb{Z}/5\mathbb{Z})^* = \{1, 2, 3, 4\}$ under multiplication mod 5, you do get a group---you'll see this in Module~6 when we talk about multiplicative inverses mod a prime.
 
 \medskip
-\textbf{Exercise 14.}
+\textbf{Exercise~13b.}
+\begin{enumerate}[label=(\alph*)]
+  \item For every $a, b \in G$, $\mathrm{id}_G(a *_G b) = a *_G b = \mathrm{id}_G(a) *_G \mathrm{id}_G(b)$, so $\mathrm{id}_G$ is a homomorphism.
+  \item We check the defining equation of a homomorphism for $\psi \circ \varphi$. Let $a, b \in G$. Then
+  \[
+    (\psi \circ \varphi)(a *_G b)
+      = \psi(\varphi(a *_G b))
+      = \psi(\varphi(a) *_H \varphi(b))
+      = \psi(\varphi(a)) *_K \psi(\varphi(b))
+      = (\psi \circ \varphi)(a) *_K (\psi \circ \varphi)(b),
+  \]
+  using $\varphi$'s homomorphism property at the second equality and $\psi$'s at the third.
+  \item If $\varphi : G \to H$ and $\psi : H \to K$ are isomorphisms (bijective homomorphisms), then $\psi \circ \varphi$ is a homomorphism by (b) and is a bijection because the composition of bijections is a bijection (Exercise~\ref{ex:equiv:3}). So $G \cong K$.
+\end{enumerate}
+
+\medskip
+\textbf{Exercise~14.}
 Let $(G, *, e)$ be a group, $H$ a subgroup, and define $a \sim b$ iff $a^{-1} * b \in H$.
 
 \emph{Reflexive:} $a^{-1} * a = e \in H$ (since subgroups contain the identity), so $a \sim a$.
@@ -1121,7 +1753,7 @@ All three properties hold, so $\sim$ is an equivalence relation. This is the def
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 \begin{align*}
   \lfloor -3.7 \rfloor &= -4, &
   \lceil -3.7 \rceil &= -3, \\
@@ -1132,14 +1764,14 @@ All three properties hold, so $\sim$ is an equivalence relation. This is the def
 \emph{down}, not toward zero.)
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 The additive inverse of $3$ in $\mathbb{Z}/7\mathbb{Z}$ is
 $(7 - 3) \bmod 7 = 4$.
 
 Verification: $3 + 4 = 7 \equiv 0 \pmod 7$. \checkmark
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 We need $3x \equiv 1 \pmod 5$. Try $x = 2$:
 \[
   3 \cdot 2 = 6 \equiv 1 \pmod 5.
@@ -1147,7 +1779,7 @@ We need $3x \equiv 1 \pmod 5$. Try $x = 2$:
 So the multiplicative inverse of $3$ in $\mathbb{Z}/5\mathbb{Z}$ is $2$.
 
 \medskip
-\textbf{Exercise 4.}
+\textbf{Exercise~4.}
 \begin{enumerate}[label=(\alph*)]
   \item $100 = 7 \cdot 14 + 2$, so $q = 14$, $r = 2$.
   \item $-100 = 7 \cdot (-15) + 5$, so $q = -15$, $r = 5$. (Note that $7 \cdot (-15) = -105$, and $-105 + 5 = -100$. Check: $0 \leq 5 < 7$. \checkmark)
@@ -1155,7 +1787,7 @@ So the multiplicative inverse of $3$ in $\mathbb{Z}/5\mathbb{Z}$ is $2$.
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 5.}
+\textbf{Exercise~5.}
 \begin{enumerate}[label=(\alph*)]
   \item $17 \bmod 6 = 5$ (since $17 = 6 \cdot 2 + 5$).
   \item $(-17) \bmod 6 = 1$ (since $-17 = 6 \cdot (-3) + 1$).
@@ -1165,7 +1797,7 @@ So the multiplicative inverse of $3$ in $\mathbb{Z}/5\mathbb{Z}$ is $2$.
 
 \subsection*{Standard}
 
-\textbf{Exercise 6.}
+\textbf{Exercise~6.}
 We prove $n(n+1)$ is even for every integer $n$ by cases on parity.
 
 \emph{Case 1: $n$ is even.} Then $n = 2k$ for some integer $k$, and $n(n+1) = 2k(n+1) = 2m$ where $m = k(n+1)$ is an integer. So $n(n+1)$ is even.
@@ -1177,7 +1809,7 @@ In both cases, $n(n+1)$ is even. By the quotient-remainder theorem, every intege
 (This is actually the simplest case of Exercise~11, which shows $n(n+1)(n+2)$ is divisible by $6$: here we're getting the ``divisible by $2$'' factor.)
 
 \medskip
-\textbf{Exercise 7.}
+\textbf{Exercise~7.}
 We show $\lfloor x/2 \rfloor + \lceil x/2 \rceil = x$ for every integer $x$, by cases on parity.
 
 \emph{Case 1: $x$ is even.} Then $x = 2k$ for some integer $k$. So $x/2 = k$, an integer, and both floor and ceiling of an integer equal the integer. Thus $\lfloor x/2 \rfloor + \lceil x/2 \rceil = k + k = 2k = x$. \checkmark
@@ -1187,7 +1819,7 @@ We show $\lfloor x/2 \rfloor + \lceil x/2 \rceil = x$ for every integer $x$, by 
 Both cases give $\lfloor x/2 \rfloor + \lceil x/2 \rceil = x$, so the claim holds for every integer. \hfill$\square$
 
 \medskip
-\textbf{Exercise 8.}
+\textbf{Exercise~8.}
 Additive inverses in $\mathbb{Z}/8\mathbb{Z}$ (using $-a \equiv (8 - a) \bmod 8$):
 
 \begin{center}
@@ -1209,7 +1841,7 @@ $a$ & $-a$ \\
 Checks: $0 + 0 = 0$, $1 + 7 = 8 \equiv 0$, $2 + 6 = 8 \equiv 0$, $3 + 5 = 8 \equiv 0$, $4 + 4 = 8 \equiv 0$. The remaining three rows are the same by symmetry (additive inverses are symmetric: if $a + b = 0$ then $b + a = 0$). Note that $4$ is its own inverse---this happens for the ``half'' element in $\mathbb{Z}/2k\mathbb{Z}$ whenever $n$ is even.
 
 \medskip
-\textbf{Exercise 9.}
+\textbf{Exercise~9.}
 Multiplication table for $(\mathbb{Z}/7\mathbb{Z})^{\times} = \{1, 2, 3, 4, 5, 6\}$ under multiplication mod 7:
 
 \begin{center}
@@ -1239,7 +1871,7 @@ Note the symmetry of the table---it's symmetric about the diagonal because multi
 
 \subsection*{Challenge}
 
-\textbf{Exercise 10.}
+\textbf{Exercise~10.}
 We want $x$ with $x \equiv 1 \pmod 4$, $x \equiv 2 \pmod 9$, $x \equiv 3 \pmod{25}$. By CRT, a unique solution exists modulo $4 \cdot 9 \cdot 25 = 900$.
 
 Proceed by combining constraints two at a time.
@@ -1253,7 +1885,7 @@ So $x = 353$ is the smallest positive solution. (You can double-check: $353 \bmo
 By CRT, every solution has the form $353 + 900k$.
 
 \medskip
-\textbf{Exercise 11.}
+\textbf{Exercise~11.}
 We show $6 \mid n(n+1)(n+2)$ for every integer $n$.
 
 \emph{Part 1: divisible by 2.} Among any two consecutive integers, one is even. So among $n, n+1$, at least one is even, which makes $n(n+1)(n+2)$ even.
@@ -1271,7 +1903,7 @@ Since $n(n+1)(n+2)$ is divisible by both $2$ and $3$, and $\gcd(2, 3) = 1$, it i
 (The step ``divisible by $a$ and $b$ with $\gcd(a,b) = 1$ implies divisible by $ab$'' is a mini-CRT result---you can prove it directly from B\'ezout's identity.)
 
 \medskip
-\textbf{Exercise 12.}
+\textbf{Exercise~12.}
 Suppose $x^2 \equiv 1 \pmod p$ with $p$ prime. Then $x^2 - 1 \equiv 0 \pmod p$, i.e., $(x - 1)(x + 1) \equiv 0 \pmod p$. Equivalently, $p \mid (x - 1)(x + 1)$.
 
 Key fact: if $p$ is prime and $p \mid ab$, then $p \mid a$ or $p \mid b$. (This is the definition of ``prime'' in the ring-theoretic sense, and it follows from unique factorization.) Applied here, either $p \mid (x - 1)$ or $p \mid (x + 1)$.
@@ -1286,7 +1918,7 @@ This fails when the modulus is not prime. In $\mathbb{Z}/8\mathbb{Z}$, for insta
 
 \subsection*{Connection}
 
-\textbf{Exercise 13.}
+\textbf{Exercise~13.}
 \begin{lstlisting}[language=Python]
 def mod_inverse(a, n):
     for x in range(n):
@@ -1311,7 +1943,7 @@ for a in range(1, 8):
 The elements $2, 4, 6$ in $\mathbb{Z}/8\mathbb{Z}$ have no multiplicative inverse because each shares a factor of $2$ with $8$: $\gcd(2, 8) = 2$, $\gcd(4, 8) = 4$, $\gcd(6, 8) = 2$. Recall the pattern from the theory: $a$ is invertible mod $n$ iff $\gcd(a, n) = 1$. Since $8$ is not prime, it has nontrivial common factors with half the nonzero residues, and those elements are non-invertible. This is precisely why $(\mathbb{Z}/n\mathbb{Z})^{\times}$ is interesting only when $n$ is prime: there, every nonzero element is invertible, and you get a genuine finite field.
 
 \medskip
-\textbf{Exercise 14.}
+\textbf{Exercise~14.}
 Define $a \equiv b \pmod n$ iff $n \mid (a - b)$.
 
 \emph{Reflexive:} $a - a = 0$ and $n \mid 0$ (since $0 = n \cdot 0$), so $a \equiv a \pmod n$. \checkmark
@@ -1325,7 +1957,7 @@ All three properties hold, so $\equiv \pmod n$ is an equivalence relation on $\m
 %% ---------- Intermezzo: What Does It Mean for Things to Be ``The Same''? ----------
 \section*{Intermezzo: What Does It Mean for Things to Be ``The Same''?}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 Define $P_1 \sim P_2$ iff for every input $x$, $P_1(x) = P_2(x)$
 (they produce the same output on every input).
 
@@ -1349,7 +1981,7 @@ equal if they agree on all inputs, regardless of how they compute
 their results.
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 Define $a/b \sim c/d$ iff $ad = bc$ (cross-multiplication).
 
 \emph{Reflexive:} $a/b \sim a/b$ iff $ab = ba$, which holds by
@@ -1372,12 +2004,144 @@ can be constructed as equivalence classes of pairs of natural numbers
 (with $(a,b) \sim (c,d)$ iff $a + d = b + c$), the rationals are
 constructed as equivalence classes of pairs of integers.
 
+\medskip
+\textbf{Exercise~3.}
+Define $A \sim B$ iff there exists a bijection $f : A \to B$.
+
+\emph{Reflexive:} The identity function $\mathrm{id}_A : A \to A$ is
+a bijection (it is its own inverse), so $A \sim A$.  \checkmark
+
+\emph{Symmetric:} Suppose $A \sim B$, witnessed by a bijection
+$f : A \to B$.  Every bijection has an inverse, so $f^{-1} : B \to A$
+exists and is itself a bijection.  Thus $B \sim A$.  \checkmark
+
+\emph{Transitive:} Suppose $A \sim B$ and $B \sim C$, witnessed by
+bijections $f : A \to B$ and $g : B \to C$.  The composition
+$g \circ f : A \to C$ is a bijection (composition of bijections is a
+bijection, with inverse $f^{-1} \circ g^{-1}$), so $A \sim C$.
+\checkmark
+
+The equivalence class of $\{a, b, c\}$ is the class of all
+\emph{three-element sets}: $\{1, 2, 3\}$, $\{\alpha, \beta, \gamma\}$,
+$\{\text{Alice}, \text{Bob}, \text{Carol}\}$, and every other set that
+can be put into bijective correspondence with $\{a, b, c\}$.
+
+This equivalence class is what is abstracted away: the \emph{identities}
+of the elements, the names, the order.  What remains is pure
+\emph{cardinality}---the number $3$.  In fact, one standard way to
+define the natural number $n$ is as the equivalence class of all sets
+with $n$ elements under bijection; you have just rediscovered the
+Fregean definition of number.
+
+\medskip
+\textbf{Exercise~4.}
+Define $w_1 \sim w_2$ iff $w_2$ can be obtained from $w_1$ by
+reordering the letters.
+
+\emph{Reflexive:} Every word is a reordering of itself (leave the
+letters alone).  \checkmark
+
+\emph{Symmetric:} If $w_2$ is a reordering of $w_1$, then $w_1$ is
+obtained from $w_2$ by the inverse permutation---also a reordering.
+\checkmark
+
+\emph{Transitive:} If $w_2$ is a reordering of $w_1$ and $w_3$ is a
+reordering of $w_2$, then $w_3$ is obtained from $w_1$ by composing
+the two reorderings---still a reordering.  \checkmark
+
+A few elements of the equivalence class of ``listen'': ``silent,''
+``tinsel,'' ``enlist,'' ``inlets,'' and ``listen'' itself.
+
+The natural \emph{representative} of each class is the multiset of
+letters---or, equivalently, the letters sorted into a canonical
+order (say, alphabetical).  ``listen,'' ``silent,'' and ``enlist'' all
+sort to ``eilnst,'' so you can recognise anagrams of one another by
+sorting their letters and comparing.  This is exactly the standard
+algorithm for anagram detection, and it is computing a canonical
+representative of the equivalence class.
+
+\medskip
+\textbf{Exercise~5.}
+\begin{proof}
+Assume $\sim$ is an equivalence relation on $A$ and $a \sim b$.  We show
+$[a] = [b]$ by double inclusion.
+
+\emph{$[a] \subseteq [b]$.}  Let $x \in [a]$.  Then $a \sim x$ by
+definition of $[a]$.  From $a \sim b$ and symmetry, $b \sim a$.  From
+$b \sim a$ and $a \sim x$, by transitivity, $b \sim x$.  Hence
+$x \in [b]$.
+
+\emph{$[b] \subseteq [a]$.}  Let $x \in [b]$.  Then $b \sim x$.  From
+$a \sim b$ and $b \sim x$, by transitivity, $a \sim x$.  Hence $x \in [a]$.
+
+Combining the two inclusions gives $[a] = [b]$.
+\end{proof}
+
+\emph{Partition.}  We show that any two equivalence classes are either
+equal or disjoint.  Take classes $[a]$ and $[b]$ and suppose they are
+not disjoint: some $c$ satisfies $c \in [a] \cap [b]$, so $a \sim c$
+and $b \sim c$.  By symmetry and transitivity, $a \sim b$, and by the
+lemma just proved, $[a] = [b]$.  So distinct classes are disjoint, and
+every element $a \in A$ belongs to at least one class (namely $[a]$, by
+reflexivity).  The classes therefore partition $A$.
+
+\medskip
+\textbf{Exercise~6.}
+Define $G \sim H$ iff there is a bijection $\varphi : V_1 \to V_2$
+such that $\{u, v\} \in E_1$ iff $\{\varphi(u), \varphi(v)\} \in E_2$.
+
+\emph{Reflexive:} The identity $\mathrm{id}_{V_1} : V_1 \to V_1$ is a
+bijection, and $\{u, v\} \in E_1$ iff $\{\mathrm{id}(u), \mathrm{id}(v)\} =
+\{u, v\} \in E_1$.  So $G \sim G$.  \checkmark
+
+\emph{Symmetric:} If $\varphi$ witnesses $G \sim H$, then $\varphi^{-1}$
+is also a bijection, and
+$\{u', v'\} \in E_2$ iff
+$\{\varphi^{-1}(u'), \varphi^{-1}(v')\} \in E_1$
+(apply the defining equivalence at $u = \varphi^{-1}(u')$, $v =
+\varphi^{-1}(v')$ and use $\varphi \circ \varphi^{-1} = \mathrm{id}$).
+So $H \sim G$.  \checkmark
+
+\emph{Transitive:} If $\varphi$ witnesses $G \sim H$ and $\psi$
+witnesses $H \sim K$, then $\psi \circ \varphi$ is a bijection, and
+\[
+  \{u, v\} \in E_1
+    \;\iff\; \{\varphi(u), \varphi(v)\} \in E_2
+    \;\iff\; \{\psi(\varphi(u)), \psi(\varphi(v))\} \in E_3.
+\]
+So $G \sim K$.  \checkmark
+
+\emph{Isomorphic example on four vertices.}  The path $P_4$ with
+vertices $\{1, 2, 3, 4\}$ and edges $\{\{1,2\}, \{2,3\}, \{3,4\}\}$ is
+isomorphic to the path with vertices $\{a, b, c, d\}$ and edges
+$\{\{a,b\}, \{b,c\}, \{c,d\}\}$; the bijection $1 \mapsto a$, $2 \mapsto
+b$, $3 \mapsto c$, $4 \mapsto d$ witnesses this.
+
+\emph{Non-isomorphic example.}  The four-cycle $C_4$ with edges
+$\{\{1,2\}, \{2,3\}, \{3,4\}, \{4,1\}\}$ and the path $P_4$ above are
+\emph{not} isomorphic, even though both have four vertices and three or
+four edges.  $C_4$ has four edges and $P_4$ has three, so no bijection
+between their vertex sets can match the edge structure.  (Even more
+robustly: every vertex of $C_4$ has degree $2$, while $P_4$ has two
+vertices of degree $1$ and two of degree $2$.  Any isomorphism must
+preserve the degree sequence, and these differ.)
+
+An isomorphism class of graphs \emph{remembers} the structural data:
+the number of vertices, the number of edges, the degree sequence,
+whether the graph is connected, whether it has cycles, and so on---
+anything that depends only on the abstract shape of the graph.  It
+\emph{forgets} everything that depends on vertex labels: the names of
+the vertices, the order they appear, the particular identifiers used.
+This is the standard abstraction of graph theory: we study graphs
+``up to isomorphism,'' because the labels are incidental to the
+structural questions.
+
 %% ---------- Module 7 ----------
 \section*{Module 7}
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 \begin{proof}
 We prove the contrapositive: if $n$ is odd, then $n^3$ is odd.
 
@@ -1394,7 +2158,7 @@ By contrapositive, if $n^3$ is even then $n$ is even.
 \end{proof}
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 Trace of the Euclidean algorithm on $\gcd(48, 18)$:
 \begin{align*}
   \gcd(48, 18) &: \quad 48 = 2 \cdot 18 + 12, \quad \text{so } \gcd(48,18) = \gcd(18,12). \\
@@ -1404,7 +2168,7 @@ Trace of the Euclidean algorithm on $\gcd(48, 18)$:
 Answer: $\gcd(48, 18) = 6$.
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 We want to derive $\{x = 0\}\; x := x + 3\;\{x = 3\}$.
 
 \emph{Step 1 (assignment rule).} The assignment rule says: to derive
@@ -1422,7 +2186,7 @@ This holds by elementary arithmetic. By the rule of consequence
 \]
 
 \medskip
-\textbf{Exercise 4.}
+\textbf{Exercise~4.}
 In each case, substitute the right-hand side of the assignment for the variable in the postcondition.
 \begin{enumerate}[label=(\alph*)]
   \item $\{?\}\, x := x + 5\, \{x > 10\}$: the postcondition is $x > 10$. Substituting $x + 5$ for $x$ gives $x + 5 > 10$, i.e., $x > 5$. So $\{x > 5\}\, x := x + 5\, \{x > 10\}$.
@@ -1432,7 +2196,7 @@ In each case, substitute the right-hand side of the assignment for the variable 
 
 \subsection*{Standard}
 
-\textbf{Exercise 5.}
+\textbf{Exercise~5.}
 \begin{proof}[Proof that $\sqrt{3}$ is irrational]
 Assume for contradiction that $\sqrt{3}$ is rational. Then $\sqrt{3} = a/b$ in lowest terms (so $\gcd(a, b) = 1$) with $a, b$ integers and $b > 0$. Squaring, $3 = a^2/b^2$, so $a^2 = 3b^2$. Therefore $3 \mid a^2$.
 
@@ -1444,7 +2208,7 @@ But now $3 \mid a$ and $3 \mid b$, so $\gcd(a, b) \geq 3 > 1$, contradicting our
 \end{proof}
 
 \medskip
-\textbf{Exercise 6.}
+\textbf{Exercise~6.}
 The ``proof'' that $\sqrt{4}$ is irrational follows the structure of the
 classic $\sqrt{2}$ proof by contradiction. It assumes $\sqrt{4} = a/b$
 with $\gcd(a,b) = 1$, squares both sides to get $4b^2 = a^2$, and
@@ -1463,7 +2227,7 @@ However, the main error is that the argument produces no contradiction
 at all, because $\sqrt{4}$ \emph{is} rational.)
 
 \medskip
-\textbf{Exercise 7.}
+\textbf{Exercise~7.}
 We work backward from the postcondition $x + y = 2$, peeling off one assignment at a time.
 
 \emph{Step 1 (backward through \texttt{y := y + 1}).} Substitute $y + 1$ for $y$ in $x + y = 2$ to get $x + (y + 1) = 2$, i.e., $x + y = 1$:
@@ -1488,7 +2252,7 @@ We work backward from the postcondition $x + y = 2$, peeling off one assignment 
 Done. \hfill$\square$
 
 \medskip
-\textbf{Exercise 8.}
+\textbf{Exercise~8.}
 We run the extended Euclidean algorithm on $a = 17$, $b = 5$:
 \begin{align*}
   17 &= 3 \cdot 5 + 2, \\
@@ -1510,7 +2274,7 @@ So $17 \cdot (-2) + 5 \cdot 7 = 1$, i.e., $x = -2$, $y = 7$.
 
 \subsection*{Challenge}
 
-\textbf{Exercise 9.}
+\textbf{Exercise~9.}
 \begin{proof}[Proof by contradiction that there is no largest prime]
 Assume for contradiction that there is a largest prime, call it $p$. Then every prime is at most $p$, so the list of all primes is $2, 3, 5, 7, \ldots, p$---a finite list.
 
@@ -1530,7 +2294,7 @@ Either way we reach a contradiction. So the assumption ``there is a largest prim
 This is the classical argument, attributed to Euclid (around 300 BCE), and it's one of the oldest proofs in the book.
 
 \medskip
-\textbf{Exercise 10.}
+\textbf{Exercise~10.}
 Loop invariant: $\text{Inv} := (0 \leq i \leq n) \wedge (y = 2^i)$.
 
 \emph{Establishment.} After \texttt{y := 1; i := 0}, we have $y = 1 = 2^0$ and $i = 0$, and $0 \leq 0 \leq n$ (using the precondition $n \geq 0$). So Inv holds.
@@ -1560,7 +2324,7 @@ Putting the three parts together via the while rule and sequencing, we get
 \emph{Variant for total correctness:} $n - i$ strictly decreases on each iteration (since $i$ increases by 1) and is bounded below by $0$ (since the guard forces $i < n$, i.e., $n - i > 0$). After at most $n$ iterations the loop exits.
 
 \medskip
-\textbf{Exercise 11.}
+\textbf{Exercise~11.}
 We show $\gcd(a, b) = \gcd(b, a \bmod b)$ for positive integers $a, b$ with $b \neq 0$.
 
 Write $a = bq + r$ with $r = a \bmod b$, so $0 \leq r < b$. We show the common divisors of $\{a, b\}$ and the common divisors of $\{b, r\}$ are the same set---from which it follows that the \emph{greatest} common divisors coincide.
@@ -1575,7 +2339,7 @@ This lemma is what makes Euclid's algorithm work: each step replaces the pair $(
 
 \subsection*{Connection}
 
-\textbf{Exercise 12.}
+\textbf{Exercise~12.}
 \begin{lstlisting}[language=Python]
 def egcd(a, b):
     if b == 0:
@@ -1603,7 +2367,7 @@ except ValueError as e:
 The extended Euclidean algorithm is asymptotically much faster than brute force. Brute force takes $O(n)$ time to find the inverse (it checks up to $n$ candidates). Euclid's algorithm takes $O(\log n)$ steps because each iteration at least halves the smaller argument (the ratio is actually governed by the Fibonacci numbers, but $O(\log n)$ captures the bound). For small $n$ both work fine; for cryptographic sizes (where $n$ is hundreds of digits long), brute force would take longer than the age of the universe, while Euclid's algorithm finishes in milliseconds.
 
 \medskip
-\textbf{Exercise 13.}
+\textbf{Exercise~13.}
 Hoare logic is better suited for reasoning about merge sort as a \emph{specific imperative program} that mutates arrays---establishing things like ``after \texttt{merge(xs, lo, mid, hi)}, the subarray \texttt{xs[lo..hi]} is sorted.'' The proof is about the state of memory before and after each step, which is exactly what Hoare triples express.
 
 Curry--Howard is better suited for reasoning about merge sort as a \emph{pure mathematical function} that takes a list and returns a sorted list. Under Curry--Howard, a proof that merge sort is correct \emph{becomes} an implementation of merge sort in the same proof assistant, with the return type guaranteeing the sortedness. There's no separate ``program'' and ``proof''---the proof \emph{is} the program.
@@ -1613,7 +2377,7 @@ Both correspondences are real and useful, and the choice usually tracks whether 
 %% ---------- Intermezzo: Proofs Are Programs ----------
 \section*{Intermezzo: Proofs Are Programs}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 Disjunction elimination ($\vee$E) corresponds to \textbf{pattern
 matching} on a sum type, i.e., case analysis on an \texttt{Either}
 value.  Given a value of type \texttt{Either A B}, you provide two
@@ -1633,7 +2397,7 @@ either f g (Right b) = g b
 \end{lstlisting}
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 The type $A \to (B \to A)$ corresponds to a function that takes an $a$
 and returns a function that ignores its argument and returns $a$:
 
@@ -1653,10 +2417,153 @@ regardless of what else is going on---and the program makes it
 computationally concrete: given evidence for $A$, just hold onto it and
 ignore whatever $B$-evidence someone hands you.
 
+\medskip
+\textbf{Exercise~3.}
+\begin{lstlisting}[language=Python]
+def curry(f):
+    # f has type (A, B) -> C
+    return lambda a: lambda b: f((a, b))
+
+def uncurry(g):
+    # g has type A -> (B -> C)
+    return lambda pair: g(pair[0])(pair[1])
+\end{lstlisting}
+
+\emph{Inverses.}  Starting with $f : (A \times B) \to C$:
+\begin{align*}
+  \texttt{uncurry(curry(f))}(a, b)
+    &= \texttt{curry(f)}(a)(b)                                 \\
+    &= (\lambda a.\,\lambda b.\, f((a,b)))(a)(b)               \\
+    &= f((a,b)),
+\end{align*}
+so $\texttt{uncurry(curry(f))} = f$ on every pair.  In the other
+direction, starting with $g : A \to (B \to C)$:
+\begin{align*}
+  \texttt{curry(uncurry(g))}(a)(b)
+    &= \texttt{uncurry(g)}((a,b))                              \\
+    &= g(a)(b),
+\end{align*}
+so $\texttt{curry(uncurry(g))} = g$ on every $a$ and $b$.  The two
+are inverses, witnessing the isomorphism $(A \times B) \to C \cong
+A \to (B \to C)$.
+
+Logically, this is the tautology
+\[
+  ((A \wedge B) \to C) \;\leftrightarrow\; (A \to (B \to C)).
+\]
+``Assume $A$ and $B$ at once, prove $C$'' is the same thing as
+``Assume $A$ and prove `assume $B$ and prove $C$.' ''  The way you
+build a proof of the two-step implication from a proof of the
+single-step one---and vice versa---is exactly currying and
+uncurrying.  Function currying in programming and the currying
+equivalence in logic are the same operation on proofs/programs.
+
+\medskip
+\textbf{Exercise~4.}
+\begin{lstlisting}[language=Python]
+def compose(f, g):
+    # f : A -> B,  g : B -> C,  result : A -> C
+    return lambda a: g(f(a))
+\end{lstlisting}
+
+The logical proof that $A \to B \to (B \to C) \to (A \to C)$ goes
+like this:
+\begin{enumerate}
+  \item Assume $A \to B$. \hfill (The argument \texttt{f}.)
+  \item Assume $B \to C$. \hfill (The argument \texttt{g}.)
+  \item Subproof: assume $A$, show $C$.  \hfill (The body
+        \texttt{lambda a:\;\ldots}.)
+        \begin{enumerate}[label=(\roman*)]
+          \item $A$, by assumption. \hfill (The parameter \texttt{a}.)
+          \item $B$, by modus ponens on (i) and (1). \hfill (The
+                subexpression \texttt{f(a)}.)
+          \item $C$, by modus ponens on (ii) and (2). \hfill (The
+                expression \texttt{g(f(a))}.)
+          \item Shows $C$.
+        \end{enumerate}
+  \item $A \to C$, by $\to$I on the subproof.
+\end{enumerate}
+
+Each logical step lines up with a syntactic piece of \texttt{compose}:
+modus ponens becomes function application, implication introduction
+becomes the defining \texttt{lambda}, and the result $g(f(a))$ is the
+proof of $C$ that the subproof produces.  Function composition is the
+computational content of transitivity.
+
+\medskip
+\textbf{Exercise~5.}
+\begin{lstlisting}[language=Python]
+def absurd(v):
+    # v : Void --- impossible to construct, so this branch is never taken
+    raise RuntimeError("unreachable: Void has no values")
+\end{lstlisting}
+
+The function has type $\texttt{Void} \to A$ for any $A$.  The
+body raises an error, but this body never actually runs: there are no
+values of type \texttt{Void}, so the parameter $v$ can never be
+supplied.  The function is vacuously well-defined because its domain
+of ``real'' inputs is empty.
+
+In a language like Haskell with a genuine empty type, you can often
+write this function by pattern-matching on the empty set of
+constructors:
+\begin{lstlisting}[language=Haskell]
+absurd :: Void -> a
+absurd v = case v of {}   -- no cases, because Void has no constructors
+\end{lstlisting}
+The empty \texttt{case} makes the vacuity explicit: there is no input
+to handle.
+
+Why the lack of values makes this trivially valid: to check that
+\texttt{absurd} really has type $\texttt{Void} \to A$, a type-checker
+must verify that for every value $v \in \texttt{Void}$, the body
+\texttt{absurd(v)} evaluates to a value in $A$.  That universal
+quantifier is over an empty set, so it is vacuously satisfied.  No
+actual return value is ever required.
+
+Logically, this is the principle \emph{ex falso quodlibet}: from
+$\bot$ you may conclude anything.  There is no proof of $\bot$, so
+this ``implication'' never gets discharged, but formally it is a
+function from an empty input space to any output space.
+
+\medskip
+\textbf{Exercise~6.}
+No such function can be written in general.
+
+Suppose, for contradiction, that we had a total function \texttt{lem}
+of type \texttt{() -> Either A (A -> Void)} that worked for
+\emph{every} type \texttt{A}.  Specialise to
+\begin{center}
+  \texttt{A} = ``codes of Turing machines that halt on every input.''
+\end{center}
+A value of type \texttt{A} is a witness that some specific machine is
+total.  A value of \texttt{A -> Void} is a function that takes any
+purported total machine and derives a contradiction---equivalently, a
+proof that no total machine exists at this code.
+
+For a given machine code $e$, calling \texttt{lem()} must (in finite
+time) return either:
+\begin{itemize}
+  \item a \texttt{Left}: a witness that $e$ is in fact total, or
+  \item a \texttt{Right}: a proof that $e$ is \emph{not} total.
+\end{itemize}
+But this is exactly a decision procedure for whether $e$ codes a total
+Turing machine.  By a standard computability-theory argument (this is
+the $\Pi_2^0$-complete totality problem, harder than even the halting
+problem), no algorithm decides this.
+
+So \texttt{lem} cannot be implemented as a total computable function.
+In classical logic, $A \vee \lnot A$ is a tautology because we accept
+``one of the two must be true'' without caring which; but from the
+Curry--Howard perspective, a proof of $A \vee \lnot A$ would be
+\emph{code}, and the code would have to tell us which disjunct holds.
+No such code can exist in general, which is the computational reason
+excluded middle is rejected in constructive logic.
+
 %% ---------- Intermezzo: Other Logics, Other Worlds ----------
 \section*{Intermezzo: Other Logics, Other Worlds}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 \begin{enumerate}[label=(\alph*)]
   \item ``The program eventually terminates'':
         $\Diamond\, \mathit{halt}$.
@@ -1668,12 +2575,167 @@ ignore whatever $B$-evidence someone hands you.
         $\Box\,(\mathit{request} \to \Diamond\, \mathit{response})$.
 \end{enumerate}
 
+\medskip
+\textbf{Exercise~2.}
+\begin{enumerate}[label=(\alph*)]
+  \item ``Two trains are never on the same section at the same time'':
+        \[
+          \Box\, \lnot(\mathit{train}_1 \wedge \mathit{train}_2).
+        \]
+        A classic mutual-exclusion safety property.
+
+  \item ``Once an alarm goes off, it stays on until manually reset.''
+        Using only $\Box$, $\Diamond$, $\bigcirc$ (no ``until''
+        operator), we can express the ``stays on'' part by saying: in
+        every state where the alarm is on and has not yet been reset,
+        the alarm is still on in the next state:
+        \[
+          \Box\!\left((\mathit{alarm} \wedge \lnot \mathit{reset}) \to
+                      \bigcirc \mathit{alarm}\right).
+        \]
+        This captures the rule that the only way the alarm can turn
+        off is via a reset.
+
+  \item ``Every login is eventually followed by a logout, and every
+        logout is preceded by a login.''  The forward half is
+        $\Box\,(\mathit{login} \to \Diamond\, \mathit{logout})$, by
+        analogy with the request/response example.  The backward
+        half---``a logout is preceded by a login''---is not expressible
+        in plain LTL starting at $t = 0$, because LTL's operators run
+        forward in time.  The natural forward-only reformulation is:
+        ``logout is never the first thing to happen,'' i.e.,
+        $\lnot \mathit{logout}$ at time $0$ together with
+        $\Box\,((\lnot \mathit{login\_so\_far}) \to \lnot
+        \mathit{logout})$, where $\mathit{login\_so\_far}$ is a
+        derived state proposition.  The cleanest LTL capture therefore
+        needs a state variable tracking ``has a login ever happened?''
+        The lesson: temporal logic expresses what comes next, not
+        what came before.
+\end{enumerate}
+
+\medskip
+\textbf{Exercise~3.}
+\begin{proof}
+We unfold the semantics step by step.
+\begin{align*}
+s_i \models \lnot \Diamond p
+  &\;\iff\; s_i \not\models \Diamond p \\
+  &\;\iff\; \text{there is no } j \geq i \text{ with } s_j \models p \\
+  &\;\iff\; \text{for every } j \geq i,\; s_j \not\models p \\
+  &\;\iff\; \text{for every } j \geq i,\; s_j \models \lnot p \\
+  &\;\iff\; s_i \models \Box \lnot p.
+\end{align*}
+So $\lnot \Diamond p \equiv \Box \lnot p$.
+\end{proof}
+
+This is the same argument shape as the proof of
+$\lnot (\exists x.\; P(x)) \equiv \forall x.\; \lnot P(x)$ from
+Module 4: ``there is no $x$ with $P(x)$'' is unfolded to ``for every
+$x$, $\lnot P(x)$'' by straightforward negation of an existential.
+Temporal $\Diamond$ is an existential over future times and temporal
+$\Box$ is a universal over future times, so the duality is literally
+the first-order quantifier duality in temporal clothing.
+
+\medskip
+\textbf{Exercise~4.}
+\emph{$\Diamond \Box p$}: ``it is eventually the case that $p$ holds
+at every subsequent moment.''  That is, after some finite delay, $p$
+holds and never turns off again.
+
+\emph{$\Box \Diamond p$}: ``it is always the case that $p$ will
+eventually hold.''  That is, $p$ is infinitely often true, but may
+alternate on and off forever.
+
+\emph{Distinguishing example.}  Let $p$ hold at every \emph{even}
+state and fail at every odd state.  Concretely,
+$s_0 \models p$, $s_1 \not\models p$, $s_2 \models p$, $s_3
+\not\models p$, and so on.
+
+\begin{itemize}
+  \item \emph{$\Box \Diamond p$ is true:} from any state $s_i$, there
+        is a later even state where $p$ holds (take $j = 2 \lceil
+        i/2 \rceil$).  So $\Diamond p$ holds at every $s_i$, hence
+        $\Box \Diamond p$ holds at $s_0$.
+
+  \item \emph{$\Diamond \Box p$ is false:} $\Box p$ at any state $s_i$
+        would require $p$ to hold at every $s_j$ with $j \geq i$, but
+        $s_{i+1}$ (or $s_i$ if $i$ is odd) fails $p$.  So $\Box p$
+        holds nowhere, hence $\Diamond \Box p$ is false at $s_0$.
+\end{itemize}
+
+Operationally: $\Box \Diamond p$ means ``$p$ keeps coming back,'' and
+$\Diamond \Box p$ means ``$p$ settles down to being true forever.''
+The settle-down version is strictly stronger.
+
+\medskip
+\textbf{Exercise~5.}
+The LTL version of ``at every state during the loop, the invariant $P$
+holds'' is simply
+\[
+  \Box P.
+\]
+(Implicitly restricted to states reachable during loop execution, but
+at the LTL level $\Box P$ is the natural translation.)
+
+\emph{What the LTL formulation makes explicit.}  The Hoare rule
+\[
+  \{P \wedge B\}\, c\, \{P\} \quad \Longrightarrow \quad
+  \{P\}\, \mathtt{while}\; B\; \mathtt{do}\; c\, \{P \wedge \lnot B\}
+\]
+\emph{proves} that $P$ is preserved by each iteration but only
+\emph{states} the pre- and post-condition of the entire loop.  The
+intermediate states---the moments in between iterations, during the
+iterations, at the start of each iteration---do not appear in the
+Hoare triple.  The LTL statement $\Box P$ makes those intermediate
+states first-class: it says ``at every state of the execution, $P$
+holds,'' which is a stronger and more directly useful fact.
+
+\emph{What temporal logic gives you that Hoare logic does not.}
+Hoare logic describes the pre- and post-conditions of a program as if
+the program were a black box; temporal logic describes the whole
+\emph{trajectory}, i.e., every intermediate state, so it can express
+properties of non-terminating systems (servers, operating systems,
+network protocols) where there is no ``post-condition'' because the
+program never finishes.
+
+\medskip
+\textbf{Exercise~6.}
+\begin{enumerate}[label=(\alph*)]
+  \item $\Box \lnot \mathit{deadlock}$: \textbf{safety}.  Nothing bad
+        (a deadlock) ever happens.
+
+  \item $\Box\,(\mathit{request} \to \Diamond \mathit{response})$:
+        \textbf{liveness}.  Every request is eventually answered
+        (something good always happens).
+
+  \item $\Diamond \Box \mathit{stable}$: \textbf{liveness}.  The
+        system eventually reaches a stable state and stays there---
+        this is ``something good happens'' (stability), but the
+        condition involves a promise about the future, not the
+        absence of a bad event.  (Strictly, this is the kind of
+        liveness property called an ``eventually stable'' or
+        ``persistence'' property.)
+
+  \item $\Box \Diamond \mathit{progress}$: \textbf{liveness}.
+        Progress is made infinitely often.  No specific bad event is
+        forbidden; the property is about something good happening
+        repeatedly.
+\end{enumerate}
+
+Some authors classify (c) as neither pure safety nor pure liveness
+because it requires \emph{both} a promise (reaching stability) and a
+guarantee (staying there).  The general rule is that safety properties
+have the shape $\Box(\text{good now})$ and liveness properties have
+the shape $\Box \Diamond \ldots$ or $\Diamond \ldots$---i.e., safety
+says ``nothing bad has happened yet,'' while liveness says
+``something good eventually happens.''
+
 %% ---------- Module 8 ----------
 \section*{Module 8}
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 Recursive definition of $a_n = 3n$:
 \[
   a_0 = 0, \qquad a_n = a_{n-1} + 3 \quad \text{for } n \geq 1.
@@ -1682,7 +2744,7 @@ Verification: $a_0 = 0$, $a_1 = 0 + 3 = 3$, $a_2 = 3 + 3 = 6$,
 $a_3 = 6 + 3 = 9$. These match $0, 3, 6, 9$. \checkmark
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 \begin{enumerate}[label=(\alph*)]
   \item $\sum_{i=1}^{5}(2i+1) = 3 + 5 + 7 + 9 + 11 = 35$.
   \item $\sum_{k=0}^{4} 2^k = 1 + 2 + 4 + 8 + 16 = 31$.
@@ -1691,19 +2753,19 @@ $a_3 = 6 + 3 = 9$. These match $0, 3, 6, 9$. \checkmark
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 \begin{enumerate}[label=(\alph*)]
   \item $a_0 = 2$, $a_n = a_{n-1} + 4$. Starting from $2$ and adding $4$ each step gives $2, 6, 10, 14, \ldots$, so $a_n = 4n + 2$.
   \item $b_n = n^2 + 1$. Compute $b_{n-1} = (n-1)^2 + 1 = n^2 - 2n + 2$, so $b_n - b_{n-1} = 2n - 1$. A valid recursive definition is therefore $b_0 = 1$ and $b_n = b_{n-1} + 2n - 1$ for $n \geq 1$.
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 4.}
+\textbf{Exercise~4.}
 Fibonacci: $\text{fib}(0) = 0$, $\text{fib}(1) = 1$, $\text{fib}(2) = 1$, $\text{fib}(3) = 2$, $\text{fib}(4) = 3$, $\text{fib}(5) = 5$. Check: $\text{fib}(5) = \text{fib}(4) + \text{fib}(3) = 3 + 2 = 5$. \checkmark
 
 \subsection*{Standard}
 
-\textbf{Exercise 5.}
+\textbf{Exercise~5.}
 \begin{proof}
 Let $P(n)$ be the statement
 $\displaystyle\sum_{i=1}^{n}(2i-1) = n^2$.
@@ -1726,7 +2788,7 @@ This establishes $P(k+1)$, completing the induction.
 \end{proof}
 
 \medskip
-\textbf{Exercise 6.}
+\textbf{Exercise~6.}
 \begin{proof}
 Let $P(n)$ be $\sum_{i=1}^{n} i^2 = n(n+1)(2n+1)/6$.
 
@@ -1746,7 +2808,7 @@ using the factorization $2k^2 + 7k + 6 = (k+2)(2k+3)$. This matches $(k+1)((k+1)
 \end{proof}
 
 \medskip
-\textbf{Exercise 7.}
+\textbf{Exercise~7.}
 \begin{proof}
 Let $P(n)$ be $\sum_{i=0}^{n} 2^i = 2^{n+1} - 1$.
 
@@ -1759,7 +2821,7 @@ Let $P(n)$ be $\sum_{i=0}^{n} 2^i = 2^{n+1} - 1$.
 \end{proof}
 
 \medskip
-\textbf{Exercise 8.}
+\textbf{Exercise~8.}
 \begin{proof}
 Let $T_n = n(n+1)/2$. Let $P(n)$ be $\sum_{i=1}^{n} i^3 = T_n^2$.
 
@@ -1781,7 +2843,7 @@ The miracle: cubes sum to squares of triangles. There's also a pretty layered-L-
 
 \subsection*{Challenge}
 
-\textbf{Exercise 9.}
+\textbf{Exercise~9.}
 \begin{proof}
 Let $P(n)$ be $\sum_{i=1}^{n} \frac{1}{i(i+1)} = \frac{n}{n+1}$.
 
@@ -1800,7 +2862,7 @@ Let $P(n)$ be $\sum_{i=1}^{n} \frac{1}{i(i+1)} = \frac{n}{n+1}$.
 Side note: each term $\frac{1}{i(i+1)}$ equals $\frac{1}{i} - \frac{1}{i+1}$ (partial fractions), so the sum telescopes to $1 - \frac{1}{n+1} = \frac{n}{n+1}$. The induction above is a drill; the telescoping observation is the insight.
 
 \medskip
-\textbf{Exercise 10.}
+\textbf{Exercise~10.}
 \begin{proof}
 Let $P(n)$ be $2^n < n!$, for $n \geq 4$.
 
@@ -1815,7 +2877,7 @@ where the second inequality uses $2 \leq k + 1$ (which holds since $k \geq 4 > 1
 Morally, factorial grows much faster than $2^n$ because factorial multiplies by $k + 1$ at step $k$ while the exponential only multiplies by $2$. Once $k + 1 > 2$, factorial pulls ahead and stays ahead.
 
 \medskip
-\textbf{Exercise 11.}
+\textbf{Exercise~11.}
 \begin{proof}
 Let $P(n)$ be $T_n = n(n+1)/2$, where $T_1 = 1$ and $T_n = T_{n-1} + n$.
 
@@ -1830,7 +2892,7 @@ This is the same proof as the sum-of-first-$n$-integers proof from the module; t
 
 \subsection*{Connection}
 
-\textbf{Exercise 12.}
+\textbf{Exercise~12.}
 \begin{lstlisting}[language=Python]
 def sum_of_squares(n):
     if n == 0:
@@ -1846,7 +2908,7 @@ def sum_of_squares(n):
 The correspondence is exact: proof and recursive function have the same shape, because induction and recursion are two views of the same computation.
 
 \medskip
-\textbf{Exercise 13.}
+\textbf{Exercise~13.}
 \begin{lstlisting}[language=Python]
 def fib_rec(n):
     if n < 2:
@@ -1874,7 +2936,7 @@ Timing on $n = 30$: the recursive version takes roughly $O(\phi^n)$ function cal
 Takeaway: a naive recursive definition matches the math exactly but throws away efficiency. Memoization recovers the efficiency while keeping the recursive shape---this is the core idea of dynamic programming.
 
 \medskip
-\textbf{Exercise 14.}
+\textbf{Exercise~14.}
 The ``one induction principle per data definition'' pattern works because each recursive definition is really specifying a \emph{functor}: a description of how the data is built from subparts of itself. The initial-algebra construction takes that functor and hands back both the data type and its induction principle in lockstep. That's why the base case and the recursive case of the definition line up exactly with the base case and the recursive case of the induction rule---they're the same data structure read twice, once as ``constructors'' and once as ``cases of induction.''
 
 In practice: when you write $\text{Tree} := \text{Leaf} \mid \text{Node Tree Tree}$, you automatically know that induction on trees has two premises, one for Leaf (no IH) and one for Node (two IHs, one per subtree). The BNF writes the induction rule for you. Module 10 cashes this out for several concrete recursive types, and the type-algebra intermezzo explains the general mechanism.
@@ -1884,7 +2946,7 @@ In practice: when you write $\text{Tree} := \text{Leaf} \mid \text{Node Tree Tre
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 \begin{enumerate}[label=(\alph*)]
   \item $a_0 = 1$, $a_1 = 2 \cdot 1 + 1 = 3$, $a_2 = 2 \cdot 3 + 1 = 7$, $a_3 = 2 \cdot 7 + 1 = 15$, $a_4 = 2 \cdot 15 + 1 = 31$. (Notice the pattern: $a_n = 2^{n+1} - 1$.)
   \item $b_0 = 0$, $b_1 = 1$, $b_2 = 2 \cdot 1 - 0 = 2$, $b_3 = 2 \cdot 2 - 1 = 3$, $b_4 = 2 \cdot 3 - 2 = 4$. (This is $b_n = n$.)
@@ -1892,7 +2954,7 @@ In practice: when you write $\text{Tree} := \text{Leaf} \mid \text{Node Tree Tre
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 \begin{center}
 \begin{tabular}{l|cccc}
 \toprule
@@ -1909,7 +2971,7 @@ Recurrence & 2nd-order & linear & homogeneous & const.\ coeffs \\
 Only (a) satisfies all four conditions, so only (a) can be directly solved by the characteristic-equation method from this module.
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 \begin{enumerate}[label=(\alph*)]
   \item $a_k = 5 a_{k-1} - 6 a_{k-2}$: characteristic equation $r^2 - 5r + 6 = 0$ (i.e., $r^2 = 5r - 6$).
   \item $a_k = a_{k-1} + a_{k-2}$: characteristic equation $r^2 - r - 1 = 0$ (Fibonacci).
@@ -1918,7 +2980,7 @@ Only (a) satisfies all four conditions, so only (a) can be directly solved by th
 
 \subsection*{Standard}
 
-\textbf{Exercise 4.}
+\textbf{Exercise~4.}
 \begin{proof}
 We prove by strong induction that every integer amount of postage
 $n \geq 12$ can be made using 4-cent and 5-cent stamps.
@@ -1940,7 +3002,7 @@ one more 4-cent stamp gives $n$ cents.
 \end{proof}
 
 \medskip
-\textbf{Exercise 5.}
+\textbf{Exercise~5.}
 The recurrence is $T_1 = 1$, $T_k = T_{k-1} + 3$ for $k \geq 2$.
 
 \emph{Iteration:}
@@ -1960,7 +3022,7 @@ $T_{k+1} = T_k + 3 = (3k - 2) + 3 = 3(k+1) - 2$. \checkmark
 Closed form: $T_k = 3k - 2$.
 
 \medskip
-\textbf{Exercise 6.}
+\textbf{Exercise~6.}
 The recurrence is $a_0 = 1$, $a_1 = 3$,
 $a_k = 4 a_{k-1} - 3 a_{k-2}$ for $k \geq 2$.
 
@@ -1981,7 +3043,7 @@ Subtracting gives $2\beta = 2$, so $\beta = 1$ and $\alpha = 0$.
 \emph{Closed form:} $a_n = 3^n$.
 
 \medskip
-\textbf{Exercise 7.}
+\textbf{Exercise~7.}
 The recurrence is $a_0 = 1$, $a_1 = 5$, $a_k = 5 a_{k-1} - 6 a_{k-2}$.
 
 \emph{Characteristic equation:} $r^2 - 5r + 6 = 0$, which factors as $(r - 2)(r - 3) = 0$. So $r_1 = 2$, $r_2 = 3$.
@@ -2001,7 +3063,7 @@ Sanity check: $a_2 = 3^3 - 2^3 = 27 - 8 = 19$, and $5 a_1 - 6 a_0 = 25 - 6 = 19$
 
 \subsection*{Challenge}
 
-\textbf{Exercise 8.}
+\textbf{Exercise~8.}
 The recurrence is $a_0 = 2$, $a_1 = 12$, $a_k = 6 a_{k-1} - 9 a_{k-2}$.
 
 \emph{Characteristic equation:} $r^2 - 6r + 9 = 0$, which factors as $(r - 3)^2 = 0$. Repeated root $r = 3$.
@@ -2022,7 +3084,7 @@ Verification: $a_2$ from the formula is $2 \cdot 3 \cdot 9 = 54$; from the recur
 If you had tried the distinct-root form $a_n = \alpha \cdot 3^n + \beta \cdot 3^n = (\alpha + \beta) \cdot 3^n$, you'd have only \emph{one} free parameter and couldn't fit both initial conditions. The extra $n$ factor in the repeated-root case is essential.
 
 \medskip
-\textbf{Exercise 9.}
+\textbf{Exercise~9.}
 \begin{proof}[Proof sketch]
 We prove by strong induction that $T_n \leq 2 n \log_2 n + n$ for all $n \geq 1$.
 
@@ -2049,7 +3111,7 @@ For general $n$ (not a power of $2$), you bound $\lfloor n/2 \rfloor$ and $\lcei
 The big-O version of this bound---$T_n = O(n \log n)$---is exactly the time complexity of merge sort.
 
 \medskip
-\textbf{Exercise 10.}
+\textbf{Exercise~10.}
 Tower of Hanoi: $H_1 = 1$, $H_n = 2 H_{n-1} + 1$.
 
 \emph{Iteration:}
@@ -2069,7 +3131,7 @@ Closed form: $H_n = 2^n - 1$. This is why the Tower of Hanoi with $n$ disks requ
 
 \subsection*{Connection}
 
-\textbf{Exercise 11.}
+\textbf{Exercise~11.}
 \begin{lstlisting}[language=Python]
 import math
 
@@ -2115,7 +3177,7 @@ The closed-form version starts disagreeing once the floating-point representatio
 Takeaway: the ``elegant'' closed form is great for intuition and for asymptotic analysis, but for exact computation of large Fibonacci numbers, the iterative or matrix versions are the right tools.
 
 \medskip
-\textbf{Exercise 12.}
+\textbf{Exercise~12.}
 Ordinary induction on $n = \text{height of the tree}$ \emph{can} be made to work, but only by folding all the information about ``trees of height $\leq n$'' into a single predicate $Q(n) = $ ``for every tree $t$ of height $\leq n$, $P(t)$ holds.'' Then $Q$ satisfies ordinary induction---the step from $Q(k)$ to $Q(k+1)$ internally invokes $P$ on each subtree, which has height $\leq k$. So the proof goes through.
 
 But doing it this way is ugly for two reasons. First, you're proving something about heights when the claim is naturally about trees---you've introduced an extra level of indirection. Second, you've lost the one-to-one correspondence between the shape of the data definition and the shape of the proof: structural induction on trees has one case per constructor, but ``induction on height'' has one case for the base level and then a big all-trees-of-this-height step that internally re-derives the case analysis. The recipes are the same; the packaging is worse. Structural induction (Module~10) gives you the clean version directly.
@@ -2125,7 +3187,7 @@ But doing it this way is ugly for two reasons. First, you're proving something a
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 Recursive definition:
 \begin{align*}
   \texttt{reverse}(\texttt{Nil}) &= \texttt{Nil}, \\
@@ -2154,7 +3216,7 @@ $\texttt{reverse}(\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil
 \end{align*}
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 \begin{enumerate}[label=(\alph*)]
   \item $\texttt{length}(\texttt{Cons}(a, \texttt{Cons}(b, \texttt{Nil}))) = 1 + \texttt{length}(\texttt{Cons}(b, \texttt{Nil})) = 1 + 1 + \texttt{length}(\texttt{Nil}) = 1 + 1 + 0 = 2$.
   \item $\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Nil})) \mathbin{++} \texttt{Cons}(3, \texttt{Nil}) = \texttt{Cons}(1, \texttt{Cons}(2, \texttt{Nil}) \mathbin{++} \texttt{Cons}(3, \texttt{Nil})) = \texttt{Cons}(1, \texttt{Cons}(2, \texttt{Nil} \mathbin{++} \texttt{Cons}(3, \texttt{Nil}))) = \texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil})))$.
@@ -2163,7 +3225,7 @@ $\texttt{reverse}(\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil
 \end{enumerate}
 
 \medskip
-\textbf{Exercise 3.}
+\textbf{Exercise~3.}
 \begin{enumerate}[label=(\alph*)]
   \item $\texttt{Color}$: three base cases, \textbf{zero} inductive steps. No recursion, so structural induction collapses to ``check each case.''
   \item $\texttt{RoseTree}$: one base case ($\texttt{Leaf}(A)$---no recursion in that constructor) and one inductive step ($\texttt{Branch}$) with \emph{one IH per subtree in the list}, i.e., an unbounded number. In practice this kind of induction is phrased as ``assume $P$ holds for every subtree $t_i$ in the list,'' and you get a \emph{list of IHs}. The number of IHs is the length of the list you're branching on.
@@ -2172,7 +3234,7 @@ $\texttt{reverse}(\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil
 
 \subsection*{Standard}
 
-\textbf{Exercise 4.}
+\textbf{Exercise~4.}
 Define $\texttt{leaves}(t)$ by:
 \begin{align*}
   \texttt{leaves}(\texttt{Leaf}) &= 1, \\
@@ -2202,7 +3264,7 @@ $\texttt{leaves}(r) = \texttt{size}(r) + 1$. Then:
 \end{proof}
 
 \medskip
-\textbf{Exercise 5.}
+\textbf{Exercise~5.}
 Define $\texttt{vars}$ on the BNF for propositional logic formulas:
 \begin{align*}
   \texttt{vars}(T) &= 0, \\
@@ -2237,7 +3299,7 @@ By structural induction on $f$.
 (The bound is tight: a formula like $x_1 \wedge x_2$ has $\texttt{vars} = 2$ and $\texttt{size} = 1$, so $\texttt{vars} = \texttt{size} + 1$. A formula like ${\sim}{\sim}x$ has $\texttt{vars} = 1$ and $\texttt{size} = 2$, so the bound is not tight in general.)
 
 \medskip
-\textbf{Exercise 6.}
+\textbf{Exercise~6.}
 \begin{proof}[Proof that $(xs \mathbin{++} ys) \mathbin{++} zs = xs \mathbin{++} (ys \mathbin{++} zs)$]
 By structural induction on $xs$, with $ys$ and $zs$ universally quantified inside the predicate.
 
@@ -2260,7 +3322,7 @@ Both sides equal, so the base case holds.
 \end{proof}
 
 \medskip
-\textbf{Exercise 7.}
+\textbf{Exercise~7.}
 \begin{proof}[Proof that $\texttt{length}(\texttt{map}(f, xs)) = \texttt{length}(xs)$]
 By structural induction on $xs$.
 
@@ -2280,7 +3342,7 @@ By structural induction on $xs$.
 
 \subsection*{Challenge}
 
-\textbf{Exercise 8.}
+\textbf{Exercise~8.}
 \emph{Helper 1: $xs \mathbin{++} \texttt{Nil} = xs$.}
 
 \emph{Base case:} $\texttt{Nil} \mathbin{++} \texttt{Nil} = \texttt{Nil}$ by definition of $\mathbin{++}$. \checkmark
@@ -2331,7 +3393,7 @@ By structural induction on $xs$.
 Three lemmas plus one main theorem. This is a very typical shape for ``serious'' structural induction proofs: the main result depends on helpers, which depend on smaller helpers. The dependency chain is what makes proof assistants useful in practice---keeping track of three or four nested inductions by hand is error-prone.
 
 \medskip
-\textbf{Exercise 9.}
+\textbf{Exercise~9.}
 \begin{proof}[Proof that every negation-free formula is monotone in every variable]
 We induct on the structure of negation-free formulas. The BNF of negation-free formulas is $L := T \mid F \mid x \mid L \wedge L \mid L \vee L$ (five cases, one recursive sub-part per case for the binary connectives).
 
@@ -2354,7 +3416,7 @@ All cases covered. By structural induction, every negation-free formula is monot
 This is the positive side of the Module 2 Exercise 10 result: that exercise used monotonicity to prove $\{\wedge, \vee\}$ is \emph{not} functionally complete (because $\lnot$ is not monotone), and this exercise proves \emph{why} monotonicity is preserved by $\{\wedge, \vee\}$---structural induction on the BNF that excludes $\lnot$.
 
 \medskip
-\textbf{Exercise 10.}
+\textbf{Exercise~10.}
 First, define ``perfect'' inductively:
 \begin{itemize}
   \item $\texttt{Leaf}$ is perfect.
@@ -2381,7 +3443,7 @@ The balancedness constraint is essential: without it, the two subtrees could hav
 
 \subsection*{Connection}
 
-\textbf{Exercise 11.}
+\textbf{Exercise~11.}
 \begin{lstlisting}[language=Python]
 from dataclasses import dataclass
 from typing import Union
@@ -2474,7 +3536,7 @@ print("all checks pass")
 Random testing is no substitute for proof---it can only show the \emph{absence of small counterexamples}---but it's a cheap sanity check that your proof wasn't vacuously true or based on a buggy definition.
 
 \medskip
-\textbf{Exercise 12.}
+\textbf{Exercise~12.}
 \begin{enumerate}[label=(\alph*)]
   \item $\texttt{Nat} := 0 \mid \texttt{succ Nat}$ corresponds to $N = 1 + N$ (one base case, one recursive case with one Nat sub-part).
   \item $\texttt{BinTree} := \texttt{Leaf} \mid \texttt{Node}(\texttt{BinTree}, \texttt{BinTree})$ corresponds to $T = 1 + T \cdot T$ (one base case, one recursive case with two BinTree sub-parts, which multiply because they're ordered and independent).
@@ -2486,7 +3548,7 @@ They're called ``polynomial'' functors because the expressions on the right are 
 %% ---------- Intermezzo: The Algebra of Types ----------
 \section*{Intermezzo: The Algebra of Types}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 Using the exponent-of-a-product law from the algebra of types:
 \[
   (A \to B) \times (A \to C) \;\cong\; A \to (B \times C).
@@ -2506,7 +3568,7 @@ In words: ``if $A$ implies $B$ and $A$ implies $C$, then $A$ implies
 $B$ and $C$''---and vice versa.
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 The BNF \texttt{Nat = Zero | Succ(Nat)} translates to $N = 1 + N$.
 ``Solving'' by repeated substitution:
 \begin{align*}
@@ -2525,10 +3587,175 @@ second is $1$, the third is $2$, etc.).  Since each $1$ contributes
 exactly one inhabitant, the type $N$ has inhabitants
 $0, 1, 2, 3, \ldots$---exactly the natural numbers.
 
+\medskip
+\textbf{Exercise~3.}
+Apply the distributive law of the type algebra:
+\[
+  (A + B) \times (C + D)
+    \;\cong\; A \times C + A \times D + B \times C + B \times D.
+\]
+
+The right side has four summands, so a Python realisation uses a
+tagged union with four cases:
+\begin{lstlisting}[language=Python]
+class AC:  # first constructor: A * C
+    def __init__(self, a, c): self.a, self.c = a, c
+
+class AD:  # second constructor: A * D
+    def __init__(self, a, d): self.a, self.d = a, d
+
+class BC:  # third constructor: B * C
+    def __init__(self, b, c): self.b, self.c = b, c
+
+class BD:  # fourth constructor: B * D
+    def __init__(self, b, d): self.b, self.d = b, d
+\end{lstlisting}
+
+A value of $(A + B) \times (C + D)$---a pair where each component is a
+tagged union---can be converted to one of \texttt{AC}, \texttt{AD},
+\texttt{BC}, \texttt{BD} by case analysis on both components.
+
+Under Curry--Howard this corresponds to the logical tautology
+\[
+  (A \vee B) \wedge (C \vee D)
+    \;\equiv\; (A \wedge C) \vee (A \wedge D)
+             \vee (B \wedge C) \vee (B \wedge D),
+\]
+i.e., the distributivity of $\wedge$ over $\vee$ applied twice.
+
+\medskip
+\textbf{Exercise~4.}
+Write $L = \texttt{NEList}\,A$.  The BNF
+\[
+  \texttt{NEList}\,A = A \;\mid\; A \times \texttt{NEList}\,A
+\]
+translates to the polynomial equation
+\[
+  L = A + A \cdot L.
+\]
+Factor out $A$: $L = A \cdot (1 + L)$.  Or, solving for $L$ directly,
+\[
+  L - A \cdot L = A
+    \quad\Longrightarrow\quad
+    L(1 - A) = A
+    \quad\Longrightarrow\quad
+    L = \frac{A}{1 - A}.
+\]
+
+Expanding the geometric series $\frac{1}{1 - A} = 1 + A + A^2 + A^3 +
+\cdots$ and multiplying through by $A$:
+\[
+  L = A \cdot (1 + A + A^2 + A^3 + \cdots)
+    = A + A^2 + A^3 + A^4 + \cdots.
+\]
+
+The $n$th term, $A^n$, corresponds to a non-empty list of exactly $n$
+elements.  Unlike the ordinary \texttt{List} (whose expansion included
+a $1$ for the empty list), \texttt{NEList} has no $1$ term---the
+constant part is gone, reflecting the fact that non-empty lists
+cannot have zero elements.  The series starts at $A^1$ and goes on
+forever.
+
+\medskip
+\textbf{Exercise~5.}
+\begin{enumerate}[label=(\alph*)]
+  \item $|\texttt{Maybe}\,A| = |A| + 1$: it's the $A$ values tagged
+        \texttt{Just}, plus the single \texttt{Nothing}.
+  \item $|\texttt{Maybe}\,(\texttt{Maybe}\,A)| = |A| + 2$: the outer
+        \texttt{Maybe} adds $1$ to the cardinality of
+        $\texttt{Maybe}\,A$, which itself has cardinality $|A| + 1$.
+  \item In algebraic notation,
+        \[
+          \texttt{Maybe}\,(\texttt{Maybe}\,A)
+            = \texttt{Maybe}\,A + 1
+            = (A + 1) + 1
+            = A + 2.
+        \]
+        The right side has $|A| + 2$ inhabitants: $|A|$ of them tagged
+        $\texttt{Just}(\texttt{Just}(\cdot))$, one \texttt{Just
+        Nothing}, and one \texttt{Nothing}.  The three distinct
+        outer-tag/inner-tag combinations are exactly the three ways to
+        sit in the cardinality-$|A|+2$ result, matching part (b).
+\end{enumerate}
+
+\medskip
+\textbf{Exercise~5b.}
+\begin{lstlisting}[language=Python]
+def list_map(f, xs):
+    # Recursive version
+    if not xs:
+        return []
+    return [f(xs[0])] + list_map(f, xs[1:])
+
+# Or, equivalently, as a comprehension:
+# def list_map(f, xs): return [f(x) for x in xs]
+\end{lstlisting}
+
+\emph{(a) Identity law.}
+\begin{lstlisting}[language=Python]
+>>> list_map(lambda x: x, [1, 2, 3])
+[1, 2, 3]
+\end{lstlisting}
+Matches the original list.  \checkmark
+
+\emph{(b) Composition law.}  Let $f(x) = x + 1$ and $g(x) = 2x$.
+\begin{lstlisting}[language=Python]
+>>> list_map(lambda x: g(f(x)), [1, 2, 3])
+[4, 6, 8]
+>>> list_map(g, list_map(f, [1, 2, 3]))
+[4, 6, 8]
+\end{lstlisting}
+The two sides agree.  \checkmark
+
+\emph{(c) Why the composition law matters.}  Without the composition
+law, the two-pass computation ``first \texttt{list\_map(f, xs)}, then
+\texttt{list\_map(g, \ldots)}'' could silently disagree with the
+one-pass ``\texttt{list\_map(lambda x: g(f(x)), xs)}.''  That would
+break the optimisation of fusing multiple map passes into one (the
+basis of stream-fusion and map-fusion rewrites used in compilers like
+GHC)---and it would also break the conceptual identity between ``list
+of transformed things'' and ``list with transformations composed,''
+making the functor abstraction meaningless.
+
+\medskip
+\textbf{Exercise~6.}
+\begin{lstlisting}[language=Python]
+# Left-to-right: A -> (B * C)  becomes  (A -> B) * (A -> C)
+def split(h):
+    return (lambda a: h(a)[0],
+            lambda a: h(a)[1])
+
+# Right-to-left: (A -> B) * (A -> C)  becomes  A -> (B * C)
+def merge(fg):
+    f, g = fg
+    return lambda a: (f(a), g(a))
+\end{lstlisting}
+
+\emph{Inverses.}  Start with $h : A \to (B \times C)$.  Then
+$\texttt{merge(split(h))}(a) = ((\lambda a'.\, h(a')[0])(a),\,
+(\lambda a'.\, h(a')[1])(a)) = (h(a)[0], h(a)[1]) = h(a)$, so
+$\texttt{merge(split(h))} = h$.  In the other direction, start with
+$(f, g)$ where $f : A \to B$ and $g : A \to C$.  Then
+$\texttt{split(merge((f,g)))}$: the first component is $\lambda a.\,
+\texttt{merge((f,g))}(a)[0] = \lambda a.\, (f(a), g(a))[0] = \lambda a.\,
+f(a) = f$ (up to eta-equivalence), and similarly the second component
+is $g$.  So \texttt{split} and \texttt{merge} are mutual inverses,
+witnessing the isomorphism.
+
+In pure-arithmetic terms, this is the exponent-of-a-product law
+\[
+  (b \cdot c)^a \;=\; b^a \cdot c^a.
+\]
+On the type side: the number of functions from $A$ to $B \times C$ is
+the product of the number of functions $A \to B$ and the number of
+functions $A \to C$.  On the arithmetic side: raising a product to a
+power distributes over the factors.  The two statements are the same
+fact seen through cardinality.
+
 %% ---------- Intermezzo: The Lambda Calculus ----------
 \section*{Intermezzo: The Lambda Calculus}
 
-\textbf{Exercise 1.}
+\textbf{Exercise~1.}
 Application is left-associative, so
 $(\lambda x.\;\lambda y.\; x)\; 3\; 7 = ((\lambda x.\;\lambda y.\; x)\; 3)\; 7$.
 
@@ -2552,7 +3779,7 @@ second---it is the ``constant'' function (or, in Church encoding terms,
 it is $\text{true}$: given two options, pick the first).
 
 \medskip
-\textbf{Exercise 2.}
+\textbf{Exercise~2.}
 Define $\text{and} = \lambda a.\;\lambda b.\; a\; b\; \text{false}$.
 
 The idea: if $a$ is true, the result depends on $b$; if $a$ is false,
@@ -2595,5 +3822,185 @@ the result is false regardless.  Verification on all four cases:
 \end{align*}
 
 All four cases match the expected truth table for AND\@.
+
+\medskip
+\textbf{Exercise~3.}
+Again application is left-associative, so
+$(\lambda x.\;\lambda y.\; y)\; 3\; 7 = ((\lambda x.\;\lambda y.\; y)\;
+3)\; 7$.
+
+\emph{Step 1.}  Apply $(\lambda x.\;\lambda y.\; y)$ to $3$:
+substitute $3$ for $x$ in the body $\lambda y.\; y$.  Since $x$ does
+not occur in $\lambda y.\; y$, nothing changes:
+\[
+  (\lambda x.\;\lambda y.\; y)\; 3 \;\longrightarrow\; \lambda y.\; y.
+\]
+
+\emph{Step 2.}  Apply $(\lambda y.\; y)$ to $7$: substitute $7$ for
+$y$ in the body $y$:
+\[
+  (\lambda y.\; y)\; 7 \;\longrightarrow\; 7.
+\]
+
+Final result: $7$.
+
+This function takes two arguments and returns the \emph{second},
+ignoring the first---the mirror of Exercise~1.  Together, these two
+functions encode the Church booleans from Section 3:
+\[
+  \text{true} = \lambda x.\; \lambda y.\; x,
+  \qquad
+  \text{false} = \lambda x.\; \lambda y.\; y.
+\]
+Exercise~1 is $\text{true}$ applied to two arguments; Exercise~3 is
+$\text{false}$ applied to two arguments.  A Church boolean is
+precisely a two-argument selector: given two options, pick one of
+them.
+
+\medskip
+\textbf{Exercise~4.}
+Apply $\text{succ}$ to $\mathbf{2}$:
+\begin{align*}
+  \text{succ}\;\mathbf{2}
+    &= (\lambda n.\;\lambda f.\;\lambda x.\; f\;(n\; f\; x))\;\mathbf{2} \\
+    &\longrightarrow \lambda f.\;\lambda x.\; f\;(\mathbf{2}\; f\; x) \\
+    &= \lambda f.\;\lambda x.\; f\;((\lambda f.\;\lambda x.\; f\;(f\; x))\; f\; x).
+\end{align*}
+
+Reduce the inner $\mathbf{2}\; f\; x$ step by step.  First apply
+$\mathbf{2}$ to $f$:
+\[
+  (\lambda f.\;\lambda x.\; f\;(f\; x))\; f
+    \;\longrightarrow\; \lambda x.\; f\;(f\; x).
+\]
+Then apply the result to $x$:
+\[
+  (\lambda x.\; f\;(f\; x))\; x
+    \;\longrightarrow\; f\;(f\; x).
+\]
+
+Plugging back in:
+\begin{align*}
+  \text{succ}\;\mathbf{2}
+    &\longrightarrow \lambda f.\;\lambda x.\; f\;(f\;(f\; x)).
+\end{align*}
+
+This is exactly the definition of $\mathbf{3}$: apply $f$ three times
+to $x$.  So $\text{succ}\;\mathbf{2} = \mathbf{3}$, as expected.
+
+\medskip
+\textbf{Exercise~5.}
+Define $\text{or} = \lambda a.\;\lambda b.\; a\;\text{true}\; b$.
+
+The idea: if $a$ is true, the result is true regardless of $b$; if
+$a$ is false, the result depends on $b$.  Verification on all four
+cases:
+
+\medskip
+\emph{Case 1:} $\text{or}\;\text{true}\;\text{true}$:
+\begin{align*}
+  \text{or}\;\text{true}\;\text{true}
+    &= (\lambda a.\;\lambda b.\; a\;\text{true}\; b)\;\text{true}\;\text{true} \\
+    &\longrightarrow (\lambda b.\; \text{true}\;\text{true}\; b)\;\text{true} \\
+    &\longrightarrow \text{true}\;\text{true}\;\text{true} \\
+    &= (\lambda t.\;\lambda f.\; t)\;\text{true}\;\text{true} \\
+    &\longrightarrow (\lambda f.\;\text{true})\;\text{true} \\
+    &\longrightarrow \text{true}. \quad\checkmark
+\end{align*}
+
+\emph{Case 2:} $\text{or}\;\text{true}\;\text{false}$:
+\begin{align*}
+  &\longrightarrow \text{true}\;\text{true}\;\text{false}
+   = (\lambda t.\;\lambda f.\; t)\;\text{true}\;\text{false}
+   \longrightarrow (\lambda f.\;\text{true})\;\text{false}
+   \longrightarrow \text{true}. \quad\checkmark
+\end{align*}
+
+\emph{Case 3:} $\text{or}\;\text{false}\;\text{true}$:
+\begin{align*}
+  &\longrightarrow \text{false}\;\text{true}\;\text{true}
+   = (\lambda t.\;\lambda f.\; f)\;\text{true}\;\text{true}
+   \longrightarrow (\lambda f.\; f)\;\text{true}
+   \longrightarrow \text{true}. \quad\checkmark
+\end{align*}
+
+\emph{Case 4:} $\text{or}\;\text{false}\;\text{false}$:
+\begin{align*}
+  &\longrightarrow \text{false}\;\text{true}\;\text{false}
+   = (\lambda t.\;\lambda f.\; f)\;\text{true}\;\text{false}
+   \longrightarrow (\lambda f.\; f)\;\text{false}
+   \longrightarrow \text{false}. \quad\checkmark
+\end{align*}
+
+All four cases match the expected truth table for OR\@.
+
+\medskip
+\textbf{Exercise~6.}
+Apply $\text{mult}$ to $\mathbf{2}$ and $\mathbf{3}$:
+\begin{align*}
+  \text{mult}\;\mathbf{2}\;\mathbf{3}
+    &= (\lambda m.\;\lambda n.\;\lambda f.\; m\;(n\; f))\;\mathbf{2}\;\mathbf{3} \\
+    &\longrightarrow (\lambda n.\;\lambda f.\; \mathbf{2}\;(n\; f))\;\mathbf{3} \\
+    &\longrightarrow \lambda f.\; \mathbf{2}\;(\mathbf{3}\; f).
+\end{align*}
+
+The inner term $\mathbf{3}\; f$ reduces to ``apply $f$ three times'':
+\[
+  \mathbf{3}\; f = (\lambda f.\;\lambda x.\; f\;(f\;(f\; x)))\; f
+    \;\longrightarrow\; \lambda x.\; f\;(f\;(f\; x)).
+\]
+Call this function $g = \lambda x.\; f\;(f\;(f\; x))$.  Then
+$\mathbf{2}\; g$ reduces to ``apply $g$ twice'':
+\begin{align*}
+  \mathbf{2}\; g
+    &= (\lambda f.\;\lambda x.\; f\;(f\; x))\; g \\
+    &\longrightarrow \lambda x.\; g\;(g\; x).
+\end{align*}
+And $g\;(g\; x)$ applies $f$ three times to $x$, then three more
+times, for six total:
+\[
+  g\;(g\; x) = g\;(f\;(f\;(f\; x))) = f\;(f\;(f\;(f\;(f\;(f\; x))))).
+\]
+Pulling the outer $\lambda f.\; \lambda x.\;$ back on, we get
+\[
+  \text{mult}\;\mathbf{2}\;\mathbf{3}
+    \;\longrightarrow\; \lambda f.\;\lambda x.\; f\;(f\;(f\;(f\;(f\;(f\; x))))),
+\]
+which is exactly $\mathbf{6}$---apply $f$ six times to $x$.
+
+\emph{Why $m\;(n\; f)$ encodes multiplication.}  The term $n\; f$ is
+``apply $f$ $n$ times''---it is a new function, call it $g$, that
+applies $f$ exactly $n$ times.  Then $m\; g$ is ``apply $g$ $m$
+times''---which applies $f$ $n$ times, then another $n$ times, $m$
+rounds in total, for $m \cdot n$ applications of $f$.  The body
+$m\;(n\; f)$ is literally the identity ``iterate $(\text{iterate}_n
+f)$ $m$ times,'' which is iteration of $f$ $m \cdot n$ times.
+
+\medskip
+\textbf{Exercise~7.}
+\emph{Python to lambda.}  The Python code
+\begin{lstlisting}[language=Python]
+lambda x: lambda y: x + y
+\end{lstlisting}
+translates to the lambda term
+\[
+  \lambda x.\; \lambda y.\; x + y
+\]
+(treating $+$ as a primitive---it is not itself a pure lambda term).
+This is the curried addition function: it takes $x$, returns a
+function that takes $y$, and returns $x + y$.
+
+\emph{Lambda to Python.}  The term $\lambda f.\;\lambda g.\;\lambda
+x.\; f\;(g\; x)$ translates to
+\begin{lstlisting}[language=Python]
+lambda f: lambda g: lambda x: f(g(x))
+\end{lstlisting}
+
+This is \textbf{function composition} (usually written $f \circ g$
+in mathematics).  Given $f$ and $g$, it returns a new function that
+first applies $g$ to its input and then applies $f$ to the result.
+It is the same gadget as Exercise~4 of the Curry--Howard
+intermezzo---the computational content of transitivity of
+implication---expressed in pure lambda-calculus form.
 
 \end{document}

@@ -77,11 +77,56 @@ Now let's go back and count which modules contributed what to that proof.
 
 Every module contributed, and dropping any one of them would make the proof harder (or would force us to use a different approach). The moral is that the modules aren't independent silos: each one adds a layer of tooling that sits on top of the previous ones, and a real proof freely draws on all of them at once.
 
-\section*{A variant to chew on}
+\section*{A second worked problem: $30 \mid n^5 - n$}
 
-Here's a closely related claim you can try yourself: \emph{for every integer $n$, the quantity $n^5 - n$ is divisible by $30$.} (Note: $30 = 2 \cdot 3 \cdot 5$.) You'll need cases on $n \bmod 5$ and a similar coprime-combination step. Try it. If you can do it, you've earned the first half of the term.
+Since the first proof was the clean illustration of the method, let's do a variant that pushes each piece a little further. The same toolkit, applied to a case that needs a nontrivial algebraic identity at one step.
 
-A slightly harder variant: \emph{for every prime $p$ and every integer $n$, $p \mid n^p - n$.} This is Fermat's Little Theorem, and it generalizes both of the above. The standard proof uses induction (Module~8) plus the binomial theorem, so you'll want to revisit this once you've done Module~8.
+\begin{theorem}
+For every integer $n$, the quantity $n^5 - n$ is divisible by $30$.
+\end{theorem}
+
+Before starting, note $30 = 2 \cdot 3 \cdot 5$. These three primes are pairwise coprime, so by the same logic as Step~3 of the previous proof, it suffices to show that each of $2$, $3$, $5$ divides $n^5 - n$ separately.
+
+First, factor:
+\[
+  n^5 - n = n(n^4 - 1) = n(n^2 - 1)(n^2 + 1) = (n-1)\cdot n\cdot(n+1)\cdot(n^2 + 1).
+\]
+The first three factors are three consecutive integers---the same setup that did all of the work last time.
+
+\subsection*{Step 1: $2 \mid n^5 - n$}
+
+Among any three consecutive integers at least one is even, so $(n-1)\cdot n\cdot (n+1)$ is even, so the full product is even. Exactly as in Step~1 of the $n^3 - n$ proof.
+
+\subsection*{Step 2: $3 \mid n^5 - n$}
+
+Again by the same argument: among $n-1$, $n$, $n+1$ at least one is divisible by $3$, so the full product is divisible by $3$. Identical to Step~2 of the previous proof.
+
+\subsection*{Step 3: $5 \mid n^5 - n$}
+
+This is the new ingredient. Three consecutive integers can miss a multiple of $5$ entirely---consider $n = 7$, so $\{6, 7, 8\}$. So we can't get away with just the $(n-1)n(n+1)$ part; we have to bring the $n^2 + 1$ factor in. Proceed by cases on $n \bmod 5$, using the quotient--remainder theorem to guarantee the five cases are exhaustive.
+
+\medskip
+\emph{Case 1: $n \equiv 0 \pmod 5$.} Then $5 \mid n$, so $5$ divides the product.
+
+\emph{Case 2: $n \equiv 1 \pmod 5$.} Then $n - 1 \equiv 0 \pmod 5$, so $5 \mid (n-1)$, so $5$ divides the product.
+
+\emph{Case 3: $n \equiv 2 \pmod 5$.} Then $n^2 \equiv 4 \pmod 5$, so $n^2 + 1 \equiv 5 \equiv 0 \pmod 5$. So $5 \mid (n^2 + 1)$ and $5$ divides the product.
+
+\emph{Case 4: $n \equiv 3 \pmod 5$.} Then $n^2 \equiv 9 \equiv 4 \pmod 5$, so again $n^2 + 1 \equiv 0 \pmod 5$, and $5$ divides the product.
+
+\emph{Case 5: $n \equiv 4 \pmod 5$.} Then $n + 1 \equiv 0 \pmod 5$, so $5 \mid (n+1)$, so $5$ divides the product.
+
+The five cases are exhaustive and each concludes the divisibility, so $5 \mid n^5 - n$ for every integer $n$.
+
+\subsection*{Combining: $30 \mid n^5 - n$}
+
+We have $2 \mid n^5 - n$, $3 \mid n^5 - n$, and $5 \mid n^5 - n$. The three primes $2, 3, 5$ are pairwise coprime, so the same B\'ezout-style argument as before lets us combine them one at a time: $2 \cdot 3 = 6$ divides the quantity, then $6$ and $5$ are coprime so $6 \cdot 5 = 30$ divides it. Hence $30 \mid n^5 - n$ for every integer $n$. \hfill$\square$
+
+\medskip
+\noindent\textbf{What was different this time.} Steps~1 and~2 came for free---they were literally the same arguments as in the first proof, because three consecutive integers always contain a multiple of~$2$ and a multiple of~$3$. The real work was in Step~3, where the three-consecutive-integers trick \emph{doesn't} cover every residue class mod~$5$ and we had to bring in an extra algebraic factor, $n^2 + 1$, to mop up the two missing cases. The pattern to notice is that proofs like these grow by cases-needing-another-factor: each prime you want to handle may or may not be covered by the factors you already have, and when it isn't, you reach for another factor of the polynomial.
+
+\medskip
+\noindent\textbf{A harder variant.} \emph{For every prime $p$ and every integer $n$, $p \mid n^p - n$.} This is Fermat's Little Theorem, and it generalizes both $n^3 - n$ divisible by $6 = 2 \cdot 3$ and $n^5 - n$ divisible by $30 = 2 \cdot 3 \cdot 5$. (Those are the $p = 3$ and $p = 5$ instances, combined with some leftover structure.) The standard proof uses induction (Module~8) plus the binomial theorem, and is worth revisiting once you've done Module~8---you'll see our two worked problems pop out as special cases.
 
 \section*{Where we're going}
 

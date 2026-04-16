@@ -73,6 +73,19 @@ Ex falso ($\bot$-elimination) & $\longleftrightarrow$ & Handling the empty type 
 
 The left column is everything we've been doing since Module 3. The right column is everything you've been doing since your first programming class. They were the same subject the whole time.
 
+\begin{center}
+\begin{tikzpicture}[node distance=3.2cm, >=Stealth]
+  \node (prop) {\textsf{Proposition}};
+  \node (type) [below left of=prop, node distance=3cm] {\textsf{Type}};
+  \node (prog) [below right of=prop, node distance=3cm] {\textsf{Program}};
+  \draw[<->, thick] (prop) -- node[above left] {\small Curry--Howard} (type);
+  \draw[<->, thick] (type) -- node[below] {\small ``inhabitant of''} (prog);
+  \draw[<->, thick] (prop) -- node[above right] {\small ``proof of''} (prog);
+\end{tikzpicture}
+\end{center}
+
+Read any side of this triangle as an equivalence: a proof of a proposition and an inhabitant of the corresponding type are literally the same object, and that object is a program.
+
 Let that sink in for a moment. Every time you wrote a function that takes a pair and returns one component, you were doing conjunction elimination. Every time you pattern-matched on a tagged union, you were doing proof by cases. Every time you defined a function, you were introducing an implication.
 
 \section{A worked example: the same proof, four ways}
@@ -170,7 +183,7 @@ Verify that \texttt{curry} and \texttt{uncurry} are inverses of each other. What
 \[
   (A \to B) \to ((B \to C) \to (A \to C))
 \]
-says that implication is transitive. Write a Python function \texttt{compose(f, g)} that takes \texttt{f : A -> B} and \texttt{g : B -> C} and returns a function from \texttt{A} to \texttt{C}. The proof of transitivity \emph{is} the definition of function composition. Trace which step of the logical proof corresponds to which line of code.
+says that implication is transitive. Write a Python function \texttt{compose(f, g)} that takes \texttt{f : A -> B} and \texttt{g : B -> C} and returns a function from \texttt{A} to \texttt{C}. The proof of transitivity \emph{is} the definition of function composition. Trace which step of the logical proof corresponds to which line of code. (Note the three faces of the same idea: function composition from Module~1, transitivity of implication from Module~3, and a proof of $(A \to B) \to ((B \to C) \to (A \to C))$ are a single gadget described from three different angles.)
 
 \bigskip
 \textbf{Exercise 5.}\label{ex:ch:5} (Vacuous truth and the empty type.) Under Curry--Howard, the type \texttt{Void} (the empty type) corresponds to the proposition $\bot$. The principle of \emph{ex falso quodlibet} says $\bot \to A$ for any $A$. Write a Python function (or pseudocode) of type \texttt{Void -> A} for any \texttt{A}. (Hint: there are no values of type \texttt{Void}, so the function never actually has to return anything---you can never call it with a real argument.) Why does the lack of values in \texttt{Void} make this trivially valid?

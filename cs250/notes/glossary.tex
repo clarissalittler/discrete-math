@@ -40,11 +40,19 @@ place. Entries are alphabetical.
 
 \textbf{Cartesian product.} $A \times B = \{(a, b) \mid a \in A, b \in B\}$, the set of ordered pairs. Generalizes to $A \times B \times C$, etc. Used to define functions and relations (both are subsets of a Cartesian product). See Module~1.
 
+\textbf{Category theory.} The mathematics of objects and structure-preserving arrows between them, with composition as the central operation. It is the general setting in which \emph{product}, \emph{sum}, \emph{functor}, and \emph{universal property} (see separate entries) live. Named in passing in the typealgebra intermezzo; formally developed in later coursework.
+
 \textbf{Characteristic equation.} The quadratic $r^2 = Ar + B$ obtained by substituting $a_n = r^n$ into a second-order linear homogeneous recurrence $a_k = A a_{k-1} + B a_{k-2}$. Its roots determine the closed form. See Module~9.
 
 \textbf{Chinese Remainder Theorem (CRT).} If $m$ and $n$ are coprime, then knowing $x \bmod m$ and $x \bmod n$ uniquely determines $x$ modulo $mn$. Generalizes to any finite set of pairwise-coprime moduli. See Module~6.
 
 \textbf{Closure.} A set $S$ is closed under an operation $*$ if applying $*$ to elements of $S$ produces another element of $S$. The group axioms implicitly require closure (the operation has type $G \to G \to G$). See Module~5.
+
+\textbf{Completeness (of a proof system).} For a proof system relative to a semantics: every semantically valid formula has a derivation. For propositional logic, every tautology has a natural-deduction proof. Partner to \emph{soundness}. See Module~3.
+
+\textbf{Composition (of functions).} Given $f : A \to B$ and $g : B \to C$, the composition $g \circ f : A \to C$ is defined by $(g \circ f)(a) = g(f(a))$. Associative, with the identity function as a two-sided unit. Introduced in Module~1 and used throughout the course, including the Curry--Howard intermezzo (as transitivity of implication) and Module~5 (the archetypal group is bijections under composition).
+
+\textbf{Conjunction ($\wedge$).} The logical connective ``and.'' $p \wedge q$ is true exactly when both $p$ and $q$ are true. Under the Curry--Howard correspondence, conjunction corresponds to the product type. See Module~2.
 
 \textbf{Conjunctive Normal Form (CNF).} A formula in propositional logic is in CNF when it is a conjunction of clauses, each of which is a disjunction of literals. Every formula has an equivalent CNF form. See Module~3. Contrast with \emph{disjunctive normal form}.
 
@@ -61,6 +69,8 @@ place. Entries are alphabetical.
 \section*{D}
 
 \textbf{De Morgan's laws.} $\lnot(p \wedge q) \equiv \lnot p \vee \lnot q$ and $\lnot(p \vee q) \equiv \lnot p \wedge \lnot q$. Generalized to quantifiers: $\lnot \forall x.\; P(x) \equiv \exists x.\; \lnot P(x)$ and $\lnot \exists x.\; P(x) \equiv \forall x.\; \lnot P(x)$. See Modules~2 and 4.
+
+\textbf{Disjunction ($\vee$).} The logical connective ``or'' (inclusive---true when at least one operand is true). Under the Curry--Howard correspondence, disjunction corresponds to the sum type. See Module~2.
 
 \textbf{Disjunctive Normal Form (DNF).} A formula in propositional logic is in DNF when it is a disjunction of terms, each of which is a conjunction of literals. Every truth table can be mechanically converted to a DNF formula (one disjunct per T row). See Module~3. Contrast with \emph{conjunctive normal form}.
 
@@ -92,6 +102,8 @@ place. Entries are alphabetical.
 
 \textbf{Finite field.} A field---a set with addition, subtraction, multiplication, and division (by nonzero elements)---with finitely many elements. $\mathbb{Z}/p\mathbb{Z}$ is a finite field iff $p$ is prime. See Module~6.
 
+\textbf{First-order logic.} The logic of \emph{predicate} formulas, extending propositional logic with the quantifiers $\forall$ and $\exists$. The workhorse logic for stating and proving most of ordinary mathematics. See Module~4.
+
 \textbf{Floor and ceiling.} $\lfloor x \rfloor$ is the greatest integer $\leq x$ (rounding down). $\lceil x \rceil$ is the least integer $\geq x$ (rounding up). For negative numbers, floor is \emph{not} the same as truncating toward zero. See Module~6.
 
 \textbf{Free variable.} A variable that is not bound by any quantifier in its scope. A formula with free variables doesn't have a definite truth value until you specify what those variables refer to. See Module~4.
@@ -99,6 +111,8 @@ place. Entries are alphabetical.
 \textbf{Function.} A total, single-valued assignment $f : A \to B$: every $a \in A$ has exactly one output $f(a) \in B$. Dropping totality gives a \emph{partial function}. See Module~1.
 
 \textbf{Functional completeness.} A set of boolean connectives is functionally complete if every boolean function can be expressed using only those connectives. $\{\wedge, \vee, \lnot\}$ is functionally complete; so is $\{\text{NAND}\}$; $\{\wedge, \vee\}$ alone is not (it only yields monotone functions). See Modules~2 and 3.
+
+\textbf{Functor.} A type constructor $F$ together with a \texttt{map} operation that, given $f : A \to B$, produces $F(f) : F(A) \to F(B)$, subject to the identity and composition laws. \texttt{List}, \texttt{Tree}, and \texttt{Maybe} are all functors. Named in the typealgebra intermezzo; developed fully in later coursework.
 
 \section*{G}
 
@@ -112,9 +126,13 @@ place. Entries are alphabetical.
 
 \textbf{Hoare triple.} A statement of the form $\{P\}\, c\, \{Q\}$ where $P$ (the \emph{precondition}) and $Q$ (the \emph{postcondition}) are logical formulas and $c$ is a program. See Module~7.
 
+\textbf{Homomorphism.} A structure-preserving map. For groups, a function $\varphi : G \to H$ is a homomorphism if $\varphi(a *_G b) = \varphi(a) *_H \varphi(b)$ for all $a, b \in G$; this forces $\varphi(e_G) = e_H$ and $\varphi(g^{-1}) = \varphi(g)^{-1}$. The notion of ``map'' once you're doing algebra. See Module~5.
+
 \section*{I}
 
 \textbf{Identity element.} In a group (or any structure with a binary operation), an element $e$ satisfying $e * g = g * e = g$ for every $g$. Unique if it exists. See Module~5.
+
+\textbf{Identity function.} The function $\mathrm{id}_A : A \to A$ defined by $\mathrm{id}_A(a) = a$. The two-sided unit for function composition. See Module~1.
 
 \textbf{Implication ($\to$).} The logical connective $p \to q$, true except when $p$ is true and $q$ is false. Often read ``if $p$ then $q$.'' The rows where $p$ is false give \emph{vacuous truth}. See Module~2.
 
@@ -140,15 +158,23 @@ place. Entries are alphabetical.
 
 \textbf{Irrational number.} A real number that is not rational (not expressible as $a/b$ for integers $a, b$). $\sqrt{2}$ is the classic example. See Module~7.
 
+\textbf{Isomorphism (of groups).} A bijective group homomorphism. Two groups are \emph{isomorphic}, $G \cong H$, when an isomorphism between them exists; isomorphic groups are interchangeable for every algebraic purpose. The right notion of sameness for groups. See Module~5.
+
 \section*{L}
+
+\textbf{Lambda calculus.} A minimal universal computation model built from just three things: variables, function abstraction ($\lambda x.\; e$), and application ($e_1\, e_2$). Everything programmable can be encoded as $\lambda$-terms. See the Lambda Calculus intermezzo.
 
 \textbf{Literal.} In a propositional formula, either a variable or its negation. The building blocks of CNF and DNF clauses. See Module~3.
 
-\textbf{Logical equivalence.} Two formulas are logically equivalent (written $\equiv$) if they have the same truth table---or equivalently, if the biconditional between them is a tautology. See Module~2.
+\textbf{Logical equivalence.} Two formulas are logically equivalent (written $\equiv$) if they have the same truth table---or equivalently, if the biconditional between them is a tautology. The right notion of sameness for propositional formulas. See Module~2.
 
 \textbf{Loop invariant.} In a Hoare-logic proof of a while loop, a proposition that holds every time control reaches the top of the loop. The invariant, combined with the negation of the loop guard, must imply the desired postcondition. See Module~7.
 
 \section*{M}
+
+\textbf{Metalanguage.} The language in which we make claims \emph{about} a formal system, as opposed to the \emph{object language} whose expressions the formal system generates. When we say ``the formula $p \wedge q \to p$ is a tautology,'' the formula is in the object language; the word ``tautology'' lives in the metalanguage. Keeping these layers distinct is a habit the course starts in Module~3.
+
+\textbf{Modal logic.} The logic of ``necessity'' ($\Box$) and ``possibility'' ($\Diamond$) over a structure of ``possible worlds.'' Temporal logic is the special case where the worlds are moments in time. See the temporal-logic intermezzo.
 
 \textbf{Modular arithmetic.} Arithmetic in $\mathbb{Z}/n\mathbb{Z}$, the integers modulo $n$. Addition, subtraction, and multiplication all work on residues mod $n$; division works too if $n$ is prime. See Module~6.
 
@@ -208,6 +234,8 @@ place. Entries are alphabetical.
 
 \textbf{Residue class.} The equivalence class of an integer under congruence mod $n$. The residue classes form the set $\mathbb{Z}/n\mathbb{Z}$. See Module~6 and the Equivalence intermezzo.
 
+\textbf{Rig.} A set with $+$ and $\cdot$ satisfying the usual arithmetic laws but \emph{without} requiring additive inverses: a ``ring without negation.'' Data types under sum and product form a rig (you can't subtract types). See the typealgebra intermezzo.
+
 \section*{S}
 
 \textbf{Sequence.} A function from $\mathbb{N}$ (or a subset) to some set. Can be defined explicitly or recursively. See Module~8.
@@ -215,6 +243,8 @@ place. Entries are alphabetical.
 \textbf{Set.} An unordered, duplicate-free collection of elements. The primary data structure of discrete math. See Module~1.
 
 \textbf{Set-builder notation.} The notation $\{x \mid x \in S, P(x)\}$ for ``the set of all $x$ in $S$ such that $P(x)$.'' See Module~1.
+
+\textbf{Soundness (of a proof system).} For a proof system relative to a semantics: every derivable formula is semantically valid. For propositional logic, every derivable formula is a tautology. Partner to \emph{completeness}. See Module~3.
 
 \textbf{Subset ($\subseteq$).} $A \subseteq B$ iff every element of $A$ is also an element of $B$. Equivalently, $\forall x.\; (x \in A \to x \in B)$. See Module~1.
 
@@ -225,6 +255,8 @@ place. Entries are alphabetical.
 \section*{T}
 
 \textbf{Tautology.} A formula that is true under every assignment of truth values. $p \vee \lnot p$ is the canonical example. See Module~2.
+
+\textbf{Temporal logic.} A modal logic whose ``worlds'' are moments in time; the modal operators become $\Box$ (``always''), $\Diamond$ (``eventually''), and $\bigcirc$ (``next''). The basis of model checking. See the temporal-logic intermezzo.
 
 \textbf{Transitive relation.} A relation $R$ on $A$ is transitive if $a \, R \, b$ and $b \, R \, c$ imply $a \, R \, c$, for all $a, b, c$. See Module~1.
 
@@ -239,6 +271,8 @@ place. Entries are alphabetical.
 \textbf{Universal quantifier ($\forall$).} $\forall x : A.\; P(x)$ is true iff every element of $A$ satisfies $P$. Its introduction rule requires generalizing over an arbitrary element. See Module~4.
 
 \textbf{Uncountable set.} A set that cannot be put into bijection with $\mathbb{N}$. The real numbers are uncountable, as proved by Cantor's diagonal argument. See the Cardinality intermezzo.
+
+\textbf{Universal property.} A way of specifying a mathematical object by describing the arrows into or out of it rather than its internal construction. $A \times B$ is pinned down by the fact that functions $X \to A \times B$ correspond to pairs of functions $X \to A$ and $X \to B$; $A + B$, $1$, $0$, and $A \to B$ each have analogous characterizations. See the typealgebra intermezzo.
 
 \section*{V}
 

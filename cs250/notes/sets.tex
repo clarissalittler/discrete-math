@@ -39,6 +39,8 @@ A function $f : A \to B$ is a \emph{bijection}\index{bijection} if it is both in
 
 A bijection is a perfect pairing---every element of $A$ matches exactly one element of $B$, and every element of $B$ matches exactly one element of $A$. When a bijection $f : A \to B$ exists, we say $A$ and $B$ have the same cardinality, written $|A| = |B|$.
 
+Two quick consequences of the definition that we'll use later. First, the identity function $\mathrm{id}_A : A \to A$ is a bijection (it's its own inverse). Second, if $f : A \to B$ and $g : B \to C$ are bijections, then so is their composition $g \circ f : A \to C$, with inverse $f^{-1} \circ g^{-1}$. (Check this by composing: $(f^{-1} \circ g^{-1}) \circ (g \circ f) = f^{-1} \circ (g^{-1} \circ g) \circ f = f^{-1} \circ f = \mathrm{id}_A$.) So bijections compose, and this means ``has the same cardinality as'' is a transitive relation: if $|A| = |B|$ and $|B| = |C|$, then $|A| = |C|$, with the witnessing bijection obtained by composition.
+
 \subsection*{A gallery of arrow diagrams}
 
 These definitions are easier to grasp with pictures. Think of $A$ as a set of dots on the left, $B$ as a set of dots on the right, and draw an arrow from each input $a \in A$ to its output $f(a) \in B$.

@@ -142,7 +142,7 @@ By the CRT, the solution is unique modulo $3 \cdot 5 \cdot 7 = 105$. So the full
 The general recipe for two coprime moduli $m, n$ is:
 \begin{enumerate}
   \item Use B\'ezout's identity to find integers $u, v$ with $um + vn = 1$.
-  \item Then $x = a \cdot vn + b \cdot um$ satisfies $x \equiv a \pmod m$ (because $vn \equiv 1 \pmod m$ by Bézout and $um \equiv 0 \pmod m$) and similarly $x \equiv b \pmod n$. \checkmark
+  \item Then $x = a \cdot vn + b \cdot um$ satisfies $x \equiv a \pmod m$ (because $vn \equiv 1 \pmod m$ by B\'ezout and $um \equiv 0 \pmod m$) and similarly $x \equiv b \pmod n$. \checkmark
 \end{enumerate}
 This recipe turns the search into a small amount of algebra, scaled up by however many moduli you're juggling.
 
@@ -191,7 +191,7 @@ So in both cases we get something of the form $2m + 1$, which is odd. Since ever
 \textbf{What we built this module.} We took integer arithmetic and discovered that it's wrapped around several group structures we already understood from Module 5---addition mod $n$ for any $n$, and multiplication mod $p$ for primes. The CRT gave us a first taste of ``modular reconstruction,'' which is the pattern behind fast big-integer arithmetic and RSA. Proof by cases became a concrete, practical technique rather than a formal rule.
 
 \medskip
-\textbf{Looking ahead.} Module 7 introduces the two indirect proof techniques---contradiction and contrapositive---plus the Euclidean algorithm (which computes multiplicative inverses in $\mathbb{Z}/p\mathbb{Z}$ via Bézout, closing the loop with what we did here) and Hoare logic for program correctness. Before you get there, the equivalence-relation intermezzo uses modular congruence as its central example, so it's a good partner to this module.
+\textbf{Looking ahead.} Module 7 introduces the two indirect proof techniques---contradiction and contrapositive---plus the Euclidean algorithm (which computes multiplicative inverses in $\mathbb{Z}/p\mathbb{Z}$ via B\'ezout, closing the loop with what we did here) and Hoare logic for program correctness. Before you get there, the equivalence-relation intermezzo uses modular congruence as its central example, so it's a good partner to this module.
 \end{summarybox}
 
 \section{Exercises}

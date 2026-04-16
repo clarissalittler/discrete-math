@@ -19,17 +19,17 @@
 Back in Module 3 we derived proof by contradiction as a tautology, starting from modus tollens and working through a bunch of substitution and simplification. That was important for understanding *why* the technique is valid, but now we need to get good at *using* it.
 
 \subsection{Proof by contradiction, in practice}\index{proof!by contradiction}
-Let's recall the shape of proof by contradiction. You want to prove some statement $P$. Instead of proving it directly, you assume $\sim P$---that is, you assume the \emph{negation} of what you want to prove---and then you show that this assumption leads to a contradiction. A contradiction is when you can derive both some statement $Q$ and its negation $\sim Q$ at the same time, which obviously can't happen. Since the assumption $\sim P$ led to nonsense, you conclude that $P$ must be true after all.
+Let's recall the shape of proof by contradiction. You want to prove some statement $P$. Instead of proving it directly, you assume $\lnot P$---that is, you assume the \emph{negation} of what you want to prove---and then you show that this assumption leads to a contradiction. A contradiction is when you can derive both some statement $Q$ and its negation $\lnot Q$ at the same time, which obviously can't happen. Since the assumption $\lnot P$ led to nonsense, you conclude that $P$ must be true after all.
 
 The template looks like this:
-\begin{lstlisting}
-Goal: prove P
-(1) Assume ~P
-(2) ... reasoning ...
-(3) Derive Q
-(4) Derive ~Q
-(5) Contradiction! Therefore P.
-\end{lstlisting}
+\begin{enumerate}
+  \item[\textbf{Goal:}] prove $P$.
+  \item Assume $\lnot P$.
+  \item $\ldots$ reasoning $\ldots$
+  \item Derive $Q$.
+  \item Derive $\lnot Q$.
+  \item Contradiction; therefore $P$.
+\end{enumerate}
 
 When should you reach for this technique? A good rule of thumb: if the statement you're trying to prove is a \emph{negative} statement (``there is no\ldots'', ``it is not the case that\ldots'', ``$x$ does not divide $y$'') then contradiction is often a natural fit. Why? Because assuming the negation of a negative statement gives you a \emph{positive} assumption, which tends to be easier to work with.
 
@@ -56,7 +56,7 @@ Therefore $\sqrt{2}$ is irrational.
 That's a really satisfying proof and one of the oldest in all of mathematics---it goes back to the ancient Greeks, who were apparently quite disturbed by the discovery.
 
 \subsection{Proof by contrapositive}\index{proof!by contrapositive}
-The other indirect technique is proof by \emph{contrapositive}. This one is specifically for proving implications. So say you want to prove ``if $P$ then $Q$'', written $P \to Q$. The contrapositive of this statement is $\sim Q \to \sim P$, and it turns out these are logically equivalent!
+The other indirect technique is proof by \emph{contrapositive}. This one is specifically for proving implications. So say you want to prove ``if $P$ then $Q$,'' written $P \to Q$. The contrapositive of this statement is $\lnot Q \to \lnot P$, and it turns out these are logically equivalent!
 
 We actually already verified this back in Module 3 when we showed that modus tollens is a tautology. But let's just check the equivalence directly with a quick truth table:
 
@@ -73,7 +73,7 @@ F & F & T & T \\
 \end{tabular}
 \end{center}
 
-Same column, so they're equivalent. This means that whenever you want to prove $P \to Q$, you're free to instead prove $\sim Q \to \sim P$. Sometimes this is way easier because flipping the direction and negating everything gives you better things to work with.
+Same column, so they're equivalent. This means that whenever you want to prove $P \to Q$, you're free to instead prove $\lnot Q \to \lnot P$. Sometimes this is way easier because flipping the direction and negating everything gives you better things to work with.
 
 Here's the classic example.
 
@@ -238,43 +238,57 @@ This is a deliberately stripped-down language---just enough to explain the basic
 Now here's our basic rules:
 
 \noindent\textbf{Skip:}
-\begin{lstlisting}
-{P}skip{P}
-\end{lstlisting}
-this rule tells us that skip changes nothing. If the proposition P was true before it's true after skip.
+\[
+  \begin{array}{rl}
+    \hline
+    \text{shows} & \{P\}\; \texttt{skip}\; \{P\}
+  \end{array}
+\]
+This rule tells us that \texttt{skip} changes nothing. If the proposition $P$ was true before, it's true after \texttt{skip}.
 
 \noindent\textbf{Sequencing:}
-\begin{lstlisting}
-assumes: {P}c1{Q}
-         {Q}c2{R}
-shows: {P}c1;c2{R}
-\end{lstlisting}
-this rule tells us that if c1 takes us from P to Q, and c2 takes us from Q to R, then we can glue them together with sequencing. This is just transitivity---\texttt{P -> Q} and \texttt{Q -> R} give us \texttt{P -> R}---but with the code steps wired in between.
+\[
+  \begin{array}{rl}
+    \text{assumes} & \{P\}\, c_1\, \{Q\} \\
+                   & \{Q\}\, c_2\, \{R\} \\
+    \hline
+    \text{shows} & \{P\}\, c_1;\, c_2\, \{R\}
+  \end{array}
+\]
+This rule tells us that if $c_1$ takes us from $P$ to $Q$, and $c_2$ takes us from $Q$ to $R$, then we can glue them together with sequencing. This is just transitivity---$P \to Q$ and $Q \to R$ give $P \to R$---but with the code steps wired in between.
 
 \noindent\textbf{Conditionals:}
-\begin{lstlisting}
-assumes: {P ^ B}c1{Q}
-         {P ^ ~B}c2{Q}
-shows: {P}if B then c1 else c2{Q}
-\end{lstlisting}
-
-This tells us that if Q is true after c1 runs when P and B are true \textbf{and} Q is true after c2 runs when P is true and B is false, then P implies Q when the conditional statement is run. The way to think of this is that if you take the ``true'' branch you're not just assuming P is true but you're also allowed to assume B is true \textbf{because you took the true branch}, and conversely for when you take the false branch.
+\[
+  \begin{array}{rl}
+    \text{assumes} & \{P \wedge B\}\, c_1\, \{Q\} \\
+                   & \{P \wedge \lnot B\}\, c_2\, \{Q\} \\
+    \hline
+    \text{shows} & \{P\}\; \texttt{if}\; B\; \texttt{then}\; c_1\; \texttt{else}\; c_2\; \{Q\}
+  \end{array}
+\]
+This tells us that if $Q$ is true after $c_1$ runs when $P$ and $B$ are true \textbf{and} $Q$ is true after $c_2$ runs when $P$ is true and $B$ is false, then $P$ implies $Q$ when the conditional statement is run. The way to think of this is that if you take the ``true'' branch you're not just assuming $P$ is true but you're also allowed to assume $B$ is true \textbf{because you took the true branch}, and conversely for when you take the false branch.
 
 \noindent\textbf{While:}
-\begin{lstlisting}
-assumes: {P ^ B}c{P}
-shows: {P}while B do c{P ^ ~B}
-\end{lstlisting}
+\[
+  \begin{array}{rl}
+    \text{assumes} & \{P \wedge B\}\, c\, \{P\} \\
+    \hline
+    \text{shows} & \{P\}\; \texttt{while}\; B\; \texttt{do}\; c\; \{P \wedge \lnot B\}
+  \end{array}
+\]
 The idea is to identify a \emph{loop invariant}\index{loop invariant}---a property preserved by each iteration of the loop body. You show that if the invariant and the loop condition both hold before the body executes, the invariant still holds afterward. When the loop terminates, you know the invariant holds \emph{and} the loop condition is false.
 
 The next one is definitely the weirdest, and one that we need to explain a bit.
 
 \noindent\textbf{Assignment:}\index{assignment rule}
-\begin{lstlisting}
-{P[x/e]}x := e{P}
-\end{lstlisting}
+\[
+  \begin{array}{rl}
+    \hline
+    \text{shows} & \{P[x/e]\}\; x := e\; \{P\}
+  \end{array}
+\]
 
-What this is saying is that \textbf{if} the proposition P is true after substituting the expression e for the variable x, then after assignment you can just conclude that P is true.
+What this is saying is that \textbf{if} the proposition $P$ is true after substituting the expression $e$ for the variable $x$, then after assignment you can just conclude that $P$ is true.
 
 Let's look at an example because I think it'll make more sense:
 
@@ -298,14 +312,16 @@ in other words, that if x is greater than zero incrementing it will keep it grea
 Thankfully, there's one last rule that's super useful that helps us glue all of these bits and pieces together:
 
 \noindent\textbf{Strengthening / Weakening:}\index{strengthening}\index{weakening}
-\begin{lstlisting}
-assumes: {P2}c{Q2}
-         P1 -> P2
-         Q2 -> Q1
-shows:
-{P1}c{Q1}
-\end{lstlisting}
-Read it carefully: if we know that \{P2\}c\{Q2\}, in other words that P2 implies Q2 \textbf{after} running the code c, and we know that P1 implies P2, and we know that Q2 implies Q1, we're allowed to glue all these facts together to make the new fact that P1 implies Q1 after c is run. Why? Because we can take the P1 and turn it into a P2, since P1 -> P2, and then we can take the resulting Q2 and turn it into a Q1 since Q2 -> Q1.
+\[
+  \begin{array}{rl}
+    \text{assumes} & \{P_2\}\, c\, \{Q_2\} \\
+                   & P_1 \to P_2 \\
+                   & Q_2 \to Q_1 \\
+    \hline
+    \text{shows} & \{P_1\}\, c\, \{Q_1\}
+  \end{array}
+\]
+Read it carefully: if we know that $\{P_2\}\, c\, \{Q_2\}$, in other words that $P_2$ implies $Q_2$ \textbf{after} running the code $c$, and we know that $P_1 \to P_2$, and we know that $Q_2 \to Q_1$, we're allowed to glue all these facts together to make the new fact that $P_1$ implies $Q_1$ after $c$ is run. Why? Because we can take the $P_1$ and turn it into a $P_2$, since $P_1 \to P_2$, and then we can take the resulting $Q_2$ and turn it into a $Q_1$ since $Q_2 \to Q_1$.
 
 Another way of thinking of it is that you can always make the pre-condition \emph{stronger} and the post-condition \emph{weaker}.
 
@@ -335,10 +351,7 @@ We'll work backwards from the postcondition, which is generally the right strate
 \medskip
 \noindent\textbf{Step 1: Apply the assignment rule to the second assignment.}
 
-We want to end up with $\{x = 3\}$ after executing \texttt{x := x - 1}. The assignment rule says:
-\begin{lstlisting}
-{P[x/e]} x := e {P}
-\end{lstlisting}
+We want to end up with $\{x = 3\}$ after executing \texttt{x := x - 1}. The assignment rule says $\{P[x/e]\}\, x := e\, \{P\}$.
 Here $P$ is $x = 3$ and $e$ is $x - 1$, so $P[x/(x-1)]$ means we substitute $x - 1$ for $x$ in $x = 3$, giving us $x - 1 = 3$. That produces:
 \begin{lstlisting}
 {x - 1 = 3} x := x - 1 {x = 3}            [assignment]
@@ -360,11 +373,14 @@ $P[x/(x-1)]$ gives us $x - 1 = 4$. So:
 \noindent\textbf{Step 3: Chain the two assignments together with sequencing.}
 
 The sequencing rule says:
-\begin{lstlisting}
-assumes: {P}c1{Q}
-         {Q}c2{R}
-shows: {P}c1;c2{R}
-\end{lstlisting}
+\[
+  \begin{array}{rl}
+    \text{assumes} & \{P\}\, c_1\, \{Q\} \\
+                   & \{Q\}\, c_2\, \{R\} \\
+    \hline
+    \text{shows} & \{P\}\, c_1;\, c_2\, \{R\}
+  \end{array}
+\]
 Our two results from Steps 1 and 2 fit this pattern exactly, with $P = (x - 1 = 4)$, $Q = (x = 4)$, $c_1$ being the first \texttt{x := x - 1}, $c_2$ being the second \texttt{x := x - 1}, and $R = (x = 3)$. But we need the postcondition of the first triple to match the precondition of the second triple. The postcondition of Step 2 is $x = 4$ and the precondition of Step 1 is $x - 1 = 3$, which is the same thing (since $x - 1 = 3$ iff $x = 4$). So sequencing gives us:
 
 \begin{lstlisting}
@@ -375,12 +391,15 @@ Our two results from Steps 1 and 2 fit this pattern exactly, with $P = (x - 1 = 
 \noindent\textbf{Step 4: Use strengthening to connect to the stated precondition.}
 
 We're almost done, but notice the precondition we derived is $x - 1 = 4$ (i.e.\ $x = 5$), and the precondition we \emph{want} is $x = 5$. These are logically equivalent, so in particular $x = 5 \to x - 1 = 4$. We can use the strengthening/weakening rule:
-\begin{lstlisting}
-assumes: {P2}c{Q2}
-         P1 -> P2
-         Q2 -> Q1
-shows: {P1}c{Q1}
-\end{lstlisting}
+\[
+  \begin{array}{rl}
+    \text{assumes} & \{P_2\}\, c\, \{Q_2\} \\
+                   & P_1 \to P_2 \\
+                   & Q_2 \to Q_1 \\
+    \hline
+    \text{shows} & \{P_1\}\, c\, \{Q_1\}
+  \end{array}
+\]
 with $P_1 = (x = 5)$, $P_2 = (x - 1 = 4)$, $Q_1 = Q_2 = (x = 3)$, and $c$ being the full program. The implication $x = 5 \to x - 1 = 4$ holds by basic arithmetic, and $x = 3 \to x = 3$ is trivially true. So we conclude:
 
 \begin{lstlisting}
@@ -509,8 +528,8 @@ That was a lot, and it's meant as an introduction to how you might prove propert
 \section{Summary and looking ahead}
 
 \begin{keytakeaway}
-  \item \emph{Proof by contradiction}: assume $\lnot P$, derive $\bot$, conclude $P$. Good for proving negative statements (``there is no $\ldots$,'' ``$\sqrt{2}$ is not rational'').
-  \item \emph{Proof by contrapositive}: to prove $P \to Q$, prove $\lnot Q \to \lnot P$ instead. Usually cleaner than contradiction when the goal is an implication.
+  \item A \emph{proof by contradiction} assumes $\lnot P$, derives $\bot$, and concludes $P$. Good for proving negative statements (``there is no $\ldots$,'' ``$\sqrt{2}$ is not rational'').
+  \item A \emph{proof by contrapositive} shows $\lnot Q \to \lnot P$ in place of $P \to Q$. Usually cleaner than contradiction when the goal is an implication.
   \item The \emph{Euclidean algorithm} computes $\gcd(a, b)$ by repeatedly replacing $(a, b)$ with $(b, a \bmod b)$. The \emph{extended} version computes integers $x, y$ with $ax + by = \gcd(a, b)$; this is how you compute multiplicative inverses mod a prime.
   \item \emph{Hoare logic} reasons about imperative programs via triples $\{P\}\, c\, \{Q\}$: if $P$ holds before $c$ runs, then $Q$ holds after. Each language construct has its own proof rule, and the assignment rule is applied \emph{backward} (substitute in the postcondition).
   \item A \emph{loop invariant} is the induction hypothesis for a while loop. It must hold on entry (establishment), be preserved by the body (preservation), and imply the postcondition on exit (termination).

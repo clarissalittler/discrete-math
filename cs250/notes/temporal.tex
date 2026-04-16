@@ -123,6 +123,29 @@ And there are proof rules for temporal logic, just as there are for propositiona
 
 Same methodology. Same pattern. New domain. The toolkit from Modules 2--3 transfers directly---you just need to learn the new operators and their semantics. If you can read a BNF, define a semantics, and apply inference rules, you can learn any logic.
 
+\section{Duality everywhere}
+
+The relationship $\Diamond p \equiv \lnot \Box \lnot p$ that we wrote down in passing is not an isolated curiosity. Every logic you have met in this course is secretly running on the same symmetry. Line them up:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Context} & \textbf{Pair 1} & \textbf{Pair 2 (its dual)} \\
+\midrule
+Propositional logic (Module~2) & $p \wedge q$ & $p \vee q$ \\
+\qquad via De~Morgan & $\lnot(p \wedge q)$ & $\lnot p \vee \lnot q$ \\
+First-order logic (Module~4) & $\forall x.\, P(x)$ & $\exists x.\, P(x)$ \\
+\qquad via quantifier negation & $\lnot \forall x.\, P(x)$ & $\exists x.\, \lnot P(x)$ \\
+Games for quantifiers (intermezzo) & Proponent's $\forall$-move & Opponent's $\exists$-move \\
+Algebra of types (intermezzo) & product $A \times B$ & sum $A + B$ \\
+Types, universally (intermezzo) & arrows \emph{into} $A \times B$ & arrows \emph{out of} $A + B$ \\
+Temporal logic (this chapter) & $\Box \varphi$ & $\Diamond \varphi$ \\
+\qquad via the semantics & $\lnot \Box \varphi$ & $\Diamond \lnot \varphi$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Each row is an instance of the same move: you take a ``for-all-like'' operator and a ``there-exists-like'' operator, and pushing negation past one of them flips it into the other. This is not a coincidence of notation; it is a single structural phenomenon appearing in many costumes. Category theory has a precise name for what is happening---these pairs are \emph{adjoint}---and once you see one such pair, the others snap into place as the same thing viewed through different lenses. You don't need to know that name yet; what matters is noticing the pattern, because it is the kind of thing that tells you there is something deeper waiting.
+
 \section{Exercises}
 
 \bigskip

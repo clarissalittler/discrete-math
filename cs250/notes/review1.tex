@@ -52,41 +52,42 @@ The same result, established syntactically using the introduction and eliminatio
 
 \subsection*{Direction 1: $(p \to q) \wedge (p \to r) \;\to\; p \to (q \wedge r)$}
 
-\begin{lstlisting}
-Assume: (p -> q) ^ (p -> r)
-
-(1) (p -> q) ^ (p -> r)     by assumption
-(2) p -> q                  by ^-elimination on (1)
-(3) p -> r                  by ^-elimination on (1)
-(4) subproof:
-      (4a) p                by assumption
-      (4b) q                by modus ponens on (4a), (2)
-      (4c) r                by modus ponens on (4a), (3)
-      (4d) q ^ r            by ^-introduction on (4b), (4c)
-    shows q ^ r
-(5) p -> (q ^ r)            by ->-introduction on subproof (4)
-\end{lstlisting}
+\noindent Assume $(p \to q) \wedge (p \to r)$.
+\begin{enumerate}
+  \item $(p \to q) \wedge (p \to r)$ \hfill (assumption)
+  \item $p \to q$ \hfill ($\wedge$-elimination on (1))
+  \item $p \to r$ \hfill ($\wedge$-elimination on (1))
+  \item Subproof: assuming $p$, show $q \wedge r$:
+    \begin{enumerate}[label=(4\alph*)]
+      \item $p$ \hfill (assumption)
+      \item $q$ \hfill (modus ponens on (4a), (2))
+      \item $r$ \hfill (modus ponens on (4a), (3))
+      \item $q \wedge r$ \hfill ($\wedge$-introduction on (4b), (4c))
+    \end{enumerate}
+  \item $p \to (q \wedge r)$ \hfill ($\to$-introduction on subproof (4))
+\end{enumerate}
 
 \subsection*{Direction 2: $p \to (q \wedge r) \;\to\; (p \to q) \wedge (p \to r)$}
 
-\begin{lstlisting}
-Assume: p -> (q ^ r)
-
-(1) p -> (q ^ r)            by assumption
-(2) subproof:
-      (2a) p                by assumption
-      (2b) q ^ r            by modus ponens on (2a), (1)
-      (2c) q                by ^-elimination on (2b)
-    shows q
-(3) p -> q                  by ->-introduction on subproof (2)
-(4) subproof:
-      (4a) p                by assumption
-      (4b) q ^ r            by modus ponens on (4a), (1)
-      (4c) r                by ^-elimination on (4b)
-    shows r
-(5) p -> r                  by ->-introduction on subproof (4)
-(6) (p -> q) ^ (p -> r)     by ^-introduction on (3), (5)
-\end{lstlisting}
+\noindent Assume $p \to (q \wedge r)$.
+\begin{enumerate}
+  \item $p \to (q \wedge r)$ \hfill (assumption)
+  \item Subproof: assuming $p$, show $q$:
+    \begin{enumerate}[label=(2\alph*)]
+      \item $p$ \hfill (assumption)
+      \item $q \wedge r$ \hfill (modus ponens on (2a), (1))
+      \item $q$ \hfill ($\wedge$-elimination on (2b))
+    \end{enumerate}
+  \item $p \to q$ \hfill ($\to$-introduction on subproof (2))
+  \item Subproof: assuming $p$, show $r$:
+    \begin{enumerate}[label=(4\alph*)]
+      \item $p$ \hfill (assumption)
+      \item $q \wedge r$ \hfill (modus ponens on (4a), (1))
+      \item $r$ \hfill ($\wedge$-elimination on (4b))
+    \end{enumerate}
+  \item $p \to r$ \hfill ($\to$-introduction on subproof (4))
+  \item $(p \to q) \wedge (p \to r)$ \hfill ($\wedge$-introduction on (3), (5))
+\end{enumerate}
 
 Since both directions are derivable, the formulas are equivalent in the proof system. \hfill$\square$
 

@@ -206,7 +206,11 @@ Since propositional logic is a really simple logic, one that only has booleans a
 
 Maybe that doesn't seem profound, but this is called ``the law of the excluded middle'' and is actually pretty controversial in the history of logic! In \emph{this} propositional logic and \emph{this} notion of ``truth'', however, we can always conclude that if something isn't false it must be true.
 
-Why controversial? There's a tradition in logic---called \emph{constructive} or \emph{intuitionistic} logic---that refuses to accept $p \vee \lnot p$ as an axiom. The idea is that to prove ``$A$ or $B$'' you should have to actually show \emph{which one} is true, not just argue that one of them must be. If you think about it from a programming perspective, this makes a lot of sense: a constructive proof of ``$A$ or $B$'' is like a program that actually \emph{computes} which case holds and hands you the evidence. Classical logic, the kind we're using, lets you say ``well, one of them \emph{has} to be true'' without ever telling you which---you get an existence result but not an algorithm. That connection between proofs and programs turns out to be really deep and beautiful, and it's one of the reasons logic matters so much to computer science. In this course we'll stick with classical logic (with excluded middle) because that's what Epp uses and what most intro courses assume, but fair warning: your instructor has a constructive bias, and it will probably peek through from time to time.
+Why controversial? There's a tradition in logic---called \emph{constructive} or \emph{intuitionistic} logic---that refuses to accept $p \vee \lnot p$ as an axiom. The idea is that to prove ``$A$ or $B$'' you should have to actually show \emph{which one} is true, not just argue that one of them must be.
+
+From a programming perspective this makes a lot of sense: a constructive proof of ``$A$ or $B$'' is like a program that actually \emph{computes} which case holds and hands you the evidence. Classical logic, the kind we're using, lets you say ``well, one of them \emph{has} to be true'' without ever telling you which---you get an existence result but not an algorithm. The connection between proofs and programs turns out to be deep and beautiful, and it's one of the reasons logic matters so much to computer science.
+
+In this course we'll stick with classical logic (with excluded middle) because that's what Epp uses and what most intro courses assume. Fair warning: your instructor has a constructive bias, and it will probably peek through from time to time.
 
 We'll come back to tautologies a bit later when we want to talk about reasoning and proof a little more explicitly, but for now just keep in mind the idea that they provide templates for what valid reasoning looks like.
 
@@ -216,7 +220,7 @@ Another thing we can do with truth tables is calculate \emph{equivalences}---we 
 Two formulas are \emph{logically equivalent}\index{logical equivalence} exactly when they have the same truth table.
 \end{definition}
 
-Since we're defining the meaning of a formula \textbf{as its truth table}, this is a natural notion of equivalence.
+Since we're defining the meaning of a formula \textbf{as its truth table}, this is a natural notion of equivalence. Put differently: logical equivalence is the right notion of sameness for propositional formulas. Two formulas with the same truth table may look wildly different on paper---$(p \to q)$ and $(\lnot p \vee q)$ are the canonical example---but nothing we can say \emph{about} them inside propositional logic can tell them apart. This is a recurring pattern: each kind of mathematical object comes with its own notion of ``the same,'' chosen so that it abstracts away the differences that don't matter. The intermezzo after Module~6 is the essay on that pattern.
 
 We can also express equivalence \emph{inside} the logic by defining a shorthand: $p \leftrightarrow q$ means $(p \to q) \wedge (q \to p)$. This is called the \emph{biconditional}\index{biconditional@$\leftrightarrow$ (biconditional)} and reads ``if and only if.'' It is \textbf{not} a primitive connective in our grammar---it's just an abbreviation for a conjunction of two implications. You can compute its truth table by expanding the definition:
 
