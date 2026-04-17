@@ -9,11 +9,15 @@
 \begin{document}
 \maketitle
 
-\begin{center}
-\fbox{\begin{minipage}{0.92\textwidth}
-\textbf{Reading map.} This module covers \textbf{Epp §2.1--2.2}: logical form and logical equivalence. \textbf{Prerequisites:} Module 1 (sets, functions, truth as a boolean-valued assignment). \textbf{Relevant intermezzi:} the Gentzen/inference-tree intermezzo (optional, useful preview for Module 3). \textbf{Practice from Epp:} §2.1 exercises on building truth tables and classifying formulas as tautology / contradiction / contingent; §2.2 exercises on logical equivalences and De Morgan's laws.
-\end{minipage}}
-\end{center}
+\begin{readingmap}
+\rmentry{Epp sections.}{§2.1--2.2: logical form and logical equivalence.}
+
+\rmentry{Prerequisites.}{Module 1 (sets, functions, truth as a boolean-valued assignment).}
+
+\rmentry{Relevant intermezzi.}{The Gentzen/inference-tree intermezzo (optional, useful preview for Module 3).}
+
+\rmentry{Practice from Epp.}{§2.1 exercises on building truth tables and classifying formulas as tautology / contradiction / contingent; §2.2 exercises on logical equivalences and De Morgan's laws.}
+\end{readingmap}
 
 \section{Logical formulas, formalized}
 With all our mathematical preliminaries out of the way, we're ready to start dealing with logic more formally. Early attempts at talking about logic were focused on rhetoric and how to make arguments in human language. They were still about reasoning but didn't treat it in the \emph{symbolic} way we do in modern times, where we turn logic into formulas and equations and symbols.
@@ -134,7 +138,7 @@ F & T \\
 
 Now we get to the counterintuitive one: implication. The intuition is that we want $p \to q$ to be true if p being true makes q be true---in other words, I can take the knowledge that p is true and then conclude that q is true.
 
-(Sidenote: there's a sense, that we might get into later in this course, that implication really is a function that takes in a proof that p is true and turns it \emph{into} a proof that q is true. Keep that idea in mind.)
+(Sidenote: there's a sense, which we might get into later in this course, in which implication really is a function that takes in a proof that p is true and turns it \emph{into} a proof that q is true. Keep that idea in mind.)
 
 \emph{Do I care} if q is true without p being true? In our first choice of logic, the answer is ``no''. We're going to make the decision that $F \to p$ is true no matter what p is, because the case where the premise is false is irrelevant to what we want implication to capture. This has some odd implications! From a false premise you can conclude anything. We'll dig into that more as we go.
 

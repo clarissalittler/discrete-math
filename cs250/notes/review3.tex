@@ -57,7 +57,7 @@ where each $C_i$ is a conjunction of literals. Then $\lnot g \equiv \lnot g'$, a
 \[
   \lnot (C_1 \vee \cdots \vee C_k) \equiv \lnot C_1 \wedge \lnot C_2 \wedge \cdots \wedge \lnot C_k.
 \]
-Each $\lnot C_i$ is a disjunction of literals (by another application of De Morgan, pushing the $\lnot$ inside each conjunction and flipping each literal). So we have transformed $\lnot g$ into a \emph{conjunctive} normal form (CNF) formula. To convert CNF to DNF, we \emph{distribute}: $A \wedge (B \vee C) \equiv (A \wedge B) \vee (A \wedge C)$, and iterating gives us
+Each $\lnot C_i$ is a disjunction of literals (by another application of De Morgan, pushing the $\lnot$ inside each conjunction and flipping each literal---see the De Morgan box in Module~2). So we have transformed $\lnot g$ into a \emph{conjunctive} normal form (CNF) formula. To convert CNF to DNF, we use the $\wedge$-over-$\vee$ distributivity law $A \wedge (B \vee C) \equiv (A \wedge B) \vee (A \wedge C)$ (verify by truth table if you haven't before---it's one of the basic propositional equivalences), and iterating gives us
 \[
   (D_{1,1} \vee D_{1,2}) \wedge \cdots \wedge (D_{k,1} \vee \cdots) \;\equiv\; \bigvee_{(\text{choices})} (\text{AND of one } D_{i,?} \text{ per clause}),
 \]

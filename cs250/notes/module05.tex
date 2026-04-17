@@ -9,11 +9,15 @@
 \begin{document}
 \maketitle
 
-\begin{center}
-\fbox{\begin{minipage}{0.92\textwidth}
-\textbf{Reading map.} This module covers \textbf{Epp §4.1--4.3} (§4.1--4.4 in the 5th edition): direct proof, proof by counterexample, proofs involving rational numbers and divisibility, and existence proofs. \textbf{Prerequisites:} Modules 1--4 (especially the $\forall$ and $\exists$ proof rules from Module 4). \textbf{Relevant intermezzi:} ``What Does It Mean for Things to Be `The Same'?'' (equivalence relations; read after Module 6) ties into the group-theory section here. \textbf{Practice from Epp:} §4.1 exercises on direct proofs about even/odd and divisibility; §4.2 exercises on rational-number proofs; §4.3 exercises on divisibility; and any `disprove with counterexample' problems from those sections.
-\end{minipage}}
-\end{center}
+\begin{readingmap}
+\rmentry{Epp sections.}{§4.1--4.3 (§4.1--4.4 in the 5th edition): direct proof, proof by counterexample, proofs involving rational numbers and divisibility, and existence proofs.}
+
+\rmentry{Prerequisites.}{Modules 1--4 (especially the $\forall$ and $\exists$ proof rules from Module 4).}
+
+\rmentry{Relevant intermezzi.}{``What Does It Mean for Things to Be `The Same'?'' (equivalence relations; read after Module 6) ties into the group-theory section here.}
+
+\rmentry{Practice from Epp.}{§4.1 exercises on direct proofs about even/odd and divisibility; §4.2 exercises on rational-number proofs; §4.3 exercises on divisibility; and any `disprove with counterexample' problems from those sections.}
+\end{readingmap}
 
 This module is, in a sense, a breather. We're not introducing new concepts here --- instead we're getting practice with informal proofs after several modules of formal logic.
 
@@ -282,7 +286,7 @@ A few cautions:
 \begin{itemize}
   \item Exhaustion only works on \emph{finite} domains (or at most finitely many distinguishable cases, when the domain is infinite but the cases cover it). If the claim is universal over $\mathbb{Z}$, exhaustion is not available to you.
   \item You have to genuinely cover \emph{every} case. If you list 15 of the 16 binary operators and say ``similar argument for the last one,'' you haven't completed the proof.
-  \item The conclusion only applies to the cases you listed. My ``corrected claim'' above is specifically about $\{4, 6, 8, 10\}$, not about all even integers. (The unrestricted claim ``every even integer $\geq 4$ is a sum of two primes'' is the famous \emph{Goldbach conjecture}, which is still open as of 2026. Exhaustion on a finite sub-case is not the same as a proof for infinitely many cases, which is a whole other tool---induction---that we'll come back to in Modules 8--10.)
+  \item The conclusion only applies to the cases you listed. My claim above is specifically about $\{4, 6, 8, 10, 12\}$, not about all even integers. (The unrestricted claim ``every even integer $\geq 4$ is a sum of two primes'' is the famous \emph{Goldbach conjecture}, which is still open as of 2026. Exhaustion on a finite sub-case is not the same as a proof for infinitely many cases, which is a whole other tool---induction---that we'll come back to in Modules 8--10.)
 \end{itemize}
 
 \section{Common mistakes}
@@ -370,7 +374,7 @@ What proof-technique error does this commit?
 \begin{enumerate}[label=(\alph*)]
   \item Show that the identity function $\mathrm{id}_G : G \to G$ is a homomorphism from $G$ to itself.
   \item Show that the composition $\psi \circ \varphi : G \to K$ is a homomorphism.
-  \item Conclude (informally, no proof required) that if $G \cong H$ and $H \cong K$ then $G \cong K$, so ``being isomorphic'' is a transitive relation on groups.
+  \item Conclude (informally, no proof required) that if $G \cong H$ and $H \cong K$ then $G \cong K$, so ``being isomorphic'' is a transitive relation on groups. You'll need two facts that this module doesn't prove: that the composition of two bijections is a bijection (we do set this up in the ``Cardinality'' intermezzo---see the composition lemma there), and that the inverse of a bijective homomorphism is itself a homomorphism (take this on faith for now---it's a short computation using the fact that $\varphi$ is bijective and a homomorphism).
 \end{enumerate}
 
 \bigskip

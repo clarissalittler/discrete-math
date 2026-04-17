@@ -9,11 +9,15 @@
 \begin{document}
 \maketitle
 
-\begin{center}
-\fbox{\begin{minipage}{0.92\textwidth}
-\textbf{Reading map.} This module covers \textbf{Epp §4.6--4.8} (§4.7, 4.8, and 4.10 in the 5th edition): indirect proof (contradiction and contrapositive), the Euclidean algorithm, and an introduction to programming logic (Hoare logic). \textbf{Prerequisites:} Modules 3 (proof systems), 5 (direct proof), and 6 (modular arithmetic---the extended Euclidean algorithm is how we justify that multiplicative inverses mod $p$ exist). \textbf{Relevant intermezzi:} ``Proofs Are Programs'' (Curry--Howard; read after this module)---the connection between Hoare logic and the Curry--Howard view of proofs is worth seeing twice. \textbf{Practice from Epp:} §4.6 exercises on contradiction proofs (irrationality of $\sqrt{2}$ and friends); §4.7 exercises on contrapositive; any exercises involving the Euclidean algorithm. Epp's §4.10 on program correctness is less comprehensive than the Hoare-logic treatment here, but is worth skimming for additional examples.
-\end{minipage}}
-\end{center}
+\begin{readingmap}
+\rmentry{Epp sections.}{§4.6--4.8 (§4.7, 4.8, and 4.10 in the 5th edition): indirect proof (contradiction and contrapositive), the Euclidean algorithm, and an introduction to programming logic (Hoare logic).}
+
+\rmentry{Prerequisites.}{Modules 3 (proof systems), 5 (direct proof), and 6 (modular arithmetic---the extended Euclidean algorithm is how we justify that multiplicative inverses mod $p$ exist).}
+
+\rmentry{Relevant intermezzi.}{``Proofs Are Programs'' (Curry--Howard; read after this module)---the connection between Hoare logic and the Curry--Howard view of proofs is worth seeing twice.}
+
+\rmentry{Practice from Epp.}{§4.6 exercises on contradiction proofs (irrationality of $\sqrt{2}$ and friends); §4.7 exercises on contrapositive; any exercises involving the Euclidean algorithm. Epp's §4.10 on program correctness is less comprehensive than the Hoare-logic treatment here, but is worth skimming for additional examples.}
+\end{readingmap}
 
 \section{More on proofs by contradiction and proofs by contrapositive}
 Back in Module 3 we derived proof by contradiction as a tautology, starting from modus tollens and working through a bunch of substitution and simplification. That was important for understanding *why* the technique is valid, but now we need to get good at *using* it.
@@ -346,10 +350,10 @@ Now that we have all the rules on the table, let's do a complete worked example 
 
 In other words: if $x$ starts at 5 and we subtract 1 twice, then $x$ ends up at 3. Not exactly a shock, but the point is to see how the formal machinery works end to end.
 
-We'll work backwards from the postcondition, which is generally the right strategy when the assignment rule is involved. The assignment rule tells us what the precondition \emph{must} be for a given assignment and postcondition, so starting at the end and peeling off one assignment at a time is the natural approach.
+We'll work backwards from the postcondition, which is generally the right strategy when the assignment rule is involved. The assignment rule tells us what the precondition \emph{must} be for a given assignment and postcondition, so starting at the end and peeling off one assignment at a time is the natural approach. To keep things straight we'll label our two intermediate triples by \emph{program order}---Step A for the first assignment and Step B for the second assignment---even though we'll actually \emph{derive} Step B first and then Step A. That way, when we chain them together in the sequencing step, ``Step A'' and ``Step B'' line up with the left-to-right order of the program.
 
 \medskip
-\noindent\textbf{Step 1: Apply the assignment rule to the second assignment.}
+\noindent\textbf{Step B (derived first): Apply the assignment rule to the second assignment.}
 
 We want to end up with $\{x = 3\}$ after executing \texttt{x := x - 1}. The assignment rule says $\{P[x/e]\}\, x := e\, \{P\}$.
 Here $P$ is $x = 3$ and $e$ is $x - 1$, so $P[x/(x-1)]$ means we substitute $x - 1$ for $x$ in $x = 3$, giving us $x - 1 = 3$. That produces:
@@ -357,12 +361,12 @@ Here $P$ is $x = 3$ and $e$ is $x - 1$, so $P[x/(x-1)]$ means we substitute $x -
 {x - 1 = 3} x := x - 1 {x = 3}            [assignment]
 \end{lstlisting}
 
-So after the first assignment runs, we need $x - 1 = 3$ (equivalently, $x = 4$) to hold.
+So before the second assignment runs, we need $x - 1 = 3$ (equivalently, $x = 4$) to hold.
 
 \medskip
-\noindent\textbf{Step 2: Apply the assignment rule to the first assignment.}
+\noindent\textbf{Step A (derived second): Apply the assignment rule to the first assignment.}
 
-Now we need $\{x = 4\}$ to hold after the first \texttt{x := x - 1}. Note that $x - 1 = 3$ and $x = 4$ are logically equivalent, so we can use either form; let's use $x = 4$ since it's a bit cleaner. Applying the assignment rule again with $P$ being $x = 4$ and $e$ being $x - 1$:
+Now we need $\{x = 4\}$ to hold after the first \texttt{x := x - 1} (so that Step B has what it needs). $x - 1 = 3$ and $x = 4$ are logically equivalent, so we can use either form; let's use $x = 4$ since it's a bit cleaner. Applying the assignment rule again with $P$ being $x = 4$ and $e$ being $x - 1$:
 
 $P[x/(x-1)]$ gives us $x - 1 = 4$. So:
 \begin{lstlisting}
@@ -381,7 +385,7 @@ The sequencing rule says:
     \text{shows} & \{P\}\, c_1;\, c_2\, \{R\}
   \end{array}
 \]
-Our two results from Steps 1 and 2 fit this pattern exactly, with $P = (x - 1 = 4)$, $Q = (x = 4)$, $c_1$ being the first \texttt{x := x - 1}, $c_2$ being the second \texttt{x := x - 1}, and $R = (x = 3)$. But we need the postcondition of the first triple to match the precondition of the second triple. The postcondition of Step 2 is $x = 4$ and the precondition of Step 1 is $x - 1 = 3$, which is the same thing (since $x - 1 = 3$ iff $x = 4$). So sequencing gives us:
+Our two triples from Steps A and B fit this pattern exactly, with $P = (x - 1 = 4)$, $Q = (x = 4)$, $c_1$ being the first \texttt{x := x - 1}, $c_2$ being the second \texttt{x := x - 1}, and $R = (x = 3)$. But we need the postcondition of Step A to match the precondition of Step B. The postcondition of Step A is $x = 4$ and the precondition of Step B is $x - 1 = 3$, which is the same thing (since $x - 1 = 3$ iff $x = 4$). So sequencing gives us:
 
 \begin{lstlisting}
 {x - 1 = 4} x := x - 1; x := x - 1 {x = 3}     [sequencing]
@@ -573,7 +577,7 @@ Organized into \textbf{warm-up} (mechanical practice), \textbf{standard} (indire
 
 ``Assume for contradiction that $\sqrt{4}$ is rational. Then $\sqrt{4} = a/b$ in lowest terms. Squaring: $4 = a^2/b^2$, so $a^2 = 4b^2$. This means $a^2$ is even, so $a$ is even. Write $a = 2c$. Then $4c^2 = 4b^2$, so $c^2 = b^2$, so $c = b$. But then $a = 2b$ and the fraction $a/b = 2$, so $\sqrt{4} = 2$. Contradiction!''
 
-Where exactly does the reasoning go wrong?
+Where exactly does the reasoning go wrong? (Hint: the claim being ``disproved'' is that $\sqrt{4}$ is irrational---which is false, since $\sqrt{4} = 2$ is rational. So any apparent proof that $\sqrt{4}$ is irrational \emph{must} contain a bad inference somewhere. Your job is to locate the exact step where the writer calls something a contradiction that actually isn't one. Don't pattern-match on the $\sqrt{2}$ proof---read line by line.)
 
 \bigskip
 \textbf{Exercise 7.}\label{ex:m7:7} Prove the Hoare triple $\{x = 0 \wedge y = 0\}\; x := x + 1;\; y := y + 1\;\{x + y = 2\}$. Use the assignment rule twice (once for each assignment), chain them with sequencing, and finish with strengthening.

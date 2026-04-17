@@ -72,3 +72,28 @@
   innerleftmargin=9pt,
   innerrightmargin=9pt
 ]{summarybox}
+
+% Reading-map environment: used at the top of each numbered module to
+% indicate Epp coverage, prerequisites, relevant intermezzi, and
+% suggested practice problems. Expects four \rmentry{label}{body}
+% items inside (or arbitrary paragraphs).
+\newmdenv[
+  linewidth=0.8pt,
+  linecolor=black!55,
+  backgroundcolor=yellow!4,
+  skipabove=10pt,
+  skipbelow=14pt,
+  innertopmargin=9pt,
+  innerbottommargin=9pt,
+  innerleftmargin=11pt,
+  innerrightmargin=11pt
+]{readingmapbox}
+\newcommand{\rmentry}[2]{\par\noindent\textbf{#1}\hspace{0.4em}#2\par}
+\newenvironment{readingmap}{%
+  \begin{readingmapbox}%
+  \noindent{\bfseries\large Reading map}%
+  \vspace{2pt}%
+  \setlength{\parskip}{4pt plus 1pt}%
+}{%
+  \end{readingmapbox}%
+}

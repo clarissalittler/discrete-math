@@ -9,14 +9,18 @@
 \begin{document}
 \maketitle
 
-\begin{center}
-\fbox{\begin{minipage}{0.92\textwidth}
-\textbf{Reading map.} This module covers \textbf{Epp §3.1--3.4} (predicates, quantified statements, and arguments with quantified statements) and \textbf{§5.2} (the principle of mathematical induction; we return to this in Module 8). \textbf{Prerequisites:} Modules 1--3 (sets and functions, propositional logic, proof systems). \textbf{Relevant intermezzi:} ``More on Natural Induction'' (immediately after this module, walks through commutativity and associativity of $+$ inductively) and ``Quantifiers as Games'' (gives a game-semantic intuition for nested $\forall/\exists$). \textbf{Practice from Epp:} §3.1 exercises on translating English into symbolic statements; §3.2 exercises on negating quantified statements; §3.3--3.4 exercises on validity in predicate logic; §5.2 exercises on simple induction.
-\end{minipage}}
-\end{center}
+\begin{readingmap}
+\rmentry{Epp sections.}{§3.1--3.4 (predicates, quantified statements, and arguments with quantified statements) and §5.2 (the principle of mathematical induction; we return to this in Module 8).}
+
+\rmentry{Prerequisites.}{Modules 1--3 (sets and functions, propositional logic, proof systems).}
+
+\rmentry{Relevant intermezzi.}{``More on Natural Induction'' (immediately after this module, walks through commutativity and associativity of $+$ inductively) and ``Quantifiers as Games'' (gives a game-semantic intuition for nested $\forall/\exists$).}
+
+\rmentry{Practice from Epp.}{§3.1 exercises on translating English into symbolic statements; §3.2 exercises on negating quantified statements; §3.3--3.4 exercises on validity in predicate logic; §5.2 exercises on simple induction.}
+\end{readingmap}
 
 \section{A logic with real types}
-Now we need to start dealing with a logic that has actual types beyond just booleans: first-order predicate logic\index{first-order logic}! This is going to look \emph{a lot} like propositional logic---it still has our old friends: \texttt{->}, \texttt{\^{}}, \texttt{v}, \texttt{\~{}}, T, and F---but now it's also going to have $\forall$ and $\exists$ as well as a notion of predicates.
+Now we need to start dealing with a logic that has actual types beyond just booleans: first-order predicate logic\index{first-order logic}! This is going to look \emph{a lot} like propositional logic---it still has our old friends: $\to$, $\wedge$, $\vee$, $\lnot$, T, and F---but now it's also going to have $\forall$ and $\exists$ as well as a notion of predicates.
 
 We need these things in order to add \emph{sets} (or in other words \emph{types}) to our logic. Unlike booleans, when it comes to sets we need to be able to quantify our propositions about elements.
 \begin{itemize}
@@ -156,11 +160,11 @@ This section is about translating some very common mathematical and CS jargon ba
 
 A common point of confusion: ``$P$ is necessary for $Q$'' is $Q \to P$, \textbf{not} $P \to Q$. The necessary thing goes on the \emph{right} of the arrow when the thing that needs it is on the left. Think of it as: $Q$ requires $P$, so if you have $Q$ you must have $P$. This trips people up more than almost anything else in the course, so take a moment to make sure it sits right.
 
-\textbf{Example.} ``Being a square is sufficient for being a rectangle.'' This means: if something is a square, then it's a rectangle. Every square is a rectangle. That's $\text{Square}(x) \to \text{Rectangle}(x)$.
+\textbf{Example (sufficient).} ``Being a square is sufficient for being a rectangle.'' This means: if something is a square, then it's a rectangle. Every square is a rectangle. That's $\text{Square}(x) \to \text{Rectangle}(x)$.
 
-Flipping it around: ``Being a rectangle is necessary for being a square.'' This means: if something isn't a rectangle, it can't be a square. You need rectangle-ness in order to have square-ness. That's $\text{Square}(x) \to \text{Rectangle}(x)$---the same implication, just described from the other direction.
+\textbf{Example (necessary).} Real example from a spec: ``Authentication is necessary for authorization.'' This means: if you're authorized, then you must be authenticated. You can't have authorization without authentication. That's $\text{Authorized}(x) \to \text{Authenticated}(x)$---notice that the \emph{necessary} thing (authentication) ends up on the \emph{right} of the arrow, and the thing it's necessary \emph{for} (authorization) ends up on the left. That's the direction that trips people up.
 
-The connection to everything else we've been doing is pretty direct: these are just different ways of talking about implication. The reason we bring this up now is that math texts and CS specs use this language \emph{all the time} and if you don't know how to translate ``necessary'' and ``sufficient'' into arrows, you're going to have a bad time reading formal documentation.\footnote{Real example from a spec I once read: ``Authentication is necessary but not sufficient for authorization.'' Translation: $\text{Authorized} \to \text{Authenticated}$ but $\text{Authenticated} \not\to \text{Authorized}$. You need to be logged in, but being logged in doesn't mean you have permission.}
+The connection to everything else we've been doing is pretty direct: these are just different ways of talking about implication. The reason we bring this up now is that math texts and CS specs use this language \emph{all the time} and if you don't know how to translate ``necessary'' and ``sufficient'' into arrows, you're going to have a bad time reading formal documentation.\footnote{The full version of the spec line above is ``Authentication is necessary but not sufficient for authorization.'' The ``not sufficient'' half adds $\text{Authenticated}(x) \not\to \text{Authorized}(x)$---being logged in doesn't mean you have permission to do what you're trying to do.}
 
 \section{Proofs with this logic}
 Proofs in this logic are going to be really similar to proofs in propositional logic but there are going to be five additional rules: the intro and elimination rules of our new quantifiers plus a special rule for our $=$ operator.
@@ -405,7 +409,7 @@ is also an equivalence. If it is, prove both directions. If it isn't, prove one 
 \[
   \text{Counter} := \text{zero} \mid \text{tickA Counter} \mid \text{tickB Counter}
 \]
-You don't have to prove anything with it---just write down the rule.\footnote{If your rule has three premises, you're on the right track. If it has two, you forgot a case. If it has four, you've invented something interesting and we should talk.}
+You don't have to prove anything with it---just write down the rule. This one is a preview of what we'll do systematically in Module 10: each recursive case of the BNF contributes its own premise to the induction rule, so the \texttt{Counter} rule has \emph{two} inductive-step premises (one for \texttt{tickA}, one for \texttt{tickB}) where natural induction had only one.\footnote{If your rule has three premises, you're on the right track. If it has two, you forgot a case. If it has four, you've invented something interesting and we should talk.}
 
 \bigskip
 \textbf{Exercise 11.}\label{ex:m4:11} Define multiplication on $\text{Nat}$ recursively on the second argument:

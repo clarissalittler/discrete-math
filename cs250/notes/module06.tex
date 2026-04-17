@@ -9,11 +9,15 @@
 \begin{document}
 \maketitle
 
-\begin{center}
-\fbox{\begin{minipage}{0.92\textwidth}
-\textbf{Reading map.} This module covers \textbf{Epp §4.4--4.5} (§4.5--4.6 in the 5th edition): divisibility, the quotient-remainder theorem, modular arithmetic, and proofs by cases. \textbf{Prerequisites:} Module 5 (direct proof and the group axioms). \textbf{Relevant intermezzi:} ``What Does It Mean for Things to Be `The Same'?''---the equivalence-relations intermezzo sits right after this module and uses modular congruence as its main example. \textbf{Practice from Epp:} §4.4 exercises on the quotient-remainder theorem and proofs by cases; §4.5 exercises on floor/ceiling identities and applications.
-\end{minipage}}
-\end{center}
+\begin{readingmap}
+\rmentry{Epp sections.}{§4.4--4.5 (§4.5--4.6 in the 5th edition): divisibility, the quotient-remainder theorem, modular arithmetic, and proofs by cases.}
+
+\rmentry{Prerequisites.}{Module 5 (direct proof and the group axioms).}
+
+\rmentry{Relevant intermezzi.}{``What Does It Mean for Things to Be `The Same'?''---the equivalence-relations intermezzo sits right after this module and uses modular congruence as its main example.}
+
+\rmentry{Practice from Epp.}{§4.4 exercises on the quotient-remainder theorem and proofs by cases; §4.5 exercises on floor/ceiling identities and applications.}
+\end{readingmap}
 
 \section{The modulus operation}
 An operation that's important in both mathematics and computer science is the modulus\index{modulus} operator, sometimes called \texttt{mod} or \texttt{\%}. This is the operation that gives you the remainder after integer division.
@@ -94,7 +98,7 @@ q (+) (n - q) = (q + n - q) % n
               = 0
 \end{lstlisting}
 
-\section{$\mathbb{Z}/p\mathbb{Z}$, where $p$ is prime}
+\section{$(\mathbb{Z}/p\mathbb{Z})^{\times}$ is a group when $p$ is prime}
 When the number you're taking the modulus by is prime, something \textbf{really} special happens. It isn't just a group under addition---if you exclude 0, the nonzero residues also form a group under multiplication. That is, $((\mathbb{Z}/p\mathbb{Z})^{\times}, \cdot, 1)$ satisfies exactly the same group axioms we checked for the integers in Module 5, just with a different set and a different operation.
 \begin{lstlisting}
 q, r : Z % p, q /= 0, r /= 0
@@ -181,7 +185,7 @@ So in both cases we get something of the form $2m + 1$, which is odd. Since ever
 
 \begin{keytakeaway}
   \item The \emph{quotient-remainder theorem} guarantees that every integer $n$ decomposes uniquely as $n = dq + r$ with $0 \leq r < d$. This is what makes ``case on $n \bmod d$'' a valid proof technique.
-  \item $(\mathbb{Z}/n\mathbb{Z}, +, 0)$ is a group for every positive $n$. $((\mathbb{Z}/p\mathbb{Z})^{\times}, \cdot, 1)$ is a group iff $n$ is prime---then and only then does every nonzero residue have a multiplicative inverse.
+  \item $(\mathbb{Z}/n\mathbb{Z}, +, 0)$ is a group for every positive $n$. $((\mathbb{Z}/p\mathbb{Z})^{\times}, \cdot, 1)$ is a group iff $p$ is prime---then and only then does every nonzero residue have a multiplicative inverse.
   \item The \emph{Chinese Remainder Theorem}: coprime moduli combine. Knowing $x \bmod m$ and $x \bmod n$ (with $\gcd(m,n) = 1$) determines $x$ uniquely modulo $mn$.
   \item \emph{Floor} rounds down on the number line, \emph{ceiling} rounds up. For negative numbers this is \emph{not} the same as ``drop the fractional part.''
   \item \emph{Proof by cases} on modular residues is just $\vee$-elimination where the disjunction $(n \bmod d = 0) \vee \cdots \vee (n \bmod d = d-1)$ is exhaustive by the quotient-remainder theorem.
