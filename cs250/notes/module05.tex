@@ -21,15 +21,9 @@
 \rmentry{Practice from Epp.}{§4.1 exercises on direct proofs about even/odd and divisibility; §4.2 exercises on rational-number proofs; §4.3 exercises on divisibility; and any `disprove with counterexample' problems from those sections.}
 \end{readingmap}
 
-This module is, in a sense, a breather. We're not introducing new concepts here --- instead we're getting practice with informal proofs after several modules of formal logic.
+This module is, in a sense, a breather. We're not introducing new logical machinery---instead we're getting practice with informal proofs after several modules of formal logic. The relevant sections of Epp are very well written and give plenty of time to practice proofs about numbers, touching on topics I think matter: a games-based approach to quantifiers, constructive vs.\ non-constructive proofs of $\exists$, and the relationship between writing proofs and writing programs. What I want to add, rather than recapitulating Epp, is to practice the same techniques in a \emph{different} mathematical setting---abstract algebra, specifically groups---so you can see that the patterns are general.
 
-The relevant sections of Epp give us a lot of time to practice proofs with numbers. They're very well written and even call out some topics I think are important: a games-based approach to quantifiers, constructive vs.\ non-constructive proofs of $\exists$, and the relationship between writing proofs and writing computer programs (framing the connection as analogy rather than mathematical identity).
-
-What I think might be useful as an addition to the text, rather than attempting to recapitulate its content, is to give lots of examples of proofs in a different context than numbers.
-
-But first, let's make sure we have the number-theory toolkit down solid, since that's what Epp 4.1--4.4 is all about.
-
-One thing worth saying up front: the informal proof techniques we're about to practice are not a departure from the formal rules we built up in Modules 3 and 4---they're implementations of them. A direct proof of ``for all $x$, if $P(x)$ then $Q(x)$'' is really $\forall$-intro combined with $\to$-intro: introduce a fresh variable, assume the hypothesis, derive the conclusion. A counterexample to a universal claim is $\exists$-intro applied to the negation $\lnot(\forall x.\; P(x))$. A proof by cases is $\lor$-elimination in disguise. The formal rules tell us \emph{why} these techniques are valid; the informal style is how mathematicians actually write. We'll keep pointing out these connections as we go, so you can see the formal machinery underneath the prose.
+One thing worth saying up front, though: the informal techniques we're about to practice are not a departure from the formal rules of Modules 3 and 4---they're \emph{implementations} of them. A direct proof of ``for all $x$, if $P(x)$ then $Q(x)$'' is $\forall$-intro combined with $\to$-intro: introduce a fresh variable, assume the hypothesis, derive the conclusion. A counterexample to a universal claim is $\exists$-intro applied to the negation $\lnot(\forall x.\; P(x))$. A proof by cases is $\vee$-elimination in disguise. The formal rules tell us \emph{why} these techniques are valid; the informal style is how mathematicians actually write. We'll keep pointing out the correspondence as we go, so you can see the formal machinery underneath the prose. But first, let's get the number-theory toolkit solid.
 
 \section{Direct proof}
 
@@ -55,7 +49,7 @@ Let's do a worked example.
 \]
 Since $j + k + 1$ is an integer, $a + b = 2m$ where $m = j + k + 1$, so $a + b$ is even by definition. \hfill $\square$
 
-See the pattern? We assumed the hypothesis (both odd), unpacked the definitions (got $j$ and $k$), did some algebra, and then repacked the result into the definition of even. See the pattern? Assume the hypothesis, unpack the definitions, do the algebra, repack the result. That's the core of direct proof.
+See the pattern? We assumed the hypothesis (both odd), unpacked the definitions (got $j$ and $k$), did some algebra, and then repacked the result into the definition of even. Assume the hypothesis, unpack the definitions, do the algebra, repack the result---that's the core of direct proof.
 
 Let's do another one.
 
@@ -167,45 +161,43 @@ A \emph{group}\index{group} is a set $G$, an element $e : G$\index{identity elem
 
 So what is this saying? A group is a triple of data: a base set $G$, a binary operation $*$ on the set, and an element $e$ that acts as the identity for the operation. Associativity tells us that repeated applications of the operation don't depend on how we parenthesize them, the identity axioms guarantee that $e$ really acts as an identity, and the inverse axioms guarantee that every element has an inverse that can be used to cancel it out.
 
+\begin{sidebar}{groups in the wild}
+This definition looks abstract, but you've been surrounded by groups your whole life. A few places they show up:
+
+\begin{itemize}
+  \item \textbf{Symmetries of objects.} Take a square. The rotations and reflections that map it back to itself---eight of them, if you count---form a group under composition. Same for a cube (48 symmetries), a snowflake, a molecule. Any time you hear ``this thing has a symmetry,'' there's a group lurking underneath.
+  \item \textbf{Permutations.} Shuffling $n$ items is a group. Composing two shuffles gives another shuffle; the identity is ``don't shuffle''; every shuffle can be undone. The Rubik's cube group is a permutation group on 54 stickers (quotiented by some physical constraints). The same group theory that solves the cube classifies the symmetries of molecules.
+  \item \textbf{Cryptography.} Diffie--Hellman key exchange lives in the group of nonzero residues modulo a large prime. Elliptic-curve cryptography uses points on an elliptic curve, which also form a group. The security of these systems rests on the difficulty of ``undoing'' certain group operations---concretely, the \emph{discrete logarithm problem}. If you've ever accessed a site over HTTPS, you've used a group.
+  \item \textbf{Undo in editors and version control.} The operation ``apply a patch'' wants to be a group: identity is the empty patch, composition is ``apply this, then that,'' and inverse is ``undo.'' Real systems only approximate this (merges make it complicated), but the mental model is group-shaped.
+  \item \textbf{Integer and floating-point arithmetic modulo $2^{32}$.} The bit-level addition on a 32-bit CPU is $(\mathbb{Z}/2^{32}\mathbb{Z}, +, 0)$---a genuine, finite group, right there in your hardware. Overflow wraps around exactly because the inverse of every element exists.
+\end{itemize}
+
+Groups are the minimum algebraic machinery for talking about ``invertible operations,'' and invertible operations are everywhere in CS---from reversible computing to crypto to functional programming's lens laws. The definition's austerity is the point: by asking for \emph{only} associativity, identity, and inverses, we pick up everything that has those three features at once.
+\end{sidebar}
+
 Let's start by proving that some things \textbf{are} or are \textbf{not} groups.
 
 \section{The integers under addition form a group}
-Proposal: the set of integers, $\mathbb{Z}$, is a group with addition and an identity element of 0.
+\textbf{Claim.} The integers $\mathbb{Z}$, together with $+$ as the binary operation and $0$ as the identity, form a group.
 
-Proof:
-To prove this we need to show all of the axioms hold for the integers. We're allowed to assume the standard definitions of addition, negation, and 0 since we're proving that these form a group not defining them formally. If you were doing this \emph{inside} a logic you'd have to first use the tools of the logic to give definitions for $\mathbb{Z}$ and for all the operations on it. This is essentially what the Natural Number Game requires.
+\textbf{Proof.} We need to show that all four axioms hold. We're allowed to assume the standard definitions of addition, negation, and $0$---we're proving that they form a group, not defining them formally. If you were doing this \emph{inside} a logic (as, say, the Natural Number Game requires), you'd have to first define $\mathbb{Z}$ and all its operations from the ground up. Here we just take them as given.
 
-Proof of associativity:
-Let $a,b,c : \mathbb{Z}$. Then $(a+b)+c = a+(b+c)$ by the associativity of integer addition.
+\emph{Associativity.} Let $a, b, c : \mathbb{Z}$. Then $(a + b) + c = a + (b + c)$ by the associativity of integer addition.
 
-Proof of left-identity:
-Let $n : \mathbb{Z}$, an arbitrary element, we need to show that $0 + n = n$. But this follows by the definition of addition on $\mathbb{Z}$!
+\emph{Left-identity.} Let $n : \mathbb{Z}$ be arbitrary. We need $0 + n = n$, but this follows directly from the definition of addition on $\mathbb{Z}$.
 
-Proof of right-identity:
-Let $n : \mathbb{Z}$, an arbitrary element, we need to show that $n + 0 = n$. But this follows by the definition of addition on $\mathbb{Z}$!
+\emph{Right-identity.} Similarly, for arbitrary $n : \mathbb{Z}$, the equation $n + 0 = n$ follows from the definition of addition.
 
-Now to show the inverses we need to show that for every element of $\mathbb{Z}$ we have a proposed inverse-under-addition for this element, and \emph{then} we prove that the element really is both the left and right inverse.
+\emph{Inverses.} We need, for every $n : \mathbb{Z}$, some element $n^{-1} : \mathbb{Z}$ that works as both a left and right inverse. The obvious candidate is $-n$, and our obligations become $\forall n.\; (-n) + n = 0$ and $\forall n.\; n + (-n) = 0$. But that's just subtraction written funny, and since we've already defined subtraction to work this way, both equations hold by definition.
 
-The obvious candidate for every $n : \mathbb{Z}$ would be $-n$!
-
-So now the theorems we need to prove become
-
-$\forall n.\; (-n) + n = 0$
-
-$\forall n.\; n + (-n) = 0$
-
-but this is just a funnily written subtraction! And we already have defined subtraction to work this way, so our sub-theorems work automatically.
-
-Thus we've shown that $(\mathbb{Z},+,0)$ is a group. \hfill $\square$
+All four axioms hold, so $(\mathbb{Z}, +, 0)$ is a group. \hfill $\square$
 
 \section{The integers under multiplication do \emph{not} form a group}
-We can \emph{disprove} that the integers with multiplication as the binary operation and 1 as the identity are a group easily. We just need to show one of the theorems cannot hold.
+Disproving a group claim is easier than proving one: we only need a single axiom to fail. Let's show that $(\mathbb{Z}, \cdot, 1)$ has no inverses.
 
-Let's show that inverses don't exist!
+Consider the integer $2$. For $(\mathbb{Z}, \cdot, 1)$ to be a group we'd need some integer $n$ with $2 \cdot n = 1$. But for any integer $n$, the product $2 \cdot n$ is always even,\footnote{If you want a bonus challenge, prove this property of multiplication with natural induction! It's not too hard but is a good exercise.} and $1$ is odd. So no integer acts as the multiplicative inverse of $2$---one element without an inverse is enough, the axiom fails, and $(\mathbb{Z}, \cdot, 1)$ is not a group. \hfill $\square$
 
-Consider the integer $2$. For $(\mathbb{Z}, \cdot, 1)$ to be a group, there would need to be some integer $n$ such that $2 \cdot n = 1$. But for any integer $n$, the product $2 \cdot n$ is always even\footnote{If you want a bonus challenge, prove this property of multiplication with natural induction! It's not too hard but is a good exercise}, and $1$ is odd. So there is no integer that can act as the multiplicative inverse of $2$.
-
-Since we've found even one element without an inverse, the inverse axiom fails and it's not a group! \hfill $\square$
+This is the group-theory version of the counterexample pattern: disproving a universal (``every element has an inverse'') by exhibiting a single bad case.
 
 \section{Proof of uniqueness of identity}
 We can also prove properties about \emph{all} groups, not just a specific group. Like let's prove the uniqueness of identity elements. In other words, that if there are two elements in a group that satisfy the identity axioms then they must be \textbf{equal}.

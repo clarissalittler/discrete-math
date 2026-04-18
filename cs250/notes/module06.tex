@@ -22,16 +22,15 @@
 \end{readingmap}
 
 \section{The modulus operation}
-An operation that's important in both mathematics and computer science is the modulus\index{modulus} operator, sometimes called \texttt{mod} or \texttt{\%}. This is the operation that gives you the remainder after integer division.
+Module 5 gave us the group axioms and a small zoo of examples: the integers under addition, the rationals under multiplication, the non-examples where inverses fail. This module adds a bigger, finite zoo---the modular arithmetic systems $\mathbb{Z}/n\mathbb{Z}$---and uses them as the setting for a new proof technique, proof by cases.
 
-Examples:
+The star of the show is the modulus\index{modulus} operator, sometimes written \texttt{mod} or \texttt{\%}, which gives the remainder after integer division:
 \begin{lstlisting}
 5 % 2 = 1
 9 % 3 = 0
 59 % 4 = 3
 \end{lstlisting}
-
-The modulus operation takes the natural numbers---which are NOT a group under addition, because there are no additive inverses---and gives them really nice properties!
+Taking remainders turns the natural numbers---which are \emph{not} a group under addition (no additive inverses) and not a group under multiplication either (no multiplicative inverses)---into a finite system that \emph{is} a group, and sometimes a field. That's the central algebraic surprise of this module, and everything else we do here flows from it.
 
 \section{The quotient-remainder theorem}
 
@@ -78,50 +77,44 @@ There's a nice connection to the quotient-remainder theorem too. For positive in
 
 Fun fact: the floor function shows up all over computer science. Array indexing, hash functions, binary search---anywhere you need to convert a real-valued quantity into an integer index, you're probably using floor.
 
+\begin{sidebar}{modular arithmetic, applied}
+Modular arithmetic isn't just ``clock math.'' It's everywhere in the systems you use every day:
+
+\begin{itemize}
+  \item \textbf{Hash tables.} When you index into a dictionary or hash set, the typical implementation computes \texttt{hash(key) \% num\_buckets} to pick a slot. The \texttt{\%} is doing real work: it compresses a giant hash value into a bucket index, and the reason collisions behave reasonably is that \texttt{(a + b) \% n} and \texttt{(a \% n + b \% n) \% n} give the same result---that's the homomorphism property from Module~5 applied to $\mathbb{Z} \to \mathbb{Z}/n\mathbb{Z}$.
+  \item \textbf{Checksums and error detection.} Your credit card's last digit is a mod-10 Luhn check. ISBN-10 uses mod 11, ISBN-13 uses mod 10. ISO container numbers use mod 11. The CRC checksums on every network packet are arithmetic in a \emph{binary} finite field $\mathbb{F}_{2^k}$. All of these exist to let the receiver check ``did this get corrupted?'' in constant time.
+  \item \textbf{Cryptography.} RSA encrypts and decrypts in $\mathbb{Z}/n\mathbb{Z}$ where $n = pq$ is a product of two large primes; Diffie--Hellman lives in $(\mathbb{Z}/p\mathbb{Z})^\times$ for a large prime $p$; ECDSA lives in the group of points on an elliptic curve over $\mathbb{F}_p$. Every time you open an HTTPS connection, your browser is doing hundreds of mod-$p$ operations in milliseconds.
+  \item \textbf{Bitwise tricks.} \texttt{x \& (n-1)} equals \texttt{x \% n} when \texttt{n} is a power of 2---which is why hash-table implementations so often choose a power-of-2 bucket count. Modular arithmetic in hardware is fundamentally cheap when the modulus is $2^k$.
+  \item \textbf{Pseudo-random numbers.} Classical linear-congruential generators compute $x_{n+1} = (a x_n + c) \bmod m$. Modern RNGs are more sophisticated, but the bones are the same: iterate in a finite group, rely on modular structure to mix bits.
+  \item \textbf{Cyclic anything.} Day of the week from day of the year? Mod 7. Which way does a clock hand point? Mod 12 (or 24, or 60). Which frame of a looping animation are you on? Mod \textit{frame\_count}. Any time there's a cycle, there's modular arithmetic underneath.
+\end{itemize}
+
+When we say ``modular arithmetic is a finite field when the modulus is prime,'' that abstract statement is what makes RSA possible. When we say ``$\mathbb{Z}/n\mathbb{Z}$ is always a group under addition,'' that's the identity behind every hash table. Abstract algebra feels abstract until the moment you realize your entire software stack is running on it.
+\end{sidebar}
+
 \section{$\mathbb{Z}/n\mathbb{Z}$ is a group}
-In Module 5 we proved that $(\mathbb{Z}, +, 0)$ is a group. Now we'll see that modular arithmetic gives us \emph{finite} groups---same axioms, but with a finite set of residues instead of all the integers.
+In Module 5 we proved that $(\mathbb{Z}, +, 0)$ is a group. Now we'll see that modular arithmetic gives us \emph{finite} groups---the same axioms, but with a finite set of residues instead of all the integers.
 
-For any positive integer $n$, we can define the set of residues $\mathbb{Z}/n\mathbb{Z} = \{0, 1, \ldots, n-1\}$. This set \textbf{is} actually a group under addition. We'll write $\oplus$ for the modular addition to distinguish it from ordinary $+$:
-\begin{lstlisting}
-q, r : Z % n
-q (+) r = (q + r) % n
-\end{lstlisting}
+For any positive integer $n$, define the set of residues $\mathbb{Z}/n\mathbb{Z} = \{0, 1, \ldots, n-1\}$, and define modular addition by performing ordinary addition and then taking the modulus:
+\[
+  q \oplus r \;=\; (q + r) \bmod n.
+\]
+We'll write $\oplus$ here to distinguish it from ordinary $+$, though most texts just overload $+$ and let context disambiguate.
 
-In other words, we perform ordinary addition and then take the modulus. (In practice, most texts just write $+$ for both and let context disambiguate, but the distinction is worth noting.)
-
-The group axioms work the way you'd hope: associativity comes from ordinary integer addition, the identity is still 0, and every residue has an additive inverse.
-
-For every $q \in \mathbb{Z}/n\mathbb{Z}$, the inverse is the element $r = (n - q) \bmod n$.
-
-Why is this the inverse? Because
-\begin{lstlisting}
-q (+) (n - q) = (q + n - q) % n
-              = n % n
-              = 0
-\end{lstlisting}
+The axioms all work the way you'd hope: associativity comes from associativity of ordinary integer addition, the identity is still $0$, and every residue has an additive inverse---namely $r = (n - q) \bmod n$. Checking the inverse is a one-liner: $q \oplus (n - q) = (q + n - q) \bmod n = n \bmod n = 0$. So $(\mathbb{Z}/n\mathbb{Z}, \oplus, 0)$ is a group for every positive $n$.
 
 \section{$(\mathbb{Z}/p\mathbb{Z})^{\times}$ is a group when $p$ is prime}
-When the number you're taking the modulus by is prime, something \textbf{really} special happens. It isn't just a group under addition---if you exclude 0, the nonzero residues also form a group under multiplication. That is, $((\mathbb{Z}/p\mathbb{Z})^{\times}, \cdot, 1)$ satisfies exactly the same group axioms we checked for the integers in Module 5, just with a different set and a different operation.
-\begin{lstlisting}
-q, r : Z % p, q /= 0, r /= 0
-q * r = (q * r) % p
-\end{lstlisting}
+When the modulus is prime, something \textbf{really} special happens. It isn't just a group under addition---if you exclude $0$, the nonzero residues \emph{also} form a group under multiplication. That is, $((\mathbb{Z}/p\mathbb{Z})^{\times}, \cdot, 1)$, with operation $q \cdot r = (qr) \bmod p$, satisfies exactly the group axioms we verified for the integers in Module 5.
+
+Associativity, identity ($1$), and the closure of multiplication on nonzero residues are all straightforward. The surprising axiom is inverses: for every nonzero residue $q$, there's some residue $x$ with $q \cdot x \equiv 1 \pmod p$. This is not obvious---why should such an $x$ exist?---and the proof leans on a classical number-theoretic identity:
+
 \begin{theorem}[B\'ezout's Identity]\index{Bezout's identity@B\'ezout's identity}
 For any integers $a$ and $b$, there exist integers $x$ and $y$ such that $ax + by = \gcd(a, b)$.
 \end{theorem}
-We won't prove this here, but Module 7 shows how the extended Euclidean algorithm computes these coefficients.
 
-It's maybe not obvious that multiplicative inverses exist, but they do: if $q$ is a nonzero residue mod $p$ and $p$ is prime, then $\gcd(q,p) = 1$, so B\'ezout's identity gives integers $x,y$ with $qx + py = 1$. Reducing mod $p$ then shows $qx \equiv 1 \pmod p$, so $x$ is a multiplicative inverse of $q$ modulo $p$.
+\noindent We won't prove B\'ezout here---Module 7 shows how the extended Euclidean algorithm actually \emph{computes} the coefficients $x$ and $y$---but we can use it immediately. If $q$ is a nonzero residue mod $p$ and $p$ is prime, then $\gcd(q, p) = 1$, so B\'ezout gives integers $x, y$ with $qx + py = 1$. Reducing mod $p$, the $py$ term vanishes and we're left with $qx \equiv 1 \pmod p$. So $x$ is the multiplicative inverse of $q$.
 
-Distributivity of multiplication over addition follows from distributivity in $\mathbb{Z}$, so we won't re-prove it here.
-
-The importance of this is that it makes $\mathbb{Z}/p\mathbb{Z}$ a \emph{finite field}\index{finite field}: addition works on all residues, and multiplication works on the nonzero residues. This is actually really important in cryptography!
-
-For further reading on finite fields and their applications:
-
-\url{https://en.wikipedia.org/wiki/Finite_field_arithmetic}
-
-\url{https://en.wikipedia.org/wiki/Finite_field#Discrete_logarithm}
+Distributivity of multiplication over addition follows from distributivity in $\mathbb{Z}$, so we won't re-prove it. Putting the pieces together: $\mathbb{Z}/p\mathbb{Z}$ is a \emph{finite field}\index{finite field}, a set where addition works on all residues and multiplication works on the nonzero residues, both with full group structure. Finite fields are the algebraic backbone of modern cryptography, error-correcting codes, and large chunks of coding theory---see the Wikipedia articles on \href{https://en.wikipedia.org/wiki/Finite_field_arithmetic}{finite field arithmetic} and the \href{https://en.wikipedia.org/wiki/Finite_field#Discrete_logarithm}{discrete logarithm problem} if you want to dig further.
 
 \section{The Chinese Remainder Theorem}
 
@@ -155,9 +148,9 @@ This recipe turns the search into a small amount of algebra, scaled up by howeve
 Why does this matter? A classical application: instead of doing arithmetic on a single very large modulus $N$, you can do arithmetic modulo each of its prime factors $p_1, p_2, \ldots$ separately, then use the CRT to glue the pieces back together. This is the basis of the RSA speedup used in real-world cryptography. Even if you never do cryptography, the pattern---``break a problem into pieces, solve each piece, combine''---is a recurring theme in computer science.
 
 \section{Proofs by cases and the connection to or-elimination}
-Proof by cases is $\lor$-elimination in disguise. If you have an exhaustive set of cases for the data of your problem---like a number is either 0 or non-zero, or a number is positive, zero, or negative, or a number is either odd or even, \&c.---then you can treat the disjunction of those cases as a tautology and apply $\lor$-elimination to it.
+Proof by cases\index{proof!by cases} is just $\vee$-elimination from Module 3, dressed up for number-theoretic work. If you have an exhaustive set of cases for your data---like ``a number is either $0$ or nonzero,'' or ``an integer is positive, zero, or negative,'' or ``an integer is either even or odd''---then the disjunction of those cases is a tautology, and $\vee$-elimination lets you prove the conclusion by proving it in each case. What's new in this module is that the quotient-remainder theorem gives us a principled way to \emph{generate} these case splits: for any modulus $d$, every integer lands in exactly one residue class $0, 1, \ldots, d-1$, and that's always an exhaustive disjunction.
 
-Let's do a concrete example. We'll prove that for every integer $n$, the quantity $n^2 - n + 3$ is odd. The quotient-remainder theorem tells us every integer is either even or odd (the two residue classes mod 2), so those are our two cases.
+Let's do a concrete example. We'll prove that for every integer $n$, the quantity $n^2 - n + 3$ is odd. The quotient-remainder theorem (with $d = 2$) tells us every integer is either even or odd, so those are our two cases.
 
 \textbf{Case 1:} $n$ is even, so $n = 2k$ for some integer $k$. Then
 \[

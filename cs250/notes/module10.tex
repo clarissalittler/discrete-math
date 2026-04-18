@@ -345,6 +345,21 @@ And you could keep going! Imagine a datatype with two base cases and three recur
 
 This extends to any datatype you can dream up---rose trees, abstract syntax trees, regular expressions, whatever. If you can write down a BNF for it, you get a structural induction principle for it. You'll see more of this in CS 251 when we work with graphs, automata, and other structures.
 
+\begin{sidebar}{structural induction in programming, for real}
+If you go on to any course in programming languages, compilers, type theory, or formal verification, structural induction will be the single most-used proof technique you meet. Not an exaggeration. A few concrete places it shows up:
+
+\begin{itemize}
+  \item \textbf{Compilers.} Every pass---parsing, type-checking, optimization, code generation---walks a recursive datatype (the abstract syntax tree, or the intermediate representation, or the control-flow graph). When the compiler team proves a transformation preserves meaning, they do structural induction on the AST. ``If optimization $O$ is correct on each sub-expression, it's correct on the whole expression'' is a structural induction step.
+  \item \textbf{Type systems.} ``Progress and preservation'' is the standard soundness theorem for a typed programming language, and both halves are structural inductions on typing derivations (or on program syntax, or both). This is how we know a well-typed program ``can't go wrong.'' You'll see these proofs laid out in books like \emph{Types and Programming Languages} (Pierce) and \emph{Software Foundations} (Pierce et al.), where they're written down rigorously in Coq and are sometimes dozens of cases long.
+  \item \textbf{Interpreters and evaluators.} Writing an interpreter is structural recursion on the abstract syntax; proving the interpreter correct is structural induction on the same syntax. The definitions of $\texttt{eval}$ and $P(e)$ have the same shape, one returning a value and the other returning a proof.
+  \item \textbf{Static analyzers.} Tools like Facebook's Infer (separation logic), Clang Static Analyzer, SpotBugs, and ESLint all walk syntax trees checking an invariant. When the tool's authors prove the analysis is sound, they do structural induction on program syntax.
+  \item \textbf{Regular expressions and automata.} Every identity about regexes---``$(a|b)^* = a^* (b a^*)^*$,'' for example---is proved by structural induction on the regex grammar, or by induction on the automaton it compiles to. CS 251's formal languages material is essentially one long structural-induction exercise.
+  \item \textbf{DSLs and embedded languages.} Any time you write a small language inside another language---SQL queries, GraphQL schemas, a configuration grammar, a shader language---you're defining a BNF. Anything you want to prove or enforce about programs in that DSL is a structural induction on that grammar.
+\end{itemize}
+
+The recipe ``write the BNF, get the induction principle, prove case by case'' is the workhorse of programming-language theory and formal verification. In real practice it scales up to grammars with dozens of productions and proofs with hundreds of cases---but the pattern is exactly the one in this module. Once you see the shape, every textbook in the field starts reading like a variation on the same theme.
+\end{sidebar}
+
 \subsection{Example: structural induction on propositional formulas}
 
 Let's actually carry out that propositional-logic example instead of just waving at it. Recall the BNF from Module~2:

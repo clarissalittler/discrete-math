@@ -177,7 +177,7 @@ Let's sanity check: $P_1 = 1 + 1 \cdot 2/2 = 2$. $P_2 = 1 + 2 \cdot 3/2 = 4$. An
 Now, to be rigorous, once you've \emph{guessed} the formula by iteration you should really \emph{prove} it by induction. The iteration gives you the conjecture; induction gives you the proof. But in practice, the iteration is often the hard part and the induction proof is pretty mechanical after that.
 
 \section{Second-order linear homogeneous recurrences}
-Now we're going to talk about a really important special class of recurrences.
+Iteration is a powerful guess-and-check technique, but it depends on you spotting a pattern. For one especially important class of recurrences, we don't need to guess at all---there's a \emph{systematic method} that cranks out the closed form from the recurrence itself. That class is the subject of this section.
 
 \begin{definition}[Second-order linear homogeneous recurrence]
 A \emph{second-order linear homogeneous recurrence with constant coefficients} is a recurrence of the form
@@ -260,6 +260,20 @@ F_n = \frac{1}{\sqrt{5}}\left[\left(\frac{1+\sqrt{5}}{2}\right)^n - \left(\frac{
 That's pretty remarkable, isn't it? You start with a simple recurrence and end up with the golden ratio and $\sqrt{5}$. The Fibonacci numbers are integers, but the formula involves $\sqrt{5}$ all over the place. The irrational parts cancel out perfectly every time. Also, since $\left|\frac{1-\sqrt{5}}{2}\right| < 1$, that second term shrinks to zero as $n$ grows, which means $F_n$ is approximately $\varphi^n / \sqrt{5}$ for large $n$. So the Fibonacci numbers grow exponentially at the rate of the golden ratio!
 
 It all comes from the characteristic equation method: substitute a guess and solve a quadratic.
+
+\begin{sidebar}{recurrences in the wild}
+Linear recurrences aren't just a math-class curiosity. The same machinery---and often the same characteristic-equation method---runs underneath a surprising amount of CS and applied science.
+
+\begin{itemize}
+  \item \textbf{Algorithm analysis.} The running time of a recursive algorithm is almost always a recurrence. Binary search: $T(n) = T(n/2) + O(1)$. Merge sort: $T(n) = 2T(n/2) + O(n)$. Karatsuba multiplication: $T(n) = 3T(n/2) + O(n)$. Strassen matrix multiplication: $T(n) = 7T(n/2) + O(n^2)$. The \emph{Master Theorem} is essentially a closed-form solution to a whole family of these recurrences, and every asymptotic runtime you'll see in a data-structures class comes from this analysis. (Non-homogeneous, divide-and-conquer recurrences need more machinery than our homogeneous method, but the spirit is the same: set up a recurrence, solve it.)
+  \item \textbf{Digital signal processing.} The output of an IIR (infinite impulse response) filter is a linear recurrence on the input: $y_n = a_1 y_{n-1} + a_2 y_{n-2} + \cdots + b_0 x_n + b_1 x_{n-1} + \cdots$. The \emph{poles} of the filter are exactly the roots of the characteristic equation; if a pole has magnitude $\geq 1$ the filter blows up, and if all poles are inside the unit circle it's stable. Audio codecs, speech synthesis, noise cancellation---all running characteristic-equation analyses in real time.
+  \item \textbf{Control theory.} A discrete-time feedback controller is usually a linear recurrence, and ``will the system go unstable?'' is exactly the question of whether any root of the characteristic polynomial lies outside the unit disk. Cruise control, thermostat tuning, robot arm controllers, rocket guidance---all asking the same question Fibonacci asked, just with different coefficients.
+  \item \textbf{Population and epidemiological models.} The Leslie matrix for age-structured populations produces a vector recurrence whose long-term behavior is dictated by the dominant eigenvalue, which is a root of the matrix's characteristic polynomial (same word, for good reason). SIR models of epidemics in discrete time are recurrence-driven.
+  \item \textbf{Linear feedback shift registers.} The pseudo-random generators at the heart of many stream ciphers and CRC checksums are literally linear recurrences over $\mathbb{F}_2$. Their period is determined by---wait for it---the characteristic polynomial.
+\end{itemize}
+
+The thread across all of these: when you have a system that's defined by ``next state is a linear combination of recent states,'' the characteristic equation of that recurrence tells you almost everything about how the system behaves. The quadratic we solve for Fibonacci is the toy version of an engineering workhorse.
+\end{sidebar}
 
 \subsection*{The repeated-root case}
 

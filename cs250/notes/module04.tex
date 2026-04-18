@@ -20,41 +20,36 @@
 \end{readingmap}
 
 \section{A logic with real types}
-Now we need to start dealing with a logic that has actual types beyond just booleans: first-order predicate logic\index{first-order logic}! This is going to look \emph{a lot} like propositional logic---it still has our old friends: $\to$, $\wedge$, $\vee$, $\lnot$, T, and F---but now it's also going to have $\forall$ and $\exists$ as well as a notion of predicates.
+Propositional logic got us impressively far for something that only talks about \emph{true} and \emph{false}. But real mathematics and real programming don't live in a world of just two values---they live in worlds with numbers, lists, users, chickens, whatever data type you're working with. To say anything useful about those worlds, we need a logic that can talk about the elements \emph{inside} them.
 
-We need these things in order to add \emph{sets} (or in other words \emph{types}) to our logic. Unlike booleans, when it comes to sets we need to be able to quantify our propositions about elements.
+That's first-order predicate logic\index{first-order logic}, and at a glance it looks \emph{a lot} like propositional logic: $\to$, $\wedge$, $\vee$, $\lnot$, $T$, and $F$ are all still here, our old friends. What's new are two quantifiers, $\forall$ and $\exists$, together with a notion of \emph{predicate}. Those give us three qualitatively different kinds of claim we can make about a set $A$:
 \begin{itemize}
-  \item are we making a logical claim about a particular element? (i.e.\ that zero is the identity of addition)
-  \item are we making a logical claim about all elements in A? ($\forall x : A. \ldots$)
-  \item are we making a logical claim that we know that there is an element with a certain property, although we're not naming a particular element? ($\exists x : A. \ldots$)
+  \item A claim about a \emph{specific} element (e.g.\ ``zero is the identity of addition'').
+  \item A claim about \emph{all} elements of $A$, written $\forall x : A.\; \ldots$
+  \item A claim that \emph{some} element of $A$ has a property, without naming a particular witness, written $\exists x : A.\; \ldots$
 \end{itemize}
 
-We also need to be able to make statements about these types, which is where our predicates\index{predicate} come in. With the tools we've seen, we don't have the ability to define predicates \emph{inside} the logic. Instead we need to add the predicates \emph{to} the logic and define them externally as functions: a predicate on the type/set A is really a function \texttt{A -> Bool} where Bool is the two-point set $\{\text{True},\text{False}\}$.
-
-A really special predicate is the equality predicate on each set, which is given by the diagonal relation where \texttt{a=a} is true and \texttt{a=b} is false for any b that isn't a.
+The predicates\index{predicate} are what let us make claims about elements in the first place. With the tools we've seen so far, we have no way to define predicates \emph{inside} the logic---so we'll do the next best thing and add them externally, as functions. A predicate on the type/set $A$ is literally a function $A \to \text{Bool}$, where $\text{Bool} = \{\text{True}, \text{False}\}$. ``$n$ is even,'' read as a predicate on $\mathbb{N}$, is just the function that returns True on $0, 2, 4, \ldots$ and False on $1, 3, 5, \ldots$ One predicate shows up so often it deserves its own treatment: equality. On any set $A$, equality is the predicate that returns True on the ``diagonal'' (when both arguments are the same element) and False everywhere else. We'll give equality its own proof rule later in the module, because unlike a random user-defined predicate it carries a lot of structure we can exploit.
 
 \section{Forall and exists}
-We've seen, in informal mathematics, the meaning of $\forall$ and $\exists$ a few times. As we discussed above, these are used to \emph{quantify} what elements of a set/type\footnote{I'm going to keep saying set/type because in some logics there is a notion of ``types'' that are more general than sets. For the purposes of this class, think of them as essentially the same thing.} a proposition is covering, which is why they're referred to as ``quantifiers''.
+We've seen $\forall$ and $\exists$ used informally a few times already. As we discussed above, they \emph{quantify} what elements of a set/type\footnote{I'm going to keep saying set/type because in some logics there is a notion of ``types'' that are more general than sets. For the purposes of this class, think of them as essentially the same thing.} a proposition is covering---which is exactly why they're called ``quantifiers.'' Let's nail down what they mean. There are two complementary answers, and it's worth understanding both.
 
-We need to describe what the semantics of these quantifiers are. There are two answers in this logic. The first is that the meaning of a quantifier can be described in terms of the underlying sets and functions on sets.
+\textbf{Answer 1: inverse images.} ``$\forall x : A.\; P(x)$''\index{quantifier!universal} is true exactly when the function $\texttt{P} : A \to \text{Bool}$ sends every element of $A$ to True---equivalently, when $P^{-1}(\text{True}) = A$. Dually, ``$\exists x : A.\; P(x)$''\index{quantifier!existential} is true exactly when $P$ sends at least one element of $A$ to True---equivalently, when $P^{-1}(\text{True})$ is non-empty.
 
-When we write ``$\forall x : A.\; P(x)$''\index{quantifier!universal} this is going to be true exactly when the function \texttt{P : A -> Bool} sends every element of A to True. Equivalently, if you know the language of inverse images of functions, ``$\forall x : A.\; P(x)$'' is true when $P^{-1}(\text{True}) = A$.
+\textbf{Answer 2: Big And / Big Or.} When $A$ is \emph{finite}---so we can enumerate it as $\{x_1, x_2, \ldots, x_k\}$---we can also define the quantifiers by expansion into propositional connectives:
+\begin{align*}
+  \forall x : A.\; P(x) &\;\equiv\; P(x_1) \wedge P(x_2) \wedge \cdots \wedge P(x_k), \\
+  \exists x : A.\; P(x) &\;\equiv\; P(x_1) \vee P(x_2) \vee \cdots \vee P(x_k).
+\end{align*}
+So $\forall$ is a ``big conjunction'' and $\exists$ is a ``big disjunction.'' Play with these transformations on small finite sets to convince yourself the two answers agree.\footnote{There's a secret third way to define $\forall$ and $\exists$ in dependent type theory, a logical framework where $\forall$ becomes a kind of function definition and $\exists$ becomes a kind of pair, like a pair in Python.}
 
-Similarly, when we write ``$\exists x : A.\; P(x)$''\index{quantifier!existential} this is going to be true exactly when the function \texttt{P : A -> Bool} sends at least one element of A to True or, again in the language of inverse images of functions when the set $P^{-1}(\text{True})$ is not empty.
+\begin{sidebar}{you've already been writing quantifiers}
+If you've written any Python you've used quantifiers without calling them that. The builtin \texttt{all(P(x) for x in A)} is literally $\forall x \in A.\; P(x)$, and \texttt{any(P(x) for x in A)} is $\exists x \in A.\; P(x)$. They're the runtime versions of the same logical ideas: given a finite iterable, \texttt{all} walks through checking that the predicate holds everywhere and \texttt{any} walks through looking for a single witness. Haskell uses exactly those names too, and Ruby spells them \texttt{.all?} and \texttt{.any?}.
 
-The \emph{other} way we can define the meaning, at least when the set is finite (so that we can literally write out the conjunction or disjunction), is that we can define $\forall$ as a kind of Big And and $\exists$ as a kind of Big Or, where
+SQL's \texttt{WHERE EXISTS} clause is an $\exists$ in disguise, checking whether a subquery returns at least one row. A list comprehension's filter predicate builds the truth set---the set of elements satisfying the predicate---and a generator expression is the lazy version of the same thing. Even something as mundane as ``all tests passed'' on CI is a $\forall$ over the test suite.
 
-``$\forall x : A.\; P(x)$'' becomes
-
-$P(x_1) \wedge P(x_2) \wedge \ldots$
-
-for every $x$ in the set $A$. Similarly, ``$\exists x : A.\; P(x)$'' becomes
-
-$P(x_1) \vee P(x_2) \vee \ldots$
-
-for every $x$ in $A$.
-
-You can play with these transformations for some small finite sets to prove to yourself that these definitions match up exactly.\footnote{There's a secret third way to define $\forall$ and $\exists$ in dependent type theory, a logical framework where $\forall$ becomes a kind of function definition and $\exists$ becomes a kind of pair, like a pair in Python.}
+What the logic adds, on top of these runtime operators, is the ability to talk about \emph{infinite} sets---where you can't just walk the iterable. The same claim you'd write as \texttt{all(is\_even(n) for n in range(10))} in Python, you can now state as ``$\forall n : \mathbb{N}.\; n \text{ is even}$''---except the second version is a statement we can \emph{prove or disprove}, and it happens to be false, regardless of how long you let the Python version run. That's the jump we're making: from \emph{checking} finite cases to \emph{reasoning} about all of them at once.
+\end{sidebar}
 
 \subsection{Free and bound variables}
 When a quantifier introduces a variable, that variable is \emph{bound}\index{bound variable}---it belongs to the quantifier the way a function parameter belongs to the function. In ``$\forall x : A.\; P(x)$'' the variable $x$ is bound by the $\forall$. A variable that isn't captured by any quantifier is called \emph{free}\index{free variable}.
@@ -167,9 +162,7 @@ A common point of confusion: ``$P$ is necessary for $Q$'' is $Q \to P$, \textbf{
 The connection to everything else we've been doing is pretty direct: these are just different ways of talking about implication. The reason we bring this up now is that math texts and CS specs use this language \emph{all the time} and if you don't know how to translate ``necessary'' and ``sufficient'' into arrows, you're going to have a bad time reading formal documentation.\footnote{The full version of the spec line above is ``Authentication is necessary but not sufficient for authorization.'' The ``not sufficient'' half adds $\text{Authenticated}(x) \not\to \text{Authorized}(x)$---being logged in doesn't mean you have permission to do what you're trying to do.}
 
 \section{Proofs with this logic}
-Proofs in this logic are going to be really similar to proofs in propositional logic but there are going to be five additional rules: the intro and elimination rules of our new quantifiers plus a special rule for our $=$ operator.
-
-We'll start with the easiest, which is the rule for equality.
+Good news: proofs here look almost exactly like proofs in propositional logic. The entire Module 3 toolkit---$\to$I, $\to$E, $\wedge$I, $\wedge$E, $\vee$I, $\vee$E, and friends---carries over unchanged, and we just add five new rules to handle the new vocabulary: introduction and elimination for $\forall$, introduction and elimination for $\exists$, and a special rule for the equality predicate. We'll start with the easiest, which is the rule for equality.
 
 \noindent\textbf{Reflexivity:}
 \[
@@ -234,25 +227,19 @@ This rule says: if you know something satisfying $P$ exists, and you can show th
 \]
 
 \section{Induction, round 1}
-Here we're going to introduce the concept of the natural numbers and also the idea of natural induction. Why? We've shown how to prove things about predicates in general, but if I were to just \emph{hand} you a predicate on a set it's not like you'd know how to actually do anything with it. You don't have any handles, so to speak, for how to start your proof other than brute forcing the set-based semantics. But as we've discussed a couple of times now this won't work for infinite sets where you'd need to check the formula against potentially infinite values.
+Here we're going to introduce the natural numbers and the idea of natural induction together, because the two ideas shape each other. Why? We've shown how to prove things about predicates in general, but if I just \emph{hand} you a predicate on a set you wouldn't know where to start---you don't have any handles on the proof beyond brute-forcing the set-based semantics. And as we've discussed a couple of times now, brute force won't work for infinite sets where you'd need to check the formula against infinitely many values. Induction\index{induction} gives us those handles, by defining types in a way that has structure to it.
 
-Induction\index{induction} is a way of getting a ``handle'' on the data inside a particular set/type by defining types in a way that has structure to it.
-
-Remember earlier how we talked about BNF syntax? The syntax where we recursively defined a set of things?
-
-Like how we defined all propositional logic formulas as
-
-$L := L \wedge L \mid L \vee L \mid L \to L \mid {\sim} L \mid T \mid F \mid x$
-
+Remember BNF syntax from Module 2, where we recursively defined the set of propositional logic formulas as
+\[
+L := L \wedge L \mid L \vee L \mid L \to L \mid {\sim} L \mid T \mid F \mid x
+\]
 We can define the natural numbers\index{natural numbers} the same way:
+\[
+\text{Nat} := 0 \mid \text{succ Nat}
+\]
+Every natural number is either $0$ or the successor of another natural number---so checking a predicate on infinitely many values reduces to just \emph{two cases}. That's what induction buys us.
 
-$\text{Nat} := 0 \mid \text{succ Nat}$
-
-Every natural number is either 0 or the successor of another natural number, so checking a predicate on infinitely many values reduces to just \emph{two cases}.
-
-That's what induction buys us.
-
-Now if you're playing the natural number game you'll have already seen what the induction rule based on this definition is but let's spell it out:
+If you're playing the Natural Number Game you'll have already seen the induction rule that falls out of this definition, but let's spell it out:
 
 Natural induction:
 \[

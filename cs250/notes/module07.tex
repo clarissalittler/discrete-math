@@ -22,7 +22,7 @@
 \end{readingmap}
 
 \section{More on proofs by contradiction and proofs by contrapositive}
-Back in Module 3 we derived proof by contradiction as a tautology, starting from modus tollens and working through a bunch of substitution and simplification. That was important for understanding *why* the technique is valid, but now we need to get good at *using* it.
+Back in Module 3 we derived proof by contradiction as a tautology, starting from modus tollens and working through a bunch of substitution and simplification. That was important for understanding \emph{why} the technique is valid, but now we need to get good at \emph{using} it.
 
 \subsection{Proof by contradiction, in practice}\index{proof!by contradiction}
 Let's recall the shape of proof by contradiction. You want to prove some statement $P$. Instead of proving it directly, you assume $\lnot P$---that is, you assume the \emph{negation} of what you want to prove---and then you show that this assumption leads to a contradiction. A contradiction is when you can derive both some statement $Q$ and its negation $\lnot Q$ at the same time, which obviously can't happen. Since the assumption $\lnot P$ led to nonsense, you conclude that $P$ must be true after all.
@@ -115,71 +115,38 @@ There's a subtlety worth noting for those interested in constructive mathematics
 In your homework this week you'll get to practice both techniques. One tip for the contradiction proofs: when you assume the negation, make sure you actually \emph{use} the assumption somewhere to derive the contradiction. If your proof never references the assumption, something has gone wrong---you've probably actually found a direct proof in disguise!
 
 \section{GCD, Euclid's algorithm, \&c.}
-In this section, we're going to talk a little bit about Euclid's algorithm, the \emph{extended} version of Euclid's algorithm, and how it relates to finding multiplicative inverses for modular arithmetic $\mathbb{Z}\%m$.
-
-First, let's nail down the definition of the ``greatest common divisor.''
+Last module we owed a debt: in §6.5 we claimed that multiplicative inverses exist in $\mathbb{Z}/p\mathbb{Z}$ when $p$ is prime, leaning on B\'ezout's identity without showing how to actually \emph{compute} those coefficients. Time to pay that debt. In this section we'll look at Euclid's algorithm, its \emph{extended} version, and how the extended version computes modular inverses---closing the loop on what Module 6 promised.
 
 \begin{definition}[Greatest Common Divisor]
 For integers $a$ and $b$ that are not both zero, the \emph{greatest common divisor}\index{greatest common divisor} of $a$ and $b$, denoted $\gcd(a,b)$, is the greatest \emph{positive} integer that divides both $a$ and $b$.
 \end{definition}
 
-For example
-\begin{lstlisting}
-gcd(12,24) = 12
+For example: $\gcd(12, 24) = 12$, $\gcd(21, 35) = 7$, $\gcd(1024, 1536) = 512$, and $\gcd(18, 0) = 18$. That last one is worth a sentence---more generally, if $a \neq 0$ then $\gcd(a, 0) = |a|$, because every integer divides $0$, so the common divisors of $a$ and $0$ are exactly the divisors of $a$, and the greatest positive one is $|a|$. (We leave $\gcd(0, 0)$ undefined.)
 
-gcd(21,35) = 7
-
-gcd(1024,1536) = 512
-
-gcd(18,0) = 18
-\end{lstlisting}
-
-More generally, if $a \neq 0$ then $\gcd(a,0) = |a|$. The reason is that every integer divides 0, so the common divisors of $a$ and 0 are exactly the divisors of $a$, and the greatest positive one is $|a|$. (We leave $\gcd(0,0)$ undefined.)
-
-How do you \emph{calculate} the gcd when it isn't obvious? The classic solution is \emph{Euclid's algorithm}\index{Euclidean algorithm}.
-
-Euclid's algorithm is based on the observation that if \texttt{a = n*b + r} then \texttt{gcd(a,b) = gcd(b,r)}, or in other words \texttt{gcd(a,b) = gcd(b,a\%b)}. We keep doing that until the right-hand argument is 0; if it hits 1 first, then we already know the gcd is 1 and can stop early.
-
-Here's a quick implementation in Python:
+How do you \emph{calculate} the gcd when it isn't obvious? The classic solution is \emph{Euclid's algorithm}\index{Euclidean algorithm}, based on the observation that if $a = nb + r$ (the quotient-remainder decomposition from Module 6) then $\gcd(a, b) = \gcd(b, r)$---or, written using the remainder operator, $\gcd(a, b) = \gcd(b, a \bmod b)$. Keep doing that until the right-hand argument is $0$; if it ever hits $1$, we already know the gcd is $1$ and can stop early. Here's a quick Python implementation:
 \begin{lstlisting}[language=Python]
-  def gcd(a,b):
-      if b == 1:
-          return 1
-      elif b == 0:
-          return abs(a)
-      else:
-          return gcd(b,a%b)
+def gcd(a, b):
+    if b == 1:
+        return 1
+    elif b == 0:
+        return abs(a)
+    else:
+        return gcd(b, a % b)
 \end{lstlisting}
 
-What about the \emph{extended} Euclidean algorithm\index{extended Euclidean algorithm}? The idea is that we can simultaneously calculate the gcd \emph{and} coefficients x,y such that
+The \emph{extended} Euclidean algorithm\index{extended Euclidean algorithm} does more: alongside the gcd, it simultaneously computes integers $x$ and $y$ satisfying
+\[
+  ax + by = \gcd(a, b).
+\]
+This is exactly the B\'ezout identity from Module 6, now with an algorithm attached. And here's the payoff we promised: this is how you compute multiplicative inverses mod $n$.
 
-\begin{lstlisting}
-a*x + b*y = gcd(a,b)
-\end{lstlisting}
+Suppose $n$ is prime and we want the multiplicative inverse of some $a$ (where $0 < a < n$, so $a$ is nonzero mod $n$). Since $n$ is prime and $a$ is not divisible by $n$, we have $\gcd(a, n) = 1$, so the extended Euclidean algorithm hands us integers $x, y$ with
+\[
+  a x + n y = 1.
+\]
+Reducing mod $n$, the $ny$ term vanishes (it's divisible by $n$), leaving $a x \equiv 1 \pmod n$. So $x$ is the multiplicative inverse of $a$ modulo $n$. The crucial precondition is $\gcd(a, n) = 1$; if it isn't, no inverse exists. Primality of $n$ is stronger than we actually need---it's enough that $a$ and $n$ be coprime---but the prime case is the one we care about most, since that's when \emph{every} nonzero residue is invertible and we get a finite field.
 
-What's the use of this? It helps us calculate multiplicative inverses in arithmetic modulo $n$. (See Module 6 for the modular-arithmetic background.)
-
-How? Well let's first assume that n is prime (this is stronger than we technically need, but it implies that every \textbf{nonzero} residue class has a multiplicative inverse, and the case of arithmetic mod a prime is really the one we care about anyway).
-
-Then we can use the extended Euclidean algorithm to calculate
-
-\begin{lstlisting}
-a*x + n*y = gcd(a,n)
-\end{lstlisting}
-
-but what's the gcd(a,n)? If $a$ is not divisible by $n$, then since $n$ is prime we must have $\gcd(a,n) = 1$, so we've got
-\begin{lstlisting}
-a*x + n*y = 1
-\end{lstlisting}
-and reducing modulo $n$, the term $n \cdot y$ vanishes (since $n \cdot y$ is divisible by $n$), leaving us with
-\begin{lstlisting}
-(a*x) % n = 1 % n = 1
-\end{lstlisting}
-
-which means that x is a multiplicative inverse of a modulo $n$. The crucial precondition here is $\gcd(a,n) = 1$; if the gcd is not 1, then no multiplicative inverse exists.
-
-\medskip
-With all of that motivation, here's the extended Euclidean algorithm---basically the same as before except we calculate a tuple instead of just one number. I'm following the treatment here (\url{https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm})
+With all of that motivation, here's the extended Euclidean algorithm---the same recursion as before but tracking a tuple. I'm following \href{https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm}{the Wikipedia treatment}:
 
 \begin{lstlisting}[language=Python]
   def egcdRec(a,b,x0,x1,y0,y1):
@@ -201,18 +168,29 @@ With all of that motivation, here's the extended Euclidean algorithm---basically
 
 
 \section{Programming logic}
-In this section, we're going to talk about a specific kind of logic. This material is similar to Epp section 4.10 \textbf{but} more formalized.
+Up to this point we've been using logic to reason about mathematics. But logic is a tool, and one of the most practically important places CS applies it is reasoning about \emph{code}---proving that a program does what its specification says it does. The logic we're about to meet is called \href{https://en.wikipedia.org/wiki/Hoare_logic}{Hoare logic}\index{Hoare logic}, invented by Tony Hoare in 1969. It's a fully-fledged logic with its own axioms, inference rules, syntax, and semantics, but its vocabulary is entirely about programs: variables, assignments, loops, conditionals. Epp §4.10 covers this material more informally; what follows here is the formal version.
 
-We're going to be dealing with a specific logic called Hoare logic\index{Hoare logic}. \href{https://en.wikipedia.org/wiki/Hoare_logic}{Hoare logic}---invented originally by Tony Hoare---is a formal logic for reasoning about code directly. It has its own axioms, inference rules, syntax, and semantics. It's a fully-fledged albeit very \emph{different} looking logic.
+Every statement in Hoare logic is a \emph{Hoare triple}\index{Hoare triple}:
+\[
+  \{P\}\, C\, \{Q\}.
+\]
+Here $P$ is a proposition about the state of the program \emph{before} $C$ runs\index{precondition} (the values of variables, output buffers, etc.), $C$ is the code---a sequence of statements---and $Q$ is a proposition about the state of the program \emph{after} $C$ has finished\index{postcondition}.
 
-Each statement in Hoare logic looks like\index{Hoare triple}
-\begin{lstlisting}
-{P}C{Q}
-\end{lstlisting}
+Think of $\{P\}\, C\, \{Q\}$ as an implication with a computational step in the middle: if $P$ holds before $C$ runs, then $Q$ holds afterward.
 
-Where P is a proposition about the state of the program \textbf{before} your code runs\index{precondition}---the values of variables, output, things like that---C is the code---a series of statements in your program---and Q is another proposition about the state of the program \textbf{after} the code has run\index{postcondition}.
+\begin{sidebar}{formal verification, for real}
+Hoare logic looks academic, but it (or its descendants) is behind some of the most trust-sensitive software in the world. A few places where ``$\{P\}\, C\, \{Q\}$'' turns into real engineering:
 
-Think of $\{P\}C\{Q\}$ as an implication with a computational step in the middle: if $P$ holds before $C$ runs, then $Q$ holds afterward.
+\begin{itemize}
+  \item \textbf{seL4}, an operating-system microkernel, is fully machine-verified against its specification using Isabelle/HOL. It's the same microkernel running on the avionics in some military helicopters, in high-assurance routers, and in the secure enclaves of various consumer devices.
+  \item \textbf{CompCert}, a verified C compiler developed at Inria, proves that the compiled machine code has the same behavior as the source C program. It's used in safety-critical avionics systems where ``did my compiler introduce a bug?'' is a question you can't afford to answer with a shrug.
+  \item \textbf{AWS s2n-tls}, Amazon's TLS implementation, is continuously checked with SAW, Cryptol, and a symbolic execution pipeline built around Hoare-logic-style specifications. Same for parts of the Linux kernel's BPF verifier, which does Hoare-style reasoning to decide whether an untrusted program is safe to run inside the kernel.
+  \item \textbf{Dafny}, \textbf{Frama-C}, \textbf{Viper}, and \textbf{SPARK Ada} are production verifiers where engineers write pre- and postconditions alongside their code and an SMT solver discharges the proof obligations. Amazon uses Dafny for pieces of AWS; Airbus uses SPARK for flight-control software; Mozilla has used Frama-C on parts of NSS.
+  \item \textbf{Separation logic}, a descendant of Hoare logic developed in the 2000s (John Reynolds, Peter O'Hearn, et al.), is the reasoning principle behind Facebook's Infer static analyzer, which finds null-pointer bugs and memory leaks in large C, Java, and Objective-C codebases by checking Hoare-style specs.
+\end{itemize}
+
+The common thread: Hoare logic turns ``the program is correct'' from a gut feeling into a proof obligation that a machine can (sometimes, with help) discharge. What you're about to learn---pre-/postconditions, assignment as substitution, loop invariants---is the conceptual basis for all of the above. The production tools scale it up with automation and additional reasoning principles, but the bones are what's in this section.
+\end{sidebar}
 
 The programming language we'll use is a simple imperative language, with just a few kinds of statements
 
