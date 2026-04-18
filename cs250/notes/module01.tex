@@ -9,16 +9,21 @@
 \begin{document}
 \maketitle
 
+\begin{readingmap}
+\rmentry{Epp sections.}{§1.1--1.3: the language of sets, the language of relations and functions, and the language of variables. Module 1's job is to build the shared vocabulary that every later module will reuse.}
+
+\rmentry{Prerequisites.}{None---this is where the book starts. Comfort with a little Python or similar programming will help the aside-style examples feel familiar but is not required.}
+
+\rmentry{Relevant intermezzi.}{``How to Write a Proof'' immediately follows this module and is deliberately short---revisit it while working the exercises below. ``Cardinality and Function Spaces'' (the set-theory intermezzo after it) uses this module's vocabulary to show that some infinities are genuinely bigger than others.}
+
+\rmentry{Practice from Epp.}{§1.1 exercises on set notation, set-builder notation, and set operations; §1.2 exercises on identifying functions, domains/codomains, and injections/surjections; §1.3 exercises on reflexive/symmetric/transitive relations. A runnable Python companion for this module lives at \texttt{code/module01\_sets.py}.}
+\end{readingmap}
+
 \section{A Note on The Textbook}
 If you're having trouble finding a copy of Epp 5th edition, check the library, course reserves, or the instructor first. Older editions can also still be useful for extra practice problems.
 
 \section{Welcome to CS 250}
-Welcome to CS 250! This class is an introduction to logic and mathematical reasoning geared towards computer scientists.
-
-\subsection*{A note on the structure of these notes}
-Between the main modules you'll find \emph{intermezzi}---short chapters on topics that are more mathematically sophisticated, that go deeper into a subject than the main modules require, or that cover optional material you may find interesting. They are unnumbered and won't appear on exams unless your instructor says otherwise. Think of them as the bonus tracks on an album: they enrich the experience but the main story is told in the numbered modules.
-
-By the end of this class you will
+Welcome to CS 250! This class is an introduction to logic and mathematical reasoning geared towards computer scientists. By the end of it you will
 \begin{itemize}
   \item Be able to explain what a mathematical proof is
   \item Know the distinction between formal and informal proofs
@@ -30,6 +35,9 @@ By the end of this class you will
   \item Be able to perform simple formal proofs of program correctness
 \end{itemize}
 
+\subsection*{A note on the structure of these notes}
+Between the main modules you'll find \emph{intermezzi}---short chapters on topics that are more mathematically sophisticated, that go deeper into a subject than the main modules require, or that cover optional material you may find interesting. They are unnumbered and won't appear on exams unless your instructor says otherwise. Think of them as the bonus tracks on an album: they enrich the experience but the main story is told in the numbered modules.
+
 \section{Why study logic?}
 \begin{itemize}
   \item understanding how to write proofs will let you reason about the \emph{limits} of computation
@@ -37,44 +45,20 @@ By the end of this class you will
   \item on a practical level, ``formal methods''---the application of logic to computer science---are a lucrative and in-demand field in high-stakes computing and engineering, from embedded systems programming to chip design to the development of operating system components
 \end{itemize}
 
-To that first point, let's consider a problem: if we want to understand not just what computers can do \emph{today} but what computers can do \emph{ever}, we need to start with an \textbf{abstract} model of computation, one that doesn't depend on a particular chip architecture or instruction set.
+Take that first point. If we want to understand not just what computers can do \emph{today} but what computers can do \emph{ever}, we need to start with an \textbf{abstract} model of computation---one that doesn't depend on a particular chip architecture or instruction set. Here's the kind of question we'd like to be able to answer: suppose I managed to demonstrate that \textbf{no} AMD chip today could run a program that reads in the code of another program and prints \texttt{1} if that program would run in finite time and \texttt{0} if it would go into an infinite loop. What would that tell us? How do I know there \emph{won't} be a chip that \emph{could} run such a program---maybe a quantum computer, or some architecture we haven't invented yet?
 
-Consider: suppose I managed to demonstrate that \textbf{no} AMD chip today could run a program that reads in the code of another program and prints \texttt{1} if the program would run in finite time and \texttt{0} if the program would go into an infinite loop. What would that tell us?
+Or consider two programming languages, Python and C. If I can solve a problem in Python, do I \textbf{know} that I can always write a C program that computes the same thing? What about the other way around? We all intuitively feel there isn't a real difference between what two languages can compute---only in how efficiently they compute. But intuition alone isn't good enough for a computer scientist. We need to be able to \emph{know} whether two languages are essentially equivalent, or whether two chips are capable of running the same kinds of programs.
 
-I've demonstrated this result. How do I know there \emph{won't} be a chip that \emph{could} run such a program? How do we know we won't invent some new kind of computer that could do this? Maybe a quantum computer could do things that seem impossible today?
+To do that we need mathematical \emph{models} of computation that don't depend on any of these details: not on a specific language, not on specific hardware. We need a model that \emph{abstracts} over those details. Such a model can't be a concrete programming language with a compiler---we've already ruled that out---so instead we'll reason with mathematical tools: sets, symbols, syntax and semantics, proofs. The question ``what is a proof and how do I write one'' is the bulk of this class; the actual mathematical modeling of computation we'll leave for the sequel course, CS 251. For now, I'll say that a proof is a way to convince the reader, by clearly outlining a sequence of reasoning steps, that something is true.
 
-Or how about this: consider two programming languages, Python and C.
+Points two and three are intertwined, and both come down to the difference between \emph{formal} and \emph{informal} proof. Normal proofs, like what I was talking about above, are technically considered ``informal.'' An informal proof is meant to communicate between mathematicians, using a mix of symbolic notation and prose. A formal proof, by contrast, lives \emph{inside} a logic and uses only the logic's own rules. The formal rules of a logic will feel strange and constraining---almost like writing assembly instead of a regular programming language, where each step is small, tedious, and verbose. Yet there's something important you learn by doing it. Again like assembly, you learn \emph{why} things work the way they do. You'll learn how the rules of a logic are justified mathematically, and how those rules help us distinguish good proofs from bad ones. One of the hardest things when you're first writing informal proofs is knowing what you're allowed to say and what needs justification; formal logic helps you build that judgment even when you're not using it directly.
 
-If I can solve a problem in Python, do I \textbf{know} that I can always write a C program that computes the same thing? What about the other way around?
-
-We all intuitively feel that there isn't a real difference between what two languages can compute---only in how efficiently they compute.
-
-But intuition alone isn't good enough for a computer scientist. We need the ability to \emph{know} whether two languages are essentially equivalent or two chips capable of running the same kinds of programs.
-
-To do that we need mathematical \emph{models} of computation that don't depend on any of these details, like the specifics of language or hardware. In other words, we need a model that \emph{abstracts} over these details.
-
-But what would you do with such a model once you had it?
-
-We've already determined it's not a concrete programming language with a compiler.
-
-No, instead we have to reason with mathematical tools: sets, symbols, syntax and semantics, proofs.
-
-The question ``what is a proof and how do I write one'' is the bulk of this class. The actual mathematical modeling of computation and computer science we'll leave for the sequel course, CS 251.
-
-For now, I'll say a proof is a way to convince the reader, by clearly outlining a sequence of reasoning steps, that something is true.
-
-Our points two and three are intertwined but they involve explaining the difference between \emph{formal} and \emph{informal} proof. Normal proofs, like what I was talking about above, are technically considered ``informal''. An informal proof is meant to communicate between mathematicians, using a mix of symbolic notation and prose. A formal proof, by contrast, lives \emph{inside} a logic and uses only the logic's own rules. The formal rules of a logic will feel strange and constraining, almost like writing assembly instead of a regular programming language. Each step is small, tedious, and verbose. Yet there is something important you learn by doing it. Again like assembly, you learn \emph{why} things work the way they do.
-
-You're going to learn how the rules of a logic are justified, mathematically, and how these rules help us understand what is a good and bad proof. One of the hardest things when you're first writing informal proofs is knowing what you're allowed to say and what needs justification. Formal logic helps you build that judgment even when you're not using it directly.
-
-Formal logic is not just a training exercise you discard once you've learned the basics. Formal proofs resist the kind of errors that are easy to make informally---errors that even professional mathematicians regularly commit. What if you could get those advantages without the tedium? That's where interactive theorem provers, sometimes called proof assistants, come in. These are like very specialized programming languages where the programs you write \emph{are also} proofs in a formal logic! Using a proof assistant is its own skill and becoming truly competent with them is beyond the scope of this course, but I at least want to expose you to using them.
+Formal logic isn't just a training exercise you discard once you've learned the basics. Formal proofs resist the kind of errors that are easy to make informally---errors that even professional mathematicians regularly commit. What if you could get those advantages without the tedium? That's where \emph{interactive theorem provers}, sometimes called proof assistants, come in. These are like very specialized programming languages where the programs you write \emph{are also} proofs in a formal logic. Using a proof assistant is its own skill, and becoming truly competent with one is beyond the scope of this course, but I at least want to expose you to using them.
 
 \section{What is logic, what is a proof?}
-Let's make the central concept of this course precise. Logic is the study of how the truth of statements follows from their premises by means of \emph{valid arguments}---arguments built from correct reasoning steps. In mathematics, we call a valid argument a \emph{proof}: a way to convince the reader, through a clear sequence of reasoning steps, that something is true.
+Let's make the central concept of this course precise. Logic is the study of how the truth of statements follows from their premises by means of \emph{valid arguments}---arguments built from correct reasoning steps. In mathematics, we call a valid argument a \emph{proof}: a way to convince the reader, through a clear sequence of reasoning steps, that something is true. Let's see what that looks like in practice with a simple example.
 
-Let's see what that looks like in practice with a simple example.
-
-Let's say you were thinking about the \emph{natural numbers}. That is the numbers that are either zero or a positive whole number. You realize ``hey, there are a lot of these. There must be infinitely many of them.'' and now you want to convince yourself this is \emph{true}, in other words you want to \emph{prove} it.
+Say you were thinking about the \emph{natural numbers}---the numbers that are either zero or a positive whole number. You realize ``hey, there are a lot of these. There must be infinitely many of them,'' and now you want to convince yourself this is \emph{true}. In other words, you want to \emph{prove} it.
 
 To start, you have a rather clever guess on how to show this. First, you note that if you have a natural number you can always add one and it stays a positive whole number. Second, you decide to see what happens if there's a \textbf{finite} amount of natural numbers. You're going to \emph{assume} that this is true and then see if you can show it leads to something weird.
 
@@ -113,42 +97,17 @@ None of these approaches is better than the others; each has its own strengths a
 These notes were, however, written by a constructive mathematician, so there may be bias peeking through in how this material is presented.
 
 \section{Variables and formulae}
-We've given a proof in a very \emph{informal}, natural-language way. By natural language I mean human language that evolved organically, as opposed to the language of mathematics or a programming language.
+We've given a proof in a very \emph{informal}, natural-language way. By natural language I mean human language that evolved organically, as opposed to the language of mathematics or a programming language. We need to start moving from this informal language into \emph{formal} language: symbols with rigid meaning. We'll make this journey piecemeal over time, learning how to take statements in human language---which can be ambiguous---and turn them into rigorous, unmistakable combinations of symbols. This will both help us be precise in how we do mathematics and help us move our mathematics from pen and paper to computer programs.
 
-We need to start moving from this informal language into \emph{formal} language: symbols with rigid meaning. We'll make this journey piecemeal over time, learning how to take statements in human language---which can be ambiguous---and turn them into rigorous, unmistakable combinations of symbols.
+The first such formalization is the introduction of \emph{variables}. You've already seen variables in algebra and programming before, although their uses are slightly different from what we're doing here. We're not ``solving for x'' like in algebra, nor are we using variables like labeled containers as in \emph{C}, \emph{Python}, or similar programming languages where the contents of the container can change over time. Instead, think of variables as generalized pronouns---they work a lot like ``it'' or ``this'' in natural language. There are \emph{patterns} to how we introduce them: we name the variable and its scope and then allow ourselves to use it, e.g.\ ``Consider a chicken \textbf{c}, such that \ldots'' or ``For all students \textbf{s} in CS250 \ldots''
 
-This will both help us be precise in how we do mathematics but also help us move our mathematics from pen and paper to computer programs.
+For a more concrete example, recall that in the previous section we assumed there was a largest natural number and talked through the rest of the proof from there. With variables, we can say something like: ``Assume there is a largest natural number, \textbf{n}. Then we know that n+1 is also a natural number and that n+1>n, contradicting the assumption that \textbf{n} is largest.'' That's a lot clearer than trying to write it in just words, right? And all we've done is introduce a small abstraction.
 
-The first such formalization is the introduction of \emph{variables}. You've already seen variables in algebra and programming before, although their uses are slightly different from what we're doing here.
+We \emph{need} variables to help us write more complicated kinds of logical statements as well. The first kinds we're going to talk about are what Epp calls universal, existential, and conditional. Universal statements are things like ``all dogs are mammals'' or ``every chicken has a common ancestor''---claims that are true for every possible example of a ``class of thing.'' We're going to make ``class of thing'' more rigorous soon, but for now think ``all dogs,'' ``every person,'' ``all programming languages.'' Universal statements can also include negatives like ``no dogs are also cats'' or ``every person is not immortal.''
 
-We're not ``solving for x'' like in algebra nor are we using variables like labeled containers as in \emph{C}, \emph{Python}, or similar programming languages where the contents of the container can change over time.
+Existential statements are like ``there is a smallest natural number'' or ``there is at least one rainy day each fall.'' These are about showing examples of something, or about asserting that a thing with certain properties \emph{exists}---the kinds of claims you make when you're showing a problem even has a solution. For example, ``the equation $3x - 29 = 0$ has a solution'' is an existential statement.
 
-Instead, think of variables as generalized pronouns --- they work a lot like ``it'' or ``this'' in natural language.
-
-There are \emph{patterns} to how we introduce variables like this: we name the variable and its scope and then allow ourselves to use it, e.g.\ ``Consider a chicken \textbf{c}, such that \ldots'' or ``For all students, \textbf{s}, in CS250 \ldots''
-
-For a more concrete example, recall that in the previous section we assumed there was a largest natural number and talked through the rest of the proof from there.
-
-With variables, we can say something like:
-``Assume there is a largest natural number, \textbf{n}. Then we know that n+1 is also a natural number and that n+1>n, contradicting the assumption that \textbf{n} is largest.''
-
-That's a lot clearer than trying to write it in just words, right, and all we've done is introduce a small abstraction.
-
-We \emph{need} variables to help us write more complicated kinds of logical statements as well. The first kinds we're going to talk about are what Epp calls universal, existential, and conditional.
-
-Universal statements are things like ``all dogs are mammals'' or ``every chicken has a common ancestor''. Universal statements are about something that is true for every possible example of a ``class of thing''. We're going to make ``class of thing'' more rigorous soon, but for now think ``all dogs'', ``every person'', ``all programming languages''.
-
-Universal statements can also include negatives like ``no dogs are also cats'' or ``every person is not immortal''.
-
-Existential statements are like ``there is a smallest natural number'' or ``there is at least one rainy day each fall''. These are about showing examples of something or that a thing with certain properties \emph{exists}.
-
-These are the kinds of claims you make when you're showing a problem even has a solution. For example, ``the equation $3x - 29 = 0$ has a solution'' is an existential statement.
-
-The last kind of statement Epp teases out is the ``conditional statement'', which express an ``if-then'' relationship.
-
-For example, ``if a pear can be used as a weapon, then it is not ripe'' or ``if a program does not compile, then it is not correct''.
-
-We can even combine all of these concepts together into an example such as ``for every equation of the form $mx + b = y$, where $m$ is not $0$, there exists a solution''. This is a universal wrapped around a conditional wrapped around an existential.
+The last kind of statement Epp teases out is the \emph{conditional}, which expresses an ``if-then'' relationship: ``if a pear can be used as a weapon, then it is not ripe,'' or ``if a program does not compile, then it is not correct.'' You can combine all three of these into a single claim---for example, ``for every equation of the form $mx + b = y$, where $m$ is not $0$, there exists a solution,'' which is a universal wrapped around a conditional wrapped around an existential.
 
 We're now ready to make the ``class of thing'' concept a little more formal and talk about \emph{sets}.
 
@@ -261,6 +220,18 @@ Given a universal set $U$ that contains all elements under discussion, the \emph
 \end{center}
 
 The complement only makes sense relative to some agreed-upon universe $U$. When we write $\overline{A}$ we're implicitly assuming everyone knows what $U$ is.
+
+A quick notation warning: you'll also see $A^c$\index{complement!notation $A^c$} used for the complement of $A$, particularly in Lean and in the Natural Number Game. The overline and the superscript-$c$ mean the same thing; the choice is a matter of typographic convenience.
+
+\begin{sidebar}{universes, then and now}
+The phrase ``universal set'' is doing more work than it lets on. Early set theorists---Cantor, Frege---were happy to talk about \emph{the} universe: the set of absolutely everything. That ran aground on \emph{Russell's paradox}\index{Russell's paradox}: consider the ``set'' of all sets that don't contain themselves. Does it contain itself? Either answer contradicts itself. The moral was that not every predicate carves out a set. Modern axiomatic set theory (ZFC) fixes this by only letting you form $\{x \in S \mid P(x)\}$ relative to some \emph{already-existing} set $S$---exactly the ``subset with a predicate'' construction we've been using. There is no set of all sets in ZFC, so the phrase ``universe $U$'' in the definition of complement is always a stand-in for ``some large enough set we've agreed on for this discussion.''
+
+Category theorists, who genuinely do want to talk about ``all groups'' or ``all topological spaces,'' cope with this by working inside a \emph{Grothendieck universe}\index{Grothendieck universe}---a set big enough to pretend it's everything, while technically sitting inside an even bigger one.
+
+Type theory faces the same problem from a different angle. If you try to have a single type \texttt{Type} that contains all types, including itself, you run into Girard's paradox---a type-theoretic cousin of Russell's. Systems like Coq, Agda, and Lean solve this with a \emph{universe hierarchy}\index{universe hierarchy}: \texttt{Type 0} contains ordinary types, \texttt{Type 1} contains \texttt{Type 0}, and so on up. In practice you rarely see the indices because the elaborator figures them out for you (``universe polymorphism''), but they're always there in the background, preventing the self-referential collapse.
+
+So when these notes say ``universe'' we mean something weaker than a god's-eye view of everything. It just means: a context---a set, a type, a level---big enough to contain what we're talking about today.
+\end{sidebar}
 
 \begin{definition}[Disjoint]
 Two sets $A$ and $B$ are \emph{disjoint}\index{disjoint} if they share no elements: $A \cap B = \emptyset$.
@@ -429,13 +400,13 @@ The exercises below are organized into four tiers. The \textbf{warm-ups} are sho
 \textbf{Exercise 1.}\label{ex:m1:1} Let $A = \{1, 2, 3, 4\}$ and $B = \{3, 4, 5, 6\}$. Compute $A \cap B$, $A \cup B$, $A \setminus B$, and $|A \times B|$.
 
 \bigskip
-\textbf{Exercise 2.}\label{ex:m1:2} What is $|\{1, \{1\}, \{1, \{1\}\}\}|$? Be careful---count distinct elements.
+\noindent\textbf{Exercise 2.}\label{ex:m1:2} What is $|\{1, \{1\}, \{1, \{1\}\}\}|$? Be careful---count distinct elements.
 
 \bigskip
-\textbf{Exercise 3.}\label{ex:m1:3} Rewrite the set $\{n \mid n \in \mathbb{N},\; n^2 < 20\}$ by listing its elements explicitly (``roster notation''). Then do the same for $\{n \mid n \in \mathbb{Z},\; -3 \leq n < 3\}$.
+\noindent\textbf{Exercise 3.}\label{ex:m1:3} Rewrite the set $\{n \mid n \in \mathbb{N},\; n^2 < 20\}$ by listing its elements explicitly (``roster notation''). Then do the same for $\{n \mid n \in \mathbb{Z},\; -3 \leq n < 3\}$.
 
 \bigskip
-\textbf{Exercise 4.}\label{ex:m1:4} Let $S = \{1, 2, \{1\}, \{1, 2\}\}$. For each of the following, say whether it is true, false, or a type error (``type error'' means the claim doesn't even make sense---e.g., asking whether a number is a subset of another number):
+\noindent\textbf{Exercise 4.}\label{ex:m1:4} Let $S = \{1, 2, \{1\}, \{1, 2\}\}$. For each of the following, say whether it is true, false, or a type error (``type error'' means the claim doesn't even make sense---e.g., asking whether a number is a subset of another number):
 \begin{enumerate}[label=(\alph*)]
   \item $1 \in S$
   \item $\{1\} \in S$
@@ -447,14 +418,14 @@ The exercises below are organized into four tiers. The \textbf{warm-ups} are sho
 \end{enumerate}
 
 \bigskip
-\textbf{Exercise 5.}\label{ex:m1:5} List all eight elements of $\mathcal{P}(\{a, b, c\})$ and verify that there are $2^3$ of them. Then list all six elements of $\{a, b\} \times \{1, 2, 3\}$.
+\noindent\textbf{Exercise 5.}\label{ex:m1:5} List all eight elements of $\mathcal{P}(\{a, b, c\})$ and verify that there are $2^3$ of them. Then list all six elements of $\{a, b\} \times \{1, 2, 3\}$.
 
 \subsection*{Standard}
 
 \textbf{Exercise 6.}\label{ex:m1:6} For each of the following relations on $\mathbb{Z}$, determine whether it is reflexive, symmetric, and/or transitive: (a) $a\, R\, b$ iff $a + b$ is even; (b) $a\, R\, b$ iff $a \leq b$; (c) $a\, R\, b$ iff $|a - b| \leq 1$.
 
 \bigskip
-\textbf{Exercise 7.}\label{ex:m1:7} For each of the following ``assignments'' from $\mathbb{R}$ to $\mathbb{R}$, decide whether it is a function (in the total, single-valued sense of the definition in this module). If it isn't, say which requirement fails---totality or uniqueness---and give a witness. If it is, say so explicitly.
+\noindent\textbf{Exercise 7.}\label{ex:m1:7} For each of the following ``assignments'' from $\mathbb{R}$ to $\mathbb{R}$, decide whether it is a function (in the total, single-valued sense of the definition in this module). If it isn't, say which requirement fails---totality or uniqueness---and give a witness. If it is, say so explicitly.
 \begin{enumerate}[label=(\alph*)]
   \item $f(x) = 1/x$.
   \item $f(x) = \sqrt{x}$ (taking only the non-negative square root).
@@ -463,13 +434,13 @@ The exercises below are organized into four tiers. The \textbf{warm-ups} are sho
 \end{enumerate}
 
 \bigskip
-\textbf{Exercise 8.}\label{ex:m1:8} Prove the distributive law $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ by showing both containments. That is, show $A \cap (B \cup C) \subseteq (A \cap B) \cup (A \cap C)$ and vice versa, each by picking an arbitrary element of the left-hand side and arguing that it must be in the right-hand side. Use the ``state goal, introduce variable, justify every step'' advice from the ``How to Write a Proof'' chapter.
+\noindent\textbf{Exercise 8.}\label{ex:m1:8} Prove the distributive law $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$ by showing both containments. That is, show $A \cap (B \cup C) \subseteq (A \cap B) \cup (A \cap C)$ and vice versa, each by picking an arbitrary element of the left-hand side and arguing that it must be in the right-hand side. Use the ``state goal, introduce variable, justify every step'' advice from the ``How to Write a Proof'' chapter.
 
 \bigskip
-\textbf{Exercise 9.}\label{ex:m1:9} Prove or disprove: for all sets $A$ and $B$, if $A \subseteq B$ then $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. (Reminder: to prove an implication about sets, start by assuming the hypothesis and by picking an arbitrary element of the set whose containment you want to show.)
+\noindent\textbf{Exercise 9.}\label{ex:m1:9} Prove or disprove: for all sets $A$ and $B$, if $A \subseteq B$ then $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. (Reminder: to prove an implication about sets, start by assuming the hypothesis and by picking an arbitrary element of the set whose containment you want to show.)
 
 \bigskip
-\textbf{Exercise 9b.}\label{ex:m1:9b} (Composition.) Let $f : \mathbb{Z} \to \mathbb{Z}$ send $n \mapsto n+1$ and let $g : \mathbb{Z} \to \mathbb{Z}$ send $n \mapsto 2n$. Compute $g \circ f$ and $f \circ g$ as closed-form expressions, and confirm that they are \emph{not} the same function. Then verify, for an arbitrary $n$, the associativity law $((f \circ f) \circ g)(n) = (f \circ (f \circ g))(n)$.
+\noindent\textbf{Exercise 9b.}\label{ex:m1:9b} (Composition.) Let $f : \mathbb{Z} \to \mathbb{Z}$ send $n \mapsto n+1$ and let $g : \mathbb{Z} \to \mathbb{Z}$ send $n \mapsto 2n$. Compute $g \circ f$ and $f \circ g$ as closed-form expressions, and confirm that they are \emph{not} the same function. Then verify, for an arbitrary $n$, the associativity law $((f \circ f) \circ g)(n) = (f \circ (f \circ g))(n)$.
 
 \subsection*{Challenge}
 
@@ -480,17 +451,17 @@ The exercises below are organized into four tiers. The \textbf{warm-ups} are sho
 Give a plain-English argument (``every element of $A \cup B$ is counted \ldots''). This is your first taste of \emph{inclusion--exclusion}, which generalizes to arbitrary finite unions and is one of the foundational tools of combinatorics.
 
 \bigskip
-\textbf{Exercise 11.}\label{ex:m1:11} A \emph{relation on $A$} is a subset of $A \times A$, so relations on $A$ are themselves elements of the power set $\mathcal{P}(A \times A)$. If $|A| = n$, how many distinct relations are there on $A$? How many are reflexive? (Hint for the second part: a reflexive relation \emph{must} contain all $n$ diagonal pairs, and is free to include or exclude each of the remaining pairs.)
+\noindent\textbf{Exercise 11.}\label{ex:m1:11} A \emph{relation on $A$} is a subset of $A \times A$, so relations on $A$ are themselves elements of the power set $\mathcal{P}(A \times A)$. If $|A| = n$, how many distinct relations are there on $A$? How many are reflexive? (Hint for the second part: a reflexive relation \emph{must} contain all $n$ diagonal pairs, and is free to include or exclude each of the remaining pairs.)
 
 \bigskip
-\textbf{Exercise 12.}\label{ex:m1:12} Here is a classic bad argument: ``Symmetry and transitivity together force reflexivity. After all, if $a\, R\, b$, then by symmetry $b\, R\, a$, and so by transitivity $a\, R\, a$.'' Find the flaw---this really is a common error---and then exhibit a concrete relation on $\{1, 2, 3\}$ that is symmetric and transitive but \emph{not} reflexive. What additional assumption would you need for the argument to go through?
+\noindent\textbf{Exercise 12.}\label{ex:m1:12} Here is a classic bad argument: ``Symmetry and transitivity together force reflexivity. After all, if $a\, R\, b$, then by symmetry $b\, R\, a$, and so by transitivity $a\, R\, a$.'' Find the flaw---this really is a common error---and then exhibit a concrete relation on $\{1, 2, 3\}$ that is symmetric and transitive but \emph{not} reflexive. What additional assumption would you need for the argument to go through?
 
 \subsection*{Connection}
 
 \textbf{Exercise 13.}\label{ex:m1:13} (Programming.) Write a Python function \texttt{cartesian(xs, ys)} that takes two lists and returns the Cartesian product as a list of tuples, \emph{without} using \texttt{itertools.product}. Test it on \texttt{cartesian([1,2],\ ['a','b','c'])} and verify it produces the same six tuples you listed by hand in Exercise~\ref{ex:m1:5}. Then answer: if \texttt{xs} has length $m$ and \texttt{ys} has length $n$, how many element comparisons does your implementation do?
 
 \bigskip
-\textbf{Exercise 14.}\label{ex:m1:14} (Intermezzo pointer.) The intermezzo after this module, ``Cardinality and Function Spaces,'' is about counting functions between finite sets. As a warm-up for it: how many functions are there from $\{a, b, c\}$ to $\{0, 1\}$? List them all as tables. Can you see why the answer is $2^3$ and not $3^2$? (Which set plays the role of ``exponent''?)
+\noindent\textbf{Exercise 14.}\label{ex:m1:14} (Intermezzo pointer.) The intermezzo after this module, ``Cardinality and Function Spaces,'' is about counting functions between finite sets. As a warm-up for it: how many functions are there from $\{a, b, c\}$ to $\{0, 1\}$? List them all as tables. Can you see why the answer is $2^3$ and not $3^2$? (Which set plays the role of ``exponent''?)
 
 \bigskip
 This has been a foundational week: sets, tuples, functions, relations, and (in the short chapter that follows) the prose style expected of every proof in the book. Those are the vocabulary we'll use for the rest of the course. In the next module we start doing \emph{logic}.

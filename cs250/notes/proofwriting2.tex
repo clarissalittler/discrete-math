@@ -1,0 +1,175 @@
+\documentclass[11pt]{article}
+
+\input{cs250preamble}
+
+\title{CS 250 --- How to Write a Proof, Revisited}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+The earlier chapter, ``How to Write a Proof,'' covered the prose habits that work regardless of technique: state the goal, introduce variables, justify each step, conclude clearly. Those habits still apply. You've now finished Module~7 and have met the full set of informal proof techniques---direct, counterexample, cases, contradiction, contrapositive---and you're about to start an extended run on induction (Modules~8--10). Each technique places its own demands on how the proof is structured on the page. This chapter is the upper-level companion: how to choose between techniques, how to write an induction proof, how to handle biconditionals, and the style conventions you'll need as your proofs get longer.
+
+\section{Choosing a technique}
+
+You've probably noticed that most claims can be proved in more than one way. There's no algorithm for picking the ``right'' technique, but there are reliable starting points. Here's a decision tree that's not universally correct but is usually correct:
+
+\begin{itemize}
+  \item \textbf{``For all $x$, $P(x)$.''} Start with a direct proof: let $x$ be arbitrary, prove $P(x)$. If the direct argument stalls on an internal implication inside $P$, check whether its contrapositive is easier.
+  \item \textbf{``There exists $x$ such that $P(x)$.''} If you can construct a specific $x$, do so---a \emph{constructive} proof. Otherwise assume no such $x$ exists and try to derive a contradiction---a \emph{non-constructive} proof. Constructive is preferred when available: it tells the reader not just that $x$ exists but what one looks like.
+  \item \textbf{``If $P$ then $Q$.''} Try direct first: assume $P$, derive $Q$. If $Q$ feels far from $P$, try the contrapositive: assume $\lnot Q$, derive $\lnot P$. If both get tangled, assume $P \wedge \lnot Q$ and try for a contradiction.
+  \item \textbf{``The claim splits into disjoint cases.''} Use proof by cases. The classic signal is ``for all integers $n$\ldots'' where the argument is different when $n$ is even vs.\ odd, or ``for any integer $n$, $n \bmod 3 \in \{0, 1, 2\}$.''
+  \item \textbf{``For all naturals $n$, $P(n)$'' or ``for all lists / trees / terms, $P(t)$.''} Use induction. Natural induction for the naturals; strong induction when the IH needs more than the immediate predecessor; structural induction for recursively defined data (Module~10).
+  \item \textbf{``$X$ is impossible.''} Contradiction is often cleanest: assume $X$, derive a statement you already know is false. The irrationality of $\sqrt{2}$ is the canonical example.
+\end{itemize}
+
+When two techniques both seem to work, pick the one that makes the proof \emph{shorter}. Short proofs are easier to verify and easier to remember.
+
+\section{A walkthrough: using the contrapositive}
+
+Here's a richer walkthrough than the element-chasing pair in the earlier chapter. We'll prove: \emph{for any integer $n$, if $n^2$ is even, then $n$ is even.}
+
+\medskip
+\noindent\textbf{First draft (direct attempt):}
+\begin{quote}
+Suppose $n^2$ is even. Then $n^2 = 2k$ for some integer $k$. So $n = \sqrt{2k}$\ldots
+\end{quote}
+
+This is already in trouble. The square root forces us out of the integers, and factoring $n^2 = 2k$ over the integers is exactly the divisibility question we're trying to answer---we'd be assuming what we want to prove. Direct is the wrong tool here.
+
+The flip to the contrapositive is: \emph{if $n$ is odd, then $n^2$ is odd.} That's a claim we can prove directly---we know exactly what ``odd'' means as a formula.
+
+\medskip
+\noindent\textbf{Tightened version:}
+\begin{quote}
+We prove the contrapositive: if $n$ is odd, then $n^2$ is odd.
+
+\smallskip
+Suppose $n$ is odd. By the definition of odd, $n = 2k + 1$ for some integer $k$. Then
+\[
+  n^2 = (2k+1)^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1.
+\]
+Since $2k^2 + 2k$ is an integer, $n^2$ has the form $2m + 1$ for an integer $m$, which is the definition of odd.
+
+\smallskip
+We have shown that $n$ odd implies $n^2$ odd. By the logical equivalence of a conditional and its contrapositive, $n^2$ even implies $n$ even.
+\end{quote}
+
+Three things worth noting:
+
+\begin{enumerate}
+  \item \textbf{Announce the contrapositive up front.} The reader needs to know you're not trying to prove the original statement directly, or they'll be confused about what you're doing.
+  \item \textbf{Invoke the logical equivalence at the end.} You proved $\lnot Q \Rightarrow \lnot P$; the original claim is $P \Rightarrow Q$. One sentence connects them.
+  \item \textbf{Unpack the definitions, both ways.} You start by unpacking ``$n$ is odd'' into a formula, and you end by repacking ``$n^2 = 2m + 1$'' into ``$n^2$ is odd.'' The unpack-then-repack bookends are a reliable pattern for divisibility-style proofs.
+\end{enumerate}
+
+\section{Writing induction proofs}
+
+Induction is the first proof technique in this course whose \emph{structure} is visible on the page. Most techniques before it can be written as a single flowing paragraph; an induction proof has three named pieces that the reader expects to see, in order.
+
+Here's the template.
+
+\begin{enumerate}
+  \item \textbf{State $P(n)$ explicitly.} Say what property you're proving, and what variable you're inducting on. ``We prove by induction on $n$ that $P(n)$: $1 + 2 + \cdots + n = n(n+1)/2$ for all $n \geq 1$.''
+  \item \textbf{Prove the base case.} Show $P$ holds for the smallest $n$ the claim covers.
+  \item \textbf{Prove the inductive step.} State the \emph{inductive hypothesis} (IH) explicitly: ``Suppose $P(k)$ holds for some $k \geq 1$.'' Then derive $P(k+1)$ using the IH. The place where you use the IH should be visibly labeled.
+  \item \textbf{Close with the induction principle.} One sentence: ``By the principle of mathematical induction, $P(n)$ holds for all $n \geq 1$.''
+\end{enumerate}
+
+Here's the full write-up for the sum identity.
+
+\medskip
+\noindent\textbf{Claim.} For all integers $n \geq 1$, $1 + 2 + \cdots + n = n(n+1)/2$.
+
+\medskip
+\noindent\textbf{Proof.} \emph{Base case ($n = 1$).} The left-hand side is $1$; the right-hand side is $1 \cdot 2 / 2 = 1$. They agree.
+
+\smallskip
+\emph{Inductive step.} Suppose the claim holds for some $k \geq 1$:
+\[
+  1 + 2 + \cdots + k = \frac{k(k+1)}{2}. \quad \text{(IH)}
+\]
+We want to show it holds for $k + 1$---that is, $1 + 2 + \cdots + (k+1) = (k+1)(k+2)/2$. Starting from the left-hand side,
+\begin{align*}
+  1 + 2 + \cdots + k + (k+1) &= \bigl(1 + 2 + \cdots + k\bigr) + (k+1) \\
+  &= \frac{k(k+1)}{2} + (k+1) && \text{(by IH)} \\
+  &= \frac{k(k+1) + 2(k+1)}{2} \\
+  &= \frac{(k+1)(k+2)}{2},
+\end{align*}
+which is the right-hand side for $n = k+1$.
+
+\smallskip
+By the principle of mathematical induction, the claim holds for all $n \geq 1$. $\square$
+
+\medskip
+
+Three things worth calling out.
+
+\begin{enumerate}
+  \item \textbf{Label the IH.} The annotation ``(by IH)'' at the step where you substitute the hypothesis is not optional decoration. It's how the reader verifies the step is legal---the IH is the only new assumption you're allowed to use, and marking where you used it makes your proof machine-checkable in principle.
+  \item \textbf{``Some $k$,'' not ``any $k$.''} The IH says ``suppose $P(k)$ holds for \emph{some} fixed $k$.'' A common student error is to write ``suppose $P(k)$ for all $k$''---but that's assuming the thing you're trying to prove.
+  \item \textbf{Don't skip the base case.} An induction proof without a base case is a ladder with no bottom rung. There are even famous ``paradoxes'' (``all horses are the same color'') whose flaw is a missing or mishandled base case.
+\end{enumerate}
+
+\section{Biconditional proofs}
+
+A claim of the form ``$P$ if and only if $Q$'' is really two claims: $P \Rightarrow Q$ and $Q \Rightarrow P$. Your proof needs to visibly handle both.
+
+\medskip
+\noindent\textbf{Template:}
+\begin{quote}
+\emph{($\Rightarrow$)} Assume $P$. \ldots Therefore $Q$.
+
+\smallskip
+\emph{($\Leftarrow$)} Assume $Q$. \ldots Therefore $P$.
+\end{quote}
+
+Both directions may need different techniques---the forward direction might fall to a direct proof while the backward direction wants the contrapositive, or vice versa. That's fine; label them and write them separately.
+
+As a concrete example, consider: ``$n$ is even if and only if $n^2$ is even.''
+
+\emph{($\Rightarrow$)} Suppose $n$ is even. By the definition of even, $n = 2k$ for some integer $k$, so $n^2 = 4k^2 = 2(2k^2)$, which is even.
+
+\emph{($\Leftarrow$)} This is the contrapositive direction we proved in §2: if $n^2$ is even, then $n$ is even.
+
+Together, the two directions establish the biconditional. Don't try to chain them into a single argument by writing something like ``$n$ even $\Leftrightarrow$ $n = 2k$ $\Leftrightarrow$ $n^2 = 4k^2$ $\Leftrightarrow$ $n^2$ even,'' unless every step is \emph{itself} a biconditional---it is almost always clearer to separate the directions.
+
+\section{Style conventions as proofs get longer}
+
+Once proofs run beyond a handful of sentences, a small stack of conventions starts to earn its keep.
+
+\begin{itemize}
+  \item \textbf{End-of-proof markers.} ``This completes the proof,'' ``$\square$,'' and ``$\blacksquare$'' all work. Pick one and stick with it within a single document.
+  \item \textbf{``Without loss of generality'' (WLOG).} Useful when the claim is genuinely symmetric in some variables: ``WLOG $a \leq b$'' is fine when $a$ and $b$ play interchangeable roles in the claim. A common abuse is to invoke WLOG when the situation isn't actually symmetric. If you wrote WLOG, you should be able to explain the symmetry in one sentence; if you can't, the WLOG is wrong.
+  \item \textbf{``Clearly'' and ``obviously.''} Almost always a bug. If the step really is obvious, the reader can see it without you saying so; if it isn't, ``clearly'' won't help. Replace with the actual reason, even if the reason is ``by definition'' or ``by Lemma~3.''
+  \item \textbf{Theorem, proposition, lemma, corollary.} Rough hierarchy: theorems are the headline claims; propositions are mid-tier results; lemmas are auxiliary facts proven on the way; corollaries are short consequences. When your proof needs a sub-result that would distract from the main argument, break it out as a lemma and prove it separately.
+  \item \textbf{Paragraph breaks.} Once a proof runs longer than eight or so sentences, break it by phase: setup, main argument, conclusion. Visual structure should mirror logical structure.
+  \item \textbf{Don't reuse variable names.} If $n$ already means ``the number of elements in your set,'' don't reuse $n$ as the running index of a summation. Variable collision is one of the cheapest bugs to introduce and one of the hardest to spot in a finished proof---rename early.
+\end{itemize}
+
+\section{A proof-hygiene checklist}
+
+Before you hand in a proof, read it through asking yourself:
+
+\begin{itemize}
+  \item Did you state what you're proving?
+  \item Did you introduce every variable before using it?
+  \item Did you unpack the definitions of the key terms?
+  \item Can you name the justification for each non-trivial step?
+  \item Did you close every universal (``since $x$ was arbitrary\ldots'')?
+  \item Did you show that your cases are exhaustive, for case proofs?
+  \item Did you state the IH explicitly and mark where you used it, for induction proofs?
+  \item Did you handle both directions, for biconditional proofs?
+  \item Did you conclude clearly with ``Therefore\ldots'' or a QED marker?
+  \item Did you avoid ``clearly'' and ``obviously''?
+  \item Does your proof read as English you could say out loud, or is it a wall of equations with no connective tissue?
+\end{itemize}
+
+If the answer to any of these is ``no,'' you probably have a writing fix to make before you have a mathematics one. The mathematics is often easier than the English.
+
+\section{What's next}
+
+The rest of the book---Modules~8 through~10, plus the type-algebra and lambda-calculus intermezzi---leans hard on the induction template above. Proofs grow longer; the style conventions start to pay rent. Loop back to this chapter when a proof feels like it wants to be longer than its prose can carry, or when you can see the argument in your head but can't quite write it down on the page.
+
+\end{document}

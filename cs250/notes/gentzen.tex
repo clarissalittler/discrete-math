@@ -31,7 +31,7 @@ If you know $p$ and you know $q$, you can conclude $p \wedge q$:
 \BinaryInfC{$p \wedge q$}
 \end{prooftree}
 \end{center}
-This is the same rule as the \texttt{lstlisting} version from Module 3---premises (a) $p$ and (b) $q$, conclusion $p \wedge q$---just written more compactly.
+This is the same rule as the numbered-line version from Module 3---premises (a) $p$ and (b) $q$, conclusion $p \wedge q$---just written more compactly.
 
 \noindent\textbf{Elimination:}
 If you know $p \wedge q$, you can pull out either piece:
@@ -166,8 +166,8 @@ For completeness:
 \centering
 \begin{prooftree}
 \AxiomC{}
-\RightLabel{$T$I}
-\UnaryInfC{$T$}
+\RightLabel{$\top$I}
+\UnaryInfC{$\top$}
 \end{prooftree}
 \end{minipage}
 \begin{minipage}{0.35\textwidth}
@@ -179,7 +179,7 @@ For completeness:
 \end{prooftree}
 \end{minipage}
 \end{center}
-$T$ can always be concluded (no premises needed---note the empty space above the line). We write $\bot$ (pronounced ``bottom'' or ``absurdity'') for the constant false---this is the same as $F$ from Module 2, just in standard natural deduction notation. From $\bot$ you can conclude literally anything, which is the ``ex falso'' principle.
+$\top$ (pronounced ``top'' or ``truth'') can always be concluded---no premises needed, hence the empty space above the line. It's the same constant truth as $T$ from Module 2, just in standard natural deduction notation. Dually, we write $\bot$ (pronounced ``bottom'' or ``absurdity'') for the constant false, corresponding to $F$ from Module 2. From $\bot$ you can conclude literally anything, which is the ``ex falso'' principle.
 
 \section{Composing rules into proof trees}
 
@@ -207,7 +207,7 @@ Read it from the bottom up: we want $p \to r$, so we use $\to$I, which means we 
 
 The assumptions $p \to q$ and $q \to r$ are \emph{undischarged}---they sit at the leaves of the tree as open assumptions. The assumption $[p]$ is discharged by the $\to$I at the root.
 
-Compare this to the \texttt{lstlisting} version:
+Compare this to the numbered-line version:
 \begin{lstlisting}
 (a) p -> q, by assumption
 (b) q -> r, by assumption
@@ -231,7 +231,7 @@ This dual reading mirrors a distinction you'll keep encountering: the difference
 
 \section{Why this matters}
 
-If this is your only logic or discrete math course, you can get by just fine with the \texttt{lstlisting} format from Module 3. But if you go on to take a course in compilers, programming language theory, formal verification, or type theory---and as CS majors, there's a decent chance you will---you're going to see Gentzen-style rules \emph{everywhere}. The typing rules for a programming language are written this way. The operational semantics of a language are written this way. The rules of a type checker, a proof assistant, a static analyzer---all trees, all the time. It's also the notation used in most logic textbooks beyond the intro level, so if you ever crack open a graduate-level logic text, you'll be glad you've seen it before.
+If this is your only logic or discrete math course, you can get by just fine with the numbered-line format from Module 3. But if you go on to take a course in compilers, programming language theory, formal verification, or type theory---and as CS majors, there's a decent chance you will---you're going to see Gentzen-style rules \emph{everywhere}. The typing rules for a programming language are written this way. The operational semantics of a language are written this way. The rules of a type checker, a proof assistant, a static analyzer---all trees, all the time. It's also the notation used in most logic textbooks beyond the intro level, so if you ever crack open a graduate-level logic text, you'll be glad you've seen it before.
 
 Think of this intermezzo as a Rosetta Stone: you now know two ways to write the same rules and can translate between them.
 
@@ -262,7 +262,7 @@ Recall that $\lnot p$ can be treated as $p \to \bot$, so $\lnot$I is a special c
 \textbf{Exercise 4.}\label{ex:gentzen:4} Build a Gentzen-style proof tree for $p \vee p \to p$ using the disjunction-elimination rule $\vee$E. (Hint: assume $p \vee p$, then use $\vee$E with the two ``branches'' $p \to p$, both of which are trivially provable by $\to$I on a trivial subderivation.)
 
 \bigskip
-\textbf{Exercise 5.}\label{ex:gentzen:5} Take any proof from Module 3 written in the \texttt{lstlisting} format and translate it into a Gentzen tree. Then translate it back. Convince yourself that the two formats are interchangeable but that the tree version makes the dependency structure between steps more visible.
+\textbf{Exercise 5.}\label{ex:gentzen:5} Take any proof from Module 3 written in the numbered-line format and translate it into a Gentzen tree. Then translate it back. Convince yourself that the two formats are interchangeable but that the tree version makes the dependency structure between steps more visible.
 
 \section*{Further reading}
 

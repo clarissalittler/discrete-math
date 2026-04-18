@@ -73,6 +73,28 @@
   innerrightmargin=9pt
 ]{summarybox}
 
+% Sidebar environment: used for tangential asides---historical notes,
+% pointers to other areas of math/CS, cross-paradigm remarks---that
+% enrich the main narrative without being essential to it. Takes one
+% argument: the sidebar's title.
+\newmdenv[
+  linewidth=0.6pt,
+  linecolor=gray!60,
+  backgroundcolor=gray!4,
+  skipabove=8pt,
+  skipbelow=8pt,
+  innertopmargin=6pt,
+  innerbottommargin=6pt,
+  innerleftmargin=9pt,
+  innerrightmargin=9pt
+]{sidebarbox}
+\newenvironment{sidebar}[1]{%
+  \begin{sidebarbox}%
+  \noindent\textbf{Sidebar: #1.}\par\medskip%
+}{%
+  \end{sidebarbox}%
+}
+
 % Reading-map environment: used at the top of each numbered module to
 % indicate Epp coverage, prerequisites, relevant intermezzi, and
 % suggested practice problems. Expects four \rmentry{label}{body}

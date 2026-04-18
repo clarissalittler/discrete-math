@@ -207,7 +207,59 @@ Notice the proof technique: we assumed something and derived a contradiction, so
 The deeper lesson is the \emph{method}: construct something that systematically disagrees with every entry in a supposed complete list. This ``diagonalization'' idea is incredibly powerful and shows up in several places across mathematics and computer science.
 
 \medskip
-\noindent\textbf{Forward look.} This diagonal argument has the same structure as the proof that the halting problem is undecidable, which you'll see in CS 251. The idea of constructing something that disagrees with every entry in a list---a function that does the opposite of whatever the $n$th program does on input $n$---is exactly the same trick. If you understand Cantor's argument, you already understand the skeleton of one of the most important results in theoretical computer science.
+\noindent\textbf{Forward look.} This diagonal argument has exactly the same structure as the proof that the halting problem is undecidable---one of the most important results in theoretical computer science. The diagonalization idea is so powerful that, once you have it, the halting problem falls out almost immediately. Let's actually do it.
+
+\section{Diagonalization, cashed out: the halting problem}
+
+You'll see this theorem developed properly in CS 251, once we have a formal model of computation (Turing machines, register machines---it doesn't really matter which). But the \emph{argument} is purely Cantor-style diagonalization, and we have everything we need for it right now. All we need is the intuitive programmer's notion of ``a program''---think Python.
+
+\begin{theorem}[Turing, 1936]
+There is no program \texttt{halts(P, x)} that takes the source code of a program \texttt{P} and an input \texttt{x}, always terminates, and returns \texttt{True} if \texttt{P} halts on input \texttt{x} and \texttt{False} if \texttt{P} loops forever on input \texttt{x}.
+\end{theorem}
+
+\begin{proof}
+Suppose, for contradiction, that such a program \texttt{halts} exists. Since programs are just strings of source code, we can feed one program's source code to another as input---that's what passing \texttt{P} to \texttt{halts} means. In particular, we can ask \texttt{halts(P, P)}: ``does \texttt{P} halt when given its own source code as input?''
+
+Using \texttt{halts} as a subroutine, we can build a new program \texttt{diag}:
+
+\begin{lstlisting}[language=Python]
+def diag(P):
+    if halts(P, P):
+        while True: pass   # loop forever
+    else:
+        return             # halt immediately
+\end{lstlisting}
+
+In words: \texttt{diag(P)} runs \texttt{halts(P, P)} to find out what \texttt{P} does on itself, then does the \emph{opposite}. If \texttt{P} halts on \texttt{P}, then \texttt{diag(P)} loops forever. If \texttt{P} loops forever on \texttt{P}, then \texttt{diag(P)} halts.
+
+Now ask the fatal question: what does \texttt{diag(diag)} do?
+
+\begin{itemize}
+  \item Suppose \texttt{diag(diag)} halts. Then \texttt{halts(diag, diag)} must have returned \texttt{False}---because that's the only branch of \texttt{diag} that halts. But \texttt{halts(diag, diag) = False} means, by definition of \texttt{halts}, that \texttt{diag} does \emph{not} halt on input \texttt{diag}. Contradiction.
+  \item Suppose \texttt{diag(diag)} loops forever. Then \texttt{halts(diag, diag)} must have returned \texttt{True}---because that's the only branch of \texttt{diag} that loops. But \texttt{halts(diag, diag) = True} means \texttt{diag} \emph{does} halt on input \texttt{diag}. Contradiction.
+\end{itemize}
+
+Either way we get a contradiction, so our assumption was wrong: no such \texttt{halts} exists.
+\end{proof}
+
+I want to pause and point out how this mirrors Cantor's diagonal argument, because the correspondence is \emph{tight}.
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Cantor} & \textbf{Turing} \\
+\midrule
+List of reals $r_1, r_2, r_3, \ldots$ & List of programs $P_1, P_2, P_3, \ldots$ \\
+$n$th digit of $r_n$ & Behavior of $P_n$ on input $P_n$ \\
+Construct $d$ differing at every diagonal & Construct \texttt{diag} doing opposite at every diagonal \\
+$d$ is a real not in the list & \texttt{diag}'s row can't exist in the halts-table \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+In both proofs you assume a completed list (of reals; of halt-decisions), you construct a new thing that \emph{deliberately disagrees} with the list at the $n$th position for every $n$, and then you derive a contradiction because the new thing was supposed to be on the list. Cantor uses it to show there are more reals than naturals; Turing uses it to show there is no algorithm that decides halting. The same trick, pointed at different targets.
+
+The moral: diagonalization isn't a one-off cleverness for real numbers. It's a reusable weapon. Anywhere you have a ``list of all the things that decide some question,'' you can often construct a question whose answer deliberately disagrees with every decider in the list---and so the list can't have been complete. G\"odel's incompleteness theorem, Tarski's undefinability of truth, Rice's theorem, and a long list of others are all variations on this theme. Smullyan's book in the Further Reading section traces the family tree.
 
 \section{Function spaces}
 

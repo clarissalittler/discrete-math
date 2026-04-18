@@ -44,29 +44,34 @@ Here's how the modules and intermezzi fit together. Solid arrows are hard prereq
     node distance=0.35cm and 0.9cm,
     mod/.style={rectangle, draw, rounded corners=2pt, fill=blue!12, minimum width=2.4cm, minimum height=0.7cm, font=\small, align=center},
     inter/.style={rectangle, draw, rounded corners=2pt, fill=yellow!20, dashed, minimum width=2.8cm, minimum height=0.6cm, font=\footnotesize, align=center},
+    pw/.style={rectangle, draw, rounded corners=2pt, fill=green!15, minimum width=2.4cm, minimum height=0.55cm, font=\footnotesize\itshape, align=center},
     prereq/.style={->, >={Stealth[length=2mm]}, thick},
     enrich/.style={->, >={Stealth[length=2mm]}, dashed, gray}
   ]
 
   \node[mod] (m1) {Module 1\\Sets, Functions};
-  \node[mod, below=of m1] (m2) {Module 2\\Prop.\ Logic};
+  \node[pw, below=of m1] (pw1) {How to Write\\a Proof};
+  \node[mod, below=of pw1] (m2) {Module 2\\Prop.\ Logic};
   \node[mod, below=of m2] (m3) {Module 3\\Proof Systems};
   \node[mod, below=of m3] (m4) {Module 4\\Predicate Logic};
   \node[mod, below=of m4] (m5) {Module 5\\Proofs \& Groups};
   \node[mod, below=of m5] (m6) {Module 6\\Modular Arith.};
   \node[mod, below=of m6] (m7) {Module 7\\Indirect Proof,\\Hoare Logic};
-  \node[mod, below=of m7] (m8) {Module 8\\Induction};
+  \node[pw, below=of m7] (pw2) {Writing Proofs,\\Revisited};
+  \node[mod, below=of pw2] (m8) {Module 8\\Induction};
   \node[mod, below=of m8] (m9) {Module 9\\Recurrences};
   \node[mod, below=of m9] (m10) {Module 10\\Structural Ind.};
 
   % prereq arrows along the spine
-  \draw[prereq] (m1) -- (m2);
+  \draw[prereq] (m1) -- (pw1);
+  \draw[prereq] (pw1) -- (m2);
   \draw[prereq] (m2) -- (m3);
   \draw[prereq] (m3) -- (m4);
   \draw[prereq] (m4) -- (m5);
   \draw[prereq] (m5) -- (m6);
   \draw[prereq] (m6) -- (m7);
-  \draw[prereq] (m7) -- (m8);
+  \draw[prereq] (m7) -- (pw2);
+  \draw[prereq] (pw2) -- (m8);
   \draw[prereq] (m8) -- (m9);
   \draw[prereq] (m9) -- (m10);
 
@@ -92,7 +97,7 @@ Here's how the modules and intermezzi fit together. Solid arrows are hard prereq
 \end{tikzpicture}
 \end{center}
 
-\noindent\textbf{How to read the diagram.} Solid arrows along the middle column tell you the module reading order---Module 1 comes first, each subsequent module depends on the ones above it. Dashed arrows to the right column tell you which intermezzi are best read alongside each module. ``Alongside'' means: read the module first, then the intermezzo, before moving on to the next module. The intermezzi genuinely enrich the spine, and several of them call back to earlier material in ways that reinforce understanding.
+\noindent\textbf{How to read the diagram.} Solid arrows along the middle column tell you the reading order---Module 1 comes first, each subsequent chapter depends on the ones above it. Two short \emph{reference chapters} on proof-writing (green) sit directly on the spine---``How to Write a Proof'' between Modules 1 and 2, and ``How to Write a Proof, Revisited'' between Modules 7 and 8. They aren't optional; they just teach writing habits rather than introducing new mathematics, so they're marked differently from the numbered modules. Dashed arrows to the right column tell you which intermezzi are best read alongside each module. ``Alongside'' means: read the module first, then the intermezzo, before moving on to the next module. The intermezzi genuinely enrich the spine, and several of them call back to earlier material in ways that reinforce understanding.
 
 \section*{How the modules map onto Epp}
 
@@ -111,6 +116,7 @@ If you already have Epp open and want to know which CS 250 module covers which c
 §4.1--4.4                          & Module 5 --- Direct Proof, Counterexamples, Groups \\
 §4.5--4.6                          & Module 6 --- Modular Arithmetic, Proofs by Cases \\
 §4.7, 4.8, 4.10                    & Module 7 --- Indirect Proof, Euclidean Algorithm, Hoare Logic \\
+                                   & \emph{(followed by short chapter: How to Write a Proof, Revisited)} \\
 §5.1--5.3                          & Module 8 --- Sequences, Induction on Sums \\
 §5.4--5.9                          & Module 9 --- Strong Induction, Recurrences \\
 (not in Epp)                       & Module 10 --- Structural Induction \\
@@ -125,7 +131,7 @@ Each module's Reading Map also lists a handful of suggested Epp practice problem
 The \emph{Notation Summary} appendix at the back of the book is the authoritative reference, but here are the conventions most likely to trip you up:
 
 \begin{itemize}
-  \item $\lnot$ and $\sim$ both mean negation. These notes use $\lnot$ in displayed math and $\sim$ in \texttt{lstlisting} code blocks. Epp uses $\sim$. They mean the same thing.
+  \item $\lnot$ and $\sim$ both mean negation. These notes use $\lnot$ in displayed math and $\sim$ in monospaced code blocks. Epp uses $\sim$. They mean the same thing.
   \item $\wedge$ is AND, $\vee$ is OR, $\to$ is implication, $\leftrightarrow$ is biconditional (``if and only if'').
   \item $\top$ and $T$ both mean ``true''; $\bot$ and $F$ both mean ``false.'' These notes use $T$ and $F$ in propositional-logic chapters and $\top$, $\bot$ when we get to natural deduction.
   \item A function type $A \to B$ (``functions from $A$ to $B$'') uses the same arrow as logical implication. This is not a coincidence---the Curry--Howard intermezzo explains why.
@@ -178,7 +184,7 @@ A few things that genuinely help:
 \begin{itemize}
   \item \textbf{Read actively.} When you see a definition, stop and construct an example that fits it and a non-example that doesn't. When you see a theorem, try to guess the proof before you read it. When you see a proof, cover up the next line and try to finish it yourself. Passive reading of math is almost useless.
   \item \textbf{Do the exercises.} I know. Everyone hears this in every math class---to the point of annoyance, I'm sure---but it's true. Try things out!
-  \item \textbf{Write your proofs in prose.} A proof is a short essay, not a column of symbols. If you can't explain each step in a sentence, you probably don't understand the step. The ``How to Write a Proof'' chapter (placed immediately after Module~1) is worth re-reading after every few proofs you write.
+  \item \textbf{Write your proofs in prose.} A proof is a short essay, not a column of symbols. If you can't explain each step in a sentence, you probably don't understand the step. The ``How to Write a Proof'' chapter (placed immediately after Module~1) is worth re-reading after every few proofs you write; after Module~7, the follow-up reference chapter ``How to Write a Proof, Revisited'' picks up with technique selection, the induction-proof template, and the conventions you'll need as proofs get longer.
   \item \textbf{Play the Natural Number Game.} It's free, it's online, and even if in some terms I don't assign it it's still good to play to get used to thinking in terms of logical proof. \url{https://adam.math.hhu.de/#/g/leanprover-community/nng4}
   \item \textbf{Use the department discord or come talk to me}
   \item \textbf{Form a study group---but meet \emph{after} you've tried the problems.} A study group where everyone shows up having already attempted the assignment is the most efficient learning format there is. A study group where everyone shows up planning to ``work through it together'' from scratch is much less efficient.

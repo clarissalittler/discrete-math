@@ -38,14 +38,14 @@ We're going to express this using something called Backus-Naur form\index{BNF (B
 
 \begin{definition}[Propositional Logic Syntax]
 The syntax of propositional logic\index{propositional logic} is given by the following BNF grammar:
-\begin{lstlisting}
-L := T | F | L ^ L | L v L | ~L | L -> L | x
-\end{lstlisting}
+\[
+L \;::=\; T \;\mid\; F \;\mid\; L \wedge L \;\mid\; L \vee L \;\mid\; {\sim}L \;\mid\; L \to L \;\mid\; x
+\]
 \end{definition}
 
 BNF is a way to describe how to build things recursively. It tells us, in this case, that to build an ``L'' you have a bunch of possibilities separated by the | symbol. You can follow this recursively, continuing to substitute in things for any L symbols that appear until you only have base cases (here: variables, T, and F).
 
-When a formula is ambiguous---like \texttt{p \^{} q v r}, which could be read as $(p \wedge q) \vee r$ or $p \wedge (q \vee r)$---we follow the standard precedence: $\lnot$ binds tightest, then $\wedge$, then $\vee$, then $\to$. We use parentheses to override precedence when needed. This is similar to how \texttt{*} binds tighter than \texttt{+} in arithmetic.
+When a formula is ambiguous---like $p \wedge q \vee r$, which could be read as $(p \wedge q) \vee r$ or $p \wedge (q \vee r)$---we follow the standard precedence: $\lnot$ binds tightest, then $\wedge$, then $\vee$, then $\to$. We use parentheses to override precedence when needed. This is similar to how \texttt{*} binds tighter than \texttt{+} in arithmetic.
 
 Here are some examples to help clarify how this is used. This grammar tells us that
 

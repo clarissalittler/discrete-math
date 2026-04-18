@@ -66,10 +66,84 @@ We show that the relation $y^2 = x$ on $\mathbb{R}$ is not a function from $x$ t
 
 Notice what the good version does: it states the goal, invokes the definition, gives the specific example, and explicitly connects the example back to the definition to reach the conclusion. Every step is justified. That's all a proof needs to be.
 
+\section{Two walkthroughs: tightening a proof}
+
+The contrast above shows two finished attempts side by side. But the skill worth learning is the \emph{editing move} that turns the first into the second---the tightening pass you do after your first draft. Here are two walkthroughs using the kinds of claims you'll actually prove in Module~1's exercises.
+
+\subsection*{Walkthrough 1: $A \cap B \subseteq A \cup B$}
+
+\medskip
+\noindent\textbf{First draft:}
+\begin{quote}
+Let $x \in A \cap B$. So $x \in A$ and $x \in B$. So clearly $x \in A \cup B$. Therefore $A \cap B \subseteq A \cup B$.
+\end{quote}
+
+The mathematics is right, but three things are worth fixing.
+
+\begin{enumerate}
+  \item \textbf{``Clearly'' is a confession, not a reason.} Whenever you write ``clearly'' or ``obviously,'' pause: what is the actual reason? Here we're using the definition of union---an element is in $A \cup B$ if it is in $A$ or in $B$. Say that.
+  \item \textbf{Name which definition you're invoking.} The step from ``$x \in A \cap B$'' to ``$x \in A$ and $x \in B$'' is the definition of intersection. Pointing at the definition makes the proof easier to check and trains the habit you'll need when definitions get more complex.
+  \item \textbf{Close the universal.} To conclude $A \cap B \subseteq A \cup B$, it isn't enough that \emph{this particular} $x$ landed in $A \cup B$---we need the same for every element of $A \cap B$. The standard closing phrase is ``since $x$ was arbitrary.'' That phrase is what turns the step from ``$x \in A \cup B$'' to ``$A \cap B \subseteq A \cup B$'' into a real inference instead of a leap.
+\end{enumerate}
+
+\medskip
+\noindent\textbf{Tightened version:}
+\begin{quote}
+Let $x \in A \cap B$. By the definition of intersection, $x \in A$. By the definition of union, any element of $A$ is also in $A \cup B$, so $x \in A \cup B$. Since $x$ was an arbitrary element of $A \cap B$, we conclude $A \cap B \subseteq A \cup B$.
+\end{quote}
+
+The tightened version is barely longer than the first draft---but every step is labeled, every definition is named, and the universal is properly closed.
+
+\subsection*{Walkthrough 2: showing a relation is a function}
+
+Recall that a function $f : A \to B$ assigns every element of $A$ to \emph{exactly one} element of $B$. That's two requirements packed into one phrase: \emph{at least one} output (existence) and \emph{at most one} output (uniqueness). It's easy to prove only half and think you're done.
+
+Suppose we want to show: the relation $R$ on $\mathbb{Z}$ defined by ``$R(x, y)$ iff $y = 2x$'' is a function from $\mathbb{Z}$ to $\mathbb{Z}$.
+
+\medskip
+\noindent\textbf{First draft:}
+\begin{quote}
+Take any $x \in \mathbb{Z}$. Let $y = 2x$. Then $R(x, y)$ holds. So $R$ is a function.
+\end{quote}
+
+This draft shows \emph{existence}: every input has at least one output. But it hasn't ruled out the possibility that some $x$ has \emph{two} different outputs, and that's exactly what makes a relation fail to be a function. The argument is half of what's required.
+
+\medskip
+\noindent\textbf{Tightened version:}
+\begin{quote}
+We show that $R$ assigns each $x \in \mathbb{Z}$ to exactly one $y \in \mathbb{Z}$---both that at least one such $y$ exists and that no more than one does.
+
+\smallskip
+\textbf{Existence.} Let $x \in \mathbb{Z}$. Take $y = 2x$. Then $y \in \mathbb{Z}$ (because $\mathbb{Z}$ is closed under multiplication) and $R(x, y)$ holds by definition of $R$. So every input has at least one output.
+
+\smallskip
+\textbf{Uniqueness.} Let $x \in \mathbb{Z}$, and suppose $R(x, y_1)$ and $R(x, y_2)$. By the definition of $R$, $y_1 = 2x$ and $y_2 = 2x$, so $y_1 = y_2$. So every input has at most one output.
+
+\smallskip
+Since $R$ satisfies both conditions, it is a function from $\mathbb{Z}$ to $\mathbb{Z}$.
+\end{quote}
+
+The tightened version is structured around the two halves of the definition. Whenever a definition has the form ``\emph{both} this \emph{and} that,'' your proof needs two explicitly labeled pieces---one for each half. The habit of labeling \textbf{Existence} and \textbf{Uniqueness} (or \textbf{At least one}/\textbf{At most one}) stays useful for the rest of the course.
+
+\section{When you don't know what to write next}
+
+Getting stuck on a proof is not a sign that you're bad at math---it happens to everyone, including the person who wrote this textbook. When it happens, here are four moves that almost always get you unstuck with the tools you have in Module~1.
+
+\begin{enumerate}
+  \item \textbf{Unpack every definition.} Write down, in full, the definition of every noun in the statement you're proving. If the claim is ``$f$ is injective,'' write down what ``injective'' means. If it's ``$A \subseteq B$,'' write down what ``$\subseteq$'' means. A surprising amount of the time, the proof writes itself once the definitions are sitting on the page in front of you.
+  \item \textbf{Element-chase for subset claims.} For any claim of the form ``$X \subseteq Y$,'' start your proof with ``Let $x \in X$'' and try to derive ``$x \in Y$.'' This is the workhorse move for half of the Module~1 exercises, and it's the single most reliable way to turn a set-theoretic claim into something you can actually write sentences about.
+  \item \textbf{Flip to the contrapositive when the forward direction stalls.} To show ``every element of $X$ is in $Y$,'' you can instead show ``every element \emph{not} in $Y$ is \emph{not} in $X$.'' The two statements are logically equivalent, but sometimes one is much easier to argue than the other. If you're stuck on the forward version for ten minutes, try the flipped version for five before returning.
+  \item \textbf{Plug in a tiny example.} If the claim is about arbitrary sets $A$, $B$, $C$, try $A = \{1\}$, $B = \{2\}$, $C = \{1, 2\}$. Seeing what the claim actually says in a specific case often reveals the general argument. (This is not itself a proof---you still have to write the general argument---but it's a reliable way to find the pattern that the proof will follow.)
+\end{enumerate}
+
+These four moves are the whole playbook at this point. As the book introduces more techniques---proof by cases (Module~6), induction (Modules~4 and~8), contradiction and contrapositive (Module~7)---the playbook grows. A second chapter, ``How to Write a Proof, Revisited,'' collects the full version after you've seen the rest of the toolkit.
+
 \section{Where to go from here}
 
 The advice above is independent of any particular proof technique. In the modules that follow you will meet the standard techniques---direct proof (Modules~3 and~5), counterexample and proof by cases (Modules~5 and~6), induction (Modules~4 and~8--10), proof by contradiction and contrapositive (Module~7)---and each will come with its own recipe. But every one of them expects to be written in prose that follows the rules above: state the goal, introduce variables, justify each step, conclude clearly.
 
 Plan to re-read this chapter after every few proofs you write, especially early on. The mistakes most worth fixing are not mathematical---they are writing mistakes: missing variable introductions, unjustified jumps, equations strung together without connective tissue, no clear conclusion. Fix the writing and the mathematics usually becomes visible.
+
+Once you've finished Module~7 and have the full range of informal proof techniques in hand, the companion chapter ``How to Write a Proof, Revisited'' revisits this advice at a higher level---choosing between techniques, writing induction proofs, structuring long arguments, and the style conventions you'll need for the rest of the book. Think of this chapter as the foundation and that one as the upper-level follow-up.
 
 \end{document}

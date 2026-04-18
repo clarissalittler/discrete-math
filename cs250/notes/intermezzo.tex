@@ -32,13 +32,11 @@ Assuming $0 + m' = m'$.
 
 Shows $0 + \text{succ}\; m' = \text{succ}\; m'$.
 
-By the definition of addition,
+Chasing the definition and then the induction hypothesis:
 \begin{align*}
-0 + \text{succ}\; m' &= \text{succ}\;(0 + m')
-\end{align*}
-but
-\begin{align*}
-\text{succ}\;(0 + m') &= \text{succ}\; m' && \text{by the induction hypothesis that } 0 + m' = m'
+0 + \text{succ}\; m'
+  &= \text{succ}\;(0 + m') && \text{by the definition of addition} \\
+  &= \text{succ}\; m' && \text{by the induction hypothesis that } 0 + m' = m'
 \end{align*}
 
 QED
