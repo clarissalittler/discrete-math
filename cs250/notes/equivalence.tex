@@ -21,7 +21,11 @@ This pattern is everywhere:
 \begin{itemize}
   \item \textbf{Modular arithmetic mod $n$:} ignore multiples of $n$. Two integers are ``the same'' if their difference is divisible by $n$.
   \item \textbf{Case-insensitive string comparison:} ignore capitalization. ``Hello'' and ``hello'' are different strings, but if you're searching a database and don't care about case, you declare them equivalent.
-  \item \textbf{Graph isomorphism:} ignore vertex labels, keep structure. The graph with vertices $\{1, 2, 3\}$ and edges $\{(1,2), (2,3)\}$ is ``the same'' as the graph with vertices $\{a, b, c\}$ and edges $\{(a,b), (b,c)\}$---they're both paths of length 2.
+  \item \textbf{Graph isomorphism:} ignore vertex labels, keep structure.
+  The graph with vertices $\{1, 2, 3\}$ and edges
+  $\{(1,2), (2,3)\}$ is ``the same'' as the graph with vertices
+  $\{a, b, c\}$ and edges $\{(a,b), (b,c)\}$: both are paths of
+  length 2.
   \item \textbf{Extensional equality of programs:} ignore implementation, keep input-output behavior. A bubble sort and a merge sort are ``the same function'' if you only care about what output they produce for each input.
 \end{itemize}
 
@@ -57,7 +61,15 @@ Now, concrete examples:
 
 \medskip
 
-\textbf{Case-insensitive strings.} Let $A$ be the set of all strings over the English alphabet, and define $s_1 \sim s_2$ iff $s_1$ and $s_2$ differ only in capitalization. Then $[\text{``Hello''}] = \{\text{``Hello''}, \text{``hello''}, \text{``HELLO''}, \text{``hELLO''}, \ldots\}$---all $2^5 = 32$ capitalizations of a five-letter string. The quotient set $A / {\sim}$ is the set of case-insensitive strings. When Python's \texttt{str.lower()} method converts a string to lowercase before comparing, it's choosing a \emph{representative} from each equivalence class.
+\textbf{Case-insensitive strings.} Let $A$ be the set of all strings over
+the English alphabet, and define $s_1 \sim s_2$ iff $s_1$ and $s_2$
+differ only in capitalization. The class $[\text{``Hello''}]$ contains
+``Hello,'' ``hello,'' ``HELLO,'' ``hELLO,'' and so on: all $2^5 = 32$
+capitalizations of a five-letter string. The quotient set $A / {\sim}$
+is the set of case-insensitive strings. When Python's
+\texttt{str.lower()} method converts a string to lowercase before
+comparing, it's choosing a \emph{representative} from each equivalence
+class.
 
 \medskip
 
@@ -75,7 +87,14 @@ The integers \emph{are} the quotient set $(\mathbb{N} \times \mathbb{N}) / {\sim
 
 In programming, you make equivalence-class decisions constantly---often without realizing it.
 
-\textbf{Hash maps.} When you use a dictionary in Python or a \texttt{HashMap} in Java, you're relying on a notion of key equality. Two keys are ``the same'' if they produce the same hash \emph{and} compare equal under \texttt{\_\_eq\_\_} or \texttt{.equals()}. The hash map doesn't distinguish between two keys that are equal in this sense, even if they're different objects in memory. This is an equivalence relation on the set of all possible key objects, and the hash map is organized by equivalence classes.
+\textbf{Hash maps.} When you use a dictionary in Python or a
+\texttt{HashMap} in Java, you're relying on a notion of key equality.
+Two keys are ``the same'' if they produce the same hash \emph{and}
+compare equal under \texttt{\_\_eq\_\_} or \texttt{.equals()}. The hash
+map doesn't distinguish between keys that are equal in this sense, even
+if they're different objects in memory. This is an equivalence relation
+on the possible key objects, and the hash map is organized by
+equivalence classes.
 
 \textbf{Database normalization.} In a relational database, two rows in a table represent the same entity if their primary keys match. You might have a \texttt{users} table where the primary key is \texttt{user\_id}. Two rows with the same \texttt{user\_id} are ``the same user'' even if other columns differ (perhaps one was updated more recently). The primary key defines the equivalence relation; normalization is partly about making this choice explicit and consistent.
 

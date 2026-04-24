@@ -55,7 +55,7 @@ Here are some examples to help clarify how this is used. This grammar tells us t
   \item $T \wedge (x \vee y)$ is a valid formula
   \item $T \to L$ is not a valid formula because there's still an L
   \item T + F is not a valid formula because + isn't an allowed symbol in the syntax
-  \item heck is a valid formula, a single variable named heck
+  \item \texttt{raining} is a valid formula, a single variable named \texttt{raining}---variables can be any identifier, not just single letters
 \end{itemize}
 
 That's the syntax. We need to define the \emph{semantics} of this logic. We've already named the pieces, so let's give an informal semantics before presenting the formal one:
@@ -64,7 +64,7 @@ That's the syntax. We need to define the \emph{semantics} of this logic. We've a
   \item T is just T, the boolean value for true
   \item F is just F, the boolean value for false
   \item $p \wedge q$ is \emph{and}\index{conjunction@$\wedge$ (conjunction)} and is true when p and q are both true
-  \item $p \vee q$ is \emph{or}\index{disjunction@$\vee$ (disjunction)} and is true when \textbf{either} p or q are true, but \textbf{both} can be true
+  \item $p \vee q$ is \emph{or}\index{disjunction@$\vee$ (disjunction)} and is true when \textbf{at least one} of p, q is true; the case where both are true still counts as true (this is \emph{inclusive} or, unlike everyday English ``or'' which often means ``one but not both'')
   \item $\lnot p$ is \emph{not}\index{negation@$\lnot$ (negation)} and is true when p isn't
   \item $p \to q$ is \emph{implication}\index{implication@$\to$ (implication)} and captures the idea that p being true forces q to be true. Specifically, it's false only when p is true and q is false
   \item variables are true when you plug in a true value into them
@@ -311,7 +311,7 @@ F & F & $T \vee F = T$ \\
 \end{tabular}
 \end{center}
 
-The truth tables match! Technically, we don't even need implication in this particular logic---though this equivalence is specific to classical propositional logic and does not hold in general if we have $\lnot$ and $\vee$.
+The truth tables match! So in classical propositional logic we don't even \emph{need} implication as a primitive---it can be defined as $\lnot p \vee q$. Worth flagging that this equivalence is a feature of classical logic specifically: in constructive logic, where excluded middle isn't available, $p \to q$ and $\lnot p \vee q$ come apart. For this course we're staying classical, but if you ever read about constructive or intuitionistic logic, the fact that these two formulas are \emph{not} interchangeable there is one of the first surprises.
 
 This means that just having $\vee$, $\wedge$, and $\lnot$ is ``functionally complete'' because it can describe all the operations of this logic.
 
@@ -456,6 +456,7 @@ Here are the mistakes students make most often on this module's material. Watch 
   \item \textbf{Operator precedence bugs.} Without parentheses, $\lnot p \wedge q$ means $(\lnot p) \wedge q$, \emph{not} $\lnot(p \wedge q)$. And $p \vee q \wedge r$ means $p \vee (q \wedge r)$, not $(p \vee q) \wedge r$. When in doubt, parenthesize explicitly; there's no points off for being unambiguous.
   \item \textbf{Inclusive vs.\ exclusive or.} Logical $\vee$ is \emph{inclusive}: $T \vee T = T$. Everyday English ``or'' is often exclusive---``coffee or tea'' usually means one or the other, not both. When you're translating English into propositional logic, be deliberate: did the sentence mean $\vee$ or $\oplus$?
   \item \textbf{Half-applied De Morgan.} Students often start pushing a negation inside and forget to flip the connective. $\lnot(p \wedge q)$ is $\lnot p \vee \lnot q$, \emph{not} $\lnot p \wedge \lnot q$. The connective flips: $\wedge \leftrightarrow \vee$.
+  \item \textbf{Misreading the scope of $\lnot$.} Without parentheses, $\lnot p \to q$ means $(\lnot p) \to q$---``if not-$p$ then $q$''---not $\lnot(p \to q)$. This catches students constantly when they translate English like ``it's not the case that $p$ implies $q$'' into the logic; the correct translation is $\lnot(p \to q)$, with the parentheses. When negation is meant to apply to a whole implication (or disjunction, conjunction, etc.), parenthesize explicitly.
 \end{enumerate}
 
 \section{Summary and looking ahead}

@@ -77,10 +77,17 @@ A boolean \emph{is} an if-statement. Given two branches, it picks one. In fact, 
 \[
 \text{if} = \lambda b.\; \lambda t.\; \lambda f.\; b\; t\; f
 \]
-It just hands the two branches to the boolean and lets the boolean decide. Let's verify:
-\[
-\text{if}\;\text{true}\;a\;b \;\longrightarrow\; \text{true}\;a\;b \;\longrightarrow\; (\lambda t.\;\lambda f.\; t)\;a\;b \;\longrightarrow\; (\lambda f.\; a)\;b \;\longrightarrow\; a
-\]
+It just hands the two branches to the boolean and lets the boolean decide. Let's verify, using ``$\equiv$'' for unfoldings-by-definition and ``$\longrightarrow$'' for actual beta-reduction steps:
+\begin{align*}
+  \text{if}\;\text{true}\;a\;b
+    &\;\equiv\; (\lambda b.\;\lambda t.\;\lambda f.\; b\, t\, f)\;\text{true}\;a\;b \\
+    &\;\longrightarrow\; (\lambda t.\;\lambda f.\; \text{true}\, t\, f)\;a\;b \\
+    &\;\longrightarrow\; (\lambda f.\; \text{true}\, a\, f)\;b \\
+    &\;\longrightarrow\; \text{true}\, a\, b \\
+    &\;\equiv\; (\lambda t.\;\lambda f.\; t)\; a\; b \\
+    &\;\longrightarrow\; (\lambda f.\; a)\; b \\
+    &\;\longrightarrow\; a.
+\end{align*}
 It works. And this connects directly to Module 2: we're encoding T and F---the truth values of propositional logic---as pure functions. The logical constants have become computational objects.
 
 \subsection*{Church numerals}
@@ -117,6 +124,9 @@ And addition? Apply $f$ a total of $m + n$ times by first applying it $n$ times,
 \]
 The term $n\; f\; x$ applies $f$ $n$ times to $x$. Then $m\; f$ applies $f$ $m$ more times to that result. Total: $m + n$ applications.
 
+\medskip
+\noindent A word on efficiency, since a student reading this for the first time should not come away with the wrong mental model: Church encodings are \emph{theoretically} complete but \emph{practically} horrendous. Evaluating the Church numeral $\mathbf{n}$ requires $n$ function applications; evaluating $\text{add}\;\mathbf{m}\;\mathbf{n}$ requires $m + n$; multiplication and exponentiation blow up from there. Real programming languages represent integers as bit patterns because ``apply $f$ a billion times'' is not a plan you want to run on actual silicon. The point of Church encodings isn't that you'd compute this way. It's that you \emph{could}---which tells you that lambda-expressions alone, without any built-in notion of ``number,'' are already enough to express every computable function. That universality is the result. Efficiency is an entirely separate engineering concern.
+
 \section{Why this matters}
 
 We started this course by asking whether Python and C can solve the same problems, and whether some future computer might solve problems that today's computers can't. The lambda calculus gives us the tools to answer these questions.
@@ -137,7 +147,20 @@ This is the answer to Module 1's question. Python and C can solve the same probl
 \textbf{Exercise 1.}\label{ex:lambda:1} Evaluate $(\lambda x.\; \lambda y.\; x)\; 3\; 7$ by applying beta reduction step by step. What does this function do? (Hint: the expression $(\lambda x.\; \lambda y.\; x)\; 3\; 7$ means $((\lambda x.\; \lambda y.\; x)\; 3)\; 7$---application is left-associative.)
 
 \bigskip
-\textbf{Exercise 2.}\label{ex:lambda:2} Write a Church encoding for the boolean operation AND\@. Hint: $\text{and} = \lambda a.\; \lambda b.\; a\; b\; \text{false}$. Verify that this definition is correct by evaluating it on all four input combinations: $\text{and}\;\text{true}\;\text{true}$, $\text{and}\;\text{true}\;\text{false}$, $\text{and}\;\text{false}\;\text{true}$, and $\text{and}\;\text{false}\;\text{false}$. For each case, show the beta reduction steps and confirm the result matches the expected truth value.
+\textbf{Exercise 2.}\label{ex:lambda:2} Write a Church encoding for the
+boolean operation AND\@. Hint:
+\[
+  \text{and} = \lambda a.\; \lambda b.\; a\; b\; \text{false}.
+\]
+Verify the definition on all four input combinations:
+\[
+  \text{and}\;\text{true}\;\text{true},\quad
+  \text{and}\;\text{true}\;\text{false},\quad
+  \text{and}\;\text{false}\;\text{true},\quad
+  \text{and}\;\text{false}\;\text{false}.
+\]
+For each case, show the beta reduction steps and confirm that the result
+matches the expected truth value.
 
 \bigskip
 \textbf{Exercise 3.}\label{ex:lambda:3} Evaluate $(\lambda x.\; \lambda y.\; y)\; 3\; 7$ step by step using beta reduction. Compare your answer to Exercise 1. What single concept do these two functions, together, encode? (Hint: think back to the Church booleans in Section 3.)

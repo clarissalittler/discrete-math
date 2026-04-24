@@ -15,11 +15,24 @@ This is the last review chapter of the first term, and its job is to tie the who
   \item Sets, functions, relations, and the extensional view of equality (Module~1).
   \item Propositional logic with a BNF syntax, truth-table semantics, and a natural-deduction proof system (Modules~2, 3).
   \item Predicate logic with quantifiers and a first induction principle (Module~4).
-  \item The practice of informal proof---direct, counterexample, existence, cases, contradiction, contrapositive---with a side trip into groups and modular arithmetic (Modules~5, 6, 7).
+  \item Informal proof techniques: direct proof, counterexample,
+  existence, cases, contradiction, and contrapositive, with a side trip
+  into groups and modular arithmetic (Modules~5, 6, 7).
   \item Induction on $\mathbb{N}$, summation identities, strong induction, recurrence solving (Modules~8, 9).
   \item Structural induction on arbitrary recursive data types (Module~10).
 \end{itemize}
-That is a lot of material. But it all rests on a single pattern, which is the theme we named explicitly in Module~10 and have been building towards since Module~2: \emph{define your data with a BNF grammar; derive an induction principle that mirrors the BNF; use it to prove theorems by case-and-recursion analysis.} Everything else in the course is a specialization or a consequence of that pattern.
+That is a lot of material. But it all rests on a single pattern, which
+is the theme we named explicitly in Module~10 and have been building
+towards since Module~2:
+\[
+  \text{BNF grammar}
+  \quad\Longrightarrow\quad
+  \text{matching induction principle}
+  \quad\Longrightarrow\quad
+  \text{case-and-recursion proofs}.
+\]
+Everything else in the course is a specialization or a consequence of
+that pattern.
 
 In this review, we pick a capstone theorem that touches every major thread from the term and walk through its proof end to end, stopping to point at which module every step comes from. The theorem is non-trivial but still fits on a couple of pages. Let's go.
 

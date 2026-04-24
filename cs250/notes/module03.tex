@@ -48,7 +48,8 @@ But we can also interpret this tautology as saying something like
 
 If we start with the premises $p$ and $q$ then we can conclude $p$. This represents a shift between a logical and a metalogical notion of reasoning. In one, we use the literal implication operator $\to$ and in the other we use the intuitive notion of \emph{if} and \emph{then}.
 
-\begin{mdframed}[linewidth=0.6pt, linecolor=gray!60, backgroundcolor=gray!4, innertopmargin=6pt, innerbottommargin=6pt]
+\Needspace{10\baselineskip}
+\begin{mdframed}[linewidth=0.6pt, linecolor=gray!60, backgroundcolor=gray!4, innertopmargin=6pt, innerbottommargin=6pt, nobreak=true]
 \textbf{Aside: object language vs.\ metalanguage.} When we say ``the formula $p \wedge q \to p$ is a tautology,'' the word ``tautology'' lives \emph{outside} the logic: it is a claim we make \emph{about} the formula, in ordinary English-plus-mathematics. The formula itself lives in the \emph{object language}---the language we are studying---while our claim about it lives in the \emph{metalanguage}\index{metalanguage}, the language we do the studying in.
 
 This distinction seems pedantic for a page or two and then turns out to matter a lot. ``$p \to q$'' is an object-level formula; ``from the hypothesis $p$ we can derive $q$'' is a metalevel claim. They are connected (the whole point of Module~3 is to study the connection), but they live on different floors of the building and confusing them is the source of many real errors in proofs. You'll see it again in the difference between $\vdash$ (``there is a derivation'') and $\models$ (``it is true under every assignment''), both of which are \emph{metalevel} relations that speak about the object-level formulas. Keeping these layers straight is one of the habits that will matter most in CS~251.
@@ -235,7 +236,7 @@ There are two elimination rules for $\wedge$:
 \]
 These are unsurprising.
 
-\subsection{Rules for $\vee$}
+\subsection{\texorpdfstring{Rules for $\vee$}{Rules for disjunction}}
 
 Since $\vee$ is the mirror of $\wedge$, it's not surprising that there are going to be two introduction rules and one elimination rule.
 
@@ -303,7 +304,7 @@ This is a fun one because we've essentially seen the rules for this already.
   \end{array}
 \]
 In other words, if assuming $p$ lets you derive both $q$ and $\lnot q$ for some $q$, then you can conclude $\lnot p$. This is sometimes called ``proof by negation'' to distinguish it from full proof by contradiction.
-It's worth noting that in a lot of logics negation is \emph{defined} as $\lnot p \;:=\; p \to \bot$. One such logic is the logic behind Lean 4, which you'll be playing with as part of learning The Natural Number Game.
+It's worth noting that in a lot of logics negation is \emph{defined} as $\lnot p \;:=\; p \to \bot$. One such logic is the logic behind Lean 4, which you'll be playing with as part of learning The Natural Number Game. This definition is also what the Curry--Howard intermezzo (much later) will use to ``read'' $\lnot p$ as the type of functions from proofs of $p$ into the empty type---a program that, given evidence for $p$, produces an absurdity.
 
 \noindent\textbf{Elimination:}
 \[
@@ -315,7 +316,7 @@ It's worth noting that in a lot of logics negation is \emph{defined} as $\lnot p
 \]
 This is double negation elimination, and as we discussed in the proof-by-contradiction section, it requires excluded middle. In constructive logic, you can always go from $p$ to $\lnot\lnot p$, but not the other way.
 
-\subsection{$\top$ and $\bot$}
+\subsection{\texorpdfstring{$\top$ and $\bot$}{Top and bottom}}
 
 There are also introduction and elimination rules for the constants $\top$ and $\bot$ (``top'' for true, ``bottom'' for false---the same as $T$ and $F$ from Module~2, but written this way in natural-deduction systems). What's fun about this is that there's \emph{only} an introduction rule for $\top$ and \emph{only} an elimination rule for $\bot$.
 
@@ -599,7 +600,9 @@ But here's the really cool part: how do you \emph{build} a circuit from a truth 
 
 For instance, if you have a truth table with inputs $P, Q$ and the output is 1 only when $P=1, Q=0$ or $P=0, Q=1$, you'd get the DNF expression $(P \wedge \lnot Q) \vee (\lnot P \wedge Q)$---which, hey, that's XOR! And now you have a direct recipe for wiring up the gates: two AND gates (one for each term), some NOT gates for the negations, and one OR gate to combine them.
 
-This is why DNF matters---it gives you a completely mechanical way to turn \emph{any} truth table into a working circuit. And this is literally how hardware design works at the lowest level. Computer chips are just enormous networks of logic gates, millions and millions of them wired together. The boolean algebra we learned in Module 2 \emph{is} the mathematics of chip design. When hardware engineers want to make a circuit smaller or faster, they're essentially doing the same kind of simplification we did with De Morgan's laws and distributivity---reducing the number of gates needed to compute the same function.
+This is why DNF matters---it gives you a completely mechanical way to turn \emph{any} truth table into a working circuit. And this is literally how hardware design works at the lowest level. Computer chips are just enormous networks of logic gates, millions and millions of them wired together. The boolean algebra we learned in Module 2 \emph{is} the mathematics of chip design.
+
+A caveat worth stating clearly: the DNF recipe always produces a \emph{correct} circuit, but not necessarily a \emph{minimal} one. In the example above, our three-gate circuit really did implement $P \wedge \lnot Q$, which a single AND-plus-NOT implements in two gates. Finding the smallest circuit for a given truth table is a separate problem---\emph{circuit minimization}---and it is the subject of techniques like Karnaugh maps and the Quine--McCluskey algorithm that show up in a digital-logic or hardware-design course. DNF gets you a correct solution; minimization gets you an efficient one. Don't conflate the two.
 
 Notice how this connects back to functional completeness from the previous module. The DNF construction is actually a \emph{proof} that AND, OR, and NOT are functionally complete: given any truth table whatsoever, DNF hands you a circuit built entirely from those three gates. And since we showed in that module that NAND alone can simulate AND, OR, and NOT, it follows that NAND alone is functionally complete---which is exactly why real hardware can be (and often is) built entirely from NAND gates.
 
@@ -675,7 +678,8 @@ Soundness is ``the proof system doesn't prove false things''---which is exactly 
 
 We will not prove either of these in this course. Soundness is the easier one: it follows by induction on the shape of a derivation, checking that each rule preserves truth-table validity of its premises. Completeness is deeper and has several clever proofs; the classical one constructs a derivation for a given tautology by looking at which rows of the truth table are T. You'll see these proofs in CS~251 or in a formal-methods/metalogic course. What matters now is the \emph{statement}: the truth-table world and the proof-system world are the same world, looked at from two different angles.
 
-\begin{mdframed}[linewidth=0.6pt, linecolor=gray!60, backgroundcolor=gray!4, innertopmargin=6pt, innerbottommargin=6pt]
+\Needspace{10\baselineskip}
+\begin{mdframed}[linewidth=0.6pt, linecolor=gray!60, backgroundcolor=gray!4, innertopmargin=6pt, innerbottommargin=6pt, nobreak=true]
 \textbf{Aside: G\"odel, and why first-order logic is different.} For propositional logic, soundness and completeness are both reasonable textbook theorems. For first-order predicate logic (Module~4) the completeness theorem was a serious result---it's G\"odel's thesis, 1929, published 1930, and is the reason we are comfortable using first-order logic at all. For systems strong enough to talk about arithmetic, G\"odel's \emph{incompleteness} theorems (1931) say that completeness in this sense is no longer available: there will always be true statements of arithmetic that no proof system can derive. Cumulative Review~1 returns to this story with a little more detail.
 \end{mdframed}
 

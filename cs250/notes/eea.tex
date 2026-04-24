@@ -1,0 +1,156 @@
+\documentclass[11pt]{article}
+
+\input{cs250preamble}
+
+\title{CS 250 --- Intermezzo: The Extended Euclidean Algorithm and B\'ezout Coefficients}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+Module 7 introduced Euclid's algorithm as a way to compute $\gcd(a,b)$. This intermezzo handles the \emph{extended} version---the one that doesn't just report $\gcd(a,b)$ but simultaneously produces integers $x$ and $y$ satisfying
+\[
+  a x + b y = \gcd(a,b).
+\]
+That pair $(x, y)$ is called a set of \emph{B\'ezout coefficients}\index{B\'ezout coefficients} for $a$ and $b$. We met B\'ezout's identity back in Module~6 and used it to assert that multiplicative inverses exist in $\mathbb{Z}/p\mathbb{Z}$; this intermezzo is where we actually \emph{compute} them.
+
+We're treating this as a sidetrip for a reason. The basic Euclidean algorithm is a proof-techniques topic---it's a clean test case for indirect reasoning and correctness proofs about recursive programs, which is why it lives in Module~7 proper. The \emph{extended} version is mostly bookkeeping on top of that, and it doesn't really pay for itself until you want to do something with those coefficients. The two places that happens are in modular inverses (we'll see a little here) and in RSA key generation (which is a CS~251 topic). If neither of those is on your horizon, feel free to skim.
+
+\section{Why we want B\'ezout coefficients}
+
+The one sentence to carry with you: \textbf{B\'ezout coefficients are how you compute modular inverses.}
+
+Here's why. Suppose you want $a^{-1} \bmod n$---that is, some $x$ with $a x \equiv 1 \pmod n$. The extended Euclidean algorithm hands you integers $x, y$ with
+\[
+  a x + n y = \gcd(a, n).
+\]
+If $\gcd(a, n) = 1$, that equation reads $a x + n y = 1$. Reduce modulo $n$: the $n y$ term vanishes (it's divisible by $n$), leaving $a x \equiv 1 \pmod n$. So $x$ \emph{is} the inverse of $a$ mod $n$, and the algorithm has computed it for you.
+
+If $\gcd(a, n) \neq 1$ then the equation gives you $a x + n y = d$ for some $d > 1$, and reducing mod $n$ gives $a x \equiv d \not\equiv 1$, so no inverse exists. This matches what Module~6 told us: $a$ is invertible mod $n$ exactly when $a$ and $n$ are coprime.
+
+The brute-force way to find a modular inverse is to try every residue from $0$ to $n-1$ and see which one works; that's $O(n)$ and unworkable for large $n$. The extended Euclidean algorithm runs in $O(\log \min(a,n))$, and ``large $n$'' is exactly the regime where inverses actually matter---for example, RSA keys are a few thousand bits, which means $n$ has several hundred decimal digits and brute force is out of the question.
+
+\section{The algorithm: back-substitution first}
+
+The cleanest way to understand the extended algorithm is to run ordinary Euclid and then \emph{back-substitute} to recover $x$ and $y$. Once you've done that once by hand, the one-pass iterative version makes sense as a rearrangement.
+
+Let's compute $\gcd(35, 12)$ with B\'ezout coefficients. Forward Euclid:
+\begin{align*}
+  35 &= 2 \cdot 12 + 11 \\
+  12 &= 1 \cdot 11 + 1 \\
+  11 &= 11 \cdot 1 + 0
+\end{align*}
+So $\gcd(35, 12) = 1$. Good, $35$ and $12$ are coprime.
+
+Now back-substitute. The step right before the remainder became $0$ gave us the gcd; solve it for that gcd:
+\[
+  1 = 12 - 1 \cdot 11.
+\]
+Now the next line up gave us $11 = 35 - 2 \cdot 12$. Substitute:
+\[
+  1 = 12 - 1 \cdot (35 - 2 \cdot 12) = 12 - 35 + 2 \cdot 12 = 3 \cdot 12 - 1 \cdot 35.
+\]
+So $35 \cdot (-1) + 12 \cdot 3 = 1$: the coefficients are $x = -1$ and $y = 3$. Check: $-35 + 36 = 1$. \checkmark
+
+Reading off the inverse: since $12 \cdot 3 \equiv 1 \pmod{35}$, we have $12^{-1} \equiv 3 \pmod{35}$. You can sanity-check this with a calculator: $12 \cdot 3 = 36 = 35 + 1$, so it really does reduce to $1$ mod $35$.
+
+The back-substitution works for the same reason Euclid itself works---at each step, the gcd of the current pair equals the gcd of the previous pair---but now we're keeping track of \emph{how} to write that gcd as a combination of the original $a$ and $b$.
+
+\section{The one-pass version}
+
+Doing back-substitution is fine if you're walking through a single example on paper. A program wants to do it in one pass, updating the coefficients as it goes. The trick is to carry along two pairs $(x_0, x_1)$ and $(y_0, y_1)$ at each step, representing the coefficients for the current $a$ and $b$.
+
+Here's the invariant. At every recursive call \texttt{egcdRec(a, b, x0, x1, y0, y1)}, the following hold:
+\begin{itemize}
+  \item $a = A \cdot x_0 + B \cdot y_0$, where $A, B$ are the original inputs
+  \item $b = A \cdot x_1 + B \cdot y_1$
+\end{itemize}
+That is, $x_0, y_0$ are the current coefficients for $a$, and $x_1, y_1$ are the current coefficients for $b$. When $b$ eventually hits $0$, the first pair $(x_0, y_0)$ is what we want, because $a$ is now the gcd.
+
+The initial call is \texttt{egcdRec(A, B, 1, 0, 0, 1)}, reflecting the obvious identities $A = A \cdot 1 + B \cdot 0$ and $B = A \cdot 0 + B \cdot 1$.
+
+At each recursive step we compute $q = a \div b$ and replace $(a, b)$ with $(b, a - q b)$. To preserve the invariant, the new coefficients for the new $b = a - q b$ must be $(x_0 - q x_1, y_0 - q y_1)$. (You should check this---plug in the old identities and simplify.) That's exactly the pattern in the Python code:
+
+\begin{lstlisting}[language=Python]
+def egcdRec(a, b, x0, x1, y0, y1):
+    if b == 0:
+        return (a, x0, y0)
+    else:
+        q = a // b
+        return egcdRec(b, a % b, x1, x0 - q*x1, y1, y0 - q*y1)
+
+def egcd(a, b):
+    return egcdRec(a, b, 1, 0, 0, 1)
+
+def modInverse(a, m):
+    g, i, _ = egcd(a, m)
+    if g != 1:
+        raise ValueError("inverse does not exist")
+    return i % m
+\end{lstlisting}
+
+\section{A traced example}
+
+Let's trace \texttt{egcd(35, 12)} step by step, so you can see the two coefficient pairs evolve. Each row is the arguments at one call.
+
+\begin{center}
+\begin{tabular}{c|r|r|r|r|r|r}
+\toprule
+call \# & $a$ & $b$ & $x_0$ & $x_1$ & $y_0$ & $y_1$ \\
+\midrule
+0 & 35 & 12 & 1 & 0 & 0 & 1 \\
+1 & 12 & 11 & 0 & 1 & 1 & $-2$ \\
+2 & 11 & 1  & 1 & $-1$ & $-2$ & 3 \\
+3 & 1  & 0  & $-1$ & 12 & 3 & $-35$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+At call \#3, $b = 0$, so we return $(a, x_0, y_0) = (1, -1, 3)$. That matches what we got by hand.
+
+Let's verify the invariant held at every row by plugging back in:
+\begin{itemize}
+  \item Call 0: $a = 35 = 35 \cdot 1 + 12 \cdot 0$. \checkmark \quad $b = 12 = 35 \cdot 0 + 12 \cdot 1$. \checkmark
+  \item Call 1: $a = 12 = 35 \cdot 0 + 12 \cdot 1$. \checkmark \quad $b = 11 = 35 \cdot 1 + 12 \cdot (-2) = 35 - 24$. \checkmark
+  \item Call 2: $a = 11 = 35 \cdot 1 + 12 \cdot (-2)$. \checkmark \quad $b = 1 = 35 \cdot (-1) + 12 \cdot 3 = -35 + 36$. \checkmark
+  \item Call 3: $a = 1 = 35 \cdot (-1) + 12 \cdot 3$. \checkmark
+\end{itemize}
+The invariant is preserved at every step---not by accident, but because of the arithmetic that relates $(x_0, x_1)$ to $(x_1, x_0 - q x_1)$ under the substitution $(a, b) \mapsto (b, a - q b)$.
+
+\section{Looking ahead: where this pays off}
+
+In CS~251 (or wherever else you meet cryptographic arithmetic) the extended Euclidean algorithm is the bottom of the stack for RSA key generation. A quick sketch so you see where it's headed, without pretending to teach the whole thing:
+
+\begin{enumerate}
+  \item Pick two large primes $p$ and $q$ and set $n = p q$.
+  \item Compute $\varphi(n) = (p-1)(q-1)$, the size of the multiplicative group mod $n$.
+  \item Choose a public exponent $e$ coprime to $\varphi(n)$---classically $e = 65537$.
+  \item Compute the private exponent $d$ satisfying $e d \equiv 1 \pmod{\varphi(n)}$. \emph{This step is just a modular inverse}, and the only practical way to do it for a $\varphi(n)$ with hundreds of digits is the extended Euclidean algorithm.
+  \item Publish $(n, e)$; keep $(n, d)$ secret.
+\end{enumerate}
+
+Encryption and decryption are then just ``raise to the $e$th power mod $n$'' and ``raise to the $d$th power mod $n$,'' and they invert each other by Fermat's little theorem (or Euler's theorem, depending on how you slice it). The security of the whole scheme rests on: (a) factoring $n$ being hard, so attackers can't recover $p, q$ and hence $\varphi(n)$; (b) computing modular inverses being \emph{easy} for the legitimate key-holder, who does know $\varphi(n)$ and runs \texttt{egcd}.
+
+That asymmetry---trapdoor one-way function---is what makes RSA work. And the ``easy'' side of it is exactly this algorithm.
+
+\section{Exercises}
+
+\textbf{Exercise 1.}\label{ex:eea:1} By hand, compute $\gcd(54, 21)$ and a pair of B\'ezout coefficients $x, y$ with $54 x + 21 y = \gcd(54, 21)$. Show your work: forward Euclid first, then back-substitute.
+
+\bigskip
+\noindent\textbf{Exercise 2.}\label{ex:eea:2} Use the extended Euclidean algorithm to find integers $x$ and $y$ with $17 x + 5 y = 1$. Then read off the multiplicative inverse of $17$ modulo $5$, and the multiplicative inverse of $5$ modulo $17$. Verify both answers by computing $17 \cdot x \bmod 5$ and $5 \cdot y' \bmod 17$ for the appropriate coefficients.
+
+\bigskip
+\noindent\textbf{Exercise 3.}\label{ex:eea:3} Use the extended Euclidean algorithm to compute $7^{-1} \bmod 43$. Then check your answer by computing $7 \cdot x \bmod 43$ directly.
+
+\bigskip
+\noindent\textbf{Exercise 4.}\label{ex:eea:4} Trace \texttt{egcd(100, 36)} using the table format above, with columns for $a, b, x_0, x_1, y_0, y_1$. How many calls does it take to terminate? What are the final B\'ezout coefficients? Verify them by plugging into $100 x + 36 y = \gcd(100, 36)$.
+
+\bigskip
+\noindent\textbf{Exercise 5.}\label{ex:eea:5} (Programming.) Write a Python function \texttt{egcd(a, b)} that implements the extended Euclidean algorithm iteratively (no recursion) and returns a tuple $(g, x, y)$ with $g = \gcd(a, b)$ and $a x + b y = g$. Then write \texttt{mod\_inverse\_via\_egcd(a, n)} that uses \texttt{egcd} to compute $a^{-1} \bmod n$, raising \texttt{ValueError} if $\gcd(a, n) \neq 1$. Test it on the same inputs as Module~6 Exercise~13 (the brute-force version) and verify you get the same answers. Which implementation is asymptotically faster, and why?
+
+\bigskip
+\noindent\textbf{Exercise 6.}\label{ex:eea:6} (Why the invariant holds.) The one-pass algorithm updates $(x_0, x_1, y_0, y_1) \mapsto (x_1, x_0 - q x_1, y_1, y_0 - q y_1)$ at each step, where $q = a \div b$. Assuming the invariant $a = A x_0 + B y_0$ and $b = A x_1 + B y_1$ held before the update, show that the corresponding invariant for the new $a$ (which is the old $b$) and the new $b$ (which is $a - q b$) still holds after the update. This is a short algebra exercise; no induction required.
+
+\end{document}

@@ -10,7 +10,7 @@
 \maketitle
 
 \begin{readingmap}
-\rmentry{Epp sections.}{§3.1--3.4 (predicates, quantified statements, and arguments with quantified statements) and §5.2 (the principle of mathematical induction; we return to this in Module 8).}
+\rmentry{Epp sections.}{§3.1--3.4 (predicates, quantified statements, and arguments with quantified statements) and §5.2 (the principle of mathematical induction; this module introduces induction, and Module~8 comes back to it in a bigger way).}
 
 \rmentry{Prerequisites.}{Modules 1--3 (sets and functions, propositional logic, proof systems).}
 
@@ -75,9 +75,9 @@ If you were paying attention in the last section you'll notice that this is just
 
 Let's do a couple of worked examples.
 
-\textbf{Example 1.} Let $P(d) = $ ``$6/d$ is an integer'' and let our set be $\mathbb{Z}^+$ (the positive integers). So we're asking: which positive integers divide 6 evenly? The truth set is $\{1, 2, 3, 6\}$ because those are exactly the positive divisors of 6.
+\textbf{Example 1.} Let $P(d) = $ ``$8/d$ is an integer'' and let our set be $\mathbb{Z}^+$ (the positive integers). So we're asking: which positive integers divide 8 evenly? The truth set is $\{1, 2, 4, 8\}$ because those are exactly the positive divisors of 8.
 
-\textbf{Example 2.} Let $P(x) = $ ``$1 \leq x^2 \leq 4$'' and let our set be $\mathbb{Z}$ (all integers). We need $x^2 \geq 1$, so $x \neq 0$, and $x^2 \leq 4$, so $x \in \{-2, -1, 0, 1, 2\}$. Combining these: the truth set is $\{-2, -1, 1, 2\}$.
+\textbf{Example 2.} Let $P(x) = $ ``$4 \leq x^2 \leq 16$'' and let our set be $\mathbb{Z}$ (all integers). We need $x^2 \geq 4$, so $|x| \geq 2$, and $x^2 \leq 16$, so $|x| \leq 4$. Combining these: the truth set is $\{-4, -3, -2, 2, 3, 4\}$.
 
 Here's how this connects back to quantifiers:
 \begin{itemize}
@@ -100,13 +100,13 @@ Why do these make sense? Let's think about it. ``It's \emph{not} the case that e
 
 And hey, remember the Big And / Big Or interpretation from the last section? This is just De Morgan's laws from Module 2 in disguise! Negating a big conjunction (which is what $\forall$ is) gives you a big disjunction (which is what $\exists$ is), and vice versa. The same principle applies at a larger scale.\footnote{If you squint at it in exactly the right way, the entirety of first-order logic is just propositional logic with extra steps. Which is kind of the point.}
 
-\textbf{Example 1.} Negate ``every computer has a CPU.''
+\textbf{Example 1.} Negate ``every bicycle has two wheels.''
 
-This is $\forall c : \text{Computers}.\; \text{HasCPU}(c)$. The negation is $\exists c : \text{Computers}.\; \neg\text{HasCPU}(c)$, which in English is: ``there exists a computer that does not have a CPU.''
+This is $\forall b : \text{Bicycles}.\; \text{TwoWheels}(b)$. The negation is $\exists b : \text{Bicycles}.\; \neg\text{TwoWheels}(b)$, which in English is: ``there exists a bicycle that does not have two wheels.''
 
-\textbf{Example 2.} Negate ``there exists a band that has won at least 10 Grammys.''
+\textbf{Example 2.} Negate ``there exists a movie that has grossed more than one billion dollars.''
 
-This is $\exists b : \text{Bands}.\; \text{Grammys}(b) \geq 10$. The negation is $\forall b : \text{Bands}.\; \text{Grammys}(b) < 10$, which says: ``for every band, that band has not won at least 10 Grammys''---or equivalently, ``no band has won at least 10 Grammys.''
+This is $\exists m : \text{Movies}.\; \text{Gross}(m) > 10^9$. The negation is $\forall m : \text{Movies}.\; \text{Gross}(m) \leq 10^9$, which says: ``every movie has grossed at most one billion dollars''---or equivalently, ``no movie has grossed more than a billion dollars.''
 
 One more pattern that shows up all the time: negating an implication \emph{inside} a quantifier. Recall from Module 2 that $\neg(P \to Q) \equiv P \wedge \neg Q$---the negation of ``if P then Q'' is ``P and not Q.'' So when you negate a universally quantified implication you get:
 \[
@@ -117,11 +117,11 @@ which reads as ``there's some $x$ where $P(x)$ holds but $Q(x)$ doesn't.'' This 
 \section{Nested quantifiers}
 Sometimes one quantifier just isn't enough and you need to stack them. This is where things get interesting.
 
-\textbf{Example.} Consider the statement ``there exists a real number $u$ such that for all real numbers $v$, $uv = v$.'' In our notation this is:
+\textbf{Example.} Consider the statement ``there exists a real number $u$ such that for all real numbers $v$, $u + v = v$.'' In our notation this is:
 \[
-\exists u : \mathbb{R}.\; \forall v : \mathbb{R}.\; uv = v
+\exists u : \mathbb{R}.\; \forall v : \mathbb{R}.\; u + v = v
 \]
-This is claiming that there's a multiplicative identity. Is it true? Yes! Take $u = 1$ and you get $1 \cdot v = v$ for all $v$. So we've \emph{witnessed} the existential by providing a concrete value.\footnote{This is exactly what the $\exists$-introduction rule does: you hand it a concrete element and a proof that the predicate holds on that element.}
+This is claiming that there's an additive identity. Is it true? Yes! Take $u = 0$ and you get $0 + v = v$ for all $v$. So we've \emph{witnessed} the existential by providing a concrete value.\footnote{This is exactly what the $\exists$-introduction rule does: you hand it a concrete element and a proof that the predicate holds on that element.}
 
 Here's what you really need to internalize: \textbf{order matters}. The statements $\forall x.\;\exists y.\; P(x,y)$ and $\exists y.\;\forall x.\; P(x,y)$ are \emph{very different}.
 
@@ -137,7 +137,7 @@ But $\exists y.\;\forall x.\; P(x,y)$ is like saying ``there's a single \texttt{
 
 Negating nested quantifiers is actually straightforward: you just flip each quantifier as you push the negation through, and then negate the predicate at the end. So:
 \[
-\neg(\exists u : \mathbb{R}.\;\forall v : \mathbb{R}.\; uv = v) \;\equiv\; \forall u : \mathbb{R}.\;\exists v : \mathbb{R}.\; uv \neq v
+\neg(\exists u : \mathbb{R}.\;\forall v : \mathbb{R}.\; u + v = v) \;\equiv\; \forall u : \mathbb{R}.\;\exists v : \mathbb{R}.\; u + v \neq v
 \]
 Each $\exists$ becomes a $\forall$, each $\forall$ becomes an $\exists$, and the predicate gets negated. That's it. You just walk through the quantifiers one at a time applying the rules from the previous section.
 
@@ -291,11 +291,7 @@ Here's a perspective that might help if you're a programmer. An inductive proof 
 We've barely scratched the surface here. The intermezzo immediately after this chapter walks through several more proofs in this same style---commutativity and associativity of addition, among others---to get you really comfortable with the pattern. And much later, in Module 8, we'll come back to induction in a bigger way once we have sequences and summation in hand. The point of this section was just to break the seal: now you've seen one inductive proof from end to end, and the rule isn't just sitting there as a piece of inscrutable notation.
 
 \section{Addendum on notation}
-Sometimes you might see the ``: A'' part left out of quantifiers, like
-
-``$\forall x.\; P(x)$''
-
-instead. This is valid syntax \emph{if} we've defined in advance what our ``domain of discourse'' is. Then and only then can we leave out naming what set we're talking about because there's only \emph{one} set.
+Sometimes you'll see the \texttt{:\,A} part left out of quantifiers---so ``$\forall x.\; P(x)$'' instead of ``$\forall x : A.\; P(x)$.'' This is valid shorthand \emph{if} we've fixed a ``domain of discourse'' in advance. Then, and only then, can we drop the set annotation because there's only one set to quantify over. In this book we keep the annotations when the domain isn't obvious from context, but don't be surprised to see them dropped in other sources.
 
 \section{Common mistakes}
 

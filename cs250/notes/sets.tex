@@ -170,7 +170,7 @@ Intuitively, a set is countable if you can write its elements as a (possibly inf
 \medskip
 \noindent\textbf{Hilbert's Hotel.} Here's a fun thought experiment that helps build intuition for why infinity behaves so strangely. Imagine a hotel with infinitely many rooms, numbered $1, 2, 3, \ldots$, and every room is occupied. A new guest arrives. Can you fit them in?
 
-Yes! Move every current guest from room $n$ to room $n+1$. Room 1 is now free for the new guest. In fact, you can fit infinitely many new guests the same way: move guest $n$ to room $2n$, freeing up all the odd-numbered rooms. This is essentially the same bijection trick we used above---infinity plus one is still the same infinity. It's not that the hotel ``got bigger''; it's that the pairing between guests and rooms changed.
+Yes. Move every current guest from room $n$ to room $n+1$. Room 1 is now free for the new guest. The explicit bijection is $n \mapsto n+1$: the occupant of room $n$ moves to room $n+1$, and the function is injective (different rooms to different rooms) and surjective onto $\{2, 3, 4, \ldots\}$ (everyone still has a room). In fact, you can fit infinitely many new guests the same way: use the bijection $n \mapsto 2n$ to move each existing guest to an even-numbered room, freeing up all the odd-numbered rooms for the new arrivals (guest $k$ of the new group goes to room $2k - 1$). Again, both maps are bijections---no one loses a room, no room is assigned twice. It's not that the hotel ``got bigger''; it's that a different bijection between guests and rooms works just as well as the original.
 
 \section{Uncountable infinity---Cantor's diagonal argument}
 

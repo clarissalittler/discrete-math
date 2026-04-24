@@ -10,11 +10,11 @@
 \maketitle
 
 \begin{readingmap}
-\rmentry{Epp sections.}{§4.6--4.8 (§4.7, 4.8, and 4.10 in the 5th edition): indirect proof (contradiction and contrapositive), the Euclidean algorithm, and an introduction to programming logic (Hoare logic).}
+\rmentry{Epp sections.}{§4.7, 4.8, 4.10 (§4.6--4.8 in the 4th edition): indirect proof (contradiction and contrapositive), the Euclidean algorithm, and an introduction to programming logic (Hoare logic).}
 
-\rmentry{Prerequisites.}{Modules 3 (proof systems), 5 (direct proof), and 6 (modular arithmetic---the extended Euclidean algorithm is how we justify that multiplicative inverses mod $p$ exist).}
+\rmentry{Prerequisites.}{Modules 3 (proof systems), 5 (direct proof), and 6 (modular arithmetic---we finally pay off the B\'ezout-identity debt from Module~6).}
 
-\rmentry{Relevant intermezzi.}{``Proofs Are Programs'' (Curry--Howard; read after this module)---the connection between Hoare logic and the Curry--Howard view of proofs is worth seeing twice.}
+\rmentry{Relevant intermezzi.}{``The Extended Euclidean Algorithm and B\'ezout Coefficients'' immediately follows this module, for anyone who wants the bookkeeping we skip here (and for anyone heading into RSA in CS~251). ``Proofs Are Programs'' (Curry--Howard; read after this module)---the connection between Hoare logic and the Curry--Howard view of proofs is worth seeing twice.}
 
 \rmentry{Proof-writing reference.}{The companion chapter ``How to Write a Proof, Revisited'' follows this module directly. You've now met every informal proof technique this book uses; that chapter consolidates the prose conventions that go with them and is the natural warm-up before Module~8's induction-heavy run.}
 
@@ -115,7 +115,7 @@ There's a subtlety worth noting for those interested in constructive mathematics
 In your homework this week you'll get to practice both techniques. One tip for the contradiction proofs: when you assume the negation, make sure you actually \emph{use} the assumption somewhere to derive the contradiction. If your proof never references the assumption, something has gone wrong---you've probably actually found a direct proof in disguise!
 
 \section{GCD, Euclid's algorithm, \&c.}
-Last module we owed a debt: in §6.5 we claimed that multiplicative inverses exist in $\mathbb{Z}/p\mathbb{Z}$ when $p$ is prime, leaning on B\'ezout's identity without showing how to actually \emph{compute} those coefficients. Time to pay that debt. In this section we'll look at Euclid's algorithm, its \emph{extended} version, and how the extended version computes modular inverses---closing the loop on what Module 6 promised.
+Last module we owed a debt: in §6.5 we claimed that multiplicative inverses exist in $\mathbb{Z}/p\mathbb{Z}$ when $p$ is prime, leaning on B\'ezout's identity without showing how to actually \emph{compute} those coefficients. This section pays most of that debt; the \emph{extended} Euclidean algorithm that actually computes the coefficients is handled in the intermezzo immediately after this module, because it's more bookkeeping than idea, and it doesn't really earn its keep until you want to do RSA (a CS~251 topic).
 
 \begin{definition}[Greatest Common Divisor]
 For integers $a$ and $b$ that are not both zero, the \emph{greatest common divisor}\index{greatest common divisor} of $a$ and $b$, denoted $\gcd(a,b)$, is the greatest \emph{positive} integer that divides both $a$ and $b$.
@@ -134,37 +134,7 @@ def gcd(a, b):
         return gcd(b, a % b)
 \end{lstlisting}
 
-The \emph{extended} Euclidean algorithm\index{extended Euclidean algorithm} does more: alongside the gcd, it simultaneously computes integers $x$ and $y$ satisfying
-\[
-  ax + by = \gcd(a, b).
-\]
-This is exactly the B\'ezout identity from Module 6, now with an algorithm attached. And here's the payoff we promised: this is how you compute multiplicative inverses mod $n$.
-
-Suppose $n$ is prime and we want the multiplicative inverse of some $a$ (where $0 < a < n$, so $a$ is nonzero mod $n$). Since $n$ is prime and $a$ is not divisible by $n$, we have $\gcd(a, n) = 1$, so the extended Euclidean algorithm hands us integers $x, y$ with
-\[
-  a x + n y = 1.
-\]
-Reducing mod $n$, the $ny$ term vanishes (it's divisible by $n$), leaving $a x \equiv 1 \pmod n$. So $x$ is the multiplicative inverse of $a$ modulo $n$. The crucial precondition is $\gcd(a, n) = 1$; if it isn't, no inverse exists. Primality of $n$ is stronger than we actually need---it's enough that $a$ and $n$ be coprime---but the prime case is the one we care about most, since that's when \emph{every} nonzero residue is invertible and we get a finite field.
-
-With all of that motivation, here's the extended Euclidean algorithm---the same recursion as before but tracking a tuple. I'm following \href{https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm}{the Wikipedia treatment}:
-
-\begin{lstlisting}[language=Python]
-  def egcdRec(a,b,x0,x1,y0,y1):
-      if b == 0:
-          return (a,x0,y0)
-      else:
-          q = a // b
-          return egcdRec(b,a%b,x1,x0 - q*x1,y1,y0 - q*y1)
-
-  def egcd(a,b):
-      return egcdRec(a,b,1,0,0,1)
-
-  def modInverse(a,m):
-      g,i,_ = egcd(a,m)
-      if g != 1:
-          raise ValueError("inverse does not exist")
-      return i % m
-\end{lstlisting}
+That's enough to \emph{decide} whether two numbers are coprime, which is the main thing we need for Module~6's claims about inverses: $a$ has an inverse mod $n$ exactly when $\gcd(a,n) = 1$, and now we can check that mechanically. What Euclid's algorithm doesn't do on its own is hand you the inverse. For that we need the \emph{extended} Euclidean algorithm\index{extended Euclidean algorithm}, which tracks a pair of ``B\'ezout coefficients'' $(x, y)$ alongside the running gcd and maintains the invariant $a x + b y = \gcd(a, b)$. Once you have those, the modular inverse falls out by reducing the B\'ezout equation mod $n$. The algorithm itself, a worked trace, and the inverse-extraction step live in the intermezzo after this module. If you're curious about how the bookkeeping actually works, or if you're looking ahead toward RSA, read it now; otherwise it's fine to move on and come back when you need it.
 
 
 \section{Programming logic}
@@ -205,12 +175,12 @@ where c1 and c2 are both valid statements
 
 Conditionals:
  if b then c1 else c2
-where b is a boolean valued statement that uses (>, >=, =, /=, \&c. and variables)
+where b is a boolean-valued expression built from comparison operators (>, >=, =, /=, etc.) and variables,
 and c1, c2 are other valid statements in the language
 
 While:
  while b do c
-where b is boolean valued statement, like above, and c is a valid statement
+where b is a boolean-valued expression like above, and c is a valid statement
 
 Skip:
  skip
@@ -262,6 +232,8 @@ This tells us that if $Q$ is true after $c_1$ runs when $P$ and $B$ are true \te
 \]
 The idea is to identify a \emph{loop invariant}\index{loop invariant}---a property preserved by each iteration of the loop body. You show that if the invariant and the loop condition both hold before the body executes, the invariant still holds afterward. When the loop terminates, you know the invariant holds \emph{and} the loop condition is false.
 
+A small but important caveat up front: the rule as stated only proves \emph{partial correctness}---``if the loop terminates, the postcondition holds.'' It says nothing about whether the loop actually terminates. For full \emph{total} correctness you need to additionally show that some quantity (called a \emph{variant}) strictly decreases on each iteration and is bounded below, which forces the loop to halt after finitely many steps. Epp and most intro courses stop at partial correctness, and we will too, but keep in mind that an infinite loop trivially satisfies any partial-correctness specification---the rule doesn't catch ``my program is correct except it never finishes.''
+
 The next one is definitely the weirdest, and one that we need to explain a bit.
 
 \noindent\textbf{Assignment:}\index{assignment rule}
@@ -272,15 +244,15 @@ The next one is definitely the weirdest, and one that we need to explain a bit.
   \end{array}
 \]
 
-What this is saying is that \textbf{if} the proposition $P$ is true after substituting the expression $e$ for the variable $x$, then after assignment you can just conclude that $P$ is true.
+Here's the thing to keep pinned to the top of your mind: \textbf{the assignment rule is applied backward}. You start with the postcondition $P$ (what you \emph{want} to be true after the assignment) and compute the precondition $P[x/e]$ (what \emph{must} have been true before) by substituting the expression $e$ for the variable $x$ everywhere in $P$. Every other rule in this module chains facts forward through the program; the assignment rule goes the other direction. It takes getting used to.
 
-Let's look at an example because I think it'll make more sense:
+Let's look at an example because it really does make more sense in practice than it does stated abstractly.
 
-If we take this fragment of a proposition, where we just are leaving a hole for ourselves in the pre-condition, and we \textbf{want} to conclude that after subtracting 1 from the variable x then x > 0
+Suppose we want to conclude that, after subtracting 1 from \texttt{x}, we have $x > 0$:
 \begin{lstlisting}
 {??} x := x - 1 {x > 0}
 \end{lstlisting}
-looking at this, what does the precondition have to be? It needs to be that x > 1 or\ldots another way to say this would be that (x - 1) > 0, which is exactly what you get if you substitute the expression e for x in P---which in this case means replacing x with x-1.
+What's the precondition have to be? Reasoning informally: for the postcondition $x > 0$ to hold \emph{after} the assignment, we need $(x - 1) > 0$ to hold \emph{before} the assignment---that's just the old value of $x$ being at least $2$. Reasoning by the rule: take the postcondition $x > 0$ and substitute $x - 1$ for $x$, getting $(x - 1) > 0$. Same answer.
 
 So the assignment rule lets us write things like this
 \begin{lstlisting}
@@ -424,6 +396,8 @@ The hard part of a while-loop proof is choosing the \emph{loop invariant}: a pro
 \]
 Read it as: the loop variable $i$ is somewhere between $0$ and $n$, and the running sum $s$ already equals the sum of the first $i$ positive integers. That's the useful fact we want to carry through the loop.
 
+Why these two conjuncts specifically? The second conjunct---$s = i(i+1)/2$---is the property we actually care about; it's what will give us the postcondition at loop exit. The first conjunct---$0 \leq i \leq n$---is there to keep $i$ in bounds, so that ``the loop has run exactly $i$ times and is about to either run once more or stop'' is a coherent thing to say. It's also what lets us claim $i = n$ exactly when the loop exits. Neither conjunct is useless and neither is redundant: drop the first and the arithmetic is unanchored; drop the second and the loop exit tells you nothing about $s$. A good loop invariant almost always has at least one ``bookkeeping'' conjunct pinning down the state variables and one ``result'' conjunct carrying the property you care about.
+
 The proof has three parts, which is typical for while-loop proofs:
 \begin{enumerate}
   \item \textbf{Establishment:} after the initialization (\texttt{i := 0; s := 0}), the invariant holds.
@@ -491,7 +465,7 @@ Finally, chain everything together with sequencing:
 {n >= 0} i := 0; s := 0; while i < n do (...) {s = n*(n+1)/2}
 \end{lstlisting}
 
-A small note on \emph{partial} vs.\ \emph{total} correctness. The while rule as stated establishes \emph{partial} correctness: ``if the loop terminates, the postcondition holds.'' It says nothing about whether the loop terminates. For full \emph{total} correctness you need to also argue that the loop actually halts, which you typically do by showing that some quantity (called a \emph{variant}) strictly decreases on each iteration and is bounded below. In our example, $n - i$ is a good variant: it starts at $n$, decreases by $1$ each iteration, and can't go below $0$ while the loop guard $i < n$ still holds. So after at most $n$ iterations, the loop exits. That's enough for total correctness. Epp and most intro courses stop at partial correctness; we will too, but be aware the stronger result is available.
+A note on termination for this specific example. Recall from the while rule discussion that the rule only gives us partial correctness---it doesn't promise the loop halts. For this program, $n - i$ is a good variant: it starts at $n$, decreases by $1$ each iteration, and can't go below $0$ while the loop guard $i < n$ still holds. So after at most $n$ iterations, the loop exits, and we actually have total correctness here. It's worth getting into the habit of pausing after a Hoare-logic proof and asking ``okay, but does it terminate?''---often the answer is obviously yes, but noticing that is part of the discipline.
 
 \medskip
 That was a lot, and it's meant as an introduction to how you might prove properties about programs---not something you need to completely absorb right now. In your homework for the week you're going to prove the exciting theorem that $\{x = 0\}\;x := x+1;\; x := x+1\;\{x = 2\}$ or, in other words, that $1 + 1 = 2$.
@@ -514,8 +488,8 @@ That was a lot, and it's meant as an introduction to how you might prove propert
 \begin{keytakeaway}
   \item A \emph{proof by contradiction} assumes $\lnot P$, derives $\bot$, and concludes $P$. Good for proving negative statements (``there is no $\ldots$,'' ``$\sqrt{2}$ is not rational'').
   \item A \emph{proof by contrapositive} shows $\lnot Q \to \lnot P$ in place of $P \to Q$. Usually cleaner than contradiction when the goal is an implication.
-  \item The \emph{Euclidean algorithm} computes $\gcd(a, b)$ by repeatedly replacing $(a, b)$ with $(b, a \bmod b)$. The \emph{extended} version computes integers $x, y$ with $ax + by = \gcd(a, b)$; this is how you compute multiplicative inverses mod a prime.
-  \item \emph{Hoare logic} reasons about imperative programs via triples $\{P\}\, c\, \{Q\}$: if $P$ holds before $c$ runs, then $Q$ holds after. Each language construct has its own proof rule, and the assignment rule is applied \emph{backward} (substitute in the postcondition).
+  \item The \emph{Euclidean algorithm} computes $\gcd(a, b)$ by repeatedly replacing $(a, b)$ with $(b, a \bmod b)$. The \emph{extended} version (in the intermezzo after this module) additionally produces B\'ezout coefficients $x, y$ with $a x + b y = \gcd(a,b)$, which is how you compute modular inverses.
+  \item \emph{Hoare logic} reasons about imperative programs via triples $\{P\}\, c\, \{Q\}$: if $P$ holds before $c$ runs, then $Q$ holds after. Each language construct has its own proof rule, and the assignment rule is applied \emph{backward}---start from the postcondition and substitute to find the precondition.
   \item A \emph{loop invariant} is the induction hypothesis for a while loop. It must hold on entry (establishment), be preserved by the body (preservation), and imply the postcondition on exit (termination).
 \end{keytakeaway}
 
@@ -563,7 +537,7 @@ Where exactly does the reasoning go wrong? (Hint: the claim being ``disproved'' 
 \textbf{Exercise 7.}\label{ex:m7:7} Prove the Hoare triple $\{x = 0 \wedge y = 0\}\; x := x + 1;\; y := y + 1\;\{x + y = 2\}$. Use the assignment rule twice (once for each assignment), chain them with sequencing, and finish with strengthening.
 
 \bigskip
-\textbf{Exercise 8.}\label{ex:m7:8} Use the extended Euclidean algorithm to find integers $x$ and $y$ with $17 x + 5 y = 1$. Then read off the multiplicative inverse of $17$ modulo $5$, and the multiplicative inverse of $5$ modulo $17$. Verify both answers.
+\textbf{Exercise 8.}\label{ex:m7:8} (Extended Euclidean exercises are in the intermezzo that follows.) For practice with the basic Euclidean algorithm, trace $\gcd(252, 105)$ step by step, showing each call and remainder. What's the gcd?
 
 \subsection*{Challenge}
 
@@ -587,7 +561,7 @@ Choose an appropriate loop invariant (hint: it should say something about $y$ in
 
 \subsection*{Connection}
 
-\textbf{Exercise 12.}\label{ex:m7:12} (Programming.) Write a Python function \texttt{egcd(a, b)} that implements the extended Euclidean algorithm and returns a tuple $(g, x, y)$ with $g = \gcd(a, b)$ and $a \cdot x + b \cdot y = g$. Then write \texttt{mod\_inverse\_via\_egcd(a, n)} that uses \texttt{egcd} to compute $a^{-1} \bmod n$, raising \texttt{ValueError} if $\gcd(a, n) \neq 1$. Test it on the same inputs as Module~6 Exercise~13 (brute-force version) and verify you get the same answers. Which implementation is asymptotically faster, and why?
+\textbf{Exercise 12.}\label{ex:m7:12} (Programming.) Implement the basic \texttt{gcd(a, b)} recursively in Python, matching the pseudocode in §7.2. Test it on the pairs $(48, 18), (252, 105), (1024, 1536)$ and one pair of your own choice. Then: if you're curious about the extended version that also returns B\'ezout coefficients, the intermezzo that follows this module has an implementation and a programming exercise of its own.
 
 \bigskip
 \textbf{Exercise 13.}\label{ex:m7:13} (Intermezzo pointer.) The ``Proofs Are Programs'' intermezzo (Curry--Howard) immediately follows this module. Hoare logic and Curry--Howard are two very different ways of connecting proofs and programs: Hoare logic is about \emph{verifying that a given imperative program meets a specification}, while Curry--Howard says that \emph{a proof in constructive logic \textbf{is} a program}. Read the intermezzo and, in a short paragraph, explain which of these two correspondences is more natural for reasoning about the merge-sort algorithm, and why.

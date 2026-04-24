@@ -12,7 +12,7 @@
 \begin{readingmap}
 \rmentry{Epp sections.}{This module doesn't correspond directly to an Epp section---Epp's §5.3 covers the closely related topic of recursive definitions on the naturals, but the more general ``structural induction on arbitrary recursive data'' is a computer-science-flavored topic that most discrete-math texts don't emphasize.}
 
-\rmentry{Prerequisites.}{Modules 4 (natural induction), 8 (induction is recursion), and 9 (strong induction, which generalizes to recursive data where subparts are smaller but not adjacent).}
+\rmentry{Prerequisites.}{Modules 4 (natural induction) and 8 (induction is recursion). Module 9 (strong induction) is helpful background for two of the exercises below and for tree-on-tree arguments where the sub-parts aren't adjacent, but the main module text doesn't strictly require it.}
 
 \rmentry{Relevant intermezzi.}{``The Algebra of Types'' (immediately after this module) explains why BNF definitions and induction principles line up perfectly---the pattern isn't a coincidence, it's a theorem about initial algebras.}
 
@@ -178,6 +178,41 @@ They're the same! So $P(\texttt{Cons(x, xs')})$ holds, and by structural inducti
 
 See the pattern? It's the exact same game as the induction proofs we did on natural numbers in Modules 4 and 8. Unfold the definitions, apply the inductive hypothesis, watch things simplify. The only difference is that instead of peeling off a \texttt{succ} we're peeling off a \texttt{Cons}.
 
+\subsection*{Making ``induction is recursion'' concrete on this proof}
+
+Back in Module~8 I kept insisting that induction and recursion are the same thing. Let's pin that down on the proof we just finished, because structural induction on lists is the cleanest place to see it.
+
+The statement we proved was ``for all lists $xs$, $P(xs)$'' where $P(xs)$ is ``for all $ys$, $\texttt{length}(xs \mathbin{++} ys) = \texttt{length}(xs) + \texttt{length}(ys)$.'' Imagine you wanted to \emph{compute} a proof of $P(xs)$ for a specific concrete list $xs$---say, a list of length three. What would that computation look like? It's a recursive function:
+
+\begin{lstlisting}[language=Python]
+# Informal pseudocode: returns a "proof object" that length distributes
+# over ++ for this particular xs. Every "return" line corresponds to a
+# justified equation in the actual proof.
+def length_append_proof(xs):
+    if xs == Nil:
+        # Base case of the induction:
+        # length(Nil ++ ys) = length(ys)
+        #                   = 0 + length(ys)
+        #                   = length(Nil) + length(ys)
+        return "base case chain of equalities"
+    else:  # xs == Cons(x, xs_tail)
+        # Inductive case. Recurse on the tail -- this recursive call IS
+        # the inductive hypothesis:
+        IH = length_append_proof(xs_tail)
+
+        # Now use IH to build the proof for Cons(x, xs_tail):
+        # length(Cons(x, xs_tail) ++ ys)
+        #   = length(Cons(x, xs_tail ++ ys))              [def of ++]
+        #   = 1 + length(xs_tail ++ ys)                   [def of length]
+        #   = 1 + length(xs_tail) + length(ys)            [by IH]
+        #   = length(Cons(x, xs_tail)) + length(ys)       [def of length]
+        return "inductive-step chain, using IH"
+\end{lstlisting}
+
+Reread the worked proof with this pseudocode next to it. The \texttt{if xs == Nil} branch is the base case of the induction. The recursive call \texttt{length\_append\_proof(xs\_tail)} \emph{is} the inductive hypothesis---``assume $P(xs')$,'' written in the vocabulary of ``recurse on the tail.'' The final equality chain in the \texttt{else} branch is the inductive step. No piece of the proof is missing from the code, and no piece of the code is missing from the proof. They are not two similar things; they are the same object written in two notations.
+
+This is why in proof assistants like Lean, Agda, and Coq the induction principle for a datatype is literally a recursive function---``eliminator'' is the technical name---and you write proofs by case-splitting and recursing exactly the way you'd write a program. The ``proof'' you end up with is a program whose return type is a logical proposition rather than a number. That's the Curry--Howard correspondence, which the earlier intermezzo gestured at and which you'll see more of in CS 251.
+
 \section{Binary trees}
 
 \subsection{Defining binary trees inductively}
@@ -254,7 +289,7 @@ edges(Node(left, right)) = 2 + edges(left) + edges(right)
 
 Why 2? Because each \texttt{Node} creates exactly two edges: one going down to its left child and one going down to its right child.\footnote{If you draw a binary tree on paper, every line you draw corresponds to one of these edges. A node with two children means two lines going down from that node.}
 
-Before we prove anything, let's look at a concrete binary tree so we have something to count. Here is $\texttt{Node}(\texttt{Node}(\texttt{Leaf}, \texttt{Leaf}), \texttt{Node}(\texttt{Leaf}, \texttt{Node}(\texttt{Leaf}, \texttt{Leaf})))$ drawn out:
+Before we prove anything, let's look at a concrete binary tree so we have something to count. The tree $\texttt{Node}(\texttt{Node}(\texttt{Leaf}, \texttt{Leaf}), \texttt{Node}(\texttt{Leaf}, \texttt{Node}(\texttt{Leaf}, \texttt{Leaf})))$ drawn out looks like this (blue circles are internal \texttt{Node}s and gray squares marked \texttt{L} are \texttt{Leaf}s):
 
 \begin{center}
 \begin{tikzpicture}[
@@ -353,7 +388,12 @@ If you go on to any course in programming languages, compilers, type theory, or 
   \item \textbf{Type systems.} ``Progress and preservation'' is the standard soundness theorem for a typed programming language, and both halves are structural inductions on typing derivations (or on program syntax, or both). This is how we know a well-typed program ``can't go wrong.'' You'll see these proofs laid out in books like \emph{Types and Programming Languages} (Pierce) and \emph{Software Foundations} (Pierce et al.), where they're written down rigorously in Coq and are sometimes dozens of cases long.
   \item \textbf{Interpreters and evaluators.} Writing an interpreter is structural recursion on the abstract syntax; proving the interpreter correct is structural induction on the same syntax. The definitions of $\texttt{eval}$ and $P(e)$ have the same shape, one returning a value and the other returning a proof.
   \item \textbf{Static analyzers.} Tools like Facebook's Infer (separation logic), Clang Static Analyzer, SpotBugs, and ESLint all walk syntax trees checking an invariant. When the tool's authors prove the analysis is sound, they do structural induction on program syntax.
-  \item \textbf{Regular expressions and automata.} Every identity about regexes---``$(a|b)^* = a^* (b a^*)^*$,'' for example---is proved by structural induction on the regex grammar, or by induction on the automaton it compiles to. CS 251's formal languages material is essentially one long structural-induction exercise.
+  \item \textbf{Regular expressions and automata.} Every identity about
+  regexes is proved by structural induction on the regex grammar, or by
+  induction on the automaton it compiles to. For example, identities like
+  ``$(a|b)^* = a^* (b a^*)^*$'' are structural statements about regular
+  expressions. CS 251's formal languages material is essentially one
+  long structural-induction exercise.
   \item \textbf{DSLs and embedded languages.} Any time you write a small language inside another language---SQL queries, GraphQL schemas, a configuration grammar, a shader language---you're defining a BNF. Anything you want to prove or enforce about programs in that DSL is a structural induction on that grammar.
 \end{itemize}
 
@@ -402,6 +442,67 @@ All cases handled. By structural induction, $\texttt{size}(f) \geq 0$ for every 
 
 The proof itself is almost trivially easy---and that's the point. What matters is the \emph{shape}: three base cases (matching the three non-recursive alternatives in the BNF), one inductive case with one IH (for ${\sim}$), and three inductive cases with two IHs each (for $\wedge$, $\vee$, $\to$). That shape was determined entirely by the BNF. We just followed the recipe.
 
+\subsection*{When the recursive case has variable structure: rose trees}
+
+All the datatypes we've handled so far have recursive cases that carry a \emph{fixed} number of recursive sub-parts: \texttt{Cons} has one tail, \texttt{Node} has two subtrees, binary connectives have two subformulas. The recipe ``one IH per recursive occurrence'' is easy to apply when the ``number of occurrences'' is a small constant.
+
+What about datatypes where a single constructor holds \emph{a whole list} of recursive sub-parts? The classic example is a \emph{rose tree}\index{rose tree}---a tree where each internal node has an arbitrary number of children, not just two:
+\begin{lstlisting}
+RoseTree A := Leaf(A) | Branch(List (RoseTree A))
+\end{lstlisting}
+A \texttt{Leaf} holds a value of type $A$; a \texttt{Branch} holds a list of rose-tree children (the list might be empty, or might have a hundred). Any filesystem directory structure, HTML DOM tree, or s-expression has roughly this shape.
+
+The induction principle for rose trees needs to handle the \texttt{Branch} case carefully: you don't get ``an IH per child'' because you don't know how many children there are. Instead, you get an IH that says ``the property holds for \emph{every} element of the \texttt{List}.'' Concretely:
+
+\begin{lstlisting}
+assumes P(Leaf(a)) for every a : A
+        subproof:
+          assumes P(t) for every t in children  [the list]
+          ----------------------------------------------
+          shows P(Branch(children))
+--------------------------------------------------------
+shows $\forall$ t : RoseTree A. P(t)
+\end{lstlisting}
+
+``For every $t$ in the list of children, $P(t)$ holds'' is a universal over the list, not a fixed finite set of hypotheses. When you use the IH, you use it on whichever specific child you're currently reasoning about.
+
+Let's see this with a small example. Define the \emph{size} of a rose tree to be the total number of \texttt{Leaf}s:
+\begin{lstlisting}
+size(Leaf(a))        = 1
+size(Branch(cs))     = sum of size(c) over each c in cs
+                       (which equals 0 if cs is Nil)
+\end{lstlisting}
+And define the \emph{count of \texttt{Branch} nodes}:
+\begin{lstlisting}
+branches(Leaf(a))    = 0
+branches(Branch(cs)) = 1 + sum of branches(c) over each c in cs
+\end{lstlisting}
+
+\textbf{Claim.} For every rose tree $t$, $\texttt{size}(t) \geq 1$.
+
+\textbf{Proof} by structural induction on $t$.
+
+\emph{Base case} ($t = \texttt{Leaf}(a)$): $\texttt{size}(\texttt{Leaf}(a)) = 1 \geq 1$. \checkmark
+
+\emph{Inductive step} ($t = \texttt{Branch}(cs)$): The inductive hypothesis says $\texttt{size}(c) \geq 1$ for every $c$ in the list $cs$.
+
+We split on whether $cs$ is empty.
+\begin{itemize}
+  \item If $cs = \texttt{Nil}$, then $\texttt{size}(\texttt{Branch}(\texttt{Nil})) = 0$ by the definition (empty sum). But wait---$0 \not\geq 1$. Our claim is false for empty-branch rose trees! The definition of \texttt{RoseTree} allows \texttt{Branch(Nil)}---a ``branch with no children''---and such a tree has size $0$.
+\end{itemize}
+
+The proof \emph{should} fail here, and the lesson is genuine: rose trees admit \texttt{Branch}es with no children, and those have size $0$. The right claim for \texttt{RoseTree} as defined is something like ``every rose tree has at least one \texttt{Leaf} \emph{or} is an empty \texttt{Branch}.'' Alternatively, if we want the $\texttt{size} \geq 1$ claim to hold, we have to rule out empty branches at the BNF level: e.g., require that \texttt{Branch} carry a \emph{non-empty} list of children. Either fix is available; they make different mathematical objects.
+
+This is a feature, not a bug, of structural induction: the structure of the BNF forces you to confront edge cases that might otherwise hide. Students who say ``obviously a tree has at least one leaf'' have usually forgotten the \texttt{Branch(Nil)} case.
+
+Let's instead prove something that actually is true of the datatype as given.
+
+\textbf{Claim.} For every rose tree $t$, $\texttt{size}(t) = \texttt{branches}(t) + \ell(t)$, where $\ell(t)$ is the number of \texttt{Leaf} nodes in $t$ (an easy separate recursive definition---try writing it).
+
+This is the rose-tree analogue of the edges/size identity we proved for binary trees. The argument goes through with the IH applied termwise to the sum over children. Working it out carefully is a good exercise and is left as such below (Exercise~3b, expanded).
+
+The general lesson: \textbf{datatypes whose recursive cases contain lists of sub-parts need an IH that's universally quantified over the list.} The recipe still works; you just read ``one IH per recursive occurrence'' as ``one IH per element of the list of occurrences.'' The number isn't pinned down in advance, but the principle is the same.
+
 \section{Wrapping up: the big picture}
 
 Let's take a step back and look at what we've actually built over this whole course. There's been a single thread running through every module, and now we can finally state it cleanly.
@@ -427,7 +528,11 @@ This is the foundation for CS 251 and beyond---type theory, programming language
   \item \textbf{Wrong number of inductive hypotheses.} The induction principle has exactly one IH per recursive sub-part in each recursive case. Students sometimes only use \emph{one} IH when proving a property of \texttt{Node(left, right)}---forgetting that they get \emph{both} $P(\texttt{left})$ and $P(\texttt{right})$. Conversely, students sometimes \emph{invent} IHs they don't have (e.g.\ claiming an IH for a parent tree when doing induction on a child). Always: IH count matches recursive-sub-part count in the BNF.
   \item \textbf{Missing a BNF case.} A structural induction proof has to handle every alternative in the BNF. If your grammar has seven alternatives (like the BNF for propositional formulas) and your proof handles five of them, you've proved a weaker statement than you think. For long grammars, explicitly list the cases at the top of the proof and check them off as you go.
   \item \textbf{Skipping the unfolding step.} The inductive step usually has the shape ``unfold the definition on the left, apply the IH, unfold the definition on the right, see they match.'' Students sometimes skip the unfolding and try to cite the IH directly on an expression where the IH doesn't actually apply---because the LHS expression has a $\texttt{Cons}$ or $\texttt{Node}$ wrapped around it and you have to \emph{unwrap} the definition first before the IH becomes applicable.
-  \item \textbf{Generalizing the wrong variable.} When proving ``for all \texttt{xs} and \texttt{ys}, $\ldots$'', you usually induct on one of them with the \emph{other} universally quantified inside the predicate $P(\texttt{xs})$. If you fix a particular \texttt{ys} and then try to induct on \texttt{xs}, you might find your proof goes through---but you've only proved the result for that particular \texttt{ys}. To prove it for all \texttt{ys}, the quantifier has to be \emph{inside} $P$.
+  \item \textbf{Generalizing the wrong variable.} When proving ``for all \texttt{xs} and \texttt{ys}, $\ldots$'', you usually induct on one of them with the \emph{other} universally quantified inside the predicate $P(\texttt{xs})$. If you fix a particular \texttt{ys} and then try to induct on \texttt{xs}, you might find your proof goes through---but you've only proved the result for that particular \texttt{ys}. Concretely: the \emph{right} predicate for induction on \texttt{xs} in the length-append proof is
+\[
+  P(\texttt{xs}) := \forall \texttt{ys}.\; \texttt{length}(\texttt{xs} \mathbin{++} \texttt{ys}) = \texttt{length}(\texttt{xs}) + \texttt{length}(\texttt{ys}).
+\]
+The \emph{wrong} predicate is the same statement with some specific \texttt{ys} (say, \texttt{Nil}) silently fixed. The second version can be induced on and the algebra goes through, but the thing you've proved is just ``the equation holds when \texttt{ys} = \texttt{Nil}''---not the universal claim. The quantifier has to live \emph{inside} $P$, otherwise the inductive hypothesis doesn't give you anything about other values of \texttt{ys}.
   \item \textbf{Proving a lemma you didn't state.} In the reverse-is-involution exercise (and others like it) you often need a side lemma---something like $\texttt{reverse}(xs \mathbin{++} ys) = \texttt{reverse}(ys) \mathbin{++} \texttt{reverse}(xs)$---before the main theorem can go through. Students sometimes use such a lemma mid-proof without proving it. If you need a lemma, prove it separately first (or note it and come back to it). Don't assume a useful-looking equation.
   \item \textbf{Forgetting that \texttt{Leaf} is a tree.} Base cases sometimes get short-changed because they seem trivial. But a ``trivial'' base case is still a required case; write it down explicitly and verify. The one-line base case is sometimes where the \emph{whole argument} hinges---for example, in the leaves-vs-size proof, $\texttt{leaves}(\texttt{Leaf}) = 1$ but $\texttt{size}(\texttt{Leaf}) = 0$, and you need that $0 + 1$ relationship to see why the inductive hypothesis delivers the right answer.
 \end{enumerate}
@@ -458,7 +563,15 @@ Organized into \textbf{warm-up} (mechanical practice with recursive definitions)
 
 \subsection*{Warm-up}
 
-\textbf{Exercise 1.}\label{ex:m10:1} Define a recursive function $\texttt{reverse}$ on lists, following the two cases of the BNF. (Hint: you will need to use \texttt{append} (\texttt{++}) in the recursive case.) Then compute $\texttt{reverse}(\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil}))))$ step by step, showing each unfolding of the definition.
+\textbf{Exercise 1.}\label{ex:m10:1} Define a recursive function
+$\texttt{reverse}$ on lists, following the two cases of the BNF. Hint:
+you will need \texttt{append} (\texttt{++}) in the recursive case. Then
+compute
+\[
+  \texttt{reverse}(\texttt{Cons}(1,
+    \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil}))))
+\]
+step by step, showing each unfolding of the definition.
 
 \bigskip
 \textbf{Exercise 2.}\label{ex:m10:2} Compute the following by hand, unfolding the definitions step by step:
@@ -494,6 +607,9 @@ Induct on $xs$, with $ys$ and $zs$ universally quantified inside the predicate.
 \bigskip
 \textbf{Exercise 7.}\label{ex:m10:7} Define $\texttt{map}(f, xs)$ recursively on lists: $\texttt{map}(f, \texttt{Nil}) = \texttt{Nil}$ and $\texttt{map}(f, \texttt{Cons}(x, xs')) = \texttt{Cons}(f(x), \texttt{map}(f, xs'))$. Prove by structural induction that $\texttt{length}(\texttt{map}(f, xs)) = \texttt{length}(xs)$ for every list $xs$.
 
+\bigskip
+\textbf{Exercise 7b.}\label{ex:m10:7b} (Rose trees.) Using the $\texttt{RoseTree}$ datatype from the rose-tree subsection, prove by structural induction: for every rose tree $t$, the total number of constructors appearing in $t$ (counting each \texttt{Leaf} and each \texttt{Branch} once) equals $\texttt{branches}(t) + \texttt{size}(t)$. Start by writing a recursive definition of the ``total constructor count'' function, then do the induction. The \texttt{Leaf} case is immediate. The \texttt{Branch}$(cs)$ case is where the variable-arity IH actually gets exercised: you need to apply the IH to every child in the list $cs$ at once, not to a single ``previous'' child. State the IH precisely before using it---``for every child $c$ occurring in $cs$, the property holds''---and keep that quantifier visible in your proof.
+
 \subsection*{Challenge}
 
 \textbf{Exercise 8.}\label{ex:m10:8} Prove by structural induction that reverse is an involution:
@@ -508,14 +624,25 @@ You will need two helper lemmas:
 Prove both helpers, then use them to prove the main result. This is a good example of how real structural induction proofs often involve a chain of lemmas.
 
 \bigskip
-\textbf{Exercise 9.}\label{ex:m10:9} (The plan's request: a real semantic property.) Say a propositional formula is \emph{negation-free} if it is built from $T$, $F$, variables, and the connectives $\wedge$, $\vee$ only (i.e., the BNF excludes $\lnot$ and $\to$). Say a boolean function $f$ is \emph{monotone in variable $x$} if flipping $x$ from $F$ to $T$ (with all other variables held fixed) never flips the output of $f$ from $T$ to $F$. Prove by structural induction on the negation-free BNF:
+\textbf{Exercise 9.}\label{ex:m10:9} (A real semantic property.) Say a propositional formula is \emph{negation-free} if it is built from $T$, $F$, variables, and the connectives $\wedge$, $\vee$ only (i.e., the BNF excludes $\lnot$ and $\to$). Say a boolean function $f$ is \emph{monotone in variable $x$} if flipping $x$ from $F$ to $T$ (with all other variables held fixed) never flips the output of $f$ from $T$ to $F$. Prove by structural induction on the negation-free BNF:
 \[
   \text{Every negation-free formula is monotone in every variable.}
 \]
 Hint: you'll need the sub-lemma that $\wedge$ and $\vee$ preserve monotonicity---if two functions are monotone in $x$, so is their conjunction and their disjunction. You can also look back at Module~2 Exercise~10, where you proved that $\{\wedge, \vee\}$ is not functionally complete using exactly this monotonicity idea.
 
 \bigskip
-\textbf{Exercise 10.}\label{ex:m10:10} A binary tree is \emph{perfect} if every non-leaf node has two subtrees of the same height. Define $\texttt{height}(t)$ recursively: $\texttt{height}(\texttt{Leaf}) = 0$ and $\texttt{height}(\texttt{Node}(l, r)) = 1 + \max(\texttt{height}(l), \texttt{height}(r))$. Prove by structural induction: for every perfect binary tree $t$, $\texttt{leaves}(t) = 2^{\texttt{height}(t)}$. (Hint: the definition of ``perfect'' is itself inductive: \texttt{Leaf} is perfect, and $\texttt{Node}(l, r)$ is perfect if $l$ and $r$ are both perfect and have the same height. Induct on the structure of the perfect tree.)
+\textbf{Exercise 10.}\label{ex:m10:10} A binary tree is \emph{perfect} if
+every non-leaf node has two subtrees of the same height. Define
+\[
+  \texttt{height}(\texttt{Leaf}) = 0,\qquad
+  \texttt{height}(\texttt{Node}(l, r))
+    = 1 + \max(\texttt{height}(l), \texttt{height}(r)).
+\]
+Prove by structural induction that every perfect binary tree $t$
+satisfies $\texttt{leaves}(t) = 2^{\texttt{height}(t)}$. Hint: the
+definition of ``perfect'' is itself inductive: \texttt{Leaf} is perfect,
+and $\texttt{Node}(l, r)$ is perfect if $l$ and $r$ are both perfect and
+have the same height. Induct on the structure of the perfect tree.
 
 \subsection*{Connection}
 

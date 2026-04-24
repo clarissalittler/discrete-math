@@ -128,6 +128,38 @@ We have $2 \mid n^5 - n$, $3 \mid n^5 - n$, and $5 \mid n^5 - n$. The three prim
 \medskip
 \noindent\textbf{A harder variant.} \emph{For every prime $p$ and every integer $n$, $p \mid n^p - n$.} This is Fermat's Little Theorem, and it generalizes both $n^3 - n$ divisible by $6 = 2 \cdot 3$ and $n^5 - n$ divisible by $30 = 2 \cdot 3 \cdot 5$. (Those are the $p = 3$ and $p = 5$ instances, combined with some leftover structure.) The standard proof uses induction (Module~8) plus the binomial theorem, and is worth revisiting once you've done Module~8---you'll see our two worked problems pop out as special cases.
 
+\section*{A third angle: induction on $n$}
+
+The two proofs above used \emph{case analysis} (Module~6) as their main engine. That's idiomatic for divisibility results because the case split on $n \bmod d$ handles both signs of $n$ uniformly. But it's not the only tool that works. Here's an alternative proof of the $n^3 - n$ result by \emph{induction on $n$} (Module~4), done for non-negative $n$ only to keep the setup clean.
+
+\begin{theorem}
+For every $n \in \mathbb{N}$, $6 \mid n^3 - n$.
+\end{theorem}
+
+\begin{proof}
+By induction on $n$.
+
+\emph{Base case} ($n = 0$): $0^3 - 0 = 0 = 6 \cdot 0$. \checkmark
+
+\emph{Inductive step.} Suppose $6 \mid k^3 - k$, so that $k^3 - k = 6m$ for some integer $m$. We need to show $6 \mid (k+1)^3 - (k+1)$. Expand:
+\begin{align*}
+  (k+1)^3 - (k+1) &= k^3 + 3k^2 + 3k + 1 - k - 1 \\
+                  &= (k^3 - k) + 3k^2 + 3k \\
+                  &= 6m + 3k(k + 1) \qquad \text{(by IH)}.
+\end{align*}
+Now $k(k+1)$ is the product of two consecutive integers, so it is even: write $k(k+1) = 2\ell$ for some integer $\ell$ (by case analysis on the parity of $k$, or just by noting that one of two consecutive integers is always even---exactly Step~1 of the earlier proof in miniature). Then
+\[
+  (k+1)^3 - (k+1) = 6m + 3 \cdot 2\ell = 6(m + \ell),
+\]
+which is divisible by $6$.
+
+By induction, $6 \mid n^3 - n$ for every $n \in \mathbb{N}$. \qedhere
+\end{proof}
+
+Two things worth noting. First, the induction argument \emph{contains a case analysis} inside it---the step where we argued $k(k+1)$ is even. You don't get to escape cases; you just relocate them. Second, for negative $n$ you can either do a separate induction going downward, or argue that $n^3 - n$ is an odd function so the result for negative $n$ follows from the result for positive $n$. (Exercise: work out which is cleaner.) The case-split proof earlier handled both signs uniformly, which is why it's the textbook approach. Module~5's habit of ``introduce an arbitrary element and unpack the definition'' shows up in the inductive step: the entire calculation is one long direct proof inside the inductive case.
+
+The takeaway: the same result can often be proved several ways, and each proof uses a different slice of the toolkit. Case analysis (Module~6) leans on the quotient-remainder theorem; induction (Module~4) leans on the recursive structure of $\mathbb{N}$; a group-theoretic proof (Module~5) might lean on the multiplicative structure of $(\mathbb{Z}/6\mathbb{Z})^{\times}$. When you see a divisibility result, it's worth asking which approach will be shortest---usually it's case analysis, but not always, and the habit of comparing approaches is itself worth the practice.
+
 \section*{Where we're going}
 
 Modules 7--10 take the toolkit two more steps forward:

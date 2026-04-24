@@ -16,7 +16,11 @@
 
 \rmentry{Relevant intermezzi.}{``What Does It Mean for Things to Be `The Same'?'' (equivalence relations; read after Module 6) ties into the group-theory section here.}
 
-\rmentry{Proof-writing reference.}{The companion chapter ``How to Write a Proof, Revisited,'' which appears right after Module~7, consolidates prose conventions for the full range of proof techniques---including a technique-selection decision tree and a longer walkthrough using the contrapositive. Worth flagging now as a forward reference for the trickier exercises in this module.}
+\rmentry{Proof-writing reference.}{The companion chapter ``How to Write a
+Proof, Revisited'' appears right after Module~7. It consolidates prose
+conventions for the full range of proof techniques, including a
+technique-selection decision tree and a longer walkthrough using the
+contrapositive.}
 
 \rmentry{Practice from Epp.}{§4.1 exercises on direct proofs about even/odd and divisibility; §4.2 exercises on rational-number proofs; §4.3 exercises on divisibility; and any `disprove with counterexample' problems from those sections.}
 \end{readingmap}
@@ -144,7 +148,7 @@ A group is one of the simplest structures in abstract algebra\footnote{I sometim
 Here's the definition:
 
 \begin{definition}[Group]
-A \emph{group}\index{group} is a set $G$, an element $e : G$\index{identity element}, and a binary operation $* : G \to G \to G$ that satisfies the following axioms:
+A \emph{group}\index{group} is a triple $(G, *, e)$ consisting of a set $G$, a binary operation $* : G \times G \to G$, and a distinguished element $e \in G$\index{identity element}, satisfying the following axioms:
 
 (associativity) $\forall a,b,c : G.\; (a * b) * c = a * (b * c)$
 
@@ -192,6 +196,55 @@ Let's start by proving that some things \textbf{are} or are \textbf{not} groups.
 
 All four axioms hold, so $(\mathbb{Z}, +, 0)$ is a group. \hfill $\square$
 
+\section{A worked finite example: rotations of a square}
+
+$(\mathbb{Z}, +, 0)$ is the easy confidence-builder, but the axioms were doing so little work there that you might reasonably wonder whether ``verify a group'' ever amounts to anything. Let's do a second example where the group is \emph{finite} and the verification has something concrete to chew on.
+
+Imagine a square sitting on a table with its corners labeled 1, 2, 3, 4 clockwise from the top-left. Consider the four rotations that send the square back to itself:
+\begin{itemize}
+  \item $e$: rotate by $0^\circ$ (don't do anything).
+  \item $r$: rotate clockwise by $90^\circ$.
+  \item $r^2$: rotate by $180^\circ$.
+  \item $r^3$: rotate by $270^\circ$.
+\end{itemize}
+Rotating by $360^\circ$ gets you back to $e$, so we don't pick up any new elements past $r^3$. Our carrier set is $G = \{e, r, r^2, r^3\}$ with $4$ elements.
+
+Our operation is function composition: ``$g * h$ means first apply $h$, then $g$.''\footnote{Function-composition order is backwards from how you say it in English, as we noted in Module 1. You can flip the convention if you like, as long as you're consistent.} Because we're just adding rotation angles (mod $360^\circ$), the operation is completely determined by the table:
+
+\begin{center}
+\begin{tabular}{c|cccc}
+$*$ & $e$ & $r$ & $r^2$ & $r^3$ \\
+\hline
+$e$    & $e$    & $r$    & $r^2$ & $r^3$ \\
+$r$    & $r$    & $r^2$ & $r^3$ & $e$ \\
+$r^2$ & $r^2$ & $r^3$ & $e$    & $r$ \\
+$r^3$ & $r^3$ & $e$    & $r$    & $r^2$
+\end{tabular}
+\end{center}
+
+The entry in row $g$ and column $h$ is $g * h$. Read off the patterns: every row is a permutation of $G$, and so is every column; the table is symmetric about the main diagonal in this particular case (though it wouldn't be for non-commutative groups, which we're about to get to).
+
+Now we verify the axioms. This time some of them have content.
+
+\emph{Closure.} We need $g * h \in G$ for every $g, h \in G$. The table makes this immediate: every entry is one of $e, r, r^2, r^3$. Checked by inspection of 16 cells.
+
+\emph{Associativity.} In principle we could check all $4^3 = 64$ triples $(a, b, c)$ against $(a * b) * c = a * (b * c)$. That would be tedious but valid. The cleaner argument is: $*$ here is function composition, and function composition is associative for \emph{any} functions (we saw this in Module~1). So the associativity axiom is free, inherited from the fact that rotations are functions and functions compose associatively.\footnote{This trick works for any group whose elements are functions under composition: symmetry groups, permutation groups, matrix groups under matrix multiplication. The moment you realize associativity is automatic, finite-group verification gets a lot less painful.}
+
+\emph{Left-identity and right-identity.} Reading the first row and first column of the table: $e * g = g$ and $g * e = g$ for every $g \in G$. Both identity axioms hold.
+
+\emph{Inverses.} We need every element to have an inverse. Read along the rows looking for the identity $e$:
+\begin{itemize}
+  \item $e * e = e$, so $e^{-1} = e$.
+  \item $r * r^3 = e$ and $r^3 * r = e$, so $r^{-1} = r^3$.
+  \item $r^2 * r^2 = e$, so $(r^2)^{-1} = r^2$ (it's its own inverse).
+  \item $r^3 * r = e$ and $r * r^3 = e$, so $(r^3)^{-1} = r$.
+\end{itemize}
+Every element has a two-sided inverse. All four axioms hold; $(G, *, e)$ is a group. \hfill $\square$
+
+This is a real finite group, the \emph{cyclic group of order~4}, often written $C_4$. We'll use the notation $C_4 = \{e, r, r^2, r^3\}$ later.
+
+A remark worth sitting with: the multiplication table for $C_4$ is, up to renaming, the same table as addition in $\mathbb{Z}/4\mathbb{Z}$. Relabel $e, r, r^2, r^3$ as $0, 1, 2, 3$, and ``compose two rotations'' becomes ``add two residues mod $4$.'' Same group, different costume. This ``two groups that look different but behave identically'' phenomenon is what \emph{isomorphism} (which we'll formalize in a couple of sections) is for. You'll make this exact correspondence precise in the exercises.
+
 \section{The integers under multiplication do \emph{not} form a group}
 Disproving a group claim is easier than proving one: we only need a single axiom to fail. Let's show that $(\mathbb{Z}, \cdot, 1)$ has no inverses.
 
@@ -237,7 +290,7 @@ For any positive integer $k$, the function $\varphi : \mathbb{Z} \to \mathbb{Z}/
 \[
   (a + b) \bmod k \;=\; \bigl((a \bmod k) + (b \bmod k)\bigr) \bmod k,
 \]
-which is the fact that ``addition plays nicely with remainders.'' You'll prove this in Module~6.
+which is the fact that ``addition plays nicely with remainders''---the thing Module~6 will establish when it proves modular addition is well-defined on residue classes. That well-definedness is \emph{exactly} this homomorphism property, just stated in congruence vocabulary rather than function vocabulary. Worth circling back to this example after you've read §6.4.
 \end{example}
 
 Once we have homomorphisms, the right notion of ``same'' for groups is also clear: two groups are the ``same'' when there is a homomorphism between them that can be undone.
@@ -292,6 +345,8 @@ A few cautions:
   \item \textbf{Inverting ``necessary'' and ``sufficient'' on group axioms.} To be a group, the axioms are all \emph{necessary}---you need every one. If you verify three of the four axioms and not the fourth, you haven't proved ``it's a group''; the best you've done is rule out three ways it could fail.
   \item \textbf{Not actually using the inverse axiom after invoking it.} A very common error in group-theory proofs: students write ``let $g^{-1}$ be the inverse of $g$'' and then never actually use the fact that $g \cdot g^{-1} = e$. If the proof works without that fact, you haven't used the group structure---you've proved something else.
   \item \textbf{Forgetting one direction of ``if and only if.''} A biconditional claim needs two separate arguments: $(\Rightarrow)$ and $(\Leftarrow)$. Students often prove one direction and stop. If the claim is $P \leftrightarrow Q$, you are not done until you have proofs of both $P \to Q$ and $Q \to P$.
+  \item \textbf{Trying to read associativity off a group table.} A multiplication table shows closure (every entry is in $G$), lets you read off the identity (the row/column where $g * e = g$), and lets you read off inverses (find the $e$ in each row). What it \emph{doesn't} show is associativity---$(a * b) * c = a * (b * c)$ is a statement about \emph{three} elements, and a two-dimensional table has nothing to say about it directly. Either inherit associativity from an underlying structure (function composition, integer addition, matrix multiplication) or check all triples explicitly; don't assume the table settles it.
+  \item \textbf{Using group axioms on things that aren't elements of the group.} When writing proofs about a group $(G, *, e)$, every element you name has to live in $G$. Students sometimes write ``let $g^{-1}$'' when $g$ hasn't been shown to be in $G$, or compute a product $g * h$ for some $h$ that was assumed to live in a different structure. If you catch yourself reaching for an inverse, re-check that the element you're inverting is actually in the group you said you were working in.
 \end{enumerate}
 
 \section{Summary and looking ahead}
@@ -309,7 +364,7 @@ A few cautions:
 \textbf{What we built this module.} This was the first module where we really \emph{wrote proofs}. The unpack-algebra-repack pattern is the single most important habit to build this term; it's worth more than any specific theorem in this chapter. Groups gave us a second context---beyond number theory---where the same habit pays off, and the group axioms will recur throughout the course ($\mathbb{Z}/n\mathbb{Z}$ under addition, the nonzero residues mod a prime under multiplication, etc.).
 
 \medskip
-\textbf{Looking ahead.} Module 6 introduces modular arithmetic and proof by cases, both of which lean on the habits we just built. You'll use direct proof plus case analysis on $n \bmod d$ to prove facts like ``every even integer in \{4,\ldots,12\} is a sum of two primes.'' After Module 6, the equivalence-relation intermezzo cashes in on the group theory here by showing how modular congruence partitions $\mathbb{Z}$ into cosets.
+\textbf{Looking ahead.} Module 6 introduces modular arithmetic and proof by cases, both of which lean on the habits we just built. You'll use direct proof plus case analysis on $n \bmod d$ to prove facts like ``every even integer in \{4,\ldots,12\} is a sum of two primes.'' After Module 6, the equivalence-relation intermezzo cashes in on the group theory here by showing how modular congruence partitions $\mathbb{Z}$ into \emph{equivalence classes}---and $\mathbb{Z}/n\mathbb{Z}$ is exactly the set of those classes, viewed as a group under the induced operation.
 \end{summarybox}
 
 \section{Exercises}
@@ -348,6 +403,9 @@ What proof-technique error does this commit?
 
 \bigskip
 \textbf{Exercise 9.}\label{ex:m5:9} Show that $(\mathbb{N},\, +,\, 0)$---the natural numbers under addition---is \emph{not} a group. Which axiom fails, and why?
+
+\bigskip
+\textbf{Exercise 9b.}\label{ex:m5:9b} (Isomorphism.) The module claimed that the cyclic group $C_4 = \{e, r, r^2, r^3\}$ of rotations of a square is ``the same group, in different costume,'' as $(\mathbb{Z}/4\mathbb{Z}, +, 0)$. Make this precise. Define a function $\varphi : C_4 \to \mathbb{Z}/4\mathbb{Z}$ by $\varphi(e) = 0$, $\varphi(r) = 1$, $\varphi(r^2) = 2$, $\varphi(r^3) = 3$. Prove: (a) $\varphi$ is a bijection; (b) $\varphi$ is a homomorphism---that is, $\varphi(g * h) = \varphi(g) + \varphi(h)$ (addition mod~$4$) for every $g, h \in C_4$. Part (b) is the work; it amounts to checking that the group-operation table for $C_4$ matches the addition-mod-$4$ table entry by entry. Conclude that $C_4 \cong \mathbb{Z}/4\mathbb{Z}$.
 
 \subsection*{Challenge}
 

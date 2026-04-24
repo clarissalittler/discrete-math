@@ -236,10 +236,19 @@ Any time someone says ``proof by induction on $n$'' you can mentally translate t
 \end{keytakeaway}
 
 \begin{summarybox}
-\textbf{What we built this module.} We're now fluent with induction as a proof tool. The sum-formula exercises are finger exercises; the deeper point is that every recursive definition \emph{is} an induction principle in disguise, and every inductive proof \emph{is} a recursive function with ``proof'' as its return type. That's the unification we've been building toward since Module 4.
+\textbf{What we built this module.} We're now fluent with induction as a proof tool. The sum-formula exercises are finger exercises; the deeper point is one we've been sneaking up on since Module~4: \textbf{every recursive definition carries an induction principle}. Natural numbers are defined by $\text{Nat} := 0 \mid \text{succ Nat}$, and the shape of that BNF \emph{is} the shape of the natural-induction rule---base case for $0$, inductive step across \texttt{succ}. The induction principle was never a separate fact we had to memorize; it came bundled with the definition. Modules~9 and~10 will make this slogan progressively more explicit, until in Module~10 we can read the induction principle for \emph{any} BNF-defined type straight off the grammar.
 
 \medskip
-\textbf{Looking ahead.} Module 9 generalizes ordinary induction to \emph{strong induction}, where the inductive hypothesis gives you $P(j)$ for \emph{all} $j \leq k$, not just $j = k$. This turns out to be the right tool for recurrences that reach back more than one step, divide-and-conquer algorithms, and (eventually in Module 10) structural induction on arbitrary recursive data types. Also in Module 9: the characteristic-equation method for solving linear recurrences in closed form, which is how we get the Fibonacci formula with $\varphi$ and $\sqrt{5}$.
+\textbf{Looking ahead.} Before you start Module~9, here's a problem that should feel like it \emph{should} yield to what we just built, but won't:
+
+\begin{quote}
+\emph{Prove that every integer $n \geq 2$ is either prime or a product of primes.}
+\end{quote}
+
+Try to set up a natural-induction proof on $n$. The base case is easy: $n = 2$ is prime, done. The inductive step is where it breaks. Assume every integer up to $k$ is prime or a product of primes, and try to conclude $k+1$ is too. If $k+1$ is composite, it factors as $k+1 = a \cdot b$ with $2 \leq a, b \leq k$---but which $a$? Some random integer in $\{2, \ldots, k\}$. Natural induction only hands you the hypothesis for $k$, one specific value. You need it for the specific $a$ and the specific $b$, which could land anywhere below $k+1$. You're stuck.
+
+\medskip
+That stuckness is the itch Module~9 scratches. It introduces \emph{strong induction}---an inductive hypothesis that covers \emph{all} $j \leq k$ at once, which is exactly what the prime-factorization argument wanted---and then turns around and uses the same principle for recurrences that reach back more than one step and for divide-and-conquer algorithms. Module~9 also covers the characteristic-equation method for solving linear recurrences in closed form, which is how we get the Fibonacci formula with $\varphi$ and $\sqrt{5}$.
 \end{summarybox}
 
 \section{Exercises}

@@ -10,7 +10,7 @@
 \maketitle
 
 \begin{readingmap}
-\rmentry{Epp sections.}{§4.4--4.5 (§4.5--4.6 in the 5th edition): divisibility, the quotient-remainder theorem, modular arithmetic, and proofs by cases.}
+\rmentry{Epp sections.}{§4.5--4.6 (§4.4--4.5 in the 4th edition): divisibility, the quotient-remainder theorem, modular arithmetic, and proofs by cases.}
 
 \rmentry{Prerequisites.}{Module 5 (direct proof and the group axioms).}
 
@@ -89,10 +89,10 @@ Modular arithmetic isn't just ``clock math.'' It's everywhere in the systems you
   \item \textbf{Cyclic anything.} Day of the week from day of the year? Mod 7. Which way does a clock hand point? Mod 12 (or 24, or 60). Which frame of a looping animation are you on? Mod \textit{frame\_count}. Any time there's a cycle, there's modular arithmetic underneath.
 \end{itemize}
 
-When we say ``modular arithmetic is a finite field when the modulus is prime,'' that abstract statement is what makes RSA possible. When we say ``$\mathbb{Z}/n\mathbb{Z}$ is always a group under addition,'' that's the identity behind every hash table. Abstract algebra feels abstract until the moment you realize your entire software stack is running on it.
+When we say ``modular arithmetic is a finite field when the modulus is prime,'' that abstract statement is what makes Diffie--Hellman-style arithmetic possible. RSA uses a different but closely related structure: arithmetic in $\mathbb{Z}/n\mathbb{Z}$ where $n$ is a product of two large primes, plus the CRT to move between the composite modulus and its prime factors. When we say ``$\mathbb{Z}/n\mathbb{Z}$ is always a group under addition,'' that's the identity behind every hash table. Abstract algebra feels abstract until the moment you realize your entire software stack is running on it.
 \end{sidebar}
 
-\section{$\mathbb{Z}/n\mathbb{Z}$ is a group}
+\section{\texorpdfstring{$\mathbb{Z}/n\mathbb{Z}$ is a group}{Z/nZ is a group}}
 In Module 5 we proved that $(\mathbb{Z}, +, 0)$ is a group. Now we'll see that modular arithmetic gives us \emph{finite} groups---the same axioms, but with a finite set of residues instead of all the integers.
 
 For any positive integer $n$, define the set of residues $\mathbb{Z}/n\mathbb{Z} = \{0, 1, \ldots, n-1\}$, and define modular addition by performing ordinary addition and then taking the modulus:
@@ -103,7 +103,7 @@ We'll write $\oplus$ here to distinguish it from ordinary $+$, though most texts
 
 The axioms all work the way you'd hope: associativity comes from associativity of ordinary integer addition, the identity is still $0$, and every residue has an additive inverse---namely $r = (n - q) \bmod n$. Checking the inverse is a one-liner: $q \oplus (n - q) = (q + n - q) \bmod n = n \bmod n = 0$. So $(\mathbb{Z}/n\mathbb{Z}, \oplus, 0)$ is a group for every positive $n$.
 
-\section{$(\mathbb{Z}/p\mathbb{Z})^{\times}$ is a group when $p$ is prime}
+\section{\texorpdfstring{$(\mathbb{Z}/p\mathbb{Z})^{\times}$ is a group when $p$ is prime}{Units mod p form a group when p is prime}}
 When the modulus is prime, something \textbf{really} special happens. It isn't just a group under addition---if you exclude $0$, the nonzero residues \emph{also} form a group under multiplication. That is, $((\mathbb{Z}/p\mathbb{Z})^{\times}, \cdot, 1)$, with operation $q \cdot r = (qr) \bmod p$, satisfies exactly the group axioms we verified for the integers in Module 5.
 
 Associativity, identity ($1$), and the closure of multiplication on nonzero residues are all straightforward. The surprising axiom is inverses: for every nonzero residue $q$, there's some residue $x$ with $q \cdot x \equiv 1 \pmod p$. This is not obvious---why should such an $x$ exist?---and the proof leans on a classical number-theoretic identity:
@@ -112,7 +112,9 @@ Associativity, identity ($1$), and the closure of multiplication on nonzero resi
 For any integers $a$ and $b$, there exist integers $x$ and $y$ such that $ax + by = \gcd(a, b)$.
 \end{theorem}
 
-\noindent We won't prove B\'ezout here---Module 7 shows how the extended Euclidean algorithm actually \emph{computes} the coefficients $x$ and $y$---but we can use it immediately. If $q$ is a nonzero residue mod $p$ and $p$ is prime, then $\gcd(q, p) = 1$, so B\'ezout gives integers $x, y$ with $qx + py = 1$. Reducing mod $p$, the $py$ term vanishes and we're left with $qx \equiv 1 \pmod p$. So $x$ is the multiplicative inverse of $q$.
+\noindent We won't prove B\'ezout here---the intermezzo right after Module~7 shows how the \emph{extended} Euclidean algorithm actually \emph{computes} the coefficients $x$ and $y$---but the intuition is worth carrying with you: the integer linear combinations $ax + by$ hit exactly the multiples of $\gcd(a,b)$ as $x, y$ range over $\mathbb{Z}$, and when $\gcd(a,b) = 1$ that includes $1$ itself. So whenever $\gcd(a,b) = 1$, the equation $ax + by = 1$ has a solution, and B\'ezout's identity is just naming the $x, y$ that solve it.
+
+We can use this immediately. If $q$ is a nonzero residue mod $p$ and $p$ is prime, then $\gcd(q, p) = 1$, so B\'ezout gives integers $x, y$ with $qx + py = 1$. Reducing mod $p$, the $py$ term vanishes and we're left with $qx \equiv 1 \pmod p$. So $x$ is the multiplicative inverse of $q$.
 
 Distributivity of multiplication over addition follows from distributivity in $\mathbb{Z}$, so we won't re-prove it. Putting the pieces together: $\mathbb{Z}/p\mathbb{Z}$ is a \emph{finite field}\index{finite field}, a set where addition works on all residues and multiplication works on the nonzero residues, both with full group structure. Finite fields are the algebraic backbone of modern cryptography, error-correcting codes, and large chunks of coding theory---see the Wikipedia articles on \href{https://en.wikipedia.org/wiki/Finite_field_arithmetic}{finite field arithmetic} and the \href{https://en.wikipedia.org/wiki/Finite_field#Discrete_logarithm}{discrete logarithm problem} if you want to dig further.
 
@@ -134,9 +136,30 @@ Let's solve that exact puzzle as a worked example.
 
 \textbf{Claim.} Find $x$ with $x \equiv 2 \pmod 3$, $x \equiv 3 \pmod 5$, $x \equiv 2 \pmod 7$.
 
-\textbf{Worked solution.} One way to solve this is to just enumerate candidates satisfying the first two congruences and filter by the third. Start from $x \equiv 2 \pmod 3$: candidates are $2, 5, 8, 11, 14, 17, 20, 23, \ldots$. Of these, which are $\equiv 3 \pmod 5$? Check each one: $2 \bmod 5 = 2$, $5 \bmod 5 = 0$, $8 \bmod 5 = 3$. \checkmark So $8$ works for the first two. And $8 + 15k$ also works for all $k$ (since $15 = \text{lcm}(3, 5)$). The candidates for the first two constraints are $8, 23, 38, 53, 68, 83, \ldots$. Which are $\equiv 2 \pmod 7$? Try each: $8 \bmod 7 = 1$, $23 \bmod 7 = 2$. \checkmark So $x = 23$ satisfies all three constraints.
+\textbf{Worked solution.} One way to solve this is to enumerate
+candidates satisfying the first two congruences and then filter by the
+third. Start from $x \equiv 2 \pmod 3$:
+\[
+  2, 5, 8, 11, 14, 17, 20, 23, \ldots
+\]
+Of these, which are $\equiv 3 \pmod 5$? Check:
+\[
+  2 \bmod 5 = 2,\qquad
+  5 \bmod 5 = 0,\qquad
+  8 \bmod 5 = 3.
+\]
+So $8$ works for the first two congruences, and $8 + 15k$ also works
+for all $k$ since $15 = \text{lcm}(3, 5)$. Now filter the candidates
+\[
+  8, 23, 38, 53, 68, 83, \ldots
+\]
+by the third congruence:
+\[
+  8 \bmod 7 = 1,\qquad 23 \bmod 7 = 2.
+\]
+Thus $x = 23$ satisfies all three constraints.
 
-By the CRT, the solution is unique modulo $3 \cdot 5 \cdot 7 = 105$. So the full set of integer solutions is $\{23, 128, 233, \ldots\}$ and $\{23 - 105, 23 - 210, \ldots\}$, i.e., $\{23 + 105k \mid k \in \mathbb{Z}\}$.
+By the CRT, the solution is unique modulo $\operatorname{lcm}(3, 5, 7) = 3 \cdot 5 \cdot 7 = 105$. (The LCM equals the product here because the three moduli are pairwise coprime; the CRT statement is always in terms of LCM, which coincides with the product precisely under that coprimality hypothesis.) So the full set of integer solutions is $\{23, 128, 233, \ldots\}$ and $\{23 - 105, 23 - 210, \ldots\}$, i.e., $\{23 + 105k \mid k \in \mathbb{Z}\}$.
 
 The general recipe for two coprime moduli $m, n$ is:
 \begin{enumerate}
@@ -190,7 +213,7 @@ So in both cases we get something of the form $2m + 1$, which is odd. Since ever
 \textbf{What we built this module.} We took integer arithmetic and discovered that it's wrapped around several group structures we already understood from Module 5---addition mod $n$ for any $n$, and multiplication mod $p$ for primes. The CRT gave us a first taste of ``modular reconstruction,'' which is the pattern behind fast big-integer arithmetic and RSA. Proof by cases became a concrete, practical technique rather than a formal rule.
 
 \medskip
-\textbf{Looking ahead.} Module 7 introduces the two indirect proof techniques---contradiction and contrapositive---plus the Euclidean algorithm (which computes multiplicative inverses in $\mathbb{Z}/p\mathbb{Z}$ via B\'ezout, closing the loop with what we did here) and Hoare logic for program correctness. Before you get there, the equivalence-relation intermezzo uses modular congruence as its central example, so it's a good partner to this module.
+\textbf{Looking ahead.} Module 7 introduces the two indirect proof techniques---contradiction and contrapositive---plus the Euclidean algorithm and Hoare logic for program correctness. The \emph{extended} Euclidean algorithm, which turns B\'ezout's identity into a way to actually compute the coefficients $x, y$ (and hence modular inverses), is handled in an intermezzo just after Module~7. Before you get there, the equivalence-relation intermezzo uses modular congruence as its central example, so it's a good partner to this module.
 \end{summarybox}
 
 \section{Exercises}

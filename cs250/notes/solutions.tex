@@ -1876,11 +1876,33 @@ We want $x$ with $x \equiv 1 \pmod 4$, $x \equiv 2 \pmod 9$, $x \equiv 3 \pmod{2
 
 Proceed by combining constraints two at a time.
 
-\emph{Step 1: combine the first two.} Candidates for $x \equiv 1 \pmod 4$: $1, 5, 9, 13, 17, 21, 25, 29, \ldots$. Of these, which are $\equiv 2 \pmod 9$? Check: $1 \bmod 9 = 1$, $5 \bmod 9 = 5$, $9 \bmod 9 = 0$, $13 \bmod 9 = 4$, $17 \bmod 9 = 8$, $21 \bmod 9 = 3$, $25 \bmod 9 = 7$, $29 \bmod 9 = 2$. \checkmark So $x \equiv 29 \pmod{36}$ for the first two constraints.
+\emph{Step 1: combine the first two.} Candidates for
+$x \equiv 1 \pmod 4$ are
+\[
+  1, 5, 9, 13, 17, 21, 25, 29, \ldots
+\]
+Checking these modulo $9$, the first value congruent to $2$ is
+\[
+  29 \bmod 9 = 2.
+\]
+So $x \equiv 29 \pmod{36}$ for the first two constraints.
 
-\emph{Step 2: combine with the third.} Candidates from the first two constraints: $29, 65, 101, 137, 173, 209, 245, 281, 317, 353, \ldots$. Which is $\equiv 3 \pmod{25}$? $29 \bmod 25 = 4$, $65 \bmod 25 = 15$, $101 \bmod 25 = 1$, $137 \bmod 25 = 12$, $173 \bmod 25 = 23$, $209 \bmod 25 = 9$, $245 \bmod 25 = 20$, $281 \bmod 25 = 6$, $317 \bmod 25 = 17$, $353 \bmod 25 = 3$. \checkmark
+\emph{Step 2: combine with the third.} Candidates from the first two
+constraints are
+\[
+  29, 65, 101, 137, 173, 209, 245, 281, 317, 353, \ldots
+\]
+Checking these modulo $25$, the first value congruent to $3$ is
+\[
+  353 \bmod 25 = 3.
+\]
 
-So $x = 353$ is the smallest positive solution. (You can double-check: $353 \bmod 4 = 1$, $353 \bmod 9 = 2$ (since $9 \cdot 39 = 351$, $353 - 351 = 2$), $353 \bmod 25 = 3$ (since $25 \cdot 14 = 350$). \checkmark)
+So $x = 353$ is the smallest positive solution. You can double-check:
+\[
+  353 \bmod 4 = 1,\qquad
+  353 \bmod 9 = 2,\qquad
+  353 \bmod 25 = 3.
+\]
 
 By CRT, every solution has the form $353 + 900k$.
 
@@ -2095,11 +2117,14 @@ bijection, and $\{u, v\} \in E_1$ iff $\{\mathrm{id}(u), \mathrm{id}(v)\} =
 \{u, v\} \in E_1$.  So $G \sim G$.  \checkmark
 
 \emph{Symmetric:} If $\varphi$ witnesses $G \sim H$, then $\varphi^{-1}$
-is also a bijection, and
-$\{u', v'\} \in E_2$ iff
-$\{\varphi^{-1}(u'), \varphi^{-1}(v')\} \in E_1$
-(apply the defining equivalence at $u = \varphi^{-1}(u')$, $v =
-\varphi^{-1}(v')$ and use $\varphi \circ \varphi^{-1} = \mathrm{id}$).
+is also a bijection. To check edges, apply the defining equivalence at
+$u = \varphi^{-1}(u')$ and $v = \varphi^{-1}(v')$:
+\[
+  \{u', v'\} \in E_2
+    \;\iff\;
+  \{\varphi^{-1}(u'), \varphi^{-1}(v')\} \in E_1.
+\]
+Here we used $\varphi \circ \varphi^{-1} = \mathrm{id}$.
 So $H \sim G$.  \checkmark
 
 \emph{Transitive:} If $\varphi$ witnesses $G \sim H$ and $\psi$
@@ -2111,11 +2136,13 @@ witnesses $H \sim K$, then $\psi \circ \varphi$ is a bijection, and
 \]
 So $G \sim K$.  \checkmark
 
-\emph{Isomorphic example on four vertices.}  The path $P_4$ with
-vertices $\{1, 2, 3, 4\}$ and edges $\{\{1,2\}, \{2,3\}, \{3,4\}\}$ is
-isomorphic to the path with vertices $\{a, b, c, d\}$ and edges
-$\{\{a,b\}, \{b,c\}, \{c,d\}\}$; the bijection $1 \mapsto a$, $2 \mapsto
-b$, $3 \mapsto c$, $4 \mapsto d$ witnesses this.
+\emph{Isomorphic example on four vertices.}  The path $P_4$ on
+$1 - 2 - 3 - 4$ is isomorphic to the path on $a - b - c - d$.  The
+witnessing bijection is
+\[
+  1 \mapsto a,\qquad 2 \mapsto b,\qquad
+  3 \mapsto c,\qquad 4 \mapsto d.
+\]
 
 \emph{Non-isomorphic example.}  The four-cycle $C_4$ with edges
 $\{\{1,2\}, \{2,3\}, \{3,4\}, \{4,1\}\}$ and the path $P_4$ above are
@@ -3218,10 +3245,41 @@ $\texttt{reverse}(\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil
 \medskip
 \textbf{Exercise~2.}
 \begin{enumerate}[label=(\alph*)]
-  \item $\texttt{length}(\texttt{Cons}(a, \texttt{Cons}(b, \texttt{Nil}))) = 1 + \texttt{length}(\texttt{Cons}(b, \texttt{Nil})) = 1 + 1 + \texttt{length}(\texttt{Nil}) = 1 + 1 + 0 = 2$.
-  \item $\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Nil})) \mathbin{++} \texttt{Cons}(3, \texttt{Nil}) = \texttt{Cons}(1, \texttt{Cons}(2, \texttt{Nil}) \mathbin{++} \texttt{Cons}(3, \texttt{Nil})) = \texttt{Cons}(1, \texttt{Cons}(2, \texttt{Nil} \mathbin{++} \texttt{Cons}(3, \texttt{Nil}))) = \texttt{Cons}(1, \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil})))$.
-  \item $\texttt{size}(\texttt{Node}(\texttt{Leaf}, \texttt{Node}(\texttt{Leaf}, \texttt{Leaf}))) = 1 + \texttt{size}(\texttt{Leaf}) + \texttt{size}(\texttt{Node}(\texttt{Leaf}, \texttt{Leaf})) = 1 + 0 + (1 + 0 + 0) = 2$.
-  \item $\texttt{edges}(\texttt{Node}(\texttt{Leaf}, \texttt{Node}(\texttt{Leaf}, \texttt{Leaf}))) = 2 + \texttt{edges}(\texttt{Leaf}) + \texttt{edges}(\texttt{Node}(\texttt{Leaf}, \texttt{Leaf})) = 2 + 0 + (2 + 0 + 0) = 4$. (Consistent with $2 \cdot \texttt{size} = 2 \cdot 2 = 4$.)
+  \item
+  \begin{align*}
+    \texttt{length}(\texttt{Cons}(a, \texttt{Cons}(b, \texttt{Nil})))
+      &= 1 + \texttt{length}(\texttt{Cons}(b, \texttt{Nil})) \\
+      &= 1 + 1 + \texttt{length}(\texttt{Nil}) \\
+      &= 2.
+  \end{align*}
+  \item
+  \begin{align*}
+    &\texttt{Cons}(1, \texttt{Cons}(2, \texttt{Nil}))
+      \mathbin{++} \texttt{Cons}(3, \texttt{Nil}) \\
+    &\quad= \texttt{Cons}(1,
+      \texttt{Cons}(2, \texttt{Nil}) \mathbin{++}
+      \texttt{Cons}(3, \texttt{Nil})) \\
+    &\quad= \texttt{Cons}(1,
+      \texttt{Cons}(2, \texttt{Nil} \mathbin{++}
+      \texttt{Cons}(3, \texttt{Nil}))) \\
+    &\quad= \texttt{Cons}(1,
+      \texttt{Cons}(2, \texttt{Cons}(3, \texttt{Nil}))).
+  \end{align*}
+  \item
+  \begin{align*}
+    \texttt{size}(\texttt{Node}(\texttt{Leaf},
+      \texttt{Node}(\texttt{Leaf}, \texttt{Leaf})))
+      &= 1 + 0 + (1 + 0 + 0) \\
+      &= 2.
+  \end{align*}
+  \item
+  \begin{align*}
+    \texttt{edges}(\texttt{Node}(\texttt{Leaf},
+      \texttt{Node}(\texttt{Leaf}, \texttt{Leaf})))
+      &= 2 + 0 + (2 + 0 + 0) \\
+      &= 4.
+  \end{align*}
+  This is consistent with $2 \cdot \texttt{size} = 2 \cdot 2 = 4$.
 \end{enumerate}
 
 \medskip
@@ -3364,14 +3422,18 @@ By structural induction on $xs$.
 \end{align*}
 \checkmark
 
-\emph{Inductive step} ($xs = \texttt{Cons}(x, xs')$). IH: for all $ys$, $\texttt{reverse}(xs' \mathbin{++} ys) = \texttt{reverse}(ys) \mathbin{++} \texttt{reverse}(xs')$.
+\emph{Inductive step} ($xs = \texttt{Cons}(x, xs')$). IH: for all $ys$,
+$\texttt{reverse}(xs' \mathbin{++} ys)
+ = \texttt{reverse}(ys) \mathbin{++} \texttt{reverse}(xs')$.
+For readability in this display, write $R$ for \texttt{reverse} and
+$S_x$ for $\texttt{Cons}(x, \texttt{Nil})$.
 \begin{align*}
-  \texttt{reverse}(\texttt{Cons}(x, xs') \mathbin{++} ys)
-    &= \texttt{reverse}(\texttt{Cons}(x, xs' \mathbin{++} ys)) && \text{(def $\mathbin{++}$)} \\
-    &= \texttt{reverse}(xs' \mathbin{++} ys) \mathbin{++} \texttt{Cons}(x, \texttt{Nil}) && \text{(def reverse)} \\
-    &= (\texttt{reverse}(ys) \mathbin{++} \texttt{reverse}(xs')) \mathbin{++} \texttt{Cons}(x, \texttt{Nil}) && \text{(IH)} \\
-    &= \texttt{reverse}(ys) \mathbin{++} (\texttt{reverse}(xs') \mathbin{++} \texttt{Cons}(x, \texttt{Nil})) && \text{(Exercise 6: $\mathbin{++}$ assoc)} \\
-    &= \texttt{reverse}(ys) \mathbin{++} \texttt{reverse}(\texttt{Cons}(x, xs')) && \text{(def reverse, backward)}
+  R(\texttt{Cons}(x, xs') \mathbin{++} ys)
+    &= R(\texttt{Cons}(x, xs' \mathbin{++} ys)) && \text{(def $\mathbin{++}$)} \\
+    &= R(xs' \mathbin{++} ys) \mathbin{++} S_x && \text{(def reverse)} \\
+    &= (R(ys) \mathbin{++} R(xs')) \mathbin{++} S_x && \text{(IH)} \\
+    &= R(ys) \mathbin{++} (R(xs') \mathbin{++} S_x) && \text{($\mathbin{++}$ assoc)} \\
+    &= R(ys) \mathbin{++} R(\texttt{Cons}(x, xs')) && \text{(def reverse, backward)}
 \end{align*}
 \checkmark
 
@@ -3379,12 +3441,13 @@ By structural induction on $xs$.
 
 \emph{Base case} ($xs = \texttt{Nil}$): $\texttt{reverse}(\texttt{reverse}(\texttt{Nil})) = \texttt{reverse}(\texttt{Nil}) = \texttt{Nil}$. \checkmark
 
-\emph{Inductive step} ($xs = \texttt{Cons}(x, xs')$). IH: $\texttt{reverse}(\texttt{reverse}(xs')) = xs'$.
+\emph{Inductive step} ($xs = \texttt{Cons}(x, xs')$). IH:
+$R(R(xs')) = xs'$, using the same abbreviations as above.
 \begin{align*}
-  \texttt{reverse}(\texttt{reverse}(\texttt{Cons}(x, xs')))
-    &= \texttt{reverse}(\texttt{reverse}(xs') \mathbin{++} \texttt{Cons}(x, \texttt{Nil})) && \text{(def reverse)} \\
-    &= \texttt{reverse}(\texttt{Cons}(x, \texttt{Nil})) \mathbin{++} \texttt{reverse}(\texttt{reverse}(xs')) && \text{(Helper 2)} \\
-    &= \texttt{Cons}(x, \texttt{Nil}) \mathbin{++} xs' && \text{(by direct computation and IH)} \\
+  R(R(\texttt{Cons}(x, xs')))
+    &= R(R(xs') \mathbin{++} S_x) && \text{(def reverse)} \\
+    &= R(S_x) \mathbin{++} R(R(xs')) && \text{(Helper 2)} \\
+    &= S_x \mathbin{++} xs' && \text{(direct computation and IH)} \\
     &= \texttt{Cons}(x, \texttt{Nil} \mathbin{++} xs') && \text{(def $\mathbin{++}$)} \\
     &= \texttt{Cons}(x, xs'). && \text{(def $\mathbin{++}$)}
 \end{align*}
@@ -3731,16 +3794,30 @@ def merge(fg):
     return lambda a: (f(a), g(a))
 \end{lstlisting}
 
-\emph{Inverses.}  Start with $h : A \to (B \times C)$.  Then
-$\texttt{merge(split(h))}(a) = ((\lambda a'.\, h(a')[0])(a),\,
-(\lambda a'.\, h(a')[1])(a)) = (h(a)[0], h(a)[1]) = h(a)$, so
-$\texttt{merge(split(h))} = h$.  In the other direction, start with
-$(f, g)$ where $f : A \to B$ and $g : A \to C$.  Then
-$\texttt{split(merge((f,g)))}$: the first component is $\lambda a.\,
-\texttt{merge((f,g))}(a)[0] = \lambda a.\, (f(a), g(a))[0] = \lambda a.\,
-f(a) = f$ (up to eta-equivalence), and similarly the second component
-is $g$.  So \texttt{split} and \texttt{merge} are mutual inverses,
-witnessing the isomorphism.
+\emph{Inverses.}  Start with $h : A \to (B \times C)$.  Pointwise,
+\[
+\begin{aligned}
+  \texttt{merge(split(h))}(a)
+    &= ((\lambda a'.\, h(a')[0])(a),\,
+        (\lambda a'.\, h(a')[1])(a)) \\
+    &= (h(a)[0], h(a)[1]) \\
+    &= h(a).
+\end{aligned}
+\]
+So $\texttt{merge(split(h))} = h$.
+
+In the other direction, start with a pair $(f, g)$. Assume
+$f : A \to B$ and $g : A \to C$.  The first component of
+$\texttt{split(merge((f,g)))}$ is
+\[
+  \lambda a.\, \texttt{merge((f,g))}(a)[0]
+    = \lambda a.\, (f(a), g(a))[0]
+    = \lambda a.\, f(a)
+    = f
+\]
+up to eta-equivalence, and similarly the second component is $g$.  So
+\texttt{split} and \texttt{merge} are mutual inverses, witnessing the
+isomorphism.
 
 In pure-arithmetic terms, this is the exponent-of-a-product law
 \[

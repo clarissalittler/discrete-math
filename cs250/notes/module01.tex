@@ -241,7 +241,22 @@ Next is something that seems obvious but is incredibly important and---in the hi
 
 Two sets are equal exactly when $A \subseteq B$ and $B \subseteq A$, in other words when the two sets have \emph{exactly} the same elements.
 
-This has a couple of implications. First, there's no sense of \emph{ordering} in sets: $\{a,b,c\} = \{c,b,a\} = \{c,a,b\}$. Second, it doesn't matter how you build the sets. You could get the ``set of natural numbers divisible by four'' either as $\{x \mid x \in \mathbb{N}, x \mathbin{\%} 4 = 0\}$ or as a two-step process: first get the even numbers $E = \{x \mid x \in \mathbb{N}, x \mathbin{\%} 2 = 0\}$ and then filter as $\{x \mid x \in E, x \mathbin{\%} 4 = 0\}$. Either way, you get the ``same'' set because they have the same elements.
+This has a couple of implications. First, there's no sense of
+\emph{ordering} in sets: $\{a,b,c\} = \{c,b,a\} = \{c,a,b\}$. Second,
+it doesn't matter how you build the sets. You could get the ``set of
+natural numbers divisible by four'' directly as
+\[
+  \{x \mid x \in \mathbb{N},\ x \mathbin{\%} 4 = 0\},
+\]
+or as a two-step process: first get
+\[
+  E = \{x \mid x \in \mathbb{N},\ x \mathbin{\%} 2 = 0\},
+\]
+and then filter again to get
+\[
+  \{x \mid x \in E,\ x \mathbin{\%} 4 = 0\}.
+\]
+Either way, you get the ``same'' set because they have the same elements.
 
 This is called \emph{extensional} equality\index{extensional equality}, that is equality because the two things look the same from ``the outside''.
 
@@ -384,6 +399,7 @@ Which properties do our other examples satisfy? ``Less than'' on the integers is
   \item A \emph{relation} between $A$ and $B$ is any subset of $A \times B$. Relations on a single set can be \emph{reflexive}, \emph{symmetric}, or \emph{transitive}; a relation with all three properties is an \emph{equivalence relation}.
 \end{keytakeaway}
 
+\Needspace{12\baselineskip}
 \begin{summarybox}
 \textbf{What we built this module.} We laid the vocabulary groundwork for the rest of the course. Sets and functions are the universe inside which we'll do everything else; the definitions of reflexive, symmetric, and transitive relations are the pattern we'll meet over and over (equivalence relations in Module 6, modular congruence, the $\leq$ ordering, the Curry--Howard correspondence in the intermezzo).
 
