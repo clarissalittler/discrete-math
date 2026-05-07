@@ -90,23 +90,23 @@ Let $P_n$ be the maximum number of regions into which $n$
 lines divide a plane, where $n$ is a positive integer.
 
 \begin{center}
-\begin{tikzpicture}[scale=0.62]
-  % three lines in general position
-  \draw[thick] (-3.5,-1.4) -- (3.5,1.4);   % Line 1
-  \draw[thick] (-2,-2.3) -- (2,2.8);        % Line 2
-  \draw[thick] (-3.5,1.2) -- (3.5,-1.6);    % Line 3
-  % region labels
-  \node at (0,2.2) {\small 1};
-  \node at (-2.6,0) {\small 2};
-  \node at (-0.6,0.5) {\small 3};
-  \node at (0.7,-0.3) {\small 4};
-  \node at (2.6,0) {\small 5};
-  \node at (0,-2) {\small 6};
-  \node at (-1.1,-0.8) {\small 7};
-  % labels
-  \node[right] at (3.5,1.4) {\footnotesize Line 1};
-  \node[right] at (2,2.8) {\footnotesize Line 2};
-  \node[right] at (3.5,-1.6) {\footnotesize Line 3};
+\begin{tikzpicture}[scale=0.7]
+  % three lines in general position, well-separated intersections
+  \draw[thick] (-3.5, 0)    -- (3.5, 0);     % Line 1: y = 0
+  \draw[thick] (-3,-2)      -- (2.5, 3.5);   % Line 2: y = x + 1
+  \draw[thick] (-2.5, 3.5)  -- (3,-2);       % Line 3: y = -x + 1
+  % region labels (one per region; central triangle is region 3)
+  \node at (0, 2.5)    {\small 1};   % top: above all three
+  \node at (-2.2, 0.9) {\small 2};   % upper-left wedge
+  \node at (0, 0.4)    {\small 3};   % central triangle
+  \node at (2.2, 0.9)  {\small 4};   % upper-right wedge
+  \node at (-2.3, -0.55) {\small 5}; % lower-left wedge
+  \node at (2.3, -0.55)  {\small 6}; % lower-right wedge
+  \node at (0, -1.5)   {\small 7};   % bottom: below all three
+  % line labels
+  \node[right] at (3.5, 0)   {\footnotesize Line 1};
+  \node[right] at (2.5, 3.5) {\footnotesize Line 2};
+  \node[right] at (3, -2)    {\footnotesize Line 3};
 \end{tikzpicture}
 \end{center}
 
